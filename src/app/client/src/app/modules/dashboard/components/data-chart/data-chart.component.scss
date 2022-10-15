@@ -1,0 +1,242 @@
+@import "variables";
+@import "mixins/mixins";
+
+
+.graph-statistics {
+  border-bottom: calculateRem(1px) solid var(--rc-dddddd);
+}
+
+.sb-last-update-status {
+  font-size: calculateRem(12px);
+  font-weight: bold;
+}
+
+.dashboard-graph-statistics {
+  border-bottom: calculateRem(1px) solid var(--rc-dddddd);
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: calculateRem(24px);
+
+  .graph-stat-block {
+    flex: 1;
+    border-right: calculateRem(1px) solid var(--rc-d4d8da) !important;
+
+    .graph-stat-label {
+      font-size: calculateRem(18px);
+    }
+
+    .graph-stat-value {
+      font-weight: bold;
+      font-size: calculateRem(40px);
+    }
+
+    .graph-stat-info {
+      color: var(--gray-200);
+      font-size: calculateRem(18px);
+    }
+
+    &:nth-child(3n + 3) {
+      border-right: 0px solid var(--rc-d4d8da) !important;
+    }
+  }
+}
+
+.dashboard-iframe {
+  width: 100%;
+  height: calculateRem(700px);
+}
+
+
+@include respond-below(md) {
+  .dashboard-graph-statistics {
+    border-bottom: calculateRem(1px) solid var(--rc-dddddd);
+
+    .graph-stat-block {
+      .graph-stat-label {
+        font-size: calculateRem(14px);
+      }
+
+      .graph-stat-value {
+        font-size: calculateRem(28px);
+      }
+
+      .graph-stat-info {
+        font-size: calculateRem(14px);
+      }
+    }
+  }
+}
+
+.pad5 {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.filter-btn {
+  min-width: 96px;
+}
+
+.sb-btn-normal {
+  min-width: 96px !important;
+  font-weight: 500 !important;
+  font-size: 15px !important;
+  padding-left: 18px !important;
+  padding-right: 18px !important;
+
+}
+
+.sb-label-value {
+  border-radius: 24px;
+  padding: 7px;
+  padding-right: 9px;
+  padding-left: 9px;
+  background-color: #E9E8D9 !important;
+  box-shadow: 4px 4px 3px 0 #C2C2C2 !important;
+  color: #333;
+  margin-bottom: 0.25rem;
+  margin-right: 0.25rem;
+
+}
+
+.chart-title {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 0px !important;
+  padding-top: 5px;
+}
+
+.sb-label-name {
+  font-size: 16px;
+}
+
+::ng-deep {
+  
+  .sb-hawkeye-modal.sb-modal {
+    .ui.modal {
+      margin: 0 auto 0 !important;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+}
+
+.selection-block {
+  margin-bottom: 8px;
+}
+
+.filter-select-title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+
+.sb-label-primary-100 {
+  padding: 7px !important;
+  padding-left: 9px !important;
+  padding-right: 9px !important;
+  color: #333 !important;
+  border-radius: 24px;
+}
+
+.date-range-label {
+  padding: 7px !important;
+  padding-left: 9px !important;
+  padding-right: 9px !important;
+  color: #333 !important;
+  border-radius: 24px;
+  background-color: #E9E8D9 !important;
+}
+
+
+.sb-filter {
+  &__container {
+    width: 100%;
+    height: 100vh;
+    min-height: 400px;
+    background-color: #E9E8D9 !important;
+    padding: calculateRem(24px);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    overflow-y: auto;
+
+    @include respond-above(sm) {
+      border-radius: calculateRem(8px);
+      max-width: calculateRem(1008px);
+      // min-height: calculateRem(610px);
+      height: auto;
+    }
+  }
+
+  &__header {
+    width: 100%;
+    text-align: center;
+    max-width: calculateRem(328px);
+
+
+  }
+
+  &__content {
+    width: calculateRem(648px);
+    max-width: 100%;
+    margin-bottom: auto;
+  }
+
+  &__footer {
+    margin-top: calculateRem(16px);
+    width: 100%;
+    text-align: center;
+
+    @include respond-above(sm) {
+      max-width: 80%;
+    }
+  }
+}
+
+::ng-deep {
+  .sb-filter-modal {
+    @include respond-below(sm) {
+      .ui.modal {
+        width: 95%;
+        margin: 0 0 0 0;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+      }
+
+      .ui.modal.scroll {
+        position: fixed !important;
+        margin-top: o !important;
+        margin-bottom: 0px !important;
+        top: 0;
+        width: 100%;
+        left: 0px;
+        right: 0px;
+        margin: 0 !important;
+      }
+    }
+  }
+}
+
+.sb-filter__content {
+  ::ng-deep {
+    .sb-prominent-filter-field {
+      width: 50%;
+    }
+
+  }
+}
+
+::ng-deep {
+  .mat-dialog-container {
+      background-color: #E9E8D9 !important;
+      border-radius: 24px;
+  }
+}
+
+

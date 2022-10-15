@@ -1,0 +1,8 @@
+@import "mixins/mixins";
+
+.save-btn {
+    margin: calculateRem(40px) 0 0;
+    .wide-btn {
+        min-width: calculateRem(200px);
+    }
+}

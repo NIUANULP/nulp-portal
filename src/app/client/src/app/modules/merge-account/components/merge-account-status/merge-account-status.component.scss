@@ -1,0 +1,6 @@
+@import "mixins/mixins";
+@import "pages/sign_in_up";
+
+.sb-merged-account-body-para.sb-color-success{
+    color:var(--success-color);
+}
