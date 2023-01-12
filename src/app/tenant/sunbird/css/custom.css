@@ -146,6 +146,27 @@ header{
         margin-top: -23px;
     }
 }
+@media (max-width:440px){
+    .intro-carousel .item{
+        height: 569px !important;
+    }
+    .ui.container{
+        margin-left: 0px !important;
+        margin-right: 2em!important;
+    }
+    .banner-txt{
+        left: 0 !important;
+    }
+    .pt-sm-100{
+        padding-top: 100px !important; 
+    }
+    .pb-sm-100{
+        padding-bottom: 100px !important;
+    }
+    .px-4{
+        padding: 0 15px !important;
+    }
+}
 
 @media(min-width:768px){
     .sb-search-btn input{
@@ -426,7 +447,7 @@ header{
     }
 }
 
-@media (max-width:767px) {
+@media (max-width:768px) {
     .sb-search-btn input {  
         padding: 13px 0 0 17px;
         width: 84%;
@@ -603,7 +624,7 @@ a{
   height: 10px;
   display: block;
   background-color: #00aecd;
-  margin-top: 70px;
+  /* margin-top: 70px; */
 }
 footer p {
   font-size: 25px;
@@ -1086,6 +1107,12 @@ h1, h2, h3, h4, h5,
 .pt-150{
     padding-top: 150px;
 }
+.pt-200{
+    padding-top: 200px;
+}
+.pb-200{
+    padding-bottom: 200px;
+}
 .pt-70{
     padding-top: 70px;
 }
@@ -1347,4 +1374,22 @@ section img{
 }
 .content-alig {
     float: right;
+}
+.content-alig1{
+    display: flex;
+    justify-content: right;
+}
+.bg-im{
+    background-image: url("./../img/about/works.jpg");
+    background-repeat: no-repeat;
+    background-position: top left;
+    background-size: cover;
+    height: 100%;
+}
+.bg-im1{
+    background-image: url("./../img/abt1.png");
+    background-repeat: no-repeat;
+    background-position: right top;
+    background-size: cover;
+    height: 100%;
 }
