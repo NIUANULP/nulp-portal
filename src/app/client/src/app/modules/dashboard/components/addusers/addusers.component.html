@@ -456,14 +456,25 @@
                                                         ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                                                 </th>
                                                 <th>Action</th>
-
+                                            </tr>
                                             <tr>
                                                 <th *ngFor="let col of columns" [ngSwitch]="col.field">
 
                                                     <p-multiSelect *ngSwitchCase="'orgName'" [options]="orgListData" defaultLabel="All"
                                                         appendTo="body" (onChange)="dt.filter($event.value, col.field, 'in')">
                                                     </p-multiSelect>
+                                                   
+                                                    <input class="users-input" *ngSwitchCase="'firstName'" type="text" placeholder="First Name"
+                                                    (input)="dt.filter($event.target.value, col.field, 'contains')" style="width:auto"/>
 
+                                                    <input class="users-input" *ngSwitchCase="'lastName'" pInputText type="text" placeholder="Last Name"
+                                                    (input)="dt.filter($event.target.value, col.field, 'contains')" style="width:auto"/>
+
+                                                    <input class="users-input" *ngSwitchCase="'email'" pInputText type="text" placeholder="Email"
+                                                    (input)="dt.filter($event.target.value, col.field, 'contains')" style="width:auto"/>
+
+                                                    <input class="users-input" *ngSwitchCase="'phone'" pInputText type="text" placeholder="Phone"
+                                                    (input)="dt.filter($event.target.value, col.field, 'contains')" style="width:auto"/>
 
                                                     <!-- <p-multiSelect *ngSwitchCase="'orgType'" [options]="orgTypeListUserArryData" defaultLabel="All"
                                                                                appendTo="body" (onChange)="dt.filter($event.value, col.field, 'in')"></p-multiSelect> -->
