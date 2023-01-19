@@ -152,16 +152,17 @@ header{
     }
     .ui.container{
         margin-left: 0px !important;
-        margin-right: 2em!important;
+        /* margin-right: 2em!important647898
+        */
     }
     .banner-txt{
         left: 0 !important;
     }
-    .pt-sm-100{
-        padding-top: 100px !important; 
+    .pt-sm-138{
+        padding-top: 138px !important; 
     }
-    .pb-sm-100{
-        padding-bottom: 100px !important;
+    .pb-sm-138{
+        padding-bottom: 138px !important;
     }
     .px-4{
         padding: 0 15px !important;
