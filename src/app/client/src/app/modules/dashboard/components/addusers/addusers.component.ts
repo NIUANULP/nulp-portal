@@ -472,7 +472,7 @@ export class AddusersComponent implements OnInit {
             'filters': {
               "channel": userLoginDataChannel
             },
-            'limit': 1000
+            'limit': 3000
           }
         }
       }
@@ -485,7 +485,7 @@ export class AddusersComponent implements OnInit {
           'query': organisationId,
           'filters': {
           },
-          'limit': 1000
+          'limit': 3000
         }
       }
 
