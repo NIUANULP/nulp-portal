@@ -148,6 +148,7 @@ resendOtpEnablePostTimer() {
 
   createUser(data?: any) {
     let identifier = '';
+
     const createRequest = {
       params: {
         source: _.get(this.activatedRoute, 'snapshot.queryParams.client_id'),
@@ -168,7 +169,17 @@ resendOtpEnablePostTimer() {
       createRequest.request['emailVerified'] = true;
       identifier = this.signUpdata.controls.email.value;
     }
+
     createRequest.request['reqData'] = _.get(data, 'reqData');
+
+    // @HACK - Learnathon only
+    const currentURL = window.location.href;
+    if (currentURL.includes("learnathon")){
+      createRequest.request['channel'] = "nulp-learnathon";
+      createRequest.request['roles'] = ["CONTENT_CREATOR"];
+    }
+    // @END - Learnathon only
+
     if (this.signUpdata.controls.tncAccepted.value && this.signUpdata.controls.tncAccepted.status === 'VALID') {
       this.signupService.createUserV3(createRequest).subscribe((resp: ServerResponse) => {
         this.telemetryLogEvents('sign-up', true);
