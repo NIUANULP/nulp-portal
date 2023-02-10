@@ -1279,6 +1279,7 @@ section img{
     border-radius: 50%;
     top: 46px;
     border: solid 4px #fff;
+    background-color: #fff;
 }
 .card-bottom-img{
     position: absolute;
