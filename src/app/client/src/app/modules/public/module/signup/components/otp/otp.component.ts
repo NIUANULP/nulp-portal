@@ -174,10 +174,15 @@ resendOtpEnablePostTimer() {
 
     // @HACK - Learnathon only
     const currentURL = window.location.href;
+
+    console.log("learnathon - ", currentURL);
+    
     if (currentURL.includes("learnathon")){
       createRequest.request['channel'] = "nulp-learnathon";
       createRequest.request['roles'] = ["CONTENT_CREATOR"];
     }
+
+    console.log('createRequest - ',  createRequest);
     // @END - Learnathon only
 
     if (this.signUpdata.controls.tncAccepted.value && this.signUpdata.controls.tncAccepted.status === 'VALID') {
