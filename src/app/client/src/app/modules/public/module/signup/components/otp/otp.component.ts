@@ -174,7 +174,9 @@ resendOtpEnablePostTimer() {
 
     // @HACK - Learnathon only
     const currentURL = window.location.href;
+
     console.log("learnathon - ", currentURL);
+    
     if (currentURL.includes("learnathon")){
       createRequest.request['channel'] = "nulp-learnathon";
       createRequest.request['roles'] = ["CONTENT_CREATOR"];
