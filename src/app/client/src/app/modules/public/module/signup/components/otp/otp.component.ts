@@ -181,9 +181,8 @@ resendOtpEnablePostTimer() {
 
       console.log("learnathon - in", );
 
-      createRequest.request['channel'] = "0137299712231669762";
-      createRequest.request['organisationId']="0137299712231669762";
-      createRequest.request['roles'] = ["CONTENT_CREATOR"];
+      createRequest.request['channel'] = "nulp-learnathon";
+      // createRequest.request['roles'] = ["CONTENT_CREATOR"];
     }
 
     console.log('createRequest - ',  createRequest);
