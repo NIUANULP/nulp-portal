@@ -183,6 +183,7 @@ resendOtpEnablePostTimer() {
 
       createRequest.request['channel'] = "nulp-learnathon";
       // createRequest.request['roles'] = ["CONTENT_CREATOR"];
+
     }
 
     console.log('createRequest - ',  createRequest);
