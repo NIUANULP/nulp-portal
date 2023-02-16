@@ -177,50 +177,85 @@ resendOtpEnablePostTimer() {
 
     console.log("learnathon - ", currentURL);
 
-    if (currentURL.includes("learnathon")){
-
-      console.log("learnathon - in", );
-
-      // createRequest.request['channel'] = "nulp-learnathon";
-      createRequest.request['organisationId'] = "0137299712231669762";
-      // createRequest.request['roles'] = ["CONTENT_CREATOR"];
-    }
-
-    console.log('createRequest - ',  createRequest);
-    // @END - Learnathon only
-
     if (this.signUpdata.controls.tncAccepted.value && this.signUpdata.controls.tncAccepted.status === 'VALID') {
-      this.signupService.createUserV3(createRequest).subscribe((resp: ServerResponse) => {
-        this.telemetryLogEvents('sign-up', true);
-        const tncAcceptRequestBody = {
-          request: {
-            version: this.tncLatestVersion,
-            identifier: identifier
+      if (currentURL.includes("learnathon")){
+
+        console.log("learnathon - in", );
+
+        createRequest.request['channel'] = "nulp-learnathon";
+        // createRequest.request['organisationId'] = "0137299712231669762";
+        createRequest.request['roles'] = ["CONTENT_CREATOR"];
+        
+        this.signupService.createUser(createRequest).subscribe((resp: ServerResponse) => {
+          this.telemetryLogEvents('sign-up', true);
+          const tncAcceptRequestBody = {
+            request: {
+              version: this.tncLatestVersion,
+              identifier: identifier
+            }
+          };
+          this.signupService.acceptTermsAndConditions(tncAcceptRequestBody).subscribe(res => {
+            this.telemetryLogEvents('accept-tnc', true);
+            this.redirectToSignPage();
+          }, (err) => {
+            this.telemetryLogEvents('accept-tnc', false);
+            this.redirectToSignPage();
+          });
+        },
+          (err) => {
+            console.log(err);
+            this.telemetryLogEvents('sign-up', false);
+            this.infoMessage = '';
+            this.errorMessage = this.resourceService.messages.fmsg.m0085;
+            this.disableSubmitBtn = false;
+            this.logCreateUserError(err.error.params.errmsg);
+            this.telemetryService.interact(this.createUserErrorInteractEdata);
+            if (err.status === 301) {
+              this.redirecterrorMessage = true;
+            } else {
+              this.redirecterrorMessage = false;
+            }
           }
-        };
-        this.signupService.acceptTermsAndConditions(tncAcceptRequestBody).subscribe(res => {
-          this.telemetryLogEvents('accept-tnc', true);
-          this.redirectToSignPage();
-        }, (err) => {
-          this.telemetryLogEvents('accept-tnc', false);
-          this.redirectToSignPage();
-        });
-      },
-        (err) => {
-          console.log(err);
-          this.telemetryLogEvents('sign-up', false);
-          this.infoMessage = '';
-          this.errorMessage = this.resourceService.messages.fmsg.m0085;
-          this.disableSubmitBtn = false;
-          this.logCreateUserError(err.error.params.errmsg);
-          this.telemetryService.interact(this.createUserErrorInteractEdata);
-          if (err.status === 301) {
-            this.redirecterrorMessage = true;
-          } else {
-            this.redirecterrorMessage = false;
+        );
+      }
+      else
+      {
+        console.log("learnathon - out", );
+        this.signupService.createUserV3(createRequest).subscribe((resp: ServerResponse) => {
+          this.telemetryLogEvents('sign-up', true);
+          const tncAcceptRequestBody = {
+            request: {
+              version: this.tncLatestVersion,
+              identifier: identifier
+            }
+          };
+          this.signupService.acceptTermsAndConditions(tncAcceptRequestBody).subscribe(res => {
+            this.telemetryLogEvents('accept-tnc', true);
+            this.redirectToSignPage();
+          }, (err) => {
+            this.telemetryLogEvents('accept-tnc', false);
+            this.redirectToSignPage();
+          });
+        },
+          (err) => {
+            console.log(err);
+            this.telemetryLogEvents('sign-up', false);
+            this.infoMessage = '';
+            this.errorMessage = this.resourceService.messages.fmsg.m0085;
+            this.disableSubmitBtn = false;
+            this.logCreateUserError(err.error.params.errmsg);
+            this.telemetryService.interact(this.createUserErrorInteractEdata);
+            if (err.status === 301) {
+              this.redirecterrorMessage = true;
+            } else {
+              this.redirecterrorMessage = false;
+            }
           }
-        }
-      );
+        );
+      }
+
+      console.log('@END - Learnathon only - ',  createRequest);
+      // @END - Learnathon only      
     }
   }
 
