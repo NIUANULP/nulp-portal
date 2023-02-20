@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import {
   OrganisationComponent, CourseConsumptionComponent, CourseProgressComponent, UsageReportsComponent,
   ReportComponent, ListAllReportsComponent, CourseDashboardComponent, ReIssueCertificateComponent,
-  DashboardSidebarComponent,AllReportsComponent, ReportsComponent,OrganizationReportComponent,ContentReportComponent, CourseCategoryWiseComponent,ContentCategoryWiseComponent,learnathonDashboardComponent
+  DashboardSidebarComponent,AllReportsComponent, ReportsComponent,OrganizationReportComponent,ContentReportComponent, CourseCategoryWiseComponent,ContentCategoryWiseComponent
 } from './components/';
 import { AuthGuard } from '../core/guard/auth-gard.service';
 import { AddusersComponent } from './components/addusers/addusers.component';
@@ -66,10 +66,6 @@ const routes: Routes = [
         },
       },
     ]
-  },
-  {
-    path: 'learnathonDashboard', component: learnathonDashboardComponent,
-    children:[]
   },
   {
     path: 'myActivity', component: CourseConsumptionComponent,
