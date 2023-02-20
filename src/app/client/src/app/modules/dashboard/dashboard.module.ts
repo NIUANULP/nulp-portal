@@ -19,7 +19,7 @@ import {
   OrganisationComponent, CourseConsumptionComponent, CourseProgressComponent, UsageReportsComponent,
   DataTableComponent, DataChartComponent, ReportComponent, ReportSummaryComponent, ListAllReportsComponent,
   AddSummaryModalComponent, CourseDashboardComponent, ReIssueCertificateComponent, DashboardSidebarComponent, DatasetComponent, MapComponent, FilterComponent,AllReportsComponent, ReportsComponent,OrganizationReportComponent, UserReportComponent,ContentReportComponent, ContentLeaderboardComponent,ContentCategoryWiseComponent, CourseReportComponent,CourseCategoryWiseComponent,
-  ContentCreationStaticsComponent,CityWiseReportComponent, DeptCityWiseReportComponent, ContentDeptWiseReportComponent
+  ContentCreationStaticsComponent,CityWiseReportComponent, DeptCityWiseReportComponent, ContentDeptWiseReportComponent,learnathonDashboardComponent
 } from './components';
 import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
 // import { ChartsModule } from 'ng2-charts';
@@ -53,6 +53,7 @@ import { OrgManagementModule } from '@sunbird/org-management';
 import { CertificateDirectivesModule } from 'sb-svg2pdf';
 import { CsModule } from '@project-sunbird/client-services';
 import { CsLibInitializerService } from 'CsLibInitializer';
+import { from } from 'rxjs';
 
 export const csCourseServiceFactory = (csLibInitializerService: CsLibInitializerService) => {
   if (!CsModule.instance.isInitialised) {
@@ -97,8 +98,8 @@ export const csCourseServiceFactory = (csLibInitializerService: CsLibInitializer
     CourseDashboardComponent, ReIssueCertificateComponent, DashboardSidebarComponent, DatasetComponent, MapComponent, FilterComponent,
     SbTableComponent, AddusersComponent, AllReportsComponent, UserReportComponent, ContentLeaderboardComponent,UserUploadComponent,
     CourseContentLeaderboardComponent, FileuploadComponent, CertificateTemplateUploadComponent, ReportsComponent,OrganizationReportComponent,ContentReportComponent, ContentCategoryWiseComponent,
-    CourseReportComponent,CourseCategoryWiseComponent, ContentCreationStaticsComponent,CityWiseReportComponent, DeptCityWiseReportComponent, ContentDeptWiseReportComponent],
-  exports: [CourseProgressComponent, DataTableComponent],
+    CourseReportComponent,CourseCategoryWiseComponent, ContentCreationStaticsComponent,CityWiseReportComponent, DeptCityWiseReportComponent, ContentDeptWiseReportComponent,learnathonDashboardComponent],
+  exports: [CourseProgressComponent, DataTableComponent,learnathonDashboardComponent],
   providers: [
     RendererService,
     UserSearchService,
