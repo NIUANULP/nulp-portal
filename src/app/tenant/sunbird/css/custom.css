@@ -152,17 +152,16 @@ header{
     }
     .ui.container{
         margin-left: 0px !important;
-        /* margin-right: 2em!important647898
-        */
+        margin-right: 2em!important;
     }
     .banner-txt{
         left: 0 !important;
     }
-    .pt-sm-138{
-        padding-top: 138px !important; 
+    .pt-sm-100{
+        padding-top: 100px !important; 
     }
-    .pb-sm-138{
-        padding-bottom: 138px !important;
+    .pb-sm-100{
+        padding-bottom: 100px !important;
     }
     .px-4{
         padding: 0 15px !important;
@@ -1279,7 +1278,6 @@ section img{
     border-radius: 50%;
     top: 46px;
     border: solid 4px #fff;
-    background-color: #fff;
 }
 .card-bottom-img{
     position: absolute;

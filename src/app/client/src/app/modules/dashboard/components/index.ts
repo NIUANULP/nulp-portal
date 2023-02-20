@@ -32,6 +32,4 @@ export * from './content-leaderboard/content-leaderboard.component';
 export * from './course-report/course-report.component';
 export * from './course-category-wise/course-category-wise.component';
 export * from './content-creation-statics/content-creation-statics.component';
-export * from './learnathonDashboard/learnathonDashboard.component';
-
     
