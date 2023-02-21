@@ -320,6 +320,9 @@ header{
     .mb-20{
         margin-bottom: 20px;
     }
+    .mb-60{
+        margin-bottom: 60px;
+    }
    
     
 }
@@ -809,7 +812,16 @@ input:focus-visible {
     margin-top: 20px
 }
 .mt-55{
-    margin-top: 55px;
+    margin-top: 55px !important;
+}
+.mt-10{
+    margin-top: 10px;
+}
+.mt-100{
+    margin-top: 100px !important;
+}
+.mt-60{
+    margin-top: 60px;
 }
 .py-32{
     padding: 18px 0;
@@ -1410,7 +1422,7 @@ section img{
 }
 
 .learnathon-title{
-    color:#000;
+    color:#000 !important;
 }
 
 .learnathon-heading{
@@ -1436,4 +1448,64 @@ section img{
     box-shadow: 0px 11px 5px 0 #1b1c1d63 !important;
     border: none;
     margin-top: 20px;
+}
+.learn-section{
+  padding: 0 60px !important;
+  margin-top: 4.8rem;
+}
+#owl-demo17 .item{
+    background-color: #004367;
+    height: 200px;
+}
+.owll{
+    display: block;
+    padding: 0px 82px !important;
+    z-index: 0 !important;
+}
+.owll1 .center{
+    height: 250px !important;
+    background-color: #004367;
+    transition: all 1s ease-in-out;
+    z-index: 99;
+}
+.mt-23{
+    margin-top: 23px !important;
+}
+.mb-0{
+    margin-bottom: 0px !important;
+}
+.mt-38{
+    margin-top: 38px;
+}
+.mt-28{
+    margin-top: 28px;
+}
+.sb-btn-primry1{
+    display: inline-block;
+    border-radius: 50px;
+    color: #fff;
+    background: #064066;
+    padding: 12px 25px;
+    font-size: 1.3em;
+    font-weight: 300;
+    text-transform: capitalize;
+    display: inline-block;
+    text-align: center;
+    box-shadow: 0px 11px 5px 0 #1b1c1d63 !important;
+    border: none;
+    margin-top: 20px;
+}
+.sb-btn-primry1:hover{
+    color: #fff !important;
+}
+.banners{
+    margin-top: 125px;
+    background-image: url('../img/intro-carousel/landing.png');
+    height: 400px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding: 60px 80px 0;
+}
+.banners2{
+    background-image: url('../img/about/vision.jpg');
 }

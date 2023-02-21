@@ -442,6 +442,22 @@
               </svg></i>
              Admin
           </li>
+          <li class="list-item" tabindex="0" role="link" *ngIf='!isDesktopApp && permissionService.permissionAvailable'
+            appPermission [permission]='adminDashboard' (click)="toggleSideMenu(false)"
+            [routerLink]="'dashBoard/learnathonDashboard'">
+            <i class="icon-svg icon-svg--sm icon-dashboard mr-8"><svg class="icon icon-svg--primary">
+                <use xlink:href="./assets/images/sprite.svg#dashboard"></use>
+              </svg></i>
+             Learnathon Dashboard
+          </li>
+          <li class="list-item" tabindex="0" role="link" *ngIf='!isDesktopApp && permissionService.permissionAvailable'
+          appPermission [permission]='adminDashboard' (click)="toggleSideMenu(false)"
+          [routerLink]="'dashBoard/addusess'">
+          <i class="icon-svg icon-svg--sm icon-dashboard mr-8"><svg class="icon icon-svg--primary">
+              <use xlink:href="./assets/images/sprite.svg#dashboard"></use>
+            </svg></i>
+           Leadership Dashboard
+        </li>
 
           <li class="list-item" *ngIf='!isDesktopApp && permissionService.permissionAvailable' appPermission
           [permission]='programDashboardRole' (click)="toggleSideMenu(false)" routerLink="program">
