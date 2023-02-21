@@ -64,10 +64,11 @@
                 <span class="line"></span>
               </div>
               <div class="menu">
+                <a href="/index.html" class="item" target="_blank" class="item">Home</a>
                 <a href="aboutus.html" target="_blank" class="item">About Us</a>
                 <a href="https://www.niua.org/" class="item" target="_blank" class="item">NIUA</a>
                 <a href="https://mohua.gov.in/" class="item" target="_blank" class="item">MoHUA</a>
-                <a href="/index.html" class="item" target="_blank" class="item">Home</a>
+                <a href="#" class="item" target="_blank" class="item">Learnathon</a>
               </div>
             </div>
           </div>
@@ -86,37 +87,27 @@
   <!-- banners carousel start here -->
   <div id="owl-demo" class="owl-carousel owl-theme sm-d-none">
     <div class="item">
-      <section class="sb-baner sb-baner-img sb-max-1920">
-        <div class="ui equal width grid">
-          <div class="row">
-            <div class="sixteen wide tablet ten wide computer column banner-cover">
-              <h2 class="sb-text-upper">National Urban</h2>
-              <h1 class="sb-text-upper mt-0">Learning Platform</h1>
-              <p class="sb-font">A Vibrant Digital Community for Urban Practitioners learning<br> from each other</p>
-              <div><a class="sb-btn-default mt-10" href="/resources?learnathon">Register Now</a></div>
-              <div class="mt-15 pl-10"><a class="text-white fs-15" href="https://helpdesknulp.niua.org"
-                  target="_blank">Need Help?</a></div>
-            </div>
-            <div class="sixteen wide tablet  six wide computer column"></div>
+      <section class="banners">
+          <div class="sixteen wide tablet ten wide computer column banner-cover">
+            <h2 class="sb-text-upper">National Urban</h2>
+            <h1 class="sb-text-upper mt-0">Learning Platform</h1>
+            <p class="sb-font">A Vibrant Digital Community for Urban Practitioners learning<br> from each other</p>
+            <div><a class="sb-btn-default mt-10" href="/resources?learnathon">Register Now</a></div>
+            <div class="mt-15 pl-10"><a class="text-white fs-15" href="https://helpdesknulp.niua.org"
+                target="_blank">Need Help?</a></div>
           </div>
-        </div>
       </section>
     </div>
     <div class="item">
-      <section class="sb-baner-img2 sb-baner sb-max-1920">
-        <div class="ui equal width grid">
-          <div class="row">
-            <div class="sixteen wide tablet ten wide computer column banner-cover">
-              <h2 class="sb-text-upper">National Urban</h2>
-              <h1 class="sb-text-upper mt-0">Learning Platform</h1>
-              <p class="sb-font">Leaders in Climate Change Management program <br> launched on 6th June, 2022</p>
-              <div><a class="sb-btn-default mt-10" href="/resources?learnathon">Register Now</a></div>
-              <div class="mt-15 pl-10"><a class="text-white fs-15" href="https://helpdesknulp.niua.org"
+      <section class="banners banners2">
+            <div>
+              <h2 class="sb-text-upper learnathon-title">National Urban</h2>
+              <h1 class="sb-text-upper mt-0 learnathon-title">Learning Platform</h1>
+              <p class="sb-font learnathon-title">Leaders in Climate Change Management program <br> launched on 6th June, 2022</p>
+              <div><a class="sb-btn-primry1 mt-10 text-white" href="/resources?learnathon">Register Now</a></div>
+              <div class="mt-15 pl-10"><a class="learnathon-title fs-15" href="https://helpdesknulp.niua.org"
                   target="_blank">Need Help?</a></div>
             </div>
-            <div class="sixteen wide tablet  six wide computer column"></div>
-          </div>
-        </div>
       </section>
     </div>
   </div>
@@ -177,12 +168,6 @@
       </div>
       <div class="item mt-23">
         <h4>10</h4>
-      </div>
-      <div class="item mt-23">
-        <h4>11</h4>
-      </div>
-      <div class="item mt-23">
-        <h4>12</h4>
       </div>
     </div>
   </div>
@@ -312,6 +297,10 @@
         margin: 10,
         nav: false,
         navigation: false,
+        autoplay: true,
+        autoplayHoverPause: true,
+        autoplayTimeout: 7000,
+        smartSpeed: 2000,
         responsive: {
           0: {
             items: 1
