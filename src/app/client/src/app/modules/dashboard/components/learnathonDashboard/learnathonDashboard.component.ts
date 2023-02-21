@@ -60,33 +60,13 @@ export class learnathonDashboardComponent implements OnInit {
   }
   getAllContent(){
     const data = 
-    // {
-    //   request: {
-    //     query: "",
-    //     filters: {
-    //       status: [
-    //         "Draft","FlagDraft","Review","FlagReview"
-    //       ],"primaryCategory":["Course","Digital Textbook","Content Playlist","Explanation Content","Learning Resource","Practice Question Set","eTextbook","Teacher Resource","Course Assessment"],objectType:"Content",
-    //       framework: ["nulp"],
-    //       // "channel": [_.get(this.selectedCity, 'id')],
-    //       // "channel": channelfilter,
-    //       // "contentType": ["Course", 'Resource', 'Collection'],
-    //       // "lastUpdatedOn": { ">=": this.datePipe.transform(this.fromDate, 'yyyy-MM-ddTHH:MM'), "<=": this.datePipe.transform(this.toDate, 'yyyy-MM-ddTHH:MM') }
-    //     },
-    //     limit: "1000",
-    //     sort_by: {
-    //       lastUpdatedOn: "desc"
-    //     },
-    //     fields: ["identifier", "creator", "organisation", "name", "contentType", "createdFor", "channel", "board", "medium", "gradeLevel", "subject", "lastUpdatedOn", "status", "createdBy","createdOn", "framework"]
-    //   }
-    // };
-
     {
       filters: {
-        status:["Draft","FlagDraft","Review","FlagReview" ],
+        status:["Draft", "FlagDraft", "Review", "Processing", "Live", "Unlisted", "FlagReview"],
         primaryCategory:["Course","Digital Textbook","Content Playlist","Explanation Content","Learning Resource","Practice Question Set","eTextbook","Teacher Resource","Course Assessment"],
         objectType:"Content",
-        framework: ["nulp"],
+        // framework: ["nulp"],
+        MimeType:["application/pdf", "video/x-youtube", "application/vnd.ekstep.html-archive", "application/epub", "application/vnd.ekstep.h5p-archive", "video/mp4", "video/webm", "text/x-url"],
         contentType: ["Course", 'Resource', 'Collection'],
       },
       fields: ["identifier", "creator", "organisation", "name", "contentType", "createdFor", "channel", "board", "medium", "gradeLevel", "subject", "category", "lastUpdatedOn", "status", "createdBy","createdOn", "framework"],
@@ -98,7 +78,6 @@ export class learnathonDashboardComponent implements OnInit {
 
     this.searchService.compositeSearch(data).subscribe(
       (response) => {
-        console.log("+++",response)
         if (_.get(response, 'responseCode') === 'OK') {
           if (response.result.count > 0) {
             this.tableData = [];
