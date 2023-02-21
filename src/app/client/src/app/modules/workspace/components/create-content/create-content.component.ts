@@ -40,11 +40,6 @@ export class CreateContentComponent implements OnInit, AfterViewInit {
    */
   assessmentRole: Array<string>;
   /**
-   * This veriable only to check login user in the Learnathon org or not
-   * @Hack
-   */
-  learnathonChannel;
-  /**
    * To call resource service which helps to use language constant
    */
   public resourceService: ResourceService;
@@ -86,20 +81,13 @@ export class CreateContentComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.frameworkService.initialize();
-
-    // This if loop is @hack for learnathon. Once this learnathon is done will remove it. 
-    this.learnathonChannel = this.userService.rootOrgName;
-    // console.log(this.userService.rootOrgName);
-    if (this.learnathonChannel != 'nulp-learnathon') {
-      this.textBookRole = this.configService.rolesConfig.workSpaceRole.textBookRole;
-      this.lessonRole = this.configService.rolesConfig.workSpaceRole.lessonRole;
-      this.collectionRole = this.configService.rolesConfig.workSpaceRole.collectionRole;
-      this.lessonplanRole = this.configService.rolesConfig.workSpaceRole.lessonplanRole;
-      this.assessmentRole = this.configService.rolesConfig.workSpaceRole.assessmentRole;
-      this.courseRole = this.configService.rolesConfig.workSpaceRole.courseRole;
-    }
-
+    this.textBookRole = this.configService.rolesConfig.workSpaceRole.textBookRole;
+    this.lessonRole = this.configService.rolesConfig.workSpaceRole.lessonRole;
+    this.collectionRole = this.configService.rolesConfig.workSpaceRole.collectionRole;
+    this.lessonplanRole = this.configService.rolesConfig.workSpaceRole.lessonplanRole;
     this.contentUploadRole = this.configService.rolesConfig.workSpaceRole.contentUploadRole;
+    this.assessmentRole = this.configService.rolesConfig.workSpaceRole.assessmentRole;
+    this.courseRole = this.configService.rolesConfig.workSpaceRole.courseRole;
     this.workSpaceService.questionSetEnabled$.subscribe(
       (response: any) => {
         this.enableQuestionSetCreation = response.questionSetEnablement;

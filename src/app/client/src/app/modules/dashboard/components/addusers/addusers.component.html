@@ -47,10 +47,10 @@
 
                                                 <td class="v-align-bottom">
                                                     <div class="ui-helper-clearfix export-btns">
-                                                        <button type="button" style="float:right" icon="fa fa-file" class="ui bottom attached sb-btn sb-btn-primary sb-btn-normal sb-left-icon-btn buttonleft" pbutton=""
+                                                        <button type="button" style="float:right" icon="fa fa-file" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" pbutton=""
                                                         iconPos="left" label="Export" (click)="dtOrg.exportCSV()"><span
-                                                        aria-hidden="true" class="ui-button-icon-left ui-clickable fa fa-file" style="padding: 0.3rem;"></span><span
-                                                        >Export</span></button>
+                                                        aria-hidden="true" class="ui-button-icon-left ui-clickable fa fa-file"></span><span
+                                                        class="ui-button-text ui-clickable">Export</span></button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -434,10 +434,10 @@
 
                                                 <td class="v-align-bottom">
                                                     <div class="ui-helper-clearfix export-btns">
-                                                        <button type="button" style="float:right" icon="fa fa-file" class="ui bottom attached sb-btn sb-btn-primary sb-btn-normal sb-left-icon-btn buttonleft" pbutton=""
+                                                        <button type="button" style="float:right" icon="fa fa-file" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" pbutton=""
                                                         iconPos="left" label="Export" (click)="dt.exportCSV()"><span
-                                                        aria-hidden="true" class="ui-button-icon-left ui-clickable fa fa-file" style="padding: 0.3rem;"></span><span
-                                                        >Export</span></button>
+                                                        aria-hidden="true" class="ui-button-icon-left ui-clickable fa fa-file"></span><span
+                                                        class="ui-button-text ui-clickable">Export</span></button>
                                                     </div>
                                                 </td>
 
@@ -456,25 +456,14 @@
                                                         ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                                                 </th>
                                                 <th>Action</th>
-                                            </tr>
+
                                             <tr>
                                                 <th *ngFor="let col of columns" [ngSwitch]="col.field">
 
                                                     <p-multiSelect *ngSwitchCase="'orgName'" [options]="orgListData" defaultLabel="All"
                                                         appendTo="body" (onChange)="dt.filter($event.value, col.field, 'in')">
                                                     </p-multiSelect>
-                                                   
-                                                    <input class="users-input" *ngSwitchCase="'firstName'" type="text" placeholder="First Name"
-                                                    (input)="dt.filter($event.target.value, col.field, 'contains')" style="width:auto"/>
 
-                                                    <input class="users-input" *ngSwitchCase="'lastName'" pInputText type="text" placeholder="Last Name"
-                                                    (input)="dt.filter($event.target.value, col.field, 'contains')" style="width:auto"/>
-
-                                                    <input class="users-input" *ngSwitchCase="'email'" pInputText type="text" placeholder="Email"
-                                                    (input)="dt.filter($event.target.value, col.field, 'contains')" style="width:auto"/>
-
-                                                    <input class="users-input" *ngSwitchCase="'phone'" pInputText type="text" placeholder="Phone"
-                                                    (input)="dt.filter($event.target.value, col.field, 'contains')" style="width:auto"/>
 
                                                     <!-- <p-multiSelect *ngSwitchCase="'orgType'" [options]="orgTypeListUserArryData" defaultLabel="All"
                                                                                appendTo="body" (onChange)="dt.filter($event.value, col.field, 'in')"></p-multiSelect> -->
@@ -503,7 +492,7 @@
                                                 </td>
 
 
-                                                <td class="d-flex">
+                                                <td>
                                                     <button class="sb-btn sb-btn-normal sb-btn-primary"
                                                         (click)="addRole(showUserData.userId)">Edit Roles</button>&nbsp;
                                                     <button class="sb-btn sb-btn-normal sb-btn-primary"
