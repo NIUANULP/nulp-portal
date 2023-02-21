@@ -36,6 +36,7 @@ export class learnathonDashboardComponent implements OnInit {
   cityList: any = [];
   selectedCity: string;
   cols: any[];
+  UserNameValues: any[] = new Array();
   noResultMessage: INoResultMessage;
   private activatedRoute: ActivatedRoute;
   telemetryImpression: IImpressionEventInput;
@@ -78,6 +79,7 @@ export class learnathonDashboardComponent implements OnInit {
 
     this.searchService.compositeSearch(data).subscribe(
       (response) => {
+        this.UserNameValues = [];
         if (_.get(response, 'responseCode') === 'OK') {
           if (response.result.count > 0) {
             this.tableData = [];
@@ -112,6 +114,10 @@ export class learnathonDashboardComponent implements OnInit {
             });
             this.noResult = false;
             this.tableData = tempObj;
+            tempObj.forEach(element => {
+
+              this.UserNameValues.push({ "label":element.UserName, "value": element.UserName })
+            });
             // this.tableData = _.get(this.selectedCity, 'orgName') != 'All' ? _.filter(tempObj, { OrgName: _.get(this.selectedCity, 'orgName') }) : tempObj;
             this.initializeColumns();
             // if (_.isEmpty(this.tableData)) {
