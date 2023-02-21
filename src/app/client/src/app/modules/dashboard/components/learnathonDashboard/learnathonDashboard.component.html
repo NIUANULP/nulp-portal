@@ -43,19 +43,6 @@
 </form><br><br> -->
 <div class="ui container">
   <div class="ui grid" *ngIf="!noResult && tableData.length > 0">
-    <!-- <div class="eight wide column">
-        <div class="ui two cards">
-            <div class="card" *ngFor="let block of pieChartData?.datasets[0].data;let i=index">
-                <div class="content center aligned">
-                    <div class="meta dashBoardCardText">{{pieChartData.labels[i]}}</div>
-                    <h2 class="description dashboardCardSubText">{{block}}</h2>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="four wide column">
-        <p-chart type="pie" [data]="pieChartData" height="300px" [responsive]="true"></p-chart>
-    </div> -->
     <div class="twelve wide column">
         <span>Number of contents created:&nbsp;<b>{{tableData.length}}</b></span>
     </div>
@@ -69,8 +56,11 @@
             </ng-template>
             <ng-template pTemplate="header" let-columns>
                 <tr>
-                    <th *ngFor="let col of columns" pResizableColumn>
+                    <th *ngFor="let col of columns" pResizableColumn [style.width]="col.width" [pSortableColumn]="col.field"
+                    [pSortableColumnDisabled]="col.field">
                         {{col.header}}
+                        <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order"
+                        ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                     </th>
                 </tr>
             </ng-template>
