@@ -1422,7 +1422,7 @@ section img{
 }
 
 .learnathon-title{
-    color:#000;
+    color:#000 !important;
 }
 
 .learnathon-heading{
@@ -1497,4 +1497,15 @@ section img{
 }
 .sb-btn-primry1:hover{
     color: #fff !important;
+}
+.banners{
+    margin-top: 125px;
+    background-image: url('../img/intro-carousel/landing.png');
+    height: 400px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding: 60px 80px 0;
+}
+.banners2{
+    background-image: url('../img/about/vision.jpg');
 }
