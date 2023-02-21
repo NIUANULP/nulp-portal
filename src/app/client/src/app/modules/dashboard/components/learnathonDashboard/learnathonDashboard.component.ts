@@ -66,7 +66,7 @@ export class learnathonDashboardComponent implements OnInit {
         primaryCategory:["Course","Digital Textbook","Content Playlist","Explanation Content","Learning Resource","Practice Question Set","eTextbook","Teacher Resource","Course Assessment"],
         objectType:"Content",
         // framework: ["nulp"],
-        MimeType:["application/pdf", "video/x-youtube", "application/vnd.ekstep.html-archive", "application/epub", "application/vnd.ekstep.h5p-archive", "video/mp4", "video/webm", "text/x-url"],
+        mimeType:["application/pdf", "video/x-youtube", "application/vnd.ekstep.html-archive", "application/epub", "application/vnd.ekstep.h5p-archive", "video/mp4", "video/webm", "text/x-url"],
         contentType: ["Course", 'Resource', 'Collection'],
       },
       fields: ["identifier", "creator", "organisation", "name", "contentType", "createdFor", "channel", "board", "medium", "gradeLevel", "subject", "category", "lastUpdatedOn", "status", "createdBy","createdOn", "framework"],
