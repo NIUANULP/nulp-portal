@@ -379,13 +379,13 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
       createRequest.request['emailVerified'] = true;
     }
 
-   console.log("learnathon - in", );
-    console.log('createRequest - ', createRequest);
+   console.log("onSubmitLearnathonSignUpAPI learnathon - in", );
+    console.log('onSubmitLearnathonSignUpAPI createRequest - ', createRequest);
     // this.onSubmitSignUpForm();
 
     this.addUserService.createUserDetailSaveApi(createRequest).subscribe(res => {
       this.telemetryLogEvents('sign-up', true);
-      console.log('RES', res)
+      console.log('onSubmitLearnathonSignUpAPI RES', res)
       if (res.result.response == 'SUCCESS') {
         // this.redirectToSignPage();
       }
@@ -414,13 +414,13 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
       createRequest.request['emailVerified'] = true;
     }
 
-   console.log("learnathon - in", );
-    console.log('createRequest - ', createRequest);
+   console.log("onSubmitLearnathonSignUpNew learnathon - in", );
+    console.log('onSubmitLearnathonSignUpNew createRequest - ', createRequest);
     // this.onSubmitSignUpForm();
 
     this.addUserService.createUserDetailSaveNew(createRequest).subscribe(res => {
       this.telemetryLogEvents('sign-up', true);
-      console.log('RES', res)
+      console.log('onSubmitLearnathonSignUpNew RES', res)
       // if (res.result.response == 'SUCCESS') {
         // this.redirectToSignPage();
       // }
@@ -449,13 +449,13 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
       createRequest.request['emailVerified'] = true;
     }
 
-   console.log("learnathon - in", );
-    console.log('createRequest - ', createRequest);
+   console.log("onSubmitLearnathonSignUp learnathon - in", );
+    console.log('onSubmitLearnathonSignUp createRequest - ', createRequest);
     // this.onSubmitSignUpForm();
 
     this.addUserService.createUserDetailSave(createRequest).subscribe(res => {
       this.telemetryLogEvents('sign-up', true);
-      console.log('RES', res)
+      console.log('onSubmitLearnathonSignUp RES', res)
       if (res.result.response == 'SUCCESS') {
         // this.redirectToSignPage();
       }
