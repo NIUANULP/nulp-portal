@@ -328,6 +328,15 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   submitSignupForm() {
     if (this.isP1CaptchaEnabled === 'true') {
+      // @HACK - Learnathon only
+      const currentURL = window.location.href;
+      console.log("learnathon - ", currentURL);
+      if (currentURL.includes("learnathon"))
+      {
+        this.onSubmitLearnathonSignUp();
+        // this.onSubmitSignUpForm();
+      }
+      
       this.resetGoogleCaptcha();
       this.captchaRef.execute();
     } else {
