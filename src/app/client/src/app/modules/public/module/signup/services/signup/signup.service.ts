@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { LearnerService } from '@sunbird/core';
 import { ConfigService } from '@sunbird/shared';
 import {HttpClient} from '@angular/common/http';
+// const envHelper = require('./environmentVariablesHelper.js')
 
 @Injectable({
   providedIn: 'root'
@@ -58,6 +59,26 @@ export class SignupService {
     return this.learnerService.post(options);
   }
 
+  // createSsoUser(data) {
+  //   const options = {
+  //     method: 'POST',
+  //     url: envHelper.LEARNER_URL + 'user/v1/sso/create',
+  //     headers: getHeaders(req),
+  //     body: {
+  //       params: {
+  //         signupType: "sso"
+  //       },
+  //       request: requestBody
+  //     },
+  //     json: true
+  //   }
+
+  //   const options = {
+  //     url: this.configService.urlConFig.URLS.USER.CREATE_V2,
+  //     data: data
+  //   };
+  //   return this.learnerService.post(options);
+  // } 
   /**
    * Accepts Terms and conditions and generate token of user
    * @param data
