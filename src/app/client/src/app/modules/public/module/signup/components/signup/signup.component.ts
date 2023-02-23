@@ -18,6 +18,9 @@ import { IStartEventInput, IImpressionEventInput, IInteractEventEdata } from '@s
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { ActivatedRoute } from '@angular/router';
 import { RecaptchaComponent } from 'ng-recaptcha';
+import { AddusserService } from '../../../../../dashboard/services/addusser/addusser.service';
+
+
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
@@ -56,6 +59,7 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
   isP1CaptchaEnabled: any;
   yearOfBirth: string;
   isIOSDevice: boolean = false;
+  isLearnathon: boolean = false;
 
   constructor(formBuilder: FormBuilder, public resourceService: ResourceService,
     public signupService: SignupService, public toasterService: ToasterService,
@@ -63,7 +67,7 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
     public activatedRoute: ActivatedRoute, public telemetryService: TelemetryService,
     public navigationhelperService: NavigationHelperService, public utilService: UtilService,
     public configService: ConfigService,  public recaptchaService: RecaptchaService,
-    public tncService: TncService) {
+    public tncService: TncService, public addUserService: AddusserService) {
     this.sbFormBuilder = formBuilder;
   }
 
@@ -86,11 +90,26 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
         this.toasterService.error(_.get(this.resourceService, 'messages.fmsg.m0004'));
       }
     );
+
+    const currentURL = window.location.href;
+    console.log("learnathon - ", currentURL);
+    if (currentURL.includes("learnathon")){
+      this.isLearnathon = true;
+    }
+
     this.instance = _.upperCase(this.resourceService.instance || 'SUNBIRD');
     this.tenantDataSubscription = this.tenantService.tenantData$.subscribe(
       data => {
         if (data && !data.err) {
-          this.logo = data.tenantData.logo;
+          // if (this.isLearnathon){
+          //   console.log("learnathon - LOGO");
+          //   this.logo = '';
+          // }
+          // else {
+          //   console.log("Normal - LOGO");
+            this.logo = data.tenantData.logo;
+          // }
+          
           this.tenantName = data.tenantData.titleName;
         }
       }
@@ -316,12 +335,131 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
    * @since - release-3.0.3
    */
   submitSignupForm() {
-    if (this.isP1CaptchaEnabled === 'true') {
-      this.resetGoogleCaptcha();
-      this.captchaRef.execute();
-    } else {
-      this.onSubmitSignUpForm();
+      // @HACK - Learnathon only
+      // const currentURL = window.location.href;
+      // console.log("learnathon - ", currentURL);
+
+      if (this.isLearnathon)
+      {
+        console.log("learnathon - In", );
+        this.onSubmitLearnathonSignUp();
+      }
+      else
+      {
+        console.log("learnathon - Out", );
+
+        if (this.isP1CaptchaEnabled === 'true') {
+            this.resetGoogleCaptcha();
+            this.captchaRef.execute();
+          } else {
+            this.onSubmitSignUpForm();      
+          }
+      } 
+  }
+
+  // onSubmitLearnathonSignUpAPI(){
+  //   const createRequest = {
+  //     'request': {
+  //       'firstName': _.trim(this.signUpForm.controls.name.value),
+  //       'password': _.trim(this.signUpForm.controls.password.value),
+  //       'dob': this.yearOfBirth,
+  //       'channel': 'nulp-learnathon',
+  //       'roles':["CONTENT_CREATOR"],
+  //     }
+  //   };
+
+  //   if (this.signUpForm.controls.phone.value.toString()){
+  //     createRequest.request['phone'] = this.signUpForm.controls.phone.value.toString();
+  //     createRequest.request['phoneVerified'] = true;
+  //   }
+
+  //   if (this.signUpForm.controls.email.value){
+  //     createRequest.request['email']  = this.signUpForm.controls.email.value;
+  //     createRequest.request['emailVerified'] = true;
+  //   }
+
+  //  console.log("onSubmitLearnathonSignUpAPI learnathon - in", );
+  //   console.log('onSubmitLearnathonSignUpAPI createRequest - ', createRequest);
+  //   // this.onSubmitSignUpForm();
+
+  //   this.addUserService.createUserDetailSaveApi(createRequest).subscribe(res => {
+  //     this.telemetryLogEvents('sign-up', true);
+  //     console.log('onSubmitLearnathonSignUpAPI RES', res)
+  //     if (res.result.response == 'SUCCESS') {
+  //       // this.redirectToSignPage();
+  //     }
+  //   });
+
+  // }
+
+  // onSubmitLearnathonSignUpNew(){
+  //   const createRequest = {
+  //     'request': {
+  //       'firstName': _.trim(this.signUpForm.controls.name.value),
+  //       'password': _.trim(this.signUpForm.controls.password.value),
+  //       'dob': this.yearOfBirth,
+  //       'channel': 'nulp-learnathon',
+  //       'roles':["CONTENT_CREATOR"],
+  //     }
+  //   };
+
+  //   if (this.signUpForm.controls.phone.value.toString()){
+  //     createRequest.request['phone'] = this.signUpForm.controls.phone.value.toString();
+  //     createRequest.request['phoneVerified'] = true;
+  //   }
+
+  //   if (this.signUpForm.controls.email.value){
+  //     createRequest.request['email']  = this.signUpForm.controls.email.value;
+  //     createRequest.request['emailVerified'] = true;
+  //   }
+
+  //  console.log("onSubmitLearnathonSignUpNew learnathon - in", );
+  //   console.log('onSubmitLearnathonSignUpNew createRequest - ', createRequest);
+  //   // this.onSubmitSignUpForm();
+
+  //   this.addUserService.createUserDetailSaveNew(createRequest).subscribe(res => {
+  //     this.telemetryLogEvents('sign-up', true);
+  //     console.log('onSubmitLearnathonSignUpNew RES', res)
+  //     // if (res.result.response == 'SUCCESS') {
+  //       // this.redirectToSignPage();
+  //     // }
+  //   });
+
+  // }
+
+  onSubmitLearnathonSignUp(){
+    const createRequest = {
+      'request': {
+        'firstName': _.trim(this.signUpForm.controls.name.value),
+        'password': _.trim(this.signUpForm.controls.password.value),
+        'dob': this.yearOfBirth,
+        'channel': 'nulp-learnathon',
+        'roles':["CONTENT_CREATOR"],
+      }
+    };
+
+    if (this.signUpForm.controls.phone.value.toString()){
+      createRequest.request['phone'] = this.signUpForm.controls.phone.value.toString();
+      createRequest.request['phoneVerified'] = true;
     }
+
+    if (this.signUpForm.controls.email.value){
+      createRequest.request['email']  = this.signUpForm.controls.email.value;
+      createRequest.request['emailVerified'] = true;
+    }
+
+   console.log("onSubmitLearnathonSignUp learnathon - in", );
+    console.log('onSubmitLearnathonSignUp createRequest - ', createRequest);
+    // this.onSubmitSignUpForm();
+
+    this.addUserService.createUserV2(createRequest).subscribe(res => {
+      this.telemetryLogEvents('sign-up', true);
+      console.log('onSubmitLearnathonSignUp RES', res)
+      if (res.result.response == 'SUCCESS') {
+        // this.redirectToSignPage();
+      }
+    });
+
   }
 
   resolved(captchaResponse: string) {

@@ -2,7 +2,9 @@
     <div class="fullpage-background-image">
       <div class="container-wrapper">
         <div class="text-center mb-24">
-          <img class="image centered" alt={{tenantName}} height="56" src="{{logo}}">
+          isLearnathon -  {{isLearnathon}}
+          <div *ngIf="isLearnathon"><h3>Learnathon</h3></div>
+          <img class="image centered" *ngIf="!isLearnathon" alt={{tenantName}} height="56" src="{{logo}}">
         </div>
         <div *ngIf="showSignUpForm" [appTelemetryStart]="telemetryStart">
           <!-- <div *ngIf="telemetryImpression" [appTelemetryImpression]="telemetryImpression" class="fs-1 font-weight-bold mb-16 text-center">{{resourceService.frmelmnts.lbl.signUp}}</div> -->
@@ -107,8 +109,12 @@
             </label>
             </div>
           </form>
-          <button [attr.aria-disabled]="disableSubmitBtn" [disabled]="disableSubmitBtn" type="submit" appTelemetryInteract [telemetryInteractEdata]="submitInteractEdata"  [telemetryInteractCdata]="telemetryCdata" [ngClass]="{'sb-btn-disabled':disableSubmitBtn, 'sb-btn-primary':!disableSubmitBtn}" class="sb-btn sb-btn-normal width-100 mt-10" 
-            tabindex="0" (click)="submitSignupForm()">{{resourceService.frmelmnts.lbl.signUp}}</button>
+          <!-- <button [attr.aria-disabled]="disableSubmitBtn" [disabled]="disableSubmitBtn" type="submit" appTelemetryInteract [telemetryInteractEdata]="submitInteractEdata"  [telemetryInteractCdata]="telemetryCdata" [ngClass]="{'sb-btn-disabled':disableSubmitBtn, 'sb-btn-primary':!disableSubmitBtn}" class="sb-btn sb-btn-normal width-100 mt-10" 
+            tabindex="0" (click)="onSubmitLearnathonSignUpAPI()">{{resourceService.frmelmnts.lbl.signUp}} API</button>
+            <button [attr.aria-disabled]="disableSubmitBtn" [disabled]="disableSubmitBtn" type="submit" appTelemetryInteract [telemetryInteractEdata]="submitInteractEdata"  [telemetryInteractCdata]="telemetryCdata" [ngClass]="{'sb-btn-disabled':disableSubmitBtn, 'sb-btn-primary':!disableSubmitBtn}" class="sb-btn sb-btn-normal width-100 mt-10 " 
+            tabindex="0" (click)="onSubmitLearnathonSignUpNew()">{{resourceService.frmelmnts.lbl.signUp}} New</button> -->
+            <button [attr.aria-disabled]="disableSubmitBtn" [disabled]="disableSubmitBtn" type="submit" appTelemetryInteract [telemetryInteractEdata]="submitInteractEdata"  [telemetryInteractCdata]="telemetryCdata" [ngClass]="{'sb-btn-disabled':disableSubmitBtn, 'sb-btn-primary':!disableSubmitBtn}" class="sb-btn sb-btn-normal width-100 mt-10" 
+            tabindex="0" (click)="onSubmitLearnathonSignUp()">{{resourceService.frmelmnts.lbl.signUp}}</button>
           <a tabindex="0" role="button" aria-label="re captcha" (click)="captchaRef.reset()" id="resetGoogleCaptcha"></a>
         </div>
         <div *ngIf="!showSignUpForm">
