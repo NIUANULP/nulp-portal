@@ -452,6 +452,7 @@ header{
 }
 
 @media (max-width:768px) {
+   
     .sb-search-btn input {  
         padding: 13px 0 0 17px;
         width: 84%;
@@ -1450,13 +1451,38 @@ section img{
     margin-top: 20px;
 }
 .learn-section{
-  padding: 0 60px !important;
+  padding: 0 82px !important;
   margin-top: 4.8rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 50px;
+}
+.iframe-container{
+    position: relative;
+    overflow: hidden;
+    width: 88.2%;
+    padding:43.25% 82px 0 ;
+}
+.responsive-iframe{
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+}
+.flx-bsic{
+    flex-basis: 50%;
 }
 #owl-demo17 .item{
     background-color: #004367;
     height: 200px;
 }
+.mt-139{
+    margin-top: 139px !important;
+}
+
 .owll{
     display: block;
     padding: 0px 82px !important;
@@ -1500,12 +1526,90 @@ section img{
 }
 .banners{
     margin-top: 125px;
-    background-image: url('../img/intro-carousel/landing.png');
-    height: 400px;
+    background-image: url(../img/intro-carousel/landing.png);
     background-repeat: no-repeat;
     background-size: cover;
-    padding: 60px 80px 0;
+    padding: 47px 80px;
 }
 .banners2{
     background-image: url('../img/about/vision.jpg');
 }
+.for-mobile{
+    display: none;
+}
+.txxt-blue{
+    color: #064066 !important;
+}
+@media (max-width:1081px) {
+    .learn-section{
+        padding: 0 32px !important;
+        margin-top: 4.8rem;
+        gap: 50px;
+    }
+    .iframe-container{
+        width: 100%;
+        padding:59.25% 82px 0 ;
+    }
+    .banners {
+        padding: 47px 32px;
+    }
+    .owll{
+        padding: 0 32px !important;
+    }
+}
+@media (max-width:992px) {
+    .mt-res{
+        margin-top: 68px;
+    }
+}
+@media (max-width:870px) {
+    .learn-section{
+        padding: 0 32px !important;
+        margin-top: 4.8rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0px;
+    }
+    .iframe-container{
+        width: 100%;
+        padding:42.25% !important ;
+    }
+    .banners {
+        padding: 47px 11px;
+    }
+
+}
+@media (max-width:769px) {
+    .for-mobile{
+        display: block !important;
+    }
+    .mt-sm-18{
+        margin-top: 28px !important;
+    }
+    .mt-sm-16{
+        margin-top: 20px !important;
+    }
+
+    .learn-section {
+        padding: 0px 16px !important;
+    }
+    .owll {
+        padding: 0px 34px !important;
+       
+    }
+    .iframe-container{
+        width: 100%;
+        padding:42.25% !important;
+    }
+    .txxt-blue{
+        margin-top: 14px !important;
+        line-height: 42px !important;
+    }
+    .content-learn{
+        margin-top: 16px;
+    }
+    .learn2{
+        margin-bottom: 34px !important;
+    }
+}
+
