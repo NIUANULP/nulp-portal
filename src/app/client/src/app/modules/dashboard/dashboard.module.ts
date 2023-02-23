@@ -99,7 +99,7 @@ export const csCourseServiceFactory = (csLibInitializerService: CsLibInitializer
     SbTableComponent, AddusersComponent, AllReportsComponent, UserReportComponent, ContentLeaderboardComponent,UserUploadComponent,
     CourseContentLeaderboardComponent, FileuploadComponent, CertificateTemplateUploadComponent, ReportsComponent,OrganizationReportComponent,ContentReportComponent, ContentCategoryWiseComponent,
     CourseReportComponent,CourseCategoryWiseComponent, ContentCreationStaticsComponent,CityWiseReportComponent, DeptCityWiseReportComponent, ContentDeptWiseReportComponent,learnathonDashboardComponent],
-  exports: [CourseProgressComponent, DataTableComponent],
+  exports: [CourseProgressComponent, DataTableComponent,learnathonDashboardComponent],
   providers: [
     RendererService,
     UserSearchService,
