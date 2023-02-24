@@ -73,6 +73,7 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     this.isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    this.mode = this.signUpdata.controls.contactType.value;
     this.tncService.getTncConfig().subscribe((data: ServerResponse) => {
       this.telemetryLogEvents('fetch-terms-condition', true);
         const response = _.get(data, 'result.response.value');
@@ -456,7 +457,7 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
       this.telemetryLogEvents('sign-up', true);
       console.log('onSubmitLearnathonSignUp RES', res)
       if (res.result.response == 'SUCCESS') {
-        // this.redirectToSignPage();
+        this.redirectToSignPage();
       }
     }, (err) => {
       console.log('onSubmitLearnathonSignUp err', err)
@@ -466,10 +467,13 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
       this.telemetryLogEvents('sign-up', true);
       console.log('onSubmitLearnathonSignUpNew RES', res)
       // if (res.result.response == 'SUCCESS') {
-        // this.redirectToSignPage();
+        this.redirectToSignPage();
       // }
     });
-
+  }
+  redirectToSignPage() {
+   
+    window.location.href = '/resources';
   }
 
   resolved(captchaResponse: string) {
