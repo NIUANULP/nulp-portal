@@ -17,9 +17,10 @@ import { SlickModule } from 'ngx-slick';
 import { ExplorePageComponent } from './components';
 import { ContentSectionModule } from 'content-section';
 import {ObservationModule} from '../observation/observation.module';
+import { UploadContentLearnathonComponent } from './components/upload-content-learnathon/upload-content-learnathon.component';
  
 @NgModule({
-  declarations: [ExplorePageComponent],
+  declarations: [ExplorePageComponent, UploadContentLearnathonComponent],
   imports: [
     ExplorePageRoutingModule,
     CommonModule,

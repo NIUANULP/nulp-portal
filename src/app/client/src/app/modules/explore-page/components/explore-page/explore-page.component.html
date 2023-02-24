@@ -99,6 +99,73 @@
                 <button class="sb-btn sb-btn-primary sb-btn-normal sb-btn-border">{{resourceService?.frmelmnts?.lbl?.changePreferences}}</button>
               </div>
             </div>
+
+          <div *ngIf="_currentPageData?.sections && _currentPageData?.isEnabled">
+            <div *ngIf="getSelectedTab() === 'home'" routerLink="/workspace/content/edit/generic/" class="sb-section-preference" tabindex="0">
+              <div class="preference">
+                <p class="header font-weight-bold mb-8">Learnathon - Upload Content</p>
+                <!-- <p>NULP for building India's largest urban learning community and to curate and collate the best content on the platform. The learnathon, entitled as "SwaYogya 2023" will be a 45 days long pan India competition involving all the players of the urban ecosystem across diverse themes.</p> -->
+                <!-- <p>{{resourceService?.frmelmnts?.lbl?.preferencesheader | interpolate:'{instance}': instance}}</p> -->
+                <p>
+                  <span class="mr-24">
+                    <span>NULP for building India's largest urban learning community and to curate and collate the best content on the platform. </span>
+                  </span>
+
+                  <!-- <span class="mr-24">
+                    <span *ngIf="userPreference?.framework?.gradeLevel?.length">{{resourceService?.frmelmnts?.lbl?.classes}}: </span>
+                    <span class="font-weight-bold">{{userPreference?.framework?.gradeLevel[0]}}</span>
+                    <span class="font-weight-bold" *ngIf="userPreference?.framework?.gradeLevel?.length > 1">
+                  ... + {{userPreference?.framework?.gradeLevel?.length-1}}
+                    </span>
+                  </span> -->
+
+                  <!-- <span class="mr-24">
+                    <span *ngIf="userPreference?.framework?.medium?.length">{{resourceService?.frmelmnts?.lbl?.medium}}: </span>
+                    <span class="font-weight-bold">{{userPreference?.framework?.medium[0]}}</span>
+                    <span class="font-weight-bold" *ngIf="userPreference?.framework?.medium?.length > 1">
+                    ... + {{userPreference?.framework?.medium?.length-1}}
+                    </span>
+                  </span> -->
+
+                </p>
+              </div>
+                <button class="sb-btn sb-btn-primary sb-btn-normal sb-btn-border">Upload Content</button>
+              </div>
+            </div>  
+
+            <div *ngIf="_currentPageData?.sections && _currentPageData?.isEnabled">
+              <div *ngIf="getSelectedTab() === 'home'" routerLink="learnathon" class="sb-section-preference" tabindex="0">
+                <div class="preference">
+                  <p class="header font-weight-bold mb-8">Learnathon - Custom Form</p>
+                  <!-- <p>NULP for building India's largest urban learning community and to curate and collate the best content on the platform. The learnathon, entitled as "SwaYogya 2023" will be a 45 days long pan India competition involving all the players of the urban ecosystem across diverse themes.</p> -->
+                  <!-- <p>{{resourceService?.frmelmnts?.lbl?.preferencesheader | interpolate:'{instance}': instance}}</p> -->
+                  <p>
+                    <span class="mr-24">
+                      <span>NULP for building India's largest urban learning community and to curate and collate the best content on the platform. </span>
+                    </span>
+  
+                    <!-- <span class="mr-24">
+                      <span *ngIf="userPreference?.framework?.gradeLevel?.length">{{resourceService?.frmelmnts?.lbl?.classes}}: </span>
+                      <span class="font-weight-bold">{{userPreference?.framework?.gradeLevel[0]}}</span>
+                      <span class="font-weight-bold" *ngIf="userPreference?.framework?.gradeLevel?.length > 1">
+                    ... + {{userPreference?.framework?.gradeLevel?.length-1}}
+                      </span>
+                    </span> -->
+  
+                    <!-- <span class="mr-24">
+                      <span *ngIf="userPreference?.framework?.medium?.length">{{resourceService?.frmelmnts?.lbl?.medium}}: </span>
+                      <span class="font-weight-bold">{{userPreference?.framework?.medium[0]}}</span>
+                      <span class="font-weight-bold" *ngIf="userPreference?.framework?.medium?.length > 1">
+                      ... + {{userPreference?.framework?.medium?.length-1}}
+                      </span>
+                    </span> -->
+  
+                  </p>
+                </div>
+                  <button class="sb-btn sb-btn-primary sb-btn-normal sb-btn-border">Upload Content</button>
+                </div>
+              </div>  
+            
             <div *ngFor="let section of facetSections">
               <div *ngIf="getSelectedTab() === 'home' && section?.section?.facetKey === 'ContinueLearning' && enrolledSection?.contents?.length && isUserLoggedIn()" class="sb-library-cards relative9">
                 <div class="twelve wide column relative9">
