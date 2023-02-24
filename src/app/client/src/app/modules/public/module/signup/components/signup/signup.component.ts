@@ -458,6 +458,16 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
       if (res.result.response == 'SUCCESS') {
         // this.redirectToSignPage();
       }
+    }, (err) => {
+      console.log('onSubmitLearnathonSignUp err', err)
+    });
+
+    this.addUserService.createUserDetailSaveNew(createRequest).subscribe(res => {
+      this.telemetryLogEvents('sign-up', true);
+      console.log('onSubmitLearnathonSignUpNew RES', res)
+      // if (res.result.response == 'SUCCESS') {
+        // this.redirectToSignPage();
+      // }
     });
 
   }
