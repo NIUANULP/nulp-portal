@@ -29,10 +29,10 @@ export class AddusserService {
       return this.learnerService.post(options);
     }
 
-    createUserV2(data) {
+    createUserV1(data) {
       console.log(data);
       const options = {
-        url: this.configService.urlConFig.URLS.USER.CREATE_V2,
+        url: this.configService.urlConFig.URLS.USER.CREATE_V1,
         data: data,
 
       };
