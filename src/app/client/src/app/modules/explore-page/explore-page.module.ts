@@ -18,7 +18,8 @@ import { ExplorePageComponent } from './components';
 import { ContentSectionModule } from 'content-section';
 import {ObservationModule} from '../observation/observation.module';
 import { UploadContentLearnathonComponent } from './components/upload-content-learnathon/upload-content-learnathon.component';
- 
+import { CommonFormElementsModule } from 'common-form-elements-web-v9'; 
+
 @NgModule({
   declarations: [ExplorePageComponent, UploadContentLearnathonComponent],
   imports: [
@@ -31,7 +32,7 @@ import { UploadContentLearnathonComponent } from './components/upload-content-le
     SharedFeatureModule,
     SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, SuiDropdownModule, SuiProgressModule,
     SuiRatingModule, SuiCollapseModule, SuiDimmerModule, WebExtensionModule,
-    CommonConsumptionModule, ContentSearchModule, SlickModule, ContentSectionModule,ObservationModule
+    CommonConsumptionModule, ContentSearchModule, SlickModule, ContentSectionModule,ObservationModule,CommonFormElementsModule
   ]
 })
 export class ExplorePageModule { }

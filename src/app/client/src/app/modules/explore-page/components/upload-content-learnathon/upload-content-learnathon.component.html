@@ -1,1 +1,44 @@
-<p>upload-content-learnathon works!</p>
+<div class="sbt-fluid-content-bg">
+  <div class="sb-g sbt-container sbt-page-content">
+    <div class="sb-g-col-xs-12 sb-g-col-md-12 sb-g-col-lg-12 sb-g-col-xxxl-16">
+      <div class="sbt-page-content-area home-container">
+        <div class="sb-library-cards relative9">
+          <div>
+            <div
+              class="sb-section-preference"
+              tabindex="0"
+            >
+              <div class="preference">
+                <p class="header font-weight-bold mb-8">
+                  Learnathon - Upload Content Form
+                </p>
+
+                <p>
+                  <span class="mr-24">
+                    <span
+                      >NULP for building India's largest urban learning
+                      community and to curate and collate the best content on
+                      the platform.
+                    </span>
+                  </span>
+                </p>
+              </div>
+              <!-- <ng-container *ngIf="formFieldProperties"> -->
+                <!-- <sb-form (initialize)="outputData($event)" (statusChanges)="onStatusChanges($event)" (valueChanges)="valueChanges($event)"></sb-form> -->
+                <sb-dynamic-form *ngIf="formFieldProperties"
+                  [config]="formFieldProperties.fields"
+                  (valueChanges)="valueChanges($event)"
+                  (statusChanges)="onStatusChanges($event)"
+                >
+                </sb-dynamic-form>
+              <!-- </ng-container> -->
+              <button (click)="submit()" class="sb-btn sb-btn-primary sb-btn-normal sb-btn-border">
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
