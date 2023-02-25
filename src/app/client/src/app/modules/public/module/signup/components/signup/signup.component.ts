@@ -73,7 +73,7 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     this.isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    this.mode = this.signUpdata.controls.contactType.value;
+    // this.mode = this.signUpdata.controls.contactType.value;
     this.tncService.getTncConfig().subscribe((data: ServerResponse) => {
       this.telemetryLogEvents('fetch-terms-condition', true);
         const response = _.get(data, 'result.response.value');
@@ -336,12 +336,13 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
    * @since - release-3.0.3
    */
   submitSignupForm() {
+    
       // @HACK - Learnathon only
       // const currentURL = window.location.href;
       // console.log("learnathon - ", currentURL);
 
       if (this.isLearnathon)
-      {
+      { this.redirectToSignPage()
         console.log("learnathon - In", );
         this.onSubmitLearnathonSignUp();
       }
@@ -453,7 +454,7 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
     console.log('onSubmitLearnathonSignUp createRequest - ', createRequest);
     // this.onSubmitSignUpForm();
 
-    this.addUserService.createUserV2(createRequest).subscribe(res => {
+    this.addUserService.createUserV1(createRequest).subscribe(res => {
       this.telemetryLogEvents('sign-up', true);
       console.log('onSubmitLearnathonSignUp RES', res)
       if (res.result.response == 'SUCCESS') {
@@ -472,7 +473,7 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
   redirectToSignPage() {
-   
+   console.log(window.location.href)
     window.location.href = '/resources';
   }
 
