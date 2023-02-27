@@ -583,7 +583,6 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
     };
     this.telemetryService.log(event);
   }
-
   showAndHidePopup(mode: boolean) {
     this.showTncPopup = mode;
   }
