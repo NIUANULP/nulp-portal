@@ -1486,6 +1486,14 @@ section img{
     padding: 0 42px;
     align-items: center;
 }
+.nav-header-theme{
+    height: 123px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 42px;
+    align-items: center;
+}
 .nav-left{
     display: flex;
     justify-content: space-around;
@@ -1515,6 +1523,12 @@ section img{
     line-height: 140%;
     color: #011F5B;
     padding: 0 42px !important;
+}
+.p-0{
+    padding: 0 !important;
+}
+.m-0{
+    margin: 0 0 !important; 
 }
 .abt-sb-tit{
     font-weight: 400;
@@ -1561,7 +1575,7 @@ section img{
     justify-content: space-evenly;
     gap: 60px;
     flex-wrap: wrap;
-    margin-top: 60px;
+    margin: 125px 0;
 }
 .sb-social1{
     display: flex;
@@ -1669,7 +1683,83 @@ section img{
     letter-spacing: 0.01em;
     color: #55668A;
 }
+.learn-handburger{
+    display: none !important;
+}
 
+
+/* theme css start here */
+
+.text-blck{
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 170%;
+    text-align: right;
+    letter-spacing: 0.01em;
+    color: #000000;
+}
+.link-holder{
+    padding: 0 42px;
+    margin: 90px 0 0 0;
+}
+.mt--8rem{
+    margin-top: 0.8rem !important;
+}
+.link-holder a{
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 170%;
+    text-align: justify;
+    letter-spacing: 0.01em;
+    color: #55668A;
+ }
+ .explore-theme{
+    background-image: url("../images/explore_ohter_theme.png");
+    margin-top: 60px;
+    padding: 70px 0;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+ .theme-btn{
+    display: inline-block;
+    margin: 10px 10px  10px 0;
+    padding: 20px 12px;
+    width: 326px;
+    height: 61px;
+    background: rgba(153, 0, 0, 0.6);
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
+
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 170%;
+    text-align: justify;
+    letter-spacing: 0.01em;
+    color: #FFFFFF;
+ }
+ .theme-btn-holder{
+    max-width: 90%;
+    padding: 0 42px;
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 30px;
+ }
+ .theme-title{
+    font-family: 'EB Garamond';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 36px;
+    line-height: 140%;
+    color: #FFFFFF;
+    padding: 0 42px;
+ }
 
 
 
@@ -1692,9 +1782,9 @@ section img{
     .abt-sec-title{
         padding: 0 32px !important;
     }
-    .head-content{
+    /* .head-content{
         padding: 0 32px !important;
-    }
+    } */
     .underline{
         margin: 0 32px !important;
     }
@@ -1725,6 +1815,12 @@ section img{
         flex-direction: column;
         gap: 0px;
     }
+    .d-sm-none{
+        display: none !important;
+    }
+    .learn-handburger{
+        display: block !important;
+    }
     .abt-sec-title{
         padding: 0 32px !important;
     }
@@ -1743,9 +1839,9 @@ section img{
     .banners {
         padding: 47px 11px;
     }
-    .nav-header{
+    /* .nav-header{
         flex-direction: column;
-    }
+    } */
     .logo-mt {
         margin-top: 57px;
     }
@@ -1755,13 +1851,13 @@ section img{
     .for-mobile{
         display: block !important;
     }
-    .nav-left{
+    /* .nav-left{
         flex-direction: column;
         gap: 24px;
-    }
-    .head-content {
+    } */
+    /* .head-content {
         margin-top: 200px;
-    }  
+    }   */
     .mt-sm-18{
         margin-top: 28px !important;
     }
@@ -1820,5 +1916,38 @@ section img{
     }
     .footer-img {
         padding: 100px 30px;
+    }
+    .theme-btn-holder{
+        max-width: 100%;
+    }
+}
+@media (max-width:550px) {
+    .nav-header{
+        flex-direction: column;
+    }
+    .learn-handburger{
+        position: absolute;
+        top: 55px;
+        right: 20px;
+    }
+    .ui.dropdown .menu-learn {
+        left: -112px !important;
+    }
+    .logo-mt{
+        position: absolute;
+        top: -28px;
+        left: 20px;
+    }
+    .learn-btn{
+        position: absolute;
+        top: 190px;
+        left: 32px;
+    }
+    .link-holder{
+        margin-top: 169px;
+        padding: 0 32px;
+    }
+    .theme-btn{
+        font-size: 12px;
     }
 }
