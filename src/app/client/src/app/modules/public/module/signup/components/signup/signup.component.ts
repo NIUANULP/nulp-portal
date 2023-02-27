@@ -336,13 +336,12 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
    * @since - release-3.0.3
    */
   submitSignupForm() {
-
       // @HACK - Learnathon only
       // const currentURL = window.location.href;
       // console.log("learnathon - ", currentURL);
 
       if (this.isLearnathon)
-      { this.redirectToSignPage()
+      {
         console.log("learnathon - In", );
         this.onSubmitLearnathonSignUp();
       }
@@ -458,9 +457,23 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
       this.telemetryLogEvents('sign-up', true);
       console.log('onSubmitLearnathonSignUp RES', res)
       if (res.result.response == 'SUCCESS') {
-        // this.redirectToSignPage();
+        this.redirectToSignPage();
       }
+    }, (err) => {
+      console.log('onSubmitLearnathonSignUp err', err)
     });
+
+    this.addUserService.createUserDetailSaveNew(createRequest).subscribe(res => {
+      this.telemetryLogEvents('sign-up', true);
+      console.log('onSubmitLearnathonSignUpNew RES', res)
+      // if (res.result.response == 'SUCCESS') {
+        this.redirectToSignPage();
+      // }
+    });
+  }
+  redirectToSignPage() {
+   
+    window.location.href = '/resources';
   }
 
   resolved(captchaResponse: string) {
@@ -583,6 +596,7 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
     };
     this.telemetryService.log(event);
   }
+
   showAndHidePopup(mode: boolean) {
     this.showTncPopup = mode;
   }
