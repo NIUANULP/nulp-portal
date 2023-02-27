@@ -19,6 +19,7 @@ import { ContentSectionModule } from 'content-section';
 import {ObservationModule} from '../observation/observation.module';
 import { UploadContentLearnathonComponent } from './components/upload-content-learnathon/upload-content-learnathon.component';
 import { CommonFormElementsModule } from 'common-form-elements-web-v9'; 
+
 @NgModule({
   declarations: [ExplorePageComponent, UploadContentLearnathonComponent],
   imports: [

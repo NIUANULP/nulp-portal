@@ -57,7 +57,7 @@ export class ProfilePageComponent implements OnInit, OnDestroy, AfterViewInit {
   userSubscription: Subscription;
   orgDetails: any = [];
   showContactPopup = false;
-  showEditUserDetailsPopup = false;
+  showEditUserDetailsPopup = true;
   userFrameWork: any;
   telemetryImpression: IImpressionEventInput;
   myFrameworkEditEdata: IInteractEventEdata;

@@ -1,10 +1,12 @@
 import { Component, OnInit } from "@angular/core";
+
 import { LearnerService, ActionService, UserService } from "@sunbird/core";
 import { ContentService } from "./../../../../modules/core/services/content/content.service";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { Observable } from "rxjs/internal/Observable";
 import { HttpClient, HttpResponse } from "@angular/common/http";
+
 
 @Component({
   selector: "app-upload-content-learnathon",
@@ -14,6 +16,7 @@ import { HttpClient, HttpResponse } from "@angular/common/http";
 export class UploadContentLearnathonComponent implements OnInit {
   public formFieldProperties: any;
   public formData: any;
+
   public file!: File;
   afuConfig = {
     uploadAPI: {
@@ -104,6 +107,7 @@ export class UploadContentLearnathonComponent implements OnInit {
 
   valueChanges(value: any) {
     this.formData = value;
+
     // console.log(this.formData);
   }
 
@@ -144,10 +148,12 @@ export class UploadContentLearnathonComponent implements OnInit {
     } 
 
     const createData = {
+
       request: {
         content: {
           name: this.formData?.name,
           description: this.formData?.description,
+
           code: this.formData?.name + this.makeRandom(lengthOfCode, possible), //uuid
           mimeType: this.getContentType(this.file),
           contentType: "Resource",
@@ -280,6 +286,7 @@ export class UploadContentLearnathonComponent implements OnInit {
           },
         },
       },
+
     };
     this.actionService.post(options).subscribe(
       (res) => {
@@ -294,9 +301,11 @@ export class UploadContentLearnathonComponent implements OnInit {
     );
   }
 
+
   sendForReview() {
     throw new Error("Method not implemented.");
   }
+
 
   makeRandom(lengthOfCode: number, possible: string) {
     let text = "";
@@ -355,4 +364,5 @@ export class UploadContentLearnathonComponent implements OnInit {
   public isUserLoggedIn(): boolean {
     return this.userService && (this.userService.loggedIn || false);
   }
+
 }
