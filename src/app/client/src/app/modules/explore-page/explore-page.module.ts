@@ -37,17 +37,15 @@ import { CommonFormElementsModule } from 'common-form-elements-web-v9';
     SharedFeatureModule,
     SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, SuiDropdownModule, SuiProgressModule,
     SuiRatingModule, SuiCollapseModule, SuiDimmerModule, WebExtensionModule,
-    CommonConsumptionModule, ContentSearchModule, SlickModule, ContentSectionModule,ObservationModule
-  ],
-  
-  // @Hack isLearnathon
-  providers: [WorkSpaceService, 
-    CommonConsumptionModule, 
+    CommonConsumptionModule, ContentSearchModule, SlickModule, ContentSectionModule,ObservationModule, CommonConsumptionModule, 
     ContentSearchModule, 
     SlickModule, 
     ContentSectionModule,
     ObservationModule,
     CommonFormElementsModule
-  ]
+  ],
+  
+  // @Hack isLearnathon
+  providers: [WorkSpaceService]
 })
 export class ExplorePageModule { }
