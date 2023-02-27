@@ -73,7 +73,7 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     this.isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    this.mode = this.signUpdata.controls.contactType.value;
+    // this.mode = this.signUpdata.controls.contactType.value;
     this.tncService.getTncConfig().subscribe((data: ServerResponse) => {
       this.telemetryLogEvents('fetch-terms-condition', true);
         const response = _.get(data, 'result.response.value');
