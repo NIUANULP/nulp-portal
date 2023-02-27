@@ -4,10 +4,8 @@
       <div class="sbt-page-content-area home-container">
         <div class="sb-library-cards relative9">
           <div>
-            <div
-              class="sb-section-preference"
-              tabindex="0"
-            >
+            <div class="sb-section-preference" tabindex="0">
+
               <div class="preference">
                 <p class="header font-weight-bold mb-8">
                   Learnathon - Upload Content Form
@@ -24,15 +22,25 @@
                 </p>
               </div>
               <!-- <ng-container *ngIf="formFieldProperties"> -->
-                <!-- <sb-form (initialize)="outputData($event)" (statusChanges)="onStatusChanges($event)" (valueChanges)="valueChanges($event)"></sb-form> -->
-                <sb-dynamic-form *ngIf="formFieldProperties"
-                  [config]="formFieldProperties.fields"
-                  (valueChanges)="valueChanges($event)"
-                  (statusChanges)="onStatusChanges($event)"
-                >
-                </sb-dynamic-form>
+
+              <!-- <sb-form (initialize)="outputData($event)" (statusChanges)="onStatusChanges($event)" (valueChanges)="valueChanges($event)"></sb-form> -->
+              <sb-dynamic-form
+                *ngIf="formFieldProperties"
+                [config]="formFieldProperties.fields"
+                (valueChanges)="valueChanges($event)"
+                (statusChanges)="onStatusChanges($event)"
+              >
+              </sb-dynamic-form>
+              <!-- <angular-file-uploader [config]="afuConfig" (fileSelected)="fileSelected($event)">
+              </angular-file-uploader> -->
+              <input type="file" (change)="onUpload($event)" />
+              <!-- <button (click)="onUpload()">Upload File</button> -->
               <!-- </ng-container> -->
-              <button (click)="submit()" class="sb-btn sb-btn-primary sb-btn-normal sb-btn-border">
+              <button
+                (click)="onSubmit()"
+                class="sb-btn sb-btn-primary sb-btn-normal sb-btn-border"
+              >
+
                 Submit
               </button>
             </div>

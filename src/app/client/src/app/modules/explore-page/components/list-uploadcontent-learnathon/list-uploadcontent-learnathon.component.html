@@ -1,0 +1,51 @@
+  <div class="twelve wide column mt-20" *ngIf="showLoader ">
+    <!-- <app-loader [data]="loaderMessage"></app-loader> -->
+  </div>
+  <!-- <div *ngIf="noResult && !showLoader"> -->
+    <!-- <app-no-result [data]="noResultMessage"></app-no-result> -->
+  <!-- </div> -->
+
+  <!-- <app-all-textbooks></app-all-textbooks> -->
+  
+  <table class="ui upForReviewTable table" *ngIf="allContent.length > 0 && !showLoader && !noResult "> <!--  -->
+    <thead>
+      <tr>
+        <th class="six wide UpReviewTableHeader">
+            Content
+        </th>
+        <!-- <th class="four wide UpReviewTableHeader">
+            Last Updated
+        </th> -->
+        <th class="two wide UpReviewTableHeader">
+            Status
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr in-view-item class="UpForReviewListHover cursor-pointer" *ngFor="let content of allContent let i = index;" [id]="i" [data]="content"
+      appTelemetryInteract [telemetryInteractObject]="{id:content.identifier,type:content.contentType,ver:content.pkgVersion ? content.pkgVersion.toString(): '1.0' }"
+      [telemetryInteractEdata]="{id:'allcontent',type:'click',pageid:'AllContent'}">
+      <td tabindex="0" (click)="contentClick(content)">
+        <h5 class="ui image header">
+          <img src="{{content.appIcon || 'assets/images/default.png' | cdnprefixurl}}" class="ui tiny image UpReviewTinyImage">
+          <div class="content ">
+            <div class="UpReviewHeader">{{content.name | slice:0:30}}
+              <i *ngIf="content.name.length > 30">...</i>
+            </div>
+            <div class="UpReviewSubHeader">{{content.primaryCategory}}
+            </div>
+          </div>
+        </h5>
+      </td>
+      <!-- <td>
+        <h5 class="ui image header"> 
+          <div class="content">
+            <div class="UpReviewSubHeader">{{content.lastUpdatedOn | fromNow }}
+            </div>
+          </div>
+        </h5>
+      </td> -->
+      <td class="UpForReviewStatusOrange">{{content.status}}</td>
+      </tr>
+    </tbody>
+  </table>
