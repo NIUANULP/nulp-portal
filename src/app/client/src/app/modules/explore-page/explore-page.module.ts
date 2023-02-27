@@ -18,9 +18,14 @@ import { ExplorePageComponent } from './components';
 import { ContentSectionModule } from 'content-section';
 import {ObservationModule} from '../observation/observation.module';
 import { UploadContentLearnathonComponent } from './components/upload-content-learnathon/upload-content-learnathon.component';
- 
+
+// @Hack isLearnathon
+import { ListUploadcontentLearnathonComponent } from './components/list-uploadcontent-learnathon/list-uploadcontent-learnathon.component';
+import { WorkSpaceService, EditorService , BatchService, ReviewCommentsService} from '../workspace';
+
 @NgModule({
-  declarations: [ExplorePageComponent, UploadContentLearnathonComponent],
+  // @Hack isLearnathon
+  declarations: [ExplorePageComponent, UploadContentLearnathonComponent, ListUploadcontentLearnathonComponent],
   imports: [
     ExplorePageRoutingModule,
     CommonModule,
@@ -32,6 +37,9 @@ import { UploadContentLearnathonComponent } from './components/upload-content-le
     SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, SuiDropdownModule, SuiProgressModule,
     SuiRatingModule, SuiCollapseModule, SuiDimmerModule, WebExtensionModule,
     CommonConsumptionModule, ContentSearchModule, SlickModule, ContentSectionModule,ObservationModule
-  ]
+  ],
+  
+  // @Hack isLearnathon
+  providers: [WorkSpaceService]
 })
 export class ExplorePageModule { }

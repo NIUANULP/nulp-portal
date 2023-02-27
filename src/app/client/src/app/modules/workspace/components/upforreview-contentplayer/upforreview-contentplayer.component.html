@@ -56,9 +56,154 @@
           </div>
         </div>
         <div class="ui grid" *ngIf="!showLoader && contentData">
-          <div class="eight wide column">
+          <div class="eight wide column" *ngIf="!isLearnathon">
             <app-content-player-metadata [contentData]="contentData"></app-content-player-metadata>
           </div>
+
+          <!-- @Hack isLearnathon -->
+          <div class="eight wide column" *ngIf="isLearnathon">
+            <div *ngIf="contentData">
+              
+
+              <div class="sb-meta-data-container sb-meta-data-row-facing mt-24 content-player-metadata">
+
+                <ng-container *ngIf="contentData.description">
+                    <h4 class="sb-section-title text-capitalize mb-16 d-block">
+                        {{resourceService.frmelmnts.lbl.description}}
+                    </h4>
+                    <div *ngIf="!readMore">
+                        <span class="overflow-word-wrap">{{contentData.description | slice:0:150 }}&nbsp;</span>
+                        <span class="ui expand-or-minimize mouse-pointer" tabindex="0" (click)="readMore = !readMore" *ngIf="contentData.description.length > 150 && readMore === false">
+                            {{resourceService.frmelmnts.lbl.readmore}}
+                        </span>
+                    </div>
+                    <div *ngIf="readMore">
+                        <span class="overflow-word-wrap">{{contentData.description}}&nbsp;</span>
+                        <span class="ui expand-or-minimize mouse-pointer" tabindex="0" (click)="readMore = false">
+                            {{resourceService.frmelmnts.lbl.readless}}
+                        </span>
+                    </div>
+                    <div class="ui divider mt-24 mb-24"></div>
+                </ng-container>
+            
+                <h4 class="sb-section-title text-capitalize mb-16 d-block">
+                    {{resourceService.frmelmnts.lbl.contentinformation}}
+                </h4>
+                <dl class="sb-meta-data">
+                    <dt>{{resourceService.frmelmnts.lbl.title}}</dt>
+                    <dd *ngIf="contentData.name">{{contentData.name}}</dd>
+                </dl>
+                <!-- <dl class="sb-meta-data">
+                    <dt>{{resourceService.frmelmnts?.lbl?.createdInstanceName  | interpolate:'{instance}': instance}}</dt>
+                    <dd *ngIf="contentData.creator">{{contentData.creator}}</dd>
+                </dl> -->
+                <!-- <dl class="sb-meta-data">
+                    <dt>{{resourceService.frmelmnts.lbl?.originalAuthor}}</dt>
+                    <dd *ngIf="contentData.author">{{contentData.author}}</dd>
+                </dl> -->
+                <!-- <dl class="sb-meta-data">
+                    <dt>{{resourceService.frmelmnts.lbl?.licenseTerms}}</dt>
+                    <dd *ngIf="contentData && !(contentData.licenseDetails && contentData.licenseDetails['name']) && contentData.license">{{contentData.license}}&#x200E;</dd>
+                    <dd *ngIf="contentData && contentData.licenseDetails && contentData.licenseDetails['name']">{{contentData.licenseDetails['name']}} {{contentData.licenseDetails['description']}}&#x200E; <br /><a href="{{contentData.licenseDetails['url']}}" target="_blank">{{contentData.licenseDetails['url']}}</a></dd>
+                </dl> -->
+                <!-- <dl class="sb-meta-data" *ngIf="contentData && contentData.orgName">
+                    <dt>{{resourceService.frmelmnts.lbl?.publishedOnInstanceName | interpolate:'{instance}': instance}}</dt>
+                    <dd>
+                        <span class="d-inline-block">{{contentData?.organisation?.join(', ')}}</span>
+                        <a ng-if="contentData?.email" href="mailto:{{contentData?.email}}?subject={{contentData.name}}">{{contentData.orgDetails?.email}}</a>
+                    </dd>
+                </dl> -->
+                <!-- <dl class="sb-meta-data">
+                    <dt>{{resourceService.frmelmnts.lbl?.copyRight}}</dt>
+                    <dd>
+                        <span *ngIf="contentData.copyright" class="d-inline-block mr-20">{{contentData.copyright}}
+                            <span *ngIf="contentData.copyrightYear">,&nbsp;{{contentData.copyrightYear}}</span></span>
+                        <a tabindex="0" (click)="showContentCreditsPopup()" title="{{resourceService.frmelmnts.lbl.contentCredits}}" class="cursor-pointer">
+                            {{resourceService.frmelmnts.lbl.contentCredits}}
+                        </a>
+                    </dd>
+                </dl> -->
+                <!-- <dl class="sb-meta-data">
+                    <dt>{{resourceService.frmelmnts.lbl.medium}}</dt>
+                    <dd *ngIf="contentData.medium">{{contentData.medium}}</dd>
+                </dl>
+                <dl class="sb-meta-data">
+                    <dt>{{resourceService.frmelmnts.lbl.board}}</dt>
+                    <dd *ngIf="contentData.board">{{contentData.board}}</dd>    
+                </dl>
+                <dl class="sb-meta-data">
+                    <dt>{{resourceService.frmelmnts.lbl.class}}</dt>
+                    <dd *ngIf="contentData.gradeLevel">{{contentData.gradeLevel}}</dd>
+                </dl>
+                <dl class="sb-meta-data">
+                    <dt>{{resourceService.frmelmnts.lbl.subject}}</dt>
+                    <dd *ngIf="contentData.subject">{{contentData.subject}}</dd>
+                </dl> -->
+                <dl class="sb-meta-data" *ngIf="contentData.createdOn">
+                    <dt>{{resourceService.frmelmnts.lbl.createdon}}</dt>
+                    <dd>{{contentData.createdOn | dateFormat }}</dd>
+                </dl>
+                <dl class="sb-meta-data" *ngIf="contentData.lastUpdatedOn">
+                    <dt>{{resourceService.frmelmnts.lbl.lastupdate}}</dt>
+                    <dd>{{contentData.lastUpdatedOn | dateFormat }}</dd>
+                </dl>
+                <!-- <dl class="sb-meta-data">
+                    <dt>{{resourceService.frmelmnts.lbl.keywords}}</dt>
+                    <dd *ngIf="contentData.keywords">{{contentData.keywords}}</dd>
+                </dl> -->
+                <!-- <dl class="sb-meta-data">
+                    <dt>{{resourceService.frmelmnts.lbl.contentType}}</dt>
+                    <dd *ngIf="contentData.primaryCategory">{{contentData.primaryCategory}}</dd>
+                </dl> -->
+                <!-- <dl class="sb-meta-data">
+                    <dt>{{resourceService.frmelmnts.lbl.additionalCategory}}</dt>
+                    <dd *ngIf="contentData.additionalCategories">{{contentData.additionalCategories}}</dd>
+                </dl> -->
+                <!-- <dl class="sb-meta-data" *ngIf="contentData.status === 'Flagged' && contentData.flagReasons">
+                    <dt>{{resourceService.frmelmnts.lbl.flaggedreason}}</dt>
+                    <dd>{{contentData.flagReasons}}</dd>
+                </dl>
+                <dl class="sb-meta-data" *ngIf="contentData.status === 'Flagged' && contentData.flaggedBy">
+                    <dt>{{resourceService.frmelmnts.lbl.flaggedby}}</dt>
+                    <dd>{{contentData.flaggedBy}}</dd>
+                </dl>
+                <dl class="sb-meta-data" *ngIf="contentData.status === 'Flagged' && contentData.flags">
+                    <dt>{{resourceService.frmelmnts.lbl.flaggeddescription}}</dt>
+                    <dd>{{contentData.flags}}</dd>
+                </dl> -->
+            </div>
+            
+            <!-- <div *ngIf="contentData && contentData.originData">
+                <div class="ui divider my-24"></div>
+                <h4 class="sb-section-title mb-16 d-block">{{resourceService.frmelmnts?.lbl?.contentcopiedtitle}}</h4>
+                <div class="sb-meta-data-container sb-meta-data-row-facing mt-24">
+                    <dl class="sb-meta-data" *ngIf="contentData.originData.name">
+                        <dt>{{resourceService.frmelmnts?.lbl?.contenttype}}</dt>
+                        <dd>{{contentData.originData.name}}</dd>
+                    </dl>
+                    <dl class="sb-meta-data" *ngIf="contentData.originData.author">
+                        <dt>{{resourceService.frmelmnts.lbl?.originalAuthor}}</dt>
+                        <dd *ngIf="contentData.creator">{{contentData.originData.author}}</dd>
+                    </dl>
+                    <dl class="sb-meta-data" *ngIf="contentData.originData.license">
+                        <dt>{{resourceService.frmelmnts.lbl?.licenseTerms}}</dt>
+                        <dd *ngIf="contentData.creator">{{contentData.originData.license}}&#x200E;</dd>
+                    </dl>
+                    <dl class="sb-meta-data" *ngIf="contentData.originData.organisation">
+                        <dt>{{resourceService.frmelmnts.lbl?.publishedOnInstanceName | interpolate:'{instance}': instance}}</dt>
+                        <dd>
+                            <span class="d-inline-block">{{contentData.originData.organisation.join(', ')}}</span>
+                            <a ng-if="contentData?.email" href="mailto:{{contentData?.email}}?subject={{contentData.name}}">{{contentData.originData?.email}}</a>
+                        </dd>
+                    </dl>
+                </div>
+            </div> -->
+
+
+
+            </div>
+          </div>
+          <!-- @Hack isLearnathon -->
           <div class="four wide column">
           </div>
         </div>
