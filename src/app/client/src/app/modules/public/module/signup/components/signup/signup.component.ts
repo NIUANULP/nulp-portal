@@ -453,7 +453,7 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
     console.log('onSubmitLearnathonSignUp createRequest - ', createRequest);
     // this.onSubmitSignUpForm();
 
-    this.addUserService.createUserV2(createRequest).subscribe(res => {
+    this.addUserService.createUserV1(createRequest).subscribe(res => {
       this.telemetryLogEvents('sign-up', true);
       console.log('onSubmitLearnathonSignUp RES', res)
       if (res.result.response == 'SUCCESS') {
