@@ -107,6 +107,7 @@
       "UPDATE_PROF_VIS_FIELDS": "user/v1/profile/visibility",
       "GET_USER_BY_KEY": "user/v1/get",
       "CHECK_USER_EXISTS": "user/v1/exists",
+      "CREATE_V1": "user/v1/create",
       "CREATE_V2": "user/v2/create",
       "SIGN_UP_V1": "user/v2/signup",
       "LOCATION_SEARCH": "data/v1/location/search",

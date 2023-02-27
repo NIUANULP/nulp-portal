@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ConfigService } from '@sunbird/shared';
 import { LearnerService } from '@sunbird/core';
 
-// import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 // import { PublicDataService } from '../../../core/services/public-data/public-data.service';
 
 
@@ -14,7 +14,7 @@ export class AddusserService {
   constructor(private learnerService: LearnerService, 
     public configService: ConfigService, 
 
-    // private http: HttpClient,
+    private http: HttpClient,
     // public publicDataService: PublicDataService
     ) { }
 
@@ -29,10 +29,10 @@ export class AddusserService {
       return this.learnerService.post(options);
     }
 
-    createUserV2(data) {
+    createUserV1(data) {
       console.log(data);
       const options = {
-        url: this.configService.urlConFig.URLS.USER.CREATE_V2,
+        url: this.configService.urlConFig.URLS.USER.CREATE_V1,
         data: data,
 
       };
@@ -49,15 +49,15 @@ export class AddusserService {
     //   return this.publicDataService.post(options);
     // }
 
-    // createUserDetailSaveNew(data) {
+    createUserDetailSaveNew(data) {
 
-    //   const httpOptions = {
-    //     headers: { 'Authorization' : 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkTEJ3cG5MdE1SVWRCOTVBdWFCWjhMd0hSR2lTUTBpVCJ9.Q7-3SuUgnZXJuu-j2_kw9r8J82ckSxRR6zxylpgVG5o'}
-    //   };
+      const httpOptions = {
+        headers: { 'Authorization' : 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkTEJ3cG5MdE1SVWRCOTVBdWFCWjhMd0hSR2lTUTBpVCJ9.Q7-3SuUgnZXJuu-j2_kw9r8J82ckSxRR6zxylpgVG5o'}
+      };
 
-    //   console.log('api/' + this.configService.urlConFig.URLS.USER.SIGNUP, data, httpOptions);
-    //   return this.http.post('api/' + this.configService.urlConFig.URLS.USER.SIGNUP, data, httpOptions);
-    // }
+      console.log('api/' + this.configService.urlConFig.URLS.USER.SIGNUP, data, httpOptions);
+      return this.http.post('api/' + this.configService.urlConFig.URLS.USER.SIGNUP, data, httpOptions);
+    }
 
 
     userSearch(data) {

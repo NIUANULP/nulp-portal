@@ -85,7 +85,7 @@ export class AppComponent implements OnInit, OnDestroy {
   deviceProfile: any;
   isCustodianOrgUser: any;
   usersProfile: any;
-  isLocationConfirmed = true;
+  isLocationConfirmed = false;
   userFeed: any;
   isFullScreenView;
   showUserVerificationPopup = false;

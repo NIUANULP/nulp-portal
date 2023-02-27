@@ -17,11 +17,12 @@ import { SlickModule } from 'ngx-slick';
 import { ExplorePageComponent } from './components';
 import { ContentSectionModule } from 'content-section';
 import {ObservationModule} from '../observation/observation.module';
-import { UploadContentLearnathonComponent } from './components/upload-content-learnathon/upload-content-learnathon.component';
 
 // @Hack isLearnathon
+import { UploadContentLearnathonComponent } from './components/upload-content-learnathon/upload-content-learnathon.component';
 import { ListUploadcontentLearnathonComponent } from './components/list-uploadcontent-learnathon/list-uploadcontent-learnathon.component';
 import { WorkSpaceService, EditorService , BatchService, ReviewCommentsService} from '../workspace';
+import { CommonFormElementsModule } from 'common-form-elements-web-v9'; 
 
 @NgModule({
   // @Hack isLearnathon
@@ -40,6 +41,13 @@ import { WorkSpaceService, EditorService , BatchService, ReviewCommentsService} 
   ],
   
   // @Hack isLearnathon
-  providers: [WorkSpaceService]
+  providers: [WorkSpaceService, 
+    CommonConsumptionModule, 
+    ContentSearchModule, 
+    SlickModule, 
+    ContentSectionModule,
+    ObservationModule,
+    CommonFormElementsModule
+  ]
 })
 export class ExplorePageModule { }
