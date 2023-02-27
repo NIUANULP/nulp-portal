@@ -17,9 +17,16 @@ import { SlickModule } from 'ngx-slick';
 import { ExplorePageComponent } from './components';
 import { ContentSectionModule } from 'content-section';
 import {ObservationModule} from '../observation/observation.module';
- 
+
+// @Hack isLearnathon
+import { UploadContentLearnathonComponent } from './components/upload-content-learnathon/upload-content-learnathon.component';
+import { ListUploadcontentLearnathonComponent } from './components/list-uploadcontent-learnathon/list-uploadcontent-learnathon.component';
+import { WorkSpaceService, EditorService , BatchService, ReviewCommentsService} from '../workspace';
+import { CommonFormElementsModule } from 'common-form-elements-web-v9'; 
+
 @NgModule({
-  declarations: [ExplorePageComponent],
+  // @Hack isLearnathon
+  declarations: [ExplorePageComponent, UploadContentLearnathonComponent, ListUploadcontentLearnathonComponent],
   imports: [
     ExplorePageRoutingModule,
     CommonModule,
@@ -30,7 +37,15 @@ import {ObservationModule} from '../observation/observation.module';
     SharedFeatureModule,
     SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, SuiDropdownModule, SuiProgressModule,
     SuiRatingModule, SuiCollapseModule, SuiDimmerModule, WebExtensionModule,
-    CommonConsumptionModule, ContentSearchModule, SlickModule, ContentSectionModule,ObservationModule
-  ]
+    CommonConsumptionModule, ContentSearchModule, SlickModule, ContentSectionModule,ObservationModule, CommonConsumptionModule, 
+    ContentSearchModule, 
+    SlickModule, 
+    ContentSectionModule,
+    ObservationModule,
+    CommonFormElementsModule
+  ],
+  
+  // @Hack isLearnathon
+  providers: [WorkSpaceService]
 })
 export class ExplorePageModule { }

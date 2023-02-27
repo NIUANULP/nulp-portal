@@ -99,6 +99,29 @@
                 <button class="sb-btn sb-btn-primary sb-btn-normal sb-btn-border">{{resourceService?.frmelmnts?.lbl?.changePreferences}}</button>
               </div>
             </div>
+<!-- @Hack isLearnathon -->
+            <div *ngIf="_currentPageData?.sections && _currentPageData?.isEnabled">
+              <div *ngIf="getSelectedTab() === 'home'" routerLink="learnathon" class="sb-section-preference" tabindex="0">
+                <div class="preference">
+                  <p class="header font-weight-bold mb-8">Learnathon - Custom Form</p>
+                  <p>
+                    <span class="mr-24">
+                      <span>NULP for building India's largest urban learning community and to curate and collate the best content on the platform. </span>
+                    </span>
+                  </p>
+                </div>
+                  <button class="sb-btn sb-btn-primary sb-btn-normal sb-btn-border">Upload Content</button>
+              </div>
+            </div>  
+            <div *ngIf="_currentPageData?.sections && _currentPageData?.isEnabled">
+                <div class="sb-section-preference1" tabindex="0">
+                  <div class="preference">
+                    <app-list-uploadcontent-learnathon></app-list-uploadcontent-learnathon>
+                  </div>
+                </div>
+            </div>
+<!-- @Hack isLearnathon -->
+
             <div *ngFor="let section of facetSections">
               <div *ngIf="getSelectedTab() === 'home' && section?.section?.facetKey === 'ContinueLearning' && enrolledSection?.contents?.length && isUserLoggedIn()" class="sb-library-cards relative9">
                 <div class="twelve wide column relative9">

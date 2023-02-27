@@ -26,7 +26,8 @@ export class UserOnboardingComponent implements OnInit {
   @Output() close = new EventEmitter<void>();
 
   get Stage() { return Stage; }
-  stage = Stage.USER_SELECTION;
+  // stage = Stage.USER_SELECTION;
+  stage = Stage.LOCATION_SELECTION;
   tenantInfo: ITenantData;
   isIGotSlug = false;
   private unsubscribe$ = new Subject<void>();

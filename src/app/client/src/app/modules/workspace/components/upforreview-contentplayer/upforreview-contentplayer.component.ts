@@ -100,6 +100,11 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
 
   public playerLoaded = false;
 
+  // @Hack isLearnathon
+  lernathonChannel: string = "nulp-learnathon";
+  isLearnathon: boolean = false;
+  // @Hack isLearnathon
+
   @ViewChild('publishWarningModal') publishWarningModal;
 
   showPublishWarningModal = false;
@@ -124,6 +129,12 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
     this.loaderMessage = {
       'loaderMessage': this.resourceService.messages.stmsg.m0025,
     };
+
+    // @Hack isLearnathon
+    if (this.userService.rootOrgName == this.lernathonChannel){
+      this.isLearnathon = true;
+    }
+    // @Hack isLearnathon
   }
   goToPublish() {
     this.router.navigate(['publish'], {relativeTo: this.activatedRoute});

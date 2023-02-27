@@ -73,6 +73,7 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     this.isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    // this.mode = this.signUpdata.controls.contactType.value;
     this.tncService.getTncConfig().subscribe((data: ServerResponse) => {
       this.telemetryLogEvents('fetch-terms-condition', true);
         const response = _.get(data, 'result.response.value');
@@ -101,7 +102,6 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
     this.tenantDataSubscription = this.tenantService.tenantData$.subscribe(
       data => {
         if (data && !data.err) {
-
           // if (this.isLearnathon){
           //   console.log("learnathon - LOGO");
           //   this.logo = '';
@@ -110,7 +110,7 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
           //   console.log("Normal - LOGO");
             this.logo = data.tenantData.logo;
           // }
-
+          
           this.tenantName = data.tenantData.titleName;
         }
       }
@@ -336,7 +336,6 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
    * @since - release-3.0.3
    */
   submitSignupForm() {
-
       // @HACK - Learnathon only
       // const currentURL = window.location.href;
       // console.log("learnathon - ", currentURL);
@@ -345,12 +344,10 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
       {
         console.log("learnathon - In", );
         this.onSubmitLearnathonSignUp();
-
       }
       else
       {
         console.log("learnathon - Out", );
-
 
         if (this.isP1CaptchaEnabled === 'true') {
             this.resetGoogleCaptcha();
@@ -456,119 +453,27 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
     console.log('onSubmitLearnathonSignUp createRequest - ', createRequest);
     // this.onSubmitSignUpForm();
 
-    this.addUserService.createUserV2(createRequest).subscribe(res => {
+    this.addUserService.createUserV1(createRequest).subscribe(res => {
       this.telemetryLogEvents('sign-up', true);
       console.log('onSubmitLearnathonSignUp RES', res)
       if (res.result.response == 'SUCCESS') {
-        // this.redirectToSignPage();
+        this.redirectToSignPage();
       }
+    }, (err) => {
+      console.log('onSubmitLearnathonSignUp err', err)
     });
-
-  }
-
-  onSubmitLearnathonSignUpAPI(){
-    const createRequest = {
-      'request': {
-        'firstName': _.trim(this.signUpForm.controls.name.value),
-        'password': _.trim(this.signUpForm.controls.password.value),
-        'dob': this.yearOfBirth,
-        'channel': 'nulp-learnathon',
-        'roles':["CONTENT_CREATOR"],
-      }
-    };
-
-    if (this.signUpForm.controls.phone.value.toString()){
-      createRequest.request['phone'] = this.signUpForm.controls.phone.value.toString();
-      createRequest.request['phoneVerified'] = true;
-    }
-
-    if (this.signUpForm.controls.email.value){
-      createRequest.request['email']  = this.signUpForm.controls.email.value;
-      createRequest.request['emailVerified'] = true;
-    }
-
-   console.log("onSubmitLearnathonSignUpAPI learnathon - in", );
-    console.log('onSubmitLearnathonSignUpAPI createRequest - ', createRequest);
-    // this.onSubmitSignUpForm();
-
-    this.addUserService.createUserDetailSaveApi(createRequest).subscribe(res => {
-      this.telemetryLogEvents('sign-up', true);
-      console.log('onSubmitLearnathonSignUpAPI RES', res)
-      if (res.result.response == 'SUCCESS') {
-        // this.redirectToSignPage();
-      }
-    });
-
-  }
-
-  onSubmitLearnathonSignUpNew(){
-    const createRequest = {
-      'request': {
-        'firstName': _.trim(this.signUpForm.controls.name.value),
-        'password': _.trim(this.signUpForm.controls.password.value),
-        'dob': this.yearOfBirth,
-        'channel': 'nulp-learnathon',
-        'roles':["CONTENT_CREATOR"],
-      }
-    };
-
-    if (this.signUpForm.controls.phone.value.toString()){
-      createRequest.request['phone'] = this.signUpForm.controls.phone.value.toString();
-      createRequest.request['phoneVerified'] = true;
-    }
-
-    if (this.signUpForm.controls.email.value){
-      createRequest.request['email']  = this.signUpForm.controls.email.value;
-      createRequest.request['emailVerified'] = true;
-    }
-
-   console.log("onSubmitLearnathonSignUpNew learnathon - in", );
-    console.log('onSubmitLearnathonSignUpNew createRequest - ', createRequest);
-    // this.onSubmitSignUpForm();
 
     this.addUserService.createUserDetailSaveNew(createRequest).subscribe(res => {
       this.telemetryLogEvents('sign-up', true);
       console.log('onSubmitLearnathonSignUpNew RES', res)
       // if (res.result.response == 'SUCCESS') {
-        // this.redirectToSignPage();
+        this.redirectToSignPage();
       // }
     });
-
   }
-
-  onSubmitLearnathonSignUp(){
-    const createRequest = {
-      'request': {
-        'firstName': _.trim(this.signUpForm.controls.name.value),
-        'password': _.trim(this.signUpForm.controls.password.value),
-        'dob': this.yearOfBirth,
-        'channel': 'nulp-learnathon',
-        'roles':["CONTENT_CREATOR"],
-      }
-    };
-
-    if (this.signUpForm.controls.phone.value.toString()){
-      createRequest.request['phone'] = this.signUpForm.controls.phone.value.toString();
-      createRequest.request['phoneVerified'] = true;
-    }
-
-    if (this.signUpForm.controls.email.value){
-      createRequest.request['email']  = this.signUpForm.controls.email.value;
-      createRequest.request['emailVerified'] = true;
-    }
-
-   console.log("onSubmitLearnathonSignUp learnathon - in", );
-    console.log('onSubmitLearnathonSignUp createRequest - ', createRequest);
-    // this.onSubmitSignUpForm();
-
-    this.addUserService.createUserDetailSave(createRequest).subscribe(res => {
-      this.telemetryLogEvents('sign-up', true);
-      console.log('onSubmitLearnathonSignUp RES', res)
-      if (res.result.response == 'SUCCESS') {
-        // this.redirectToSignPage();
-      }
-    });
-
+  redirectToSignPage() {
+   
+    window.location.href = '/resources';
   }
 
   resolved(captchaResponse: string) {
