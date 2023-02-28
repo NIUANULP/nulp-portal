@@ -31,9 +31,22 @@
                 (statusChanges)="onStatusChanges($event)"
               >
               </sb-dynamic-form>
+              <div>
+                <select (change)="onCategorySelect($event)">
+                  <option>Select Category</option>
+                  <option *ngFor="let category of categories" value="{{category.id}}">{{category.name}}</option>
+                </select>
+                <select>
+                  <option>Select Sub-Category</option>
+                  <option *ngFor="let subCategory of subCategories" value="{{subCategory.name}}">{{subCategory.name}}</option>
+                </select>
+              </div>
               <!-- <angular-file-uploader [config]="afuConfig" (fileSelected)="fileSelected($event)">
               </angular-file-uploader> -->
-              <input type="file" (change)="onUpload($event)" />
+              <div>
+                <input type="file" (change)="onUpload($event)" />
+                
+              </div>
               <!-- <button (click)="onUpload()">Upload File</button> -->
               <!-- </ng-container> -->
               <button

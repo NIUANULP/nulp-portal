@@ -1,15 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import {
   ServerResponse, PaginationService, ConfigService, ToasterService, IPagination,
-  ResourceService, ILoaderMessage, INoResultMessage, IContents, NavigationHelperService
+  ResourceService, ILoaderMessage, INoResultMessage, IContents, IUserData, NavigationHelperService
 } from '@sunbird/shared';
 import { SearchService, UserService, ISort, FrameworkService } from '@sunbird/core';
 import * as _ from 'lodash-es';
 import { WorkSpace } from '../../../workspace/classes/workspace';
-// /home/ttpl-rt-99/sunbirdEd/nulp-portal/src/app/client/src/app/modules/workspace/services/index.ts
-// import { WorkSpaceService } from '../../../workspace/services/index';
 import { WorkSpaceService } from '../../../workspace/services'
-// import { debounceTime, map } from 'rxjs/operators';
 
 
 
@@ -38,7 +35,7 @@ export class ListUploadcontentLearnathonComponent  extends WorkSpace implements 
   /**
    * To show / hide loader
   */
-    showLoader = true;
+  showLoader = true;
 
   /**
      * Contains list of published course(s) of logged-in user
@@ -57,6 +54,11 @@ export class ListUploadcontentLearnathonComponent  extends WorkSpace implements 
   state: string;
   lernathonChannel: string = "nulp-learnathon";
   isLearnathon: boolean = false;
+  isContentCreator: boolean = false;
+  /**
+   * userRoles
+  */
+  userRoles = [];
 
   /**
     * Constructor to create injected service(s) object
@@ -76,24 +78,33 @@ export class ListUploadcontentLearnathonComponent  extends WorkSpace implements 
   }
 
   ngOnInit(): void {
+    this.userService.userData$.subscribe(
+      (user: IUserData) => {
+        this.userRoles = user.userProfile.userRoles;
+      });
+    
+    if (_.indexOf(this.userRoles, 'CONTENT_CREATOR') !== -1) {
+      this.isContentCreator = true;
+    }
+
     this.fecthAllContent();
   }
 
   fecthAllContent(){
     this.showLoader = true;
     const preStatus = ['Draft', 'FlagDraft', 'Review', 'Processing', 'Live', 'Unlisted', 'FlagReview'];
-    const primaryCategories = ["Course","Digital Textbook","Content Playlist","Explanation Content","Learning Resource","Practice Question Set","eTextbook","Teacher Resource","Course Assessment"];
+    const primaryCategories = ["Learning Resource"];
+    // const primaryCategories = ["Course","Digital Textbook","Content Playlist","Explanation Content","Learning Resource","Practice Question Set","eTextbook","Teacher Resource","Course Assessment"];
     const searchParams = {
         filters: {
           status: preStatus,
           createdBy: this.userService.userid,
           primaryCategory: primaryCategories
         },
-        limit: 10,
+        limit: 50,
         offset: (1 - 1) * (10)
       };
 
-    // this.searchContentWithLockStatus(searchParams).subscribe(
     this.search(searchParams).subscribe(
       (data: ServerResponse) => {
 
@@ -121,7 +132,6 @@ export class ListUploadcontentLearnathonComponent  extends WorkSpace implements 
   }
 
   contentClick(content) {
-    console.log('KOMAL contentClick - ', content);
     this.workSpaceService.navigateToContent(content, this.state);
   }
 }

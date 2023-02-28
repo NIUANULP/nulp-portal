@@ -1647,6 +1647,7 @@ section img{
     color: #FFFFFF;
 }
 .bg-blue{
+    margin-top: 60px;
     background-color: #011F5B;
     padding: 100px 0;
 }

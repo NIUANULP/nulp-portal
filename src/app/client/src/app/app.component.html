@@ -85,8 +85,19 @@
     </div>
     <app-validate-teacher-identifier-popup *ngIf="showUserVerificationPopup && labels" [labels]="labels"
       [userFeedData]="userFeed"> </app-validate-teacher-identifier-popup>
-    <app-user-onboarding (close)="onLocationSubmit()" *ngIf="showUserTypePopup || !isLocationConfirmed"
-      [isCustodianOrgUser]="isCustodianOrgUser" [deviceProfile]="deviceProfile"></app-user-onboarding>
+    <!-- <app-user-onboarding (close)="onLocationSubmit()" *ngIf="showUserTypePopup || !isLocationConfirmed"
+      [isCustodianOrgUser]="isCustodianOrgUser" [deviceProfile]="deviceProfile"></app-user-onboarding> -->
+
+
+      <!-- =========learnathon starts================ -->
+
+    <app-learnathon-location (close)="onLearnathonLocationSubmit(event)" *ngIf="showLearnathonLocationPopup"
+     [userProfile]="userProfile"[isCustodianOrgUser]="isCustodianOrgUser" [deviceProfile]="deviceProfile"></app-learnathon-location>
+
+
+<!-- =========learnathon ends================ -->
+
+
 
   <app-modal-wrapper [config]="{disableClose: true, size: 'small'}"
     *ngIf="isCustodianOrgUser && usersProfile && !usersProfile?.managedBy && !usersProfile?.dob && (usersProfile?.userLocations?.length>0 || showYearOfBirthPopup)">

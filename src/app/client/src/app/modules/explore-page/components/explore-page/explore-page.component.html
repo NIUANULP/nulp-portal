@@ -63,7 +63,7 @@
           </div>
 
           <!-- Template for displaying sections based on form configuration -->
-          <div *ngIf="_currentPageData?.sections && _currentPageData?.isEnabled">
+          <div *ngIf="_currentPageData?.sections && _currentPageData?.isEnabled && !isLearnathon">
             <div *ngIf="getSelectedTab() === 'home'" (click)="showEdit = !showEdit" class="sb-section-preference" tabindex="0">
               <div class="preference">
                 <p class="header font-weight-bold mb-8">{{resourceService?.frmelmnts?.lbl?.hi}} {{userProfile?.firstName | titlecase}} {{userProfile?.lastName |
@@ -99,24 +99,33 @@
                 <button class="sb-btn sb-btn-primary sb-btn-normal sb-btn-border">{{resourceService?.frmelmnts?.lbl?.changePreferences}}</button>
               </div>
             </div>
-<!-- @Hack isLearnathon -->
-            <div *ngIf="_currentPageData?.sections && _currentPageData?.isEnabled">
-              <div *ngIf="getSelectedTab() === 'home'" routerLink="learnathon" class="sb-section-preference" tabindex="0">
+
+            <div *ngIf="isLearnathon">
+              <div *ngIf="getSelectedTab() === 'home'" class="sb-section-preference" style="background-color: #fff;" tabindex="0">
                 <div class="preference">
-                  <p class="header font-weight-bold mb-8">Learnathon - Custom Form</p>
+                  <p class="header font-weight-bold mb-8">{{resourceService?.frmelmnts?.lbl?.hi}} {{userProfile?.firstName | titlecase}} {{userProfile?.lastName |
+                    titlecase}}</p>
                   <p>
                     <span class="mr-24">
-                      <span>NULP for building India's largest urban learning community and to curate and collate the best content on the platform. </span>
+                       <span>Category: </span>
+                       <span class="font-weight-bold">Individual</span>
                     </span>
+  
+                    <span class="mr-24">
+                      <span>Sub-Category: </span>
+                      <span class="font-weight-bold">Government Official</span>
+                    </span>
+
                   </p>
                 </div>
-                  <button class="sb-btn sb-btn-primary sb-btn-normal sb-btn-border">Upload Content</button>
               </div>
-            </div>  
-            <div *ngIf="_currentPageData?.sections && _currentPageData?.isEnabled">
-                <div class="sb-section-preference1" tabindex="0">
+            </div>
+
+<!-- @Hack isLearnathon -->
+            <div *ngIf="isContentCreator">
+                <div class="sbt-page-content-area" tabindex="0">
                   <div class="preference">
-                    <app-list-uploadcontent-learnathon></app-list-uploadcontent-learnathon>
+                    <app-learnathon-landing-page></app-learnathon-landing-page>
                   </div>
                 </div>
             </div>
