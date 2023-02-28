@@ -670,6 +670,7 @@ font-size: 18px;
 line-height: 24px;
 color: #000;
 font-family: 'Source Sans Pro', sans-serif;
+
 }
 .sb-font-25 {
   font-size: 25px;
@@ -817,7 +818,7 @@ input:focus-visible {
     margin-top: 15px;
 }
 .mt-20{
-    margin-top: 20px
+    margin-top: 20px !important;
 }
 .mt-55{
     margin-top: 55px !important;
@@ -1442,7 +1443,6 @@ section img{
 }
 #owl-demo17 .item{
     background-color: #004367;
-    height: 200px;
 }
 .mt-139{
     margin-top: 139px !important;
@@ -1607,6 +1607,7 @@ section img{
     padding: 70px 0 80px;
     left: 0px;
     background: #011F5B;
+    margin-top: 89px;
 }
 .imp-tit{
     font-family: 'EB Garamond';
@@ -1667,7 +1668,7 @@ section img{
     font-weight: 400 !important;
 }
 .section-holder{
-    margin-top: 59px;
+    margin-top: 89px;
 }
 .img-fluid {
     max-width: 100%;
@@ -1745,6 +1746,7 @@ section img{
     text-align: justify;
     letter-spacing: 0.01em;
     color: #FFFFFF;
+    text-transform: uppercase;
  }
  .theme-btn-holder{
     max-width: 90%;
@@ -1762,8 +1764,123 @@ section img{
     color: #FFFFFF;
     padding: 0 42px;
  }
+ .nav-items1{
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 170%;
+    text-align: right;
+    letter-spacing: 0.01em;
+    color: #FFFFFF;
+ }
+ .footer-img1{
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+ }
+ .foo-title{
+    font-size: 20px;
+    line-height: 20px;
+    letter-spacing: 0.01em;
+ }
+ .copyright-learn{
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 20px;
+    text-align: justify;
+    letter-spacing: 0.01em;
+    color: rgba(255, 255, 255, 0.5);
+    padding: 0 20px;
+    margin: 30px 0;
+ }
+ .underline-white{
+    border-bottom: 1px solid #FFFFFF;
+    width: 50%;
+    right: 194px;
+    bottom: 32px;
+    position: absolute;
+ }
+.text-black{
+    color: #000000;
+    font-family: 'Roboto';
+    margin-top: 50px !important;
+}
+/* theme slider css */
+.first-slide{
+    width: 827px;
+    height: 540px;
+    position: relative;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.slider-img1{
+    background-image: url("./../images/water-slider.jpg");
+    
+}
+.slider-img2{
+    background-image: url("./../images/EnvironmentandClimate.png");
+   
+}
+.slider-img3{
+    background-image: url("./../images/sai-abhinives.png");
+   
+}
+.slider-img4{
+    background-image: url("./../images/Municipal-Finance.png");
+   
+}
+.slider-img5{
+    background-image: url("./../images/DataGovernanceandAnalytics.png");
+   
+}
+.slider-img6{
+    background-image: url("./../images/Urbane-governance.png");
+    
+}
+.slider-img7{
+    background-image: url("./../images/SocialAspects.png");
+   
+}
+.slider-img8{
+    background-image: url("./../images/UrbanMobility.png");
+   
+}
+.slider-img9{
+    background-image: url("./../images/GeneralAdministration.png");
+   
+}
+.slider-img10{
+    background-image: url("./../images/town-planning.png");
+    
+}
+.btn-fixed{
+    position: absolute;
+    bottom: 7px;
+    right: 0;
+}
+.slider-btn{
+    padding: 8px 5px 8px 25px;
+    background: #FFC142;
+   
 
-
+    font-family: 'EB Garamond';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 36px;
+    line-height: 140%;
+    color: #000000;
+}
+.owl-prev span {
+  
+    top: 40% !important;
+}
+.owl-next span {
+    top: 40% !important;
+}
 
 @media (max-width:1081px) {
     .learn-section{
@@ -1797,6 +1914,7 @@ section img{
     }
     .footer-title{
         text-align: start;
+        line-height: 36px;
     }
     .footer-title:first-child{
         margin-top: 20px;
@@ -1816,6 +1934,9 @@ section img{
         display: flex;
         flex-direction: column;
         gap: 0px;
+    }
+    .underline-white{
+        display: none !important;
     }
     .d-sm-none{
         display: none !important;
