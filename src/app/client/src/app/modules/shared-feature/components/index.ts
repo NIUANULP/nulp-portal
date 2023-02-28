@@ -13,3 +13,4 @@ export * from './content-player/content-player.component';
 export * from './global-consent-pii/global-consent-pii.component';
 export * from './collection-player/collection-player.component';
 export * from './year-of-birth/year-of-birth.component';
+export * from './learnathon-location/learnathon-location.component';

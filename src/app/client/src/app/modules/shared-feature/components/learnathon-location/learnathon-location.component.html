@@ -1,0 +1,80 @@
+<sui-modal
+  [mustScroll]="true"
+  [isClosable]="false"
+  [transitionDuration]="0"
+  [size]="'normal'"
+  class="sb-modal"
+  (dismissed)="closeModal();"
+  #userLocationModal>
+
+  <!--Header-->
+  <div class="sb-modal-header">
+    Your Preferences
+  </div>
+  <!--/Header-->
+
+  <!--Content-->
+  <div class="sb-modal-content o-y-visible">
+     <form class="sb-form" *ngIf="userDetailsForm" [formGroup] ="userDetailsForm">
+     <div class="sb-field">
+        <label>Category:</label>
+          <sui-select class="selection form-control" formControlName="category" [options]="allCategories"
+                      labelField="label" id="category" valueField="value"(ngModelChange)="categoryChange($event)"
+                      name="category" placeholder="Select Category">
+            <sui-select-option *ngFor="let category of allCategories"
+                               [value]="category"></sui-select-option>
+          </sui-select>
+      </div>
+      <div *ngIf="allSubCategories" class="sb-field">
+        <label>Sub Category:</label>
+          <sui-select class="selection form-control" formControlName="subcategory" [options]="allSubCategories"
+                      labelField="label" id="subcategory" valueField="value"
+                      name="subcategory" placeholder="Select Sub-Category"
+                      >
+            <sui-select-option *ngFor="let category of allSubCategories"
+                               [value]="category"></sui-select-option>
+          </sui-select>
+      </div>
+      <div *ngIf="selectedCategory=='Individual'" class="sb-field">
+        <label>City:</label>
+        <input formControlName="city" id="city" class="form-control sb-search-input" 
+        placeholder="Name Of Institution">
+          <!-- <sui-select class="selection form-control" formControlName="city" [options]="allCities"
+                      labelField="label" id="city" valueField="value"
+                      name="city" placeholder="Select City"
+                      >
+            <sui-select-option *ngFor="let category of allCities"
+                               [value]="category"></sui-select-option>
+          </sui-select> -->
+      </div>
+      <div *ngIf="selectedCategory=='Group'" class="sb-field">
+        <label>Names Of Institutions:</label>
+        <input formControlName="institution" id="institution" class="form-control, sb-search-input" 
+        placeholder="Name Of Institution">
+          <!-- <sui-select class="selection form-control" formControlName="city" [options]="allCities"
+                      labelField="label" id="city" valueField="value"
+                      name="city" placeholder="Select City"
+                      >
+            <sui-select-option *ngFor="let category of allCities"
+                               [value]="category"></sui-select-option>
+          </sui-select> -->
+      </div> 
+    
+    </form> 
+
+    
+  </div>
+  <!--/Content-->
+
+  <!--Actions-->
+  <div class="sb-modal-actions">
+    <button class="sb-btn sb-btn-normal sb-btn-primary"
+            [ngClass]="{'sb-btn-disabled': !enableSubmitBtn}"
+            [disabled]="!enableSubmitBtn" tabindex="0"
+            (click)="updateUserLocation($event)">
+      {{resourceService?.frmelmnts?.btn?.submit}}
+    </button>
+  </div>
+  <!--/Actions-->
+
+</sui-modal>
