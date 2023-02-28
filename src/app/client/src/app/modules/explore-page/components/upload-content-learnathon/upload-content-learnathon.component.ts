@@ -131,6 +131,7 @@ export class UploadContentLearnathonComponent implements OnInit {
 
     if (confirm(confirmation) !== true) {
       return;
+      // change UI
     } 
 
     /*

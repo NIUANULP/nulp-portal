@@ -6,7 +6,9 @@ import { global } from "@angular/compiler/src/util";
   providedIn: "root",
 })
 export class UploadContentService {
-  constructor(private httpService: HttpClient) {}
+  constructor(private httpService: HttpClient) {
+    
+  }
 
   getTheme() {
     return [
