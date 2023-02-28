@@ -103,6 +103,12 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
         }
     }
 
+    // @Hack isLearnathon
+    isContentCreator: boolean = false;
+    userRoles = [];
+    lernathonChannel: string = "nulp-learnathon";
+    isLearnathon: boolean = false;
+
     constructor(private searchService: SearchService, private toasterService: ToasterService, public userService: UserService,
         public resourceService: ResourceService, private configService: ConfigService, public activatedRoute: ActivatedRoute,
         private router: Router, private orgDetailsService: OrgDetailsService, private publicPlayerService: PublicPlayerService,
@@ -240,6 +246,21 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
             this.contentDownloadStatus = contentDownloadStatus;
             this.addHoverData();
         });
+
+        // @Hack isLearnathon
+        this.userService.userData$.subscribe(
+            (user: IUserData) => {
+              this.userRoles = user.userProfile.userRoles;
+            });
+          
+        if (_.indexOf(this.userRoles, 'CONTENT_CREATOR') !== -1) {
+            this.isContentCreator = true;
+        }
+
+        if (this.userService.rootOrgName == this.lernathonChannel){
+            this.isLearnathon = true;
+        }
+        // @Hack isLearnathon
     }
 
     public fetchEnrolledCoursesSection() {
