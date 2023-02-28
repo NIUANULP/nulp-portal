@@ -100,7 +100,6 @@
               </div>
             </div>
 <!-- @Hack isLearnathon -->
-            <div *ngIf="isCreator">
             <div *ngIf="_currentPageData?.sections && _currentPageData?.isEnabled">
               <div *ngIf="getSelectedTab() === 'home'" routerLink="learnathon" class="sb-section-preference" tabindex="0">
                 <div class="preference">
@@ -120,7 +119,6 @@
                     <app-list-uploadcontent-learnathon></app-list-uploadcontent-learnathon>
                   </div>
                 </div>
-            </div>
             </div>
 <!-- @Hack isLearnathon -->
 
