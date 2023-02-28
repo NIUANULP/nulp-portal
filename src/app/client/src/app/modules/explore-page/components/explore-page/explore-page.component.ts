@@ -52,6 +52,7 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
     private fetchContents$ = new BehaviorSubject(null);
     public subscription$;
     isDesktopApp = false;
+    isCreator = false;
     contentName;
     contentData;
     showDownloadLoader = false;
@@ -161,6 +162,18 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
                         this.defaultFilters = this.cacheService.exists('searchFilters') ? this.getPersistFilters(true) : this.userService.defaultFrameworkFilters;
                         delete this.defaultFilters['board'];
                         this.userProfile = this.userService.userProfile;
+                        /*
+                        For Learnathon 
+                         console.log(this.userType);
+                            console.log(this.userProfile);
+                            console.log("USER_PROFILE");                        
+                        */
+                            this.userProfile.roles.forEach(item => {
+                            if(item.role === "CONTENT_CREATOR") {
+                                this.isCreator = true;
+                            }
+                        });
+                        
                     } else {
                         this.userService.getGuestUser().subscribe((response) => {
                             const guestUserDetails: any = response;

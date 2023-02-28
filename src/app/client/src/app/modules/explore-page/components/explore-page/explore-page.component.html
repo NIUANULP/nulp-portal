@@ -100,10 +100,11 @@
               </div>
             </div>
 <!-- @Hack isLearnathon -->
+            <div *ngIf="isCreator">
             <div *ngIf="_currentPageData?.sections && _currentPageData?.isEnabled">
               <div *ngIf="getSelectedTab() === 'home'" routerLink="learnathon" class="sb-section-preference" tabindex="0">
                 <div class="preference">
-                  <p class="header font-weight-bold mb-8">Learnathon - Custom Form</p>
+                  <p class="header font-weight-bold mb-8">Learnathon - Participation Form</p>
                   <p>
                     <span class="mr-24">
                       <span>NULP for building India's largest urban learning community and to curate and collate the best content on the platform. </span>
@@ -119,6 +120,7 @@
                     <app-list-uploadcontent-learnathon></app-list-uploadcontent-learnathon>
                   </div>
                 </div>
+            </div>
             </div>
 <!-- @Hack isLearnathon -->
 
