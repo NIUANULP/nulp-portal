@@ -22,11 +22,12 @@ import {ObservationModule} from '../observation/observation.module';
 import { UploadContentLearnathonComponent } from './components/upload-content-learnathon/upload-content-learnathon.component';
 import { ListUploadcontentLearnathonComponent } from './components/list-uploadcontent-learnathon/list-uploadcontent-learnathon.component';
 import { WorkSpaceService, EditorService , BatchService, ReviewCommentsService} from '../workspace';
-import { CommonFormElementsModule } from 'common-form-elements-web-v9'; 
+import { CommonFormElementsModule } from 'common-form-elements-web-v9';
+import { LearnathonLandingPageComponent } from './components/learnathon-landing-page/learnathon-landing-page.component'; 
 
 @NgModule({
   // @Hack isLearnathon
-  declarations: [ExplorePageComponent, UploadContentLearnathonComponent, ListUploadcontentLearnathonComponent],
+  declarations: [ExplorePageComponent, UploadContentLearnathonComponent, ListUploadcontentLearnathonComponent, LearnathonLandingPageComponent],
   imports: [
     ExplorePageRoutingModule,
     CommonModule,
