@@ -820,6 +820,9 @@ input:focus-visible {
 .mt-20{
     margin-top: 20px !important;
 }
+.mt-40{
+    margin-top: 40px !important;
+}
 .mt-55{
     margin-top: 55px !important;
 }
@@ -1453,9 +1456,9 @@ section img{
     padding: 0px 42px !important;
     z-index: 0 !important;
 }
-#owl-demo17 .owl-dots{
+/* #owl-demo17 .owl-dots{
     display: none;
-}
+} */
 .mt-23{
     margin-top: 23px !important;
 }
@@ -1511,7 +1514,7 @@ section img{
     line-height: 140%;
     color: #FFFFFF;
     text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    max-width: 74%;
+    max-width: 65%;
     padding: 100px 42px 0;
 }
 .text-yel{
@@ -1646,7 +1649,12 @@ section img{
 .bg-blue{
     margin-top: 60px;
     background-color: #011F5B;
-    padding: 20px 0;
+    padding: 100px 0;
+}
+.bg-red1{
+  
+    background-color: #990000;
+    padding: 100px 0;
 }
 .footer-img{
     background-image: url("../images/Footer_bg.png");
@@ -1670,6 +1678,9 @@ section img{
 .section-holder{
     margin-top: 89px;
 }
+.section-holder1{
+    margin-top: 29px;
+}
 .img-fluid {
     max-width: 100%;
     height: auto;
@@ -1688,6 +1699,9 @@ section img{
 }
 .learn-handburger{
     display: none !important;
+}
+.ps-5{
+    padding-left: 5px;
 }
 
 
@@ -1803,6 +1817,13 @@ section img{
     bottom: 32px;
     position: absolute;
  }
+ .underline-black{
+    border-bottom: 200px solid #0000;
+    width: 50%;
+    right: 194px;
+    bottom: 32px;
+    position: absolute;
+ }
 .text-black{
     color: #000000;
     font-family: 'Roboto';
@@ -1875,11 +1896,24 @@ section img{
     color: #000000;
 }
 .owl-prev span {
-  
     top: 40% !important;
 }
 .owl-next span {
     top: 40% !important;
+}
+.create-anker{
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 170%;
+    text-align: justify;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+}
+.bg-blue1{
+    background-color: #011F5B;
+    padding: 70px 0;
 }
 
 @media (max-width:1081px) {
@@ -1901,19 +1935,19 @@ section img{
     .abt-sec-title{
         padding: 0 32px !important;
     }
-    /* .head-content{
-        padding: 0 32px !important;
-    } */
     .underline{
         margin: 0 32px !important;
     }
 }
 @media (max-width:992px) {
+    .copyright-learn{
+        text-align: center;
+    }
     .mt-res{
         margin-top: 68px;
     }
     .footer-title{
-        text-align: start;
+        text-align: center;
         line-height: 36px;
     }
     .footer-title:first-child{
@@ -1921,13 +1955,22 @@ section img{
     }
     .sb-social1{
         display: flex;
-        justify-content: start;
+        justify-content: center;
         gap: 20px;
         margin-top: 30px;
+    }
+    .first-slide{
+        width: 100%;
+        height: 350px;
     }
   
 }
 @media (max-width:870px) {
+    .slider-btn {
+        padding: 8px 3px 8px 11px;
+        font-size: 18px;
+       
+    }
     .learn-section{
         padding: 0 32px !important;
         margin-top: 4.8rem;
@@ -1971,16 +2014,14 @@ section img{
 
 }
 @media (max-width:769px) {
+    .text-black{
+        color: #000000 !important;
+        font-family: 'Roboto';
+        margin-top: 50px !important;
+    }
     .for-mobile{
         display: block !important;
     }
-    /* .nav-left{
-        flex-direction: column;
-        gap: 24px;
-    } */
-    /* .head-content {
-        margin-top: 200px;
-    }   */
     .mt-sm-18{
         margin-top: 28px !important;
     }
@@ -2043,6 +2084,12 @@ section img{
     .theme-btn-holder{
         max-width: 100%;
     }
+    .owl-prev span {
+        left: 25px !important;
+    }
+    .owl-next span {
+        right: 25px !important;
+    }
 }
 @media (max-width:550px) {
     .nav-header{
@@ -2050,11 +2097,14 @@ section img{
     }
     .learn-handburger{
         position: absolute;
-        top: 55px;
-        right: 20px;
+        top: 25px;
+        right: 10px;
+    }
+    .learn-handburger .icon-padding{
+        padding: 2px !important;
     }
     .ui.dropdown .menu-learn {
-        left: -112px !important;
+        left: -162px !important;
     }
     .logo-mt{
         position: absolute;
@@ -2071,6 +2121,6 @@ section img{
         padding: 0 32px;
     }
     .theme-btn{
-        font-size: 12px;
+        font-size: 10px;
     }
 }
