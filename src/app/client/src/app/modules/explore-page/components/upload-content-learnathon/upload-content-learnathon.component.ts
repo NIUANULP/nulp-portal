@@ -18,12 +18,14 @@ import { map } from 'rxjs/operators';
 export class UploadContentLearnathonComponent implements OnInit {
   public formFieldProperties: any;
   public formData: any;
-
+  public solutionTitle: string;
   public file!: File;
   userProfile: any;
   categories : any = [];
   subCategories: any = [];
-
+  state: string;
+  fileUpload: boolean = true;
+  linkToUpload : string;  
   constructor(
     private learnerService: LearnerService,
     private contentService: ContentService,
@@ -32,6 +34,7 @@ export class UploadContentLearnathonComponent implements OnInit {
     public userService: UserService,
     private uploadContentService: UploadContentService
   ) {
+    this.state = 'upForReview';
     this.formFieldProperties = {
       fields: [
         {
@@ -89,6 +92,15 @@ export class UploadContentLearnathonComponent implements OnInit {
   }
   
 
+  onTypeSelect(event:any) {
+    console.log(event.target.value, "EVT");
+    if(event.target.value === "youtube"){
+      this.fileUpload = false;
+    } else {
+      this.fileUpload = true;
+    }
+  }
+
   outputData(eventData: any) {}
 
   onStatusChanges(event) {
@@ -101,13 +113,19 @@ export class UploadContentLearnathonComponent implements OnInit {
     // console.log(this.formData);
   }
 
-  fileSelected(eventData) {
-    console.log(eventData);
-  }
-
   onUpload(event) {
     this.file = event.target.files[0];
     console.log(this.file);
+  }
+
+  onTitleChange(title) {
+    console.log(title);
+    this.solutionTitle = title; 
+  }
+
+  onLinkChange(link) {
+    console.log(link);
+    this.linkToUpload = link; 
   }
 
   onSubmit() {
@@ -120,8 +138,18 @@ export class UploadContentLearnathonComponent implements OnInit {
       return;
     }
 
-    if (!this.file?.name) {
+    if(!this.solutionTitle.trim()){
+      alert("Please select name");
+      return;
+    }
+
+    if (this.fileUpload && !this?.file?.name) {
       alert("Please select a file to upload");
+      return;
+    }
+
+    if (!this.fileUpload && !this.linkToUpload.trim()){
+      alert("Please select a valid Youtube Link to upload");
       return;
     }
 
@@ -167,6 +195,7 @@ export class UploadContentLearnathonComponent implements OnInit {
       (error) => {
          console.log(error,"ERROR1")
          alert("Error");
+        // this.workSpaceService.navigateToContent(content, this.state);
       })
   }
 
@@ -178,9 +207,9 @@ export class UploadContentLearnathonComponent implements OnInit {
     const createData = {
       request: {
         content: {
-          name: this.formData?.name,
-          description: this.formData?.description,
-          code: this.formData?.name + this.makeRandom(lengthOfCode, possible), //uuid
+          name: this.solutionTitle,
+          //description: this.formData?.description,
+          code: this.solutionTitle + this.makeRandom(lengthOfCode, possible), //uuid
           mimeType: this.getContentType(this.file),
           contentType: "Resource",
           resourceType: "Learn",
