@@ -95,7 +95,7 @@ export class AppComponent implements OnInit, OnDestroy {
   showUserTypePopup = false;
   deviceId: string;
   dataThemeAttribute: string;
-  showLearnathonLocationPopup = true;
+  showLearnathonLocationPopup = false;
   scrollHeight: number;
   public botObject: any = {};
   isBotEnabled = (<HTMLInputElement>document.getElementById('isBotConfigured'))
