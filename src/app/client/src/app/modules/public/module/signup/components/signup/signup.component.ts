@@ -436,6 +436,23 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
         'dob': this.yearOfBirth,
         'channel': 'nulp-learnathon',
         'roles':["CONTENT_CREATOR"],
+        "framework": {
+          "board": [
+              "TTPL Board"
+          ],
+          "medium": [
+              "teama"
+          ],
+          "gradeLevel": [
+              "Class AA"
+          ],
+          "subject": [
+              "AI"
+          ],
+          "id": [
+              "ttplsandboxfw2"
+          ]
+      }
       }
     };
 
