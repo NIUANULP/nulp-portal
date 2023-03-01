@@ -3,12 +3,12 @@ import {ResourceService, ToasterService, NavigationHelperService} from '@sunbird
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {DeviceRegisterService, UserService} from '@sunbird/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ProfileService} from '@sunbird/profile';
 import * as _ from 'lodash-es';
 import {IImpressionEventInput, IInteractEventInput, TelemetryService} from '@sunbird/telemetry';
 import {map} from 'rxjs/operators';
 import {forkJoin, of} from 'rxjs';
 import { PopupControlService } from '../../../../service/popup-control.service';
+import { ProfileService } from './../../../../plugins/profile/services';
 
 @Component({
   selector: 'app-learnathon-location',
@@ -82,10 +82,11 @@ allInstitutions: any;
   ngOnInit() {
     this.popupControlService.changePopupStatus(false);
     this.initializeFormFields();
+    console.log("this.userService.userProfile",this.userService.userProfile)
   }
   categoryChange(event){
     this.selectedCategory = event
-    console.log("categoryChange",event)
+
     if(event == 'Individual'){
       this.allSubCategories= [
         {
@@ -144,6 +145,33 @@ allInstitutions: any;
   updateUserLocation(event) {
     console.log("userDetailsForm--", this.userDetailsForm.value)
     
+    const request = {
+    //   "framework": {
+    //     "board": [
+    //         "Environment and Climate"
+    //     ],
+    //     "medium": [
+    //         "Affordable Housing"
+    //     ],
+    //     "gradeLevel": [
+    //         "Solutions Hackathon"
+    //     ],
+    //     "id": "nulplearnathon"
+    // },
+      'category': this.userDetailsForm.value.category,
+      'city': this.userDetailsForm.value.city,
+      'institution': this.userDetailsForm.value.institution,
+      'subcategory': this.userDetailsForm.value.subcategory,
+      // 'userName': 
+    };
+  
+  this.profileService.updateProfile(request).subscribe((data) => {
+    console.log("res====",data)
+    this.closeModal();
+
+  }, (error) => {
+   console.log("err====",error)
+  });
     // const locationCodes = [];
     // const locationDetails: any = {};
     // if (this.userDetailsForm.value.state) {
