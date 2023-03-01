@@ -91,7 +91,7 @@
 
       <!-- =========learnathon starts================ -->
 
-    <app-learnathon-location (close)="onLearnathonLocationSubmit(event)" *ngIf="showLearnathonLocationPopup"
+    <app-learnathon-location (close)="onLearnathonLocationSubmit(event)" *ngIf="this.userService.loggedIn && showLearnathonLocationPopup"
      [userProfile]="userProfile"[isCustodianOrgUser]="isCustodianOrgUser" [deviceProfile]="deviceProfile"></app-learnathon-location>
 
 
