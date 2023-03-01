@@ -24,13 +24,16 @@
               <!-- <ng-container *ngIf="formFieldProperties"> -->
 
               <!-- <sb-form (initialize)="outputData($event)" (statusChanges)="onStatusChanges($event)" (valueChanges)="valueChanges($event)"></sb-form> -->
-              <sb-dynamic-form
+              <!-- <sb-dynamic-form
                 *ngIf="formFieldProperties"
                 [config]="formFieldProperties.fields"
                 (valueChanges)="valueChanges($event)"
                 (statusChanges)="onStatusChanges($event)"
               >
-              </sb-dynamic-form>
+              </sb-dynamic-form> -->
+
+              <input #title type="text" (input)="onTitleChange(title.value)" />
+
               <div>
                 <select (change)="onCategorySelect($event)">
                   <option>Select Category</option>
@@ -41,11 +44,18 @@
                   <option *ngFor="let subCategory of subCategories" value="{{subCategory.name}}">{{subCategory.name}}</option>
                 </select>
               </div>
-              <!-- <angular-file-uploader [config]="afuConfig" (fileSelected)="fileSelected($event)">
-              </angular-file-uploader> -->
               <div>
+                <select (change)="onTypeSelect($event)">
+                  <option>Select Type of Proposal</option>
+                  <option value="youtube">Youtube Link</option>
+                  <option value="file">File Upload</option>
+                </select>
+              </div>
+              <div *ngIf="fileUpload">
                 <input type="file" (change)="onUpload($event)" />
-                
+              </div>
+              <div *ngIf="!fileUpload">
+                <input #link type="text" (input)="onLinkChange(link.value)" placeholder="Enter youtube link"/>
               </div>
               <!-- <button (click)="onUpload()">Upload File</button> -->
               <!-- </ng-container> -->
