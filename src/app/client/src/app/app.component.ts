@@ -95,7 +95,7 @@ export class AppComponent implements OnInit, OnDestroy {
   showUserTypePopup = false;
   deviceId: string;
   dataThemeAttribute: string;
-  showLearnathonLocationPopup = false;
+  showLearnathonLocationPopup = true;
   scrollHeight: number;
   public botObject: any = {};
   isBotEnabled = (<HTMLInputElement>document.getElementById('isBotConfigured'))
@@ -265,6 +265,7 @@ export class AppComponent implements OnInit, OnDestroy {
           this.navigationHelperService.initialize();
           this.userService.initialize(this.userService.loggedIn);
           this.getOrgDetails();
+          console.log("cccc==",this.userService.loggedIn)
           if (this.userService.loggedIn) {
             this.isGuestUser = false;
             this.permissionService.initialize();
