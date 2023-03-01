@@ -138,7 +138,7 @@ export class UploadContentLearnathonComponent implements OnInit {
       return;
     }
 
-    if(!this.solutionTitle.trim()){
+    if(!this?.solutionTitle?.trim()){
       alert("Please select name");
       return;
     }
