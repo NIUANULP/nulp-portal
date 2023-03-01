@@ -7,6 +7,8 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { Observable } from "rxjs/internal/Observable";
 import { HttpClient, HttpResponse } from "@angular/common/http";
 import { UploadContentService } from "./upload-content.service";
+import { forkJoin } from "rxjs";
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: "app-upload-content-learnathon",
@@ -134,52 +136,38 @@ export class UploadContentLearnathonComponent implements OnInit {
       // change UI
     } 
 
-    /*
-    firstPOSTCallToAPI('url', data).pipe(
-    concatMap(result1 => secondPOSTCallToAPI('url', result1))
-      concatMap( result2 => thirdPOSTCallToAPI('url', result2))
-       concatMap(result3 => fourthPOSTCallToAPI('url', result3))
-    ....
-    ).subscribe(
-    success => { /* display success msg  },
-    errorData => { /* display error msg  }
-    )
-    */
+    this.sendToServer()    
+  }
 
-
-  //   this.actionService.post(options).pipe(
-  //     concatMap(result1 => this.actionService.post(options))
-  //       concatMap( result2 => this.actionService.post({url: "content/v3/upload/url/" + identifier,optionsUploadURL.data}))
-  //        concatMap(result3 => fourthPOSTCallToAPI('url', result3))
-  //     ....
-  // ).subscribe(
-  //     success => { /* display success msg */ },
-  //     errorData => { /* display error msg */ }
-  // )
-
-    const uploadUrlData = {};
-
-    const uploadContentData = {};
-
-    // Create content
-
-    const resultOfCreate : any = this.createContent(this.getCreateDataOptions());
-    console.log(resultOfCreate);
-
-    // Upload URL
-    if (resultOfCreate) {
-      const resultOfURLCreate = this.getUploadURLOptions(
-        resultOfCreate.result.identifier
-      );
-
-      // Upload Content
-      const resultOfUploadContent = this.getUploadURLOptions(
-        resultOfCreate.result.identifier
-      );
-    }
-
-    // Submit for Review
-    //const resultOfReview = this.sendForReview();
+  sendToServer() {
+    this.actionService.post(this.getCreateDataOptions()) // first API call to create
+      .pipe(
+        map((res: any) => {
+          console.log("res", res);
+          console.log(res.result.identifier);
+          let idOfContentCreated = res.result.identifier;
+          forkJoin({
+            addUrl : this.actionService.post(this.getUploadURLOptions(idOfContentCreated)), // call for url update
+            addFile: this.actionService.post(this.getUploadContentOptions(idOfContentCreated)) // call for upload content
+          }).pipe(map((result) => {
+            console.log(result);
+            this.actionService.post(this.getReviewOptions(idOfContentCreated)).subscribe((res2) => { // call for review
+              console.log(res2,"Final success");
+              alert("Your Application was submitted successfully!");
+            },
+            (error) => {
+              console.log(error,"ERROR4")
+            })
+          })).subscribe((r) => {},(error) => {
+            console.log(error,"ERROR23")
+         })
+        })
+      )
+      .subscribe((r) => { console.log("SUCCESSSS")},
+      (error) => {
+         console.log(error,"ERROR1")
+         alert("Error");
+      })
   }
 
   getCreateDataOptions() {
@@ -201,13 +189,16 @@ export class UploadContentLearnathonComponent implements OnInit {
           framework: "nulplearnathon",
           organisation: ["nulp-learnathon"],
           primaryCategory: "Learning Resource",
+          board:"Town Planning and Housing",
+          medium:["Planning Schemes"],
+          gradeLevel:["Good Practices Competition"],
           createdBy: this.userProfile.identifier, // get current userId
           createdFor: ["0137299712231669762"], //
         },
       },
     };
 
-    console.log(createData.request);
+    // console.log(createData.request);
 
     const options = {
       url: "content/v3/create",
@@ -217,25 +208,21 @@ export class UploadContentLearnathonComponent implements OnInit {
     return options;
   }
 
-  createContent(createData) {
-    this.actionService.post(this.getCreateDataOptions()).subscribe(
-      (res) => {
-        console.log("onSubmitLearnathonSignUp RES", res);
-        if (res.result.response == "SUCCESS") {
-          return res;
-        }
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
-  }
+  // createContent() {
+  //   this.actionService.post(this.getCreateDataOptions()).subscribe(
+  //     (res) => {
+  //       console.log("onSubmitLearnathonSignUp RES", res);
+  //       if (res.result.response == "SUCCESS") {
+  //         return res;
+  //       }
+  //     },
+  //     (err) => {
+  //       console.log(err);
+  //     }
+  //   );
+  // }
 
   getUploadURLOptions(identifier) {
-    if(!identifier){
-      console.log("ERROR no id");
-      return;
-    }
     const options = {
       url: "content/v3/upload/url/" + identifier,
       data: {
@@ -248,26 +235,9 @@ export class UploadContentLearnathonComponent implements OnInit {
     };
 
     return options;
-
-    this.actionService.post(options).subscribe(
-      (res) => {
-        console.log("onSubmitLearnathonSignUp RES", res);
-        if (res.result.response == "SUCCESS") {
-          return res;
-        }
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
   }
 
   getUploadContentOptions(identifier) {
-    if(!identifier){
-      console.log("ERROR no id");
-      return;
-    }
-
     const options = {
       url: "/content/v3/upload" + identifier,
       data: {
@@ -280,20 +250,16 @@ export class UploadContentLearnathonComponent implements OnInit {
     };
 
     return options;
-    
-    this.actionService.post(options).subscribe(
-      (res) => {
-        console.log("onSubmitLearnathonSignUp RES", res);
-        if (res.result.response == "SUCCESS") {
-          // this.redirectToSignPage();
-        }
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
   }
 
+  getReviewOptions(identifier){
+    const options = {
+      url: "content/v3/review/" + identifier,
+      data: {},
+    };
+
+    return options;
+  }
 
   sendForReview() {
     throw new Error("Method not implemented.");
