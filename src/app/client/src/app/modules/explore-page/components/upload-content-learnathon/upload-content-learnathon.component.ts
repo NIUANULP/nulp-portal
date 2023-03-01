@@ -19,6 +19,7 @@ export class UploadContentLearnathonComponent implements OnInit {
   public formFieldProperties: any;
   public formData: any;
   public solutionTitle: string;
+  public userEmail: string;
   public file!: File;
   userProfile: any;
   categories : any = [];
@@ -123,6 +124,11 @@ export class UploadContentLearnathonComponent implements OnInit {
     this.solutionTitle = title; 
   }
 
+  // onEmailChange(email) {
+  //   console.log(email);
+  //   this.userEmail = email;    
+  // }
+
   onLinkChange(link) {
     console.log(link);
     this.linkToUpload = link; 
@@ -138,10 +144,17 @@ export class UploadContentLearnathonComponent implements OnInit {
       return;
     }
 
+
     if(!this?.solutionTitle?.trim()){
-      alert("Please select name");
+      alert("Please Enter a name");
       return;
     }
+
+    // if(!this?.userEmail?.trim()) {
+    //   alert("Please enter a valid email");
+    // regx
+    //   return;
+    // }
 
     if (this.fileUpload && !this?.file?.name) {
       alert("Please select a file to upload");
@@ -156,8 +169,7 @@ export class UploadContentLearnathonComponent implements OnInit {
     if(!this.hasExtension(this.file.name))
       return;
 
-    let confirmation = `Are you sure you want to submit your proposal?
-    You will not be able to edit your proposal once you submit`;
+    let confirmation = `Are you sure you want to submit your proposal? You will not be able to edit your proposal once you submit`;
 
     if (confirm(confirmation) !== true) {
       return;
@@ -208,7 +220,7 @@ export class UploadContentLearnathonComponent implements OnInit {
       request: {
         content: {
           name: this.solutionTitle,
-          //description: this.formData?.description,
+//          description: this.userEmail,
           code: this.solutionTitle + this.makeRandom(lengthOfCode, possible), //uuid
           mimeType: this.getContentType(this.file),
           contentType: "Resource",
@@ -267,16 +279,12 @@ export class UploadContentLearnathonComponent implements OnInit {
   }
 
   getUploadContentOptions(identifier) {
+    const formData = new FormData();
+    formData.append("file", this.file);
     const options = {
-      url: "/content/v3/upload" + identifier,
-      data: {
-        request: {
-          content: {
-            file: this.file,
-          },
-        },
-      },
-    };
+      url: "content/v3/upload/" + identifier,
+      data: formData
+    }
 
     return options;
   }
