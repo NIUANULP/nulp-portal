@@ -18,7 +18,6 @@ import { CacheService } from 'ng2-cache-service';
 import { DOCUMENT } from '@angular/common';
 import { image } from '../assets/images/tara-bot-icon';
 import { SBTagModule } from 'sb-tag-manager';
-import { JsonpClientBackend } from '@angular/common/http';
   
 /**
  * main app component
