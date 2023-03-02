@@ -9,6 +9,7 @@ import { HttpClient, HttpResponse } from "@angular/common/http";
 import { UploadContentService } from "./upload-content.service";
 import { forkJoin } from "rxjs";
 import { map } from 'rxjs/operators';
+import { NavigationHelperService } from '@sunbird/shared';
 
 @Component({
   selector: "app-upload-content-learnathon",
@@ -33,6 +34,7 @@ export class UploadContentLearnathonComponent implements OnInit {
     private http: HttpClient,
     public actionService: ActionService,
     public userService: UserService,
+    public navigationHelperService: NavigationHelperService,
     private uploadContentService: UploadContentService
   ) {
     this.state = 'upForReview';
@@ -194,19 +196,26 @@ export class UploadContentLearnathonComponent implements OnInit {
             this.actionService.post(this.getReviewOptions(idOfContentCreated)).subscribe((res2) => { // call for review
               console.log(res2,"Final success");
               alert("Your Application was submitted successfully!");
+              // redirection
+
+              this.navigationHelperService.navigateToWorkSpace('/resources');
+
             },
             (error) => {
               console.log(error,"ERROR4")
+              alert("Error4");
             })
           })).subscribe((r) => {},(error) => {
             console.log(error,"ERROR23")
+            alert("Error23");
          })
         })
       )
       .subscribe((r) => { console.log("SUCCESSSS")},
       (error) => {
          console.log(error,"ERROR1")
-         alert("Error");
+         alert("Error1");
+         this.navigationHelperService.navigateToWorkSpace('/resources');
         // this.workSpaceService.navigateToContent(content, this.state);
       })
   }

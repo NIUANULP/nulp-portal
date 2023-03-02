@@ -45,21 +45,22 @@
                     </select>
                   </div>
                   <div>
-                    <div class="inp-title">SUB – THEME</div>
+                    <div class="inp-title">SUB - THEME</div>
                     <select class="select-box">
                       <option>Select Sub-Category</option>
                       <option *ngFor="let subCategory of subCategories" value="{{subCategory.name}}">{{subCategory.name}}</option>
                     </select>
                   </div>
                   <div>
-                    <div class="inp-title">Type of proposal</div>
-                    <select class="select-box" (change)="onTypeSelect($event)">
-                      <option>Select Type of Proposal</option>
-                      <option value="youtube">Youtube Link</option>
-                      <option value="file">File Upload</option>
-                    </select>
+                    <div class="inp-title"></div>
+                    <!-- <div class="inp-title">Type of proposal</div> -->
+                      <!-- <select class="select-box" (change)="onTypeSelect($event)">
+                        <option>Select Type of Proposal</option>
+                        <option value="youtube">Youtube Link</option>
+                        <option value="file">File Upload</option>
+                      </select> -->
+                    </div>
                   </div>
-                </div>
                 <div>
                   <div class="select-holder file-holder">
                     <div class="" *ngIf="fileUpload">
