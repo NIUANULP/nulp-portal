@@ -631,6 +631,7 @@ a{
   text-decoration: none;
 }
 
+
 .sb-foot-separate {
   width: 100%;
   height: 10px;
@@ -1142,7 +1143,12 @@ h1, h2, h3, h4, h5,
     padding-top: 70px;
 }
 .text-center{
-    text-align: center;
+    text-align: center !important;
+}
+.flex-center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .d-flex{
     display: flex;
@@ -1580,7 +1586,7 @@ section img{
     justify-content: space-evenly;
     gap: 60px;
     flex-wrap: wrap;
-    margin: 125px 0;
+    margin: 75px 0;
 }
 .sb-social1{
     display: flex;
@@ -1651,11 +1657,58 @@ section img{
     background-color: #011F5B;
     padding: 100px 0;
 }
+.max-width{
+    max-width: 52% !important;
+}
+
+.solution-holder{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .bg-red1{
-  
     background-color: #990000;
     padding: 100px 0;
 }
+.bg-yellow1{
+    background-color: #FFC142;
+    padding: 100px 0;
+}
+.participate-tit{
+    font-family: 'EB Garamond';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 50px;
+    line-height: 140%;
+    text-align: center;
+    color: #000000;
+}
+.underline-bc{
+    width: 34px;
+    height: 4px;
+    background: #000000;
+}
+.underline-bc1{
+    width: 34px;
+    height: 4px;
+    background: #fff;
+}
+.max-50{
+    max-width: 50% !important;
+}
+.prt-sb{
+    margin-top: 35px;
+    margin-bottom: 14px;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 170%;
+    word-spacing: 6px;
+    color: #000000;
+    text-align: center;
+}
+
 .footer-img{
     background-image: url("../images/Footer_bg.png");
     padding: 180px 30px;
@@ -1824,6 +1877,9 @@ section img{
     bottom: 32px;
     position: absolute;
  }
+ .tx-black{
+    color: #000000 !important;
+ }
 .text-black{
     color: #000000;
     font-family: 'Roboto';
@@ -1914,6 +1970,26 @@ section img{
 .bg-blue1{
     background-color: #011F5B;
     padding: 70px 0;
+}
+.cate{
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 170%;
+    letter-spacing: 0.01em;
+}
+.par-que{
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 170%;
+    letter-spacing: 0.01em;
+    color: #FFFFFF;
+}
+.text-underline{
+    text-decoration: underline;
 }
 
 @media (max-width:1081px) {

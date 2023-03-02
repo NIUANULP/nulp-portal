@@ -238,3 +238,8 @@
 .profile-avtar:hover {
   opacity: 1;
 }
+@media (max-width:390px) {
+  .sbt-header-logo{
+    margin-left: -27px !important;
+}
+}
