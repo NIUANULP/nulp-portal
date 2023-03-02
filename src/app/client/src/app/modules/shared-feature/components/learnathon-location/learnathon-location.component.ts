@@ -9,7 +9,15 @@ import {map} from 'rxjs/operators';
 import {forkJoin, of} from 'rxjs';
 import { PopupControlService } from '../../../../service/popup-control.service';
 import { ProfileService } from './../../../../plugins/profile/services';
+import userData from './../../../../users.json';
 
+interface user {  
+  id: string,  
+  city: string,  
+  category: string,  
+  subCategory: string,
+  institution: string 
+}  
 @Component({
   selector: 'app-learnathon-location',
   templateUrl: './learnathon-location.component.html',
@@ -17,6 +25,7 @@ import { ProfileService } from './../../../../plugins/profile/services';
 })
 export class LearnathonLocationComponent implements OnInit, OnDestroy {
 
+  users: user[] = userData;
   @Output() close = new EventEmitter<any>();
   // @Input() userLocationDetails: any;
   @Input() deviceProfile: any;
@@ -79,10 +88,10 @@ allInstitutions: any;
     this.sbFormBuilder = formBuilder;
   }
 
-  ngOnInit() {
+  ngOnInit() {    
     this.popupControlService.changePopupStatus(false);
     this.initializeFormFields();
-    console.log("this.userService.userProfile",this.userService.userProfile)
+   
   }
   categoryChange(event){
     this.selectedCategory = event
@@ -129,6 +138,8 @@ allInstitutions: any;
   }
 
   enableSubmitButton() {
+    // console.log("this.userProfile",this.userProfile)
+    // console.log("this.userService.userProfile",this.userService.userid)
     this.userDetailsForm.valueChanges.subscribe(val => {
       this.enableSubmitBtn = (this.userDetailsForm.status === 'VALID');
     });
@@ -144,7 +155,10 @@ allInstitutions: any;
 
   updateUserLocation(event) {
     console.log("userDetailsForm--", this.userDetailsForm.value)
-    
+    this.userDetailsForm.value["id"] = this.userProfile.userid
+    localStorage.setItem('learnathonUserDetails', JSON.stringify(this.userDetailsForm.value));
+    this.users.push(this.userDetailsForm.value)
+    console.log("userData---", this.users)
     const request = {
     //   "framework": {
     //     "board": [
