@@ -30,14 +30,60 @@
                   (statusChanges)="onStatusChanges($event)"
                 >
                 </sb-dynamic-form> -->
-  
+
+                
+                <form class="sb-form">
                <div class="mt-20">
                 <div class="inp-title">Title of the Solution</div>
                 <input placeholder="Title" class="sb-textbox78" #title type="text" (input)="onTitleChange(title.value)" />
                </div>
   
+               <div *ngFor="let field of formFieldOptions">
+                <div class="required sb-field-form-group"
+                  *ngIf="field.code === 'board' && allowedFields.includes(field.code)">
+                  <label>Themes
+                    <span class="mr-8 sb-color-red" *ngIf="field.required"> * </span>
+                  </label>
+                  <div class="sb-field">
+                    <label class="w-100">
+                      <sui-select id={{field.code}} [isSearchable]="false" class="selection sb-form-control"
+                        [(ngModel)]="selectedOption[field.code]" [options]="options" 
+                        (selectedOptionChange)="selectedTheme($event, field.code)" placeholder="Select Themes"
+                        (ngModelChange)="enableSubmitButton()" name={{field.code}}>
+                        
+                        <sui-select-option *ngFor="let option of field.range | sortBy:'name':'asc'" tabindex="0"
+                          [value]="option.name | interpolate: 'CBSE': 'CBSE/NCERT'"></sui-select-option>
+                      </sui-select>
+                    </label>
+                  </div>
+                </div>
+                <div class="sb-field-form-group mt-8" *ngIf="field.code == 'medium' && allowedFields.includes(field.code)">
+                  <label>Sub-Themes
+                    <span class="mr-8 sb-color-red" *ngIf="field.required"> * </span>
+                  </label>
+                  <div class="sb-field">
+                    <label class="w-100">
+                      <sui-select id={{field.code}} [isSearchable]="false" class="selection sb-form-control"
+                        [(ngModel)]="selectedOption[field.code]" [options]="options" placeholder="Select Sub-Themes"
+                        (selectedOptionChange)="selectedSubTheme($event, field.code)"
+                        (ngModelChange)="enableSubmitButton()" name={{field.code}} >
+                        <sui-select-option *ngFor="let option of selectedSubThemes" tabindex="0" [value]="option.name">
+                        </sui-select-option>
+                      </sui-select>
+                      <!-- <sui-select id={{field.code}} [isSearchable]="false" class="selection sb-form-control"
+                        [(ngModel)]="selectedOption[field.code]" [options]="options"
+                        (ngModelChange)="enableSubmitButton()" name={{field.code}} 
+                        *ngIf="field.code !== 'gradeLevel'">
+                        <sui-select-option *ngFor="let option of field.range | sortBy:'name':'asc'" tabindex="0"
+                          [value]="option.name"></sui-select-option>
+                      </sui-select> -->
+                    </label>
+                  </div>
+                </div>
+              </div>
+
                 <div class="select-holder9">
-                  <div>
+                  <!-- <div>
                     <div class="inp-title">THEME</div>
                     <select class="select-box" (change)="onCategorySelect($event)">
                       <option>Select Category</option>
@@ -50,7 +96,7 @@
                       <option>Select Sub-Category</option>
                       <option *ngFor="let subCategory of subCategories" value="{{subCategory.name}}">{{subCategory.name}}</option>
                     </select>
-                  </div>
+                  </div> -->
                   <div>
                     <div class="inp-title"></div>
                     <!-- <div class="inp-title">Type of proposal</div> -->
@@ -83,6 +129,7 @@
   
                   Submit
                 </button>
+              </form>
            
               </div>
               

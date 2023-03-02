@@ -24,6 +24,7 @@ import { ListUploadcontentLearnathonComponent } from './components/list-uploadco
 import { WorkSpaceService, EditorService , BatchService, ReviewCommentsService} from '../workspace';
 import { CommonFormElementsModule } from 'common-form-elements-web-v9';
 import { LearnathonLandingPageComponent } from './components/learnathon-landing-page/learnathon-landing-page.component'; 
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   // @Hack isLearnathon
@@ -43,7 +44,8 @@ import { LearnathonLandingPageComponent } from './components/learnathon-landing-
     SlickModule, 
     ContentSectionModule,
     ObservationModule,
-    CommonFormElementsModule
+    CommonFormElementsModule,
+    FormsModule,ReactiveFormsModule
   ],
   
   // @Hack isLearnathon
