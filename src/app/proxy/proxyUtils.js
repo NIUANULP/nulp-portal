@@ -51,7 +51,9 @@ const decorateRequestHeaders = function (upstreamUrl = "") {
       proxyReqOpts.headers['x-authenticated-user-token'] =  getAuthToken(srcReq)
       proxyReqOpts.headers['x-auth-token'] =  getAuthToken(srcReq)
     }
-    proxyReqOpts.headers.Authorization = 'Bearer ' + getBearerToken(srcReq);
+    // proxyReqOpts.headers.Authorization = 'Bearer ' + getBearerToken(srcReq);
+        proxyReqOpts.headers.Authorization = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkTEJ3cG5MdE1SVWRCOTVBdWFCWjhMd0hSR2lTUTBpVCJ9.Q7-3SuUgnZXJuu-j2_kw9r8J82ckSxRR6zxylpgVG5o'; //'Bearer ' + getBearerToken(srcReq);
+
     proxyReqOpts.rejectUnauthorized = false
     proxyReqOpts.agent = upstreamUrl.startsWith('https') ? httpsAgent : httpAgent;
     proxyReqOpts.headers['connection'] = 'keep-alive';

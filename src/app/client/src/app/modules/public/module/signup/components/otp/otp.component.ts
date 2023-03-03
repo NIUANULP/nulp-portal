@@ -7,6 +7,8 @@ import * as _ from 'lodash-es';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { IEndEventInput, IInteractEventEdata, TelemetryService } from '@sunbird/telemetry';
 import { RecaptchaComponent } from 'ng-recaptcha';
+// import { AddusserService } from 'src/app/modules/dashboard/services/addusser/addusser.service';
+import { AddusserService } from '../../../../../dashboard/services/addusser/addusser.service';
 
 @Component({
   selector: 'app-otp',
@@ -47,10 +49,11 @@ export class OtpComponent implements OnInit {
   googleCaptchaSiteKey: string;
   isP2CaptchaEnabled: any;
   redirecterrorMessage=false;
+
   constructor(public resourceService: ResourceService, public signupService: SignupService,
     public activatedRoute: ActivatedRoute, public telemetryService: TelemetryService,
     public deviceDetectorService: DeviceDetectorService, public router: Router,
-    public utilService: UtilService, public configService: ConfigService) {
+    public utilService: UtilService, public configService: ConfigService, public addUserService: AddusserService) {
   }
 
   ngOnInit() {
@@ -148,6 +151,7 @@ resendOtpEnablePostTimer() {
 
   createUser(data?: any) {
     let identifier = '';
+
     const createRequest = {
       params: {
         source: _.get(this.activatedRoute, 'snapshot.queryParams.client_id'),
@@ -168,39 +172,40 @@ resendOtpEnablePostTimer() {
       createRequest.request['emailVerified'] = true;
       identifier = this.signUpdata.controls.email.value;
     }
-    createRequest.request['reqData'] = _.get(data, 'reqData');
-    if (this.signUpdata.controls.tncAccepted.value && this.signUpdata.controls.tncAccepted.status === 'VALID') {
-      this.signupService.createUserV3(createRequest).subscribe((resp: ServerResponse) => {
-        this.telemetryLogEvents('sign-up', true);
-        const tncAcceptRequestBody = {
-          request: {
-            version: this.tncLatestVersion,
-            identifier: identifier
+
+     if (this.signUpdata.controls.tncAccepted.value && this.signUpdata.controls.tncAccepted.status === 'VALID') {
+        createRequest.request['reqData'] = _.get(data, 'reqData');
+        this.signupService.createUserV3(createRequest).subscribe((resp: ServerResponse) => {
+          this.telemetryLogEvents('sign-up', true);
+          const tncAcceptRequestBody = {
+            request: {
+              version: this.tncLatestVersion,
+              identifier: identifier
+            }
+          };
+          this.signupService.acceptTermsAndConditions(tncAcceptRequestBody).subscribe(res => {
+            this.telemetryLogEvents('accept-tnc', true);
+            this.redirectToSignPage();
+          }, (err) => {
+            this.telemetryLogEvents('accept-tnc', false);
+            this.redirectToSignPage();
+          });
+        },
+          (err) => {
+            console.log(err);
+            this.telemetryLogEvents('sign-up', false);
+            this.infoMessage = '';
+            this.errorMessage = this.resourceService.messages.fmsg.m0085;
+            this.disableSubmitBtn = false;
+            this.logCreateUserError(err.error.params.errmsg);
+            this.telemetryService.interact(this.createUserErrorInteractEdata);
+            if (err.status === 301) {
+              this.redirecterrorMessage = true;
+            } else {
+              this.redirecterrorMessage = false;
+            }
           }
-        };
-        this.signupService.acceptTermsAndConditions(tncAcceptRequestBody).subscribe(res => {
-          this.telemetryLogEvents('accept-tnc', true);
-          this.redirectToSignPage();
-        }, (err) => {
-          this.telemetryLogEvents('accept-tnc', false);
-          this.redirectToSignPage();
-        });
-      },
-        (err) => {
-          console.log(err);
-          this.telemetryLogEvents('sign-up', false);
-          this.infoMessage = '';
-          this.errorMessage = this.resourceService.messages.fmsg.m0085;
-          this.disableSubmitBtn = false;
-          this.logCreateUserError(err.error.params.errmsg);
-          this.telemetryService.interact(this.createUserErrorInteractEdata);
-          if (err.status === 301) {
-            this.redirecterrorMessage = true;
-          } else {
-            this.redirecterrorMessage = false;
-          }
-        }
-      );
+        ); 
     }
   }
 

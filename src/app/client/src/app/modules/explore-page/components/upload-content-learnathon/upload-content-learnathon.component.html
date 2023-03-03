@@ -1,0 +1,95 @@
+<div class="">
+  <div class="sb-g sbt-container sbt-page-content">
+    <div class="sb-g-col-xs-12 sb-g-col-md-12 sb-g-col-lg-12 sb-g-col-xxxl-16">
+      <div class="home-container">
+        <div class="sb-library-cards relative9">
+          <div>
+            <div class="" tabindex="0">
+
+              <div class="sbt-container1">
+                <div class="preference">
+                  <p class="header font-weight-bold mb-8 up-title">
+                    Learnathon - Upload Content Form
+                  </p>
+  
+                  <p>
+                    <span class="mr-24 up-sb-title">
+                      NULP for building India's largest urban learning
+                        community and to curate and collate the best content on
+                        the platform.
+                    </span>
+                  </p>
+                </div>
+                <!-- <ng-container *ngIf="formFieldProperties"> -->
+  
+                <!-- <sb-form (initialize)="outputData($event)" (statusChanges)="onStatusChanges($event)" (valueChanges)="valueChanges($event)"></sb-form> -->
+                <!-- <sb-dynamic-form
+                  *ngIf="formFieldProperties"
+                  [config]="formFieldProperties.fields"
+                  (valueChanges)="valueChanges($event)"
+                  (statusChanges)="onStatusChanges($event)"
+                >
+                </sb-dynamic-form> -->
+  
+               <div class="mt-20">
+                <div class="inp-title">Title of the Solution</div>
+                <input placeholder="Title" class="sb-textbox78" #title type="text" (input)="onTitleChange(title.value)" />
+               </div>
+  
+                <div class="select-holder9">
+                  <div>
+                    <div class="inp-title">THEME</div>
+                    <select class="select-box" (change)="onCategorySelect($event)">
+                      <option>Select Category</option>
+                      <option *ngFor="let category of categories" value="{{category.id}}">{{category.name}}</option>
+                    </select>
+                  </div>
+                  <div>
+                    <div class="inp-title">SUB - THEME</div>
+                    <select class="select-box">
+                      <option>Select Sub-Category</option>
+                      <option *ngFor="let subCategory of subCategories" value="{{subCategory.name}}">{{subCategory.name}}</option>
+                    </select>
+                  </div>
+                  <div>
+                    <div class="inp-title"></div>
+                    <!-- <div class="inp-title">Type of proposal</div> -->
+                      <!-- <select class="select-box" (change)="onTypeSelect($event)">
+                        <option>Select Type of Proposal</option>
+                        <option value="youtube">Youtube Link</option>
+                        <option value="file">File Upload</option>
+                      </select> -->
+                    </div>
+                  </div>
+                <div>
+                  <div class="select-holder file-holder">
+                    <div class="" *ngIf="fileUpload">
+                      <div class="inp-title">Upload your proposal here</div>
+                      <input type="file" (change)="onUpload($event)" />
+                    </div>
+                    
+                    <div class="" *ngIf="!fileUpload">
+                      <input #link type="text" (input)="onLinkChange(link.value)" placeholder="Enter youtube link"/>
+                    </div>
+                  </div>
+                </div>
+                <!-- <button (click)="onUpload()">Upload File</button> -->
+                <!-- </ng-container> -->
+                
+                <button
+                  (click)="onSubmit()"
+                  class="sb-btn sb-btn-primary sb-btn-normal sb-btn-border sb-button"
+                >
+  
+                  Submit
+                </button>
+           
+              </div>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
