@@ -60,7 +60,58 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
   yearOfBirth: string;
   isIOSDevice: boolean = false;
   isLearnathon: boolean = false;
+  showLearnathonLocationPopup = false;
+  
+  
+  // =======learnathon starts======
 
+userDetailsForm: FormGroup;
+  public processedDeviceLocation: any = {};
+  selectedState;
+  selectedDistrict;
+  allStates: any;
+  allDistricts: any;
+  showDistrictDivLoader = false;
+  sbLocationFormBuilder: FormBuilder;
+  enableSubmitBtn = false;
+  isDeviceProfileUpdateAllowed = false;
+  isUserProfileUpdateAllowed = false;
+  public suggestionType: any;
+  private suggestedLocation;
+  showCategoryLoader = false;
+  showCityLoader = false;
+  selectedCategory:any;
+  allCategories:any= [
+    {
+        "value": "Individual",
+        "label": "Individual"
+    },
+    {
+        "value": "Group",
+        "label": "Group"
+    }
+]
+allSubCategories:any;
+allCities: any =[
+  {
+      "value": "Mumbai",
+      "label": "Mumbai"
+  },
+  {
+      "value": "Pune",
+      "label": "Pune"
+  },{
+    "value": "Dilhi",
+    "label": "Dilhi"
+},{
+  "value": "Banglore",
+  "label": "Banglore"
+}
+]
+
+allInstitutions: any;
+
+// =======learnathon ends=======
   constructor(formBuilder: FormBuilder, public resourceService: ResourceService,
     public signupService: SignupService, public toasterService: ToasterService,
     public tenantService: TenantService, public deviceDetectorService: DeviceDetectorService,
@@ -194,30 +245,98 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   initializeFormFields() {
-    this.signUpForm = this.sbFormBuilder.group({
-      name: new FormControl(null, [Validators.required]),
-      password: new FormControl(null, [Validators.required, Validators.minLength(8)]),
-      confirmPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
-      phone: new FormControl(null, [Validators.required, Validators.pattern(/^[6-9]\d{9}$/)]),
-      email: new FormControl(null, [Validators.required, Validators.email]),
-      contactType: new FormControl('email'),
-      uniqueContact: new FormControl(null, [Validators.required]),
-      tncAccepted: new FormControl(false, [Validators.requiredTrue])
-    }, {
-      validator: (formControl) => {
-        const passCtrl = formControl.controls.password;
-        const conPassCtrl = formControl.controls.confirmPassword;
-        const nameCtrl = formControl.controls.name;
-        this.onPasswordChange(passCtrl);
-        if (_.trim(nameCtrl.value) === '') { nameCtrl.setErrors({ required: true }); }
-        if (_.trim(passCtrl.value) === '') { passCtrl.setErrors({ required: true }); }
-        if (_.trim(conPassCtrl.value) === '') { conPassCtrl.setErrors({ required: true }); }
-        if (passCtrl.value !== conPassCtrl.value) {
-          conPassCtrl.setErrors({ validatePasswordConfirmation: true });
-        } else { conPassCtrl.setErrors(null); }
-        return null;
-      }
-    });
+    if(this.isLearnathon){
+      this.signUpForm = this.sbFormBuilder.group({
+        name: new FormControl(null, [Validators.required]),
+        password: new FormControl(null, [Validators.required, Validators.minLength(8)]),
+        confirmPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
+        phone: new FormControl(null, [Validators.required, Validators.pattern(/^[6-9]\d{9}$/)]),
+        email: new FormControl(null, [Validators.required, Validators.email]),
+        contactType: new FormControl('email'),
+        uniqueContact: new FormControl(null, [Validators.required]),
+        tncAccepted: new FormControl(false, [Validators.requiredTrue]),
+        // category: new FormControl(null,[Validators.required]),
+        // subcategory: new FormControl(null,[Validators.required]),
+        category: new FormControl(null),
+        subcategory: new FormControl(null),
+        city: new FormControl(null),
+        institution: new FormControl(null)
+      }, {
+        validator: (formControl) => {
+          const passCtrl = formControl.controls.password;
+          const conPassCtrl = formControl.controls.confirmPassword;
+          const nameCtrl = formControl.controls.name;
+          // const category = formControl.controls.category;
+          // const subCategory = formControl.controls.subCategory;
+          this.onPasswordChange(passCtrl);
+          if (_.trim(nameCtrl.value) === '') { nameCtrl.setErrors({ required: true }); }
+          if (_.trim(passCtrl.value) === '') { passCtrl.setErrors({ required: true }); }
+          if (_.trim(conPassCtrl.value) === '') { conPassCtrl.setErrors({ required: true }); }
+          // if (_.trim(category.value) === '') { category.setErrors({ required: true }); }
+          // if (_.trim(subCategory.value) === '') { subCategory.setErrors({ required: true }); }
+          if (passCtrl.value !== conPassCtrl.value) {
+            conPassCtrl.setErrors({ validatePasswordConfirmation: true });
+          } else { conPassCtrl.setErrors(null); }
+          return null;
+        }
+      });
+    }else{
+      this.signUpForm = this.sbFormBuilder.group({
+        name: new FormControl(null, [Validators.required]),
+        password: new FormControl(null, [Validators.required, Validators.minLength(8)]),
+        confirmPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
+        phone: new FormControl(null, [Validators.required, Validators.pattern(/^[6-9]\d{9}$/)]),
+        email: new FormControl(null, [Validators.required, Validators.email]),
+        contactType: new FormControl('email'),
+        uniqueContact: new FormControl(null, [Validators.required]),
+        tncAccepted: new FormControl(false, [Validators.requiredTrue]),
+       
+      }, {
+        validator: (formControl) => {
+          const passCtrl = formControl.controls.password;
+          const conPassCtrl = formControl.controls.confirmPassword;
+          const nameCtrl = formControl.controls.name;
+          
+          this.onPasswordChange(passCtrl);
+          if (_.trim(nameCtrl.value) === '') { nameCtrl.setErrors({ required: true }); }
+          if (_.trim(passCtrl.value) === '') { passCtrl.setErrors({ required: true }); }
+          if (_.trim(conPassCtrl.value) === '') { conPassCtrl.setErrors({ required: true }); }
+          if (passCtrl.value !== conPassCtrl.value) {
+            conPassCtrl.setErrors({ validatePasswordConfirmation: true });
+          } else { conPassCtrl.setErrors(null); }
+          return null;
+        }
+      });
+    }
+    // this.signUpForm = this.sbFormBuilder.group({
+    //   name: new FormControl(null, [Validators.required]),
+    //   password: new FormControl(null, [Validators.required, Validators.minLength(8)]),
+    //   confirmPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
+    //   phone: new FormControl(null, [Validators.required, Validators.pattern(/^[6-9]\d{9}$/)]),
+    //   email: new FormControl(null, [Validators.required, Validators.email]),
+    //   contactType: new FormControl('email'),
+    //   uniqueContact: new FormControl(null, [Validators.required]),
+    //   tncAccepted: new FormControl(false, [Validators.requiredTrue]),
+    //   category: new FormControl(null,[Validators.requiredTrue]),
+    //   subcategory: new FormControl(null,[Validators.requiredTrue]),
+    //   city: new FormControl(null),
+    //   institution: new FormControl(null)
+    // }, {
+    //   validator: (formControl) => {
+    //     const passCtrl = formControl.controls.password;
+    //     const conPassCtrl = formControl.controls.confirmPassword;
+    //     const nameCtrl = formControl.controls.name;
+        
+    //     this.onPasswordChange(passCtrl);
+    //     if (_.trim(nameCtrl.value) === '') { nameCtrl.setErrors({ required: true }); }
+    //     if (_.trim(passCtrl.value) === '') { passCtrl.setErrors({ required: true }); }
+    //     if (_.trim(conPassCtrl.value) === '') { conPassCtrl.setErrors({ required: true }); }
+    //     if (passCtrl.value !== conPassCtrl.value) {
+    //       conPassCtrl.setErrors({ validatePasswordConfirmation: true });
+    //     } else { conPassCtrl.setErrors(null); }
+    //     return null;
+    //   }
+    // });
     this.onContactTypeValueChanges();
     this.enableSignUpSubmitButton();
   }
@@ -341,8 +460,10 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
       // console.log("learnathon - ", currentURL);
 
       if (this.isLearnathon)
-      {
-        console.log("learnathon - In", );
+      { 
+        // this.showLearnathonLocationPopup = true;
+
+        console.log("learnathon - In", this.signUpForm.controls );
         this.onSubmitLearnathonSignUp();
       }
       else
@@ -429,6 +550,22 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
   // }
 
   onSubmitLearnathonSignUp(){
+    let category =this.signUpForm.controls.category.value;
+    let subCategory=this.signUpForm.controls.subcategory.value;
+    let city =this.signUpForm.controls.city.value;
+    let institution =this.signUpForm.controls.institution.value;
+    if(city==null){
+     city =""
+    }
+    if(institution==null){
+      institution =""
+     }
+     if(category==null){
+      category =""
+     }
+     if(subCategory==null){
+      subCategory =""
+     }
     const createRequest = {
       'request': {
         'firstName': _.trim(this.signUpForm.controls.name.value),
@@ -449,8 +586,12 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
           "subject": [
               "AI"
           ],
+          "subcategory":[this.signUpForm.controls.subcategory.value],
+          "category":[this.signUpForm.controls.category.value],
+          "city":[city],
+          "institution":[institution],
           "id": [
-              "ttplsandboxfw2"
+              "nulplearnathon"
           ]
       }
       }
@@ -616,5 +757,38 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
 
   showAndHidePopup(mode: boolean) {
     this.showTncPopup = mode;
+  }
+
+  categoryChange(event){
+    this.selectedCategory = event
+
+    if(event == 'Individual'){
+      this.allSubCategories= [
+        {
+            "value": "Government Official",
+            "label": "Government Official"
+        },
+        {
+            "value": "Urban Scholar",
+            "label": "Urban Scholar"
+        }
+    ]
+    }else{
+      this.allSubCategories= [
+        {
+            "value": "Cities",
+            "label": "Cities"
+        },
+        {
+            "value": "Academia & CSOs",
+            "label": "Academia & CSOs"
+        },
+        {
+            "value": "Industries",
+            "label": "Industries"
+        }
+    ]
+    }
+
   }
 }
