@@ -560,6 +560,12 @@ allInstitutions: any;
     if(institution==null){
       institution =""
      }
+     if(category==null){
+      category =""
+     }
+     if(subCategory==null){
+      subCategory =""
+     }
     const createRequest = {
       'request': {
         'firstName': _.trim(this.signUpForm.controls.name.value),
