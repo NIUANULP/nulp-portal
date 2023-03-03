@@ -1,63 +1,66 @@
 /* content upload css start here */
 .sbt-container1{
     width: calc(100% - 4%);
-    padding: 74px !important;
+    padding: 50px 74px !important;
     margin: 0 auto;
-    padding-top: 1.75rem;
     border-radius: 2.5rem 2.5rem 0 0;
     background-color: #fff;
     z-index: 8;
     margin-bottom: 30px;
     box-shadow: 0.375rem 0.375rem 0.125rem 0 rgba(0, 0, 0, 0.1);
 }
-.mt-20{
-    margin-top: 40px;
+.mt-20u{
+    margin-top: 13px;
 }
 .sb-textbox78{
-font-size: 0.75rem; 
-min-height: 2.5rem;
-border: 0;
-outline: 0;
-padding: 16px 12px;
-border-radius: 1.75rem;
-line-height: normal;
- background: #FFF;
-color: #545454;
-width: 58.5%;
-box-shadow: 0.375rem 0.375rem 0.125rem 0 rgba(0, 0, 0, 0.1);
-border: 1px solid rgb(175, 171, 171);
-font-size: 16px;
+    font-size: 12px; 
+    min-height: 2.5rem;
+    border: 0;
+    outline: 0;
+    padding: 8px 12px;
+    border-radius: 7px;
+    line-height: normal;
+    background: #FFF;
+    color: #9f9999;
+    width: 48.5%;
+    border: 1px solid rgb(175, 171, 171);
 }
 .sb-button{
-    padding: 0.5rem 1rem !important;
+    padding: 0.5rem 2rem !important;
     border-radius: 0.375rem !important;
 }
 .select-holder{
     display: flex !important;
     gap: 50px !important;
-    margin: 40px 0 !important;
+    margin-bottom: 40px 0 !important;
+}
+.sb-btn1{
+    padding: 16px 2.5rem !important;
+    border-radius: 0.375rem !important;
 }
 .select-box{
-    padding: 15px 6px;
+    padding: 0px !important;
     background-color: #fff;
-    border-radius: 8px;
+    border-radius: 7px;
     cursor: pointer;
-    transition: .4s;
-    box-shadow: 0.375rem 0.375rem 0.125rem 0 rgba(0, 0, 0, 0.1);
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+    // box-shadow: 0.375rem 0.375rem 0.125rem 0 rgb(0 0 0 / 10%);
+    display: -webkit-box;
     display: flex;
+    -webkit-box-pack: justify;
     justify-content: space-between;
-    border: 1px solid rgb(175, 171, 171);
-    color: #008840;
-    font-size: 0.875rem;
-    font-weight: 700;
+    border: 1px solid #afabab;
+    font-size: 10px;
+    font-weight: 500;
 }
 .up-title{
     font-family: 'EB Garamond';
     font-style: normal;
     font-weight: 400;
-    font-size: 50px;
+    font-size: 20px;
     line-height: 140%;
-    margin-bottom: 26px !important;
+    margin-bottom: 16px !important;
 }
 .up-sb-title{
     margin-top: 16px;
@@ -73,35 +76,58 @@ font-size: 16px;
 .inp-title{
     font-family: "Roboto";
     font-style: normal;
-    font-size: 16px;
+    font-size: 12px;
     line-height: 170%;
     text-align: justify;
     letter-spacing: 0.01em;
-    font-weight: 600;
+    font-weight: 500;
+    padding: 0px !important;
+    margin: 0px !important;
+}
+.mt--17{
+    margin-top: -19px !important;
+}
+.mt-6{
+ margin-top: -10px !important;
 }
 .file-holder{
-    border: 2px solid rgb(175, 171, 171);
-    padding: 2%;
-    box-shadow: 0.375rem 0.375rem 0.125rem 0 rgba(0, 0, 0, 0.1);
-    border-radius: 15px;
+    border: 1px solid #afabab;
+    padding: 5px;
+    // box-shadow: 0.375rem 0.375rem 0.125rem 0 rgb(0 0 0 / 10%);
+    border-radius: 7px;
     display: inline-block !important;
 }
 .select-holder9{
     display: -webkit-box !important;
     display: flex !important;
     gap: 50px !important;
-    margin: 20px 0 0 0 !important;
+    margin: 13px 0 0 0 !important;
     flex-wrap: wrap;
+}
+.btn-end{
+    display: flex;
+    justify-content: end;
+}
+.file-upload{
+    font-size: 10px !important;
+}
+.input-commet{
+    font-size: 10px !important;
+    color: red !important;
+    font-style: italic;
+}
+.para-tit{
+    font-size: 14px !important;
+    font-weight: 500 !important;
+}
+.select-box sui-select {
+    border: none;
 }
 
 @media (max-width:390px) {
-    .up-title{
-        font-size: 35px !important;
+    
+    .sb-textbox78{
+        width: 128% !important;
     }
-    .textbox78{
-        width: 128%;
-    }
-    .file-holder{
-        margin-left: -56px !important;
-    }
+    
 }
