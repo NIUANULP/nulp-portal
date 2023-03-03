@@ -1,15 +1,20 @@
 import { Component, OnInit } from "@angular/core";
 
-import { LearnerService, ActionService, UserService } from "@sunbird/core";
-import { ContentService } from "./../../../../modules/core/services/content/content.service";
+import { LearnerService, ActionService, UserService, OrgDetailsService, FrameworkService, FormService } from "@sunbird/core";import { ContentService } from "./../../../../modules/core/services/content/content.service";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { Observable } from "rxjs/internal/Observable";
 import { HttpClient, HttpResponse } from "@angular/common/http";
 import { UploadContentService } from "./upload-content.service";
 import { forkJoin } from "rxjs";
-import { map } from 'rxjs/operators';
 import { NavigationHelperService } from '@sunbird/shared';
+
+// Added by Komal
+import { first, mergeMap, map, filter } from 'rxjs/operators';
+import { of, throwError, Subscription } from 'rxjs';
+import * as _ from 'lodash-es';
+import { ResourceService, ToasterService } from '@sunbird/shared';
+import {FormControl} from '@angular/forms';
 
 @Component({
   selector: "app-upload-content-learnathon",
@@ -28,6 +33,28 @@ export class UploadContentLearnathonComponent implements OnInit {
   state: string;
   fileUpload: boolean = true;
   linkToUpload : string;  
+
+// Added by komal
+  private userFramework: Subscription;
+  private custodianOrg = false;
+  private custodianOrgBoard: any = {};
+  isGuestUser = false;
+  public selectedOption: any = {};
+  private frameWorkId: string;
+  private custOrgFrameworks: any;
+  public allowedFields = ['board', 'medium', 'gradeLevel', 'subject'];
+  private _formFieldProperties: any;
+  guestUserHashTagId;
+  private categoryMasterList: any = {};
+  public formFieldOptions = [];
+  public showButton = false;
+  formInput: any = {};
+  uploadContentForm: FormGroup;
+  uploadContentSbForm: FormBuilder;
+  selectedSubThemes: any;
+  formFieldTheme: any;
+  formFieldSubTheme:any;
+
   constructor(
     private learnerService: LearnerService,
     private contentService: ContentService,
@@ -35,6 +62,12 @@ export class UploadContentLearnathonComponent implements OnInit {
     public actionService: ActionService,
     public userService: UserService,
     public navigationHelperService: NavigationHelperService,
+    private orgDetailsService: OrgDetailsService,
+    private frameworkService: FrameworkService,
+    private formService: FormService,
+    private toasterService: ToasterService,
+    public resourceService: ResourceService,
+    formBuilder: FormBuilder,
     private uploadContentService: UploadContentService
   ) {
     this.state = 'upForReview';
@@ -74,7 +107,207 @@ export class UploadContentLearnathonComponent implements OnInit {
   ngOnInit(): void {
     this.categories = this.uploadContentService.getTheme();
 
+    // Added by komal
+    this.selectedOption = _.pickBy(_.cloneDeep(this.formInput), 'length') || { "board": [], "gradeLevel": [],"medium": [],"id": [ "nulp-learnathon" ] }; // clone selected field inputs from parent
+      
+    this.userFramework = this.isCustodianOrgUser().pipe(
+      mergeMap((custodianOrgUser: boolean) => {
+        this.custodianOrg = custodianOrgUser;
+        if (this.isGuestUser) {
+          //return this.getFormOptionsForCustodianOrgForGuestUser();
+        } else if (custodianOrgUser) {
+          return this.getFormOptionsForCustodianOrg();
+        } else {
+          return this.getFormOptionsForOnboardedUser();
+        }
+      }), first()).subscribe(data => {
+        this.formFieldOptions = data;
+        // console.log('formFieldOptions - ', data);
+      }, err => {
+        this.toasterService.warning(this.resourceService.messages.emsg.m0012);
+        // this.navigateToLibrary();
+      });
+
   }
+
+  // Added by komal
+
+  selectedTheme(theme, themeCode) {
+    this.formFieldTheme = theme;
+    const isSelectedTheme = this.formFieldOptions[0].range.filter((item) => item.name === theme);
+    this.selectedSubThemes = isSelectedTheme[0].associations;
+    this.selectedOption['medium'] = "";
+  }
+
+  selectedSubTheme(subTheme, themeCode){
+    this.formFieldSubTheme = subTheme;
+  }
+
+  private isCustodianOrgUser() {
+    return this.orgDetailsService.getCustodianOrgDetails().pipe(map((custodianOrg) => {
+      console.log("custodianOrg - ", custodianOrg);
+      if (_.get(this.userService, 'userProfile.rootOrg.rootOrgId') === _.get(custodianOrg, 'result.response.value')) {
+        return true;
+      }
+      return false;
+    }));
+  }
+
+  private getFormOptionsForCustodianOrg() {
+    this.selectedOption.board = _.get(this.selectedOption, 'board[0]');
+    this.frameWorkId = _.get(_.find(this.custOrgFrameworks, { 'name': this.selectedOption.board }), 'identifier');
+    return this.getFormatedFilterDetails().pipe(map((formFieldProperties) => {
+      this._formFieldProperties = formFieldProperties;
+      return this._formFieldProperties;
+    }));
+  }
+
+  private getFormOptionsForOnboardedUser() {
+    return this.getFormatedFilterDetails().pipe(map((formFieldProperties) => {
+      this._formFieldProperties = formFieldProperties;
+      if (_.get(this.selectedOption, 'board[0]')) {
+        this.selectedOption.board = _.get(this.selectedOption, 'board[0]');
+      }
+      return this._formFieldProperties;
+    }));
+  }
+
+  private getFormatedFilterDetails() {
+    if (this.isGuestUser) {
+      this.frameworkService.initialize(this.frameWorkId, this.guestUserHashTagId);
+    } else {
+      this.frameworkService.initialize(this.frameWorkId);
+    }
+    return this.frameworkService.frameworkData$.pipe(
+      filter((frameworkDetails) => { // wait to get the framework name if passed as input
+        if (!frameworkDetails.err) {
+          const framework = this.frameWorkId ? this.frameWorkId : 'defaultFramework';
+          if (!_.get(frameworkDetails.frameworkdata, framework)) {
+            return false;
+          }
+        }
+        return true;
+      }),
+      mergeMap((frameworkDetails) => {
+        if (!frameworkDetails.err) {
+          const framework = this.frameWorkId ? this.frameWorkId : 'defaultFramework';
+          const frameworkData = _.get(frameworkDetails.frameworkdata, framework);
+          this.frameWorkId = frameworkData.identifier;
+          this.categoryMasterList = frameworkData.categories;
+          return this.getFormDetails();
+        } else {
+          return throwError(frameworkDetails.err);
+        }
+      }), map((formData: any) => {
+        const formFieldProperties = _.filter(formData, (formFieldCategory) => {
+          formFieldCategory.range = _.get(_.find(this.categoryMasterList, { code: formFieldCategory.code }), 'terms') || [];
+          return true;
+        });
+        return _.sortBy(_.uniqBy(formFieldProperties, 'code'), 'index');
+      }), first());
+  }
+
+
+  private getFormDetails() {
+    const formServiceInputParams = {
+      formType: 'user',
+      formAction: 'update',
+      contentType: 'framework',
+      framework: this.frameWorkId
+    };
+    const hashTagId = this.isGuestUser ? this.guestUserHashTagId : _.get(this.userService, 'hashTagId');
+    return this.formService.getFormConfig(formServiceInputParams, hashTagId);
+  }
+
+  private getUpdatedFilters(field, editMode = false) {
+    console.log("getUpdatedFilters - ", field, editMode);
+    const targetIndex = field.index + 1; // only update next field if not editMode
+    const formFields = _.reduce(this.formFieldProperties, (accumulator, current) => {
+      if (current.index === targetIndex || editMode) {
+        const parentField: any = _.find(this.formFieldProperties, { index: current.index - 1 }) || {};
+        const parentAssociations = _.reduce(parentField.range, (collector, term) => {
+          const selectedFields = this.selectedOption[parentField.code] || [];
+          if ((selectedFields.includes(term.name) || selectedFields.includes(term.code))) {
+            const selectedAssociations = _.filter(term.associations, { category: current.code }) || [];
+           console.log("selectedAssociations - ", selectedAssociations);
+            collector = _.concat(collector, selectedAssociations);
+          }
+          return collector;
+        }, []);
+        const updatedRange = _.filter(current.range, range => _.find(parentAssociations, { code: range.code }));
+        current.range = updatedRange.length ? updatedRange : current.range;
+        current.range = _.unionBy(current.range, 'identifier');
+        if (!editMode) {
+          this.selectedOption[current.code] = [];
+        }
+        accumulator.push(current);
+      } else {
+        if (current.index <= field.index) { // retain options for already selected fields
+          const updateField = current.code === 'board' ? current : _.find(this.formFieldOptions, { index: current.index });
+          accumulator.push(updateField);
+        } else { // empty filters and selection
+          current.range = [];
+          this.selectedOption[current.code] = [];
+          accumulator.push(current);
+        }
+      }
+      return accumulator;
+    }, []);
+    return formFields;
+  }
+
+  public handleFieldChange(event, field) {
+    console.log("Field - ", field);
+
+    if ((!this.isGuestUser || field.index !== 1) && (!this.custodianOrg || field.index !== 1)) { // no need to fetch data, just rearrange fields
+      this.formFieldOptions = this.getUpdatedFilters(field);
+      this.enableSubmitButton();
+      return;
+    }
+    if (_.get(this.selectedOption, field.code) === 'CBSE/NCERT') {
+      this.frameWorkId = _.get(_.find(field.range, { name: 'CBSE' }), 'identifier');
+    } else {
+      this.frameWorkId = _.get(_.find(field.range, { name: _.get(this.selectedOption, field.code) }), 'identifier');
+    }
+    if (this.userFramework) { // cancel if any previous api call in progress
+      this.userFramework.unsubscribe();
+    }
+    this.userFramework = this.getFormatedFilterDetails().pipe().subscribe(
+      (formFieldProperties) => {
+        if (!formFieldProperties.length) {
+        } else {
+          this._formFieldProperties = formFieldProperties;
+          this.mergeBoard();
+          this.formFieldOptions = this.getUpdatedFilters(field);
+          this.enableSubmitButton();
+        }
+      }, (error) => {
+        this.toasterService.warning(this.resourceService.messages.emsg.m0012);
+        // this.navigateToLibrary();
+      });
+  }
+
+  private mergeBoard() {
+    _.forEach(this._formFieldProperties, (field) => {
+      if (field.code === 'board') {
+        field.range = _.unionBy(_.concat(field.range, this.custodianOrgBoard.range), 'name');
+      }
+    });
+  }
+
+  private enableSubmitButton() {
+    // const optionalFields = _.map(_.filter(this._formFieldProperties, formField => !_.get(formField, 'required')), 'code');
+    // const enableSubmitButton = _.every(this.selectedOption, (value, index) => {
+    //   return _.includes(optionalFields, index) ? true : value.length;
+    // });
+    // if (enableSubmitButton) {
+    //   this.showButton = true;
+    // } else {
+    //   this.showButton = false;
+    // }
+  }
+
+  // End Added by komal
 
   onCategorySelect(category){
     console.log(category);
@@ -239,9 +472,9 @@ export class UploadContentLearnathonComponent implements OnInit {
           framework: "nulplearnathon",
           organisation: ["nulp-learnathon"],
           primaryCategory: "Learning Resource",
-          board:"Town Planning and Housing",
-          medium:["Planning Schemes"],
-          gradeLevel:["Good Practices Competition"],
+          board:this.formFieldTheme,
+          medium:[this.formFieldSubTheme],
+          // gradeLevel:["Good Practices Competition"],
           createdBy: this.userProfile.identifier, // get current userId
           createdFor: ["0137299712231669762"], //
         },
