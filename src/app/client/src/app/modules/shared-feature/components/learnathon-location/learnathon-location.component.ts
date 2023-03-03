@@ -3,13 +3,21 @@ import {ResourceService, ToasterService, NavigationHelperService} from '@sunbird
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {DeviceRegisterService, UserService} from '@sunbird/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ProfileService} from '@sunbird/profile';
 import * as _ from 'lodash-es';
 import {IImpressionEventInput, IInteractEventInput, TelemetryService} from '@sunbird/telemetry';
 import {map} from 'rxjs/operators';
 import {forkJoin, of} from 'rxjs';
 import { PopupControlService } from '../../../../service/popup-control.service';
+import { ProfileService } from './../../../../plugins/profile/services';
+import userData from './../../../../users.json';
 
+interface user {  
+  id: string,  
+  city: string,  
+  category: string,  
+  subCategory: string,
+  institution: string 
+}  
 @Component({
   selector: 'app-learnathon-location',
   templateUrl: './learnathon-location.component.html',
@@ -17,6 +25,7 @@ import { PopupControlService } from '../../../../service/popup-control.service';
 })
 export class LearnathonLocationComponent implements OnInit, OnDestroy {
 
+  users: user[] = userData;
   @Output() close = new EventEmitter<any>();
   // @Input() userLocationDetails: any;
   @Input() deviceProfile: any;
@@ -79,13 +88,14 @@ allInstitutions: any;
     this.sbFormBuilder = formBuilder;
   }
 
-  ngOnInit() {
+  ngOnInit() {    
     this.popupControlService.changePopupStatus(false);
     this.initializeFormFields();
+   
   }
   categoryChange(event){
     this.selectedCategory = event
-    console.log("categoryChange",event)
+
     if(event == 'Individual'){
       this.allSubCategories= [
         {
@@ -128,6 +138,8 @@ allInstitutions: any;
   }
 
   enableSubmitButton() {
+    // console.log("this.userProfile",this.userProfile)
+    // console.log("this.userService.userProfile",this.userService.userid)
     this.userDetailsForm.valueChanges.subscribe(val => {
       this.enableSubmitBtn = (this.userDetailsForm.status === 'VALID');
     });
@@ -143,7 +155,37 @@ allInstitutions: any;
 
   updateUserLocation(event) {
     console.log("userDetailsForm--", this.userDetailsForm.value)
-    
+    this.userDetailsForm.value["id"] = this.userProfile.userid
+    localStorage.setItem('learnathonUserDetails', JSON.stringify(this.userDetailsForm.value));
+    this.users.push(this.userDetailsForm.value)
+    console.log("userData---", this.users)
+    const request = {
+    //   "framework": {
+    //     "board": [
+    //         "Environment and Climate"
+    //     ],
+    //     "medium": [
+    //         "Affordable Housing"
+    //     ],
+    //     "gradeLevel": [
+    //         "Solutions Hackathon"
+    //     ],
+    //     "id": "nulplearnathon"
+    // },
+      'category': this.userDetailsForm.value.category,
+      'city': this.userDetailsForm.value.city,
+      'institution': this.userDetailsForm.value.institution,
+      'subcategory': this.userDetailsForm.value.subcategory,
+      // 'userName': 
+    };
+  
+  this.profileService.updateProfile(request).subscribe((data) => {
+    console.log("res====",data)
+    this.closeModal();
+
+  }, (error) => {
+   console.log("err====",error)
+  });
     // const locationCodes = [];
     // const locationDetails: any = {};
     // if (this.userDetailsForm.value.state) {

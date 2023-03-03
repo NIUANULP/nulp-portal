@@ -18,6 +18,7 @@ import { CacheService } from 'ng2-cache-service';
 import { DOCUMENT } from '@angular/common';
 import { image } from '../assets/images/tara-bot-icon';
 import { SBTagModule } from 'sb-tag-manager';
+  
 /**
  * main app component
  */
@@ -27,6 +28,7 @@ import { SBTagModule } from 'sb-tag-manager';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit, OnDestroy {
+  
   @ViewChild('frameWorkPopUp') frameWorkPopUp;
   /**
    * user profile details.
@@ -956,6 +958,7 @@ export class AppComponent implements OnInit, OnDestroy {
     });
   }
   onLearnathonLocationSubmit(event){
-    console.log("Eeeeeee====",event);
+    console.log("learnathonUserDetails====",JSON.parse( localStorage.getItem('learnathonUserDetails')));
+    
   }
 }
