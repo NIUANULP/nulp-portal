@@ -9,16 +9,18 @@
               <div class="sbt-container1">
                 <div class="preference">
                   <p class="header font-weight-bold mb-8 up-title">
-                    Learnathon - Upload Content Form
+                    Solution submission form
                   </p>
+                  <p class="para-tit">Please check the guidelines which you
+                    need to follow before submitting</p>
   
-                  <p>
+                  <!-- <p>
                     <span class="mr-24 up-sb-title">
                       NULP for building India's largest urban learning
                         community and to curate and collate the best content on
                         the platform.
                     </span>
-                  </p>
+                  </p> -->
                 </div>
                 <!-- <ng-container *ngIf="formFieldProperties"> -->
   
@@ -33,19 +35,28 @@
 
                 
                 <form class="sb-form">
-               <div class="mt-20">
+               <div class="mt-20u flex-side">
                 <div class="inp-title">Title of the Solution</div>
                 <input placeholder="Title" class="sb-textbox78" #title type="text" (input)="onTitleChange(title.value)" />
                </div>
+               <div class="mt-20u flex-side">
+                <div class="inp-title">Email</div>
+                <input placeholder="Email" class="sb-textbox78" #title type="text" />
+               </div>
+               <div class="mt-20u flex-side">
+                <div class="inp-title">Phone number</div>
+                <input placeholder="Phone Number" class="sb-textbox78" #title type="text" />
+               </div>
   
                <div *ngFor="let field of formFieldOptions">
+                <div class="select-holder9">
                 <div class="required sb-field-form-group"
                   *ngIf="field.code === 'board' && allowedFields.includes(field.code)">
-                  <label>Themes
+                  <label class="inp-title">Themes
                     <span class="mr-8 sb-color-red" *ngIf="field.required"> * </span>
                   </label>
                   <div class="sb-field">
-                    <label class="w-100">
+                    <label class="select-box">
                       <sui-select id={{field.code}} [isSearchable]="false" class="selection sb-form-control"
                         [(ngModel)]="selectedOption[field.code]" [options]="options" 
                         (selectedOptionChange)="selectedTheme($event, field.code)" placeholder="Select Themes"
@@ -57,12 +68,13 @@
                     </label>
                   </div>
                 </div>
-                <div class="sb-field-form-group mt-8" *ngIf="field.code == 'medium' && allowedFields.includes(field.code)">
-                  <label>Sub-Themes
+
+                <div class="sb-field-form-group mt-6" *ngIf="field.code == 'medium' && allowedFields.includes(field.code)">
+                  <label class="inp-title">Sub - theme
                     <span class="mr-8 sb-color-red" *ngIf="field.required"> * </span>
                   </label>
                   <div class="sb-field">
-                    <label class="w-100">
+                    <label class="select-box">
                       <sui-select id={{field.code}} [isSearchable]="false" class="selection sb-form-control"
                         [(ngModel)]="selectedOption[field.code]" [options]="options" placeholder="Select Sub-Themes"
                         (selectedOptionChange)="selectedSubTheme($event, field.code)"
@@ -81,54 +93,33 @@
                   </div>
                 </div>
               </div>
-
-                <div class="select-holder9">
-                  <!-- <div>
-                    <div class="inp-title">THEME</div>
-                    <select class="select-box" (change)="onCategorySelect($event)">
-                      <option>Select Category</option>
-                      <option *ngFor="let category of categories" value="{{category.id}}">{{category.name}}</option>
-                    </select>
-                  </div>
-                  <div>
-                    <div class="inp-title">SUB - THEME</div>
-                    <select class="select-box">
-                      <option>Select Sub-Category</option>
-                      <option *ngFor="let subCategory of subCategories" value="{{subCategory.name}}">{{subCategory.name}}</option>
-                    </select>
-                  </div> -->
-                  <div>
-                    <div class="inp-title"></div>
-                    <!-- <div class="inp-title">Type of proposal</div> -->
-                      <!-- <select class="select-box" (change)="onTypeSelect($event)">
-                        <option>Select Type of Proposal</option>
-                        <option value="youtube">Youtube Link</option>
-                        <option value="file">File Upload</option>
-                      </select> -->
+              </div>
+                  <div class="flex-side mt-20u mt--17">
+                    <div class="inp-title">Upload your proposal here</div>
+                    <div class="select-holder file-holder">
+                      <div class="" *ngIf="fileUpload">
+                        <input type="file" class="file-upload" (change)="onUpload($event)" />
+                      </div>
+                      
+                      <div class="" *ngIf="!fileUpload">
+                        <input #link type="text" class="file-upload" (input)="onLinkChange(link.value)" placeholder="Enter youtube link"/>
+                      </div>
                     </div>
                   </div>
-                <div>
-                  <div class="select-holder file-holder">
-                    <div class="" *ngIf="fileUpload">
-                      <div class="inp-title">Upload your proposal here</div>
-                      <input type="file" (change)="onUpload($event)" />
-                    </div>
-                    
-                    <div class="" *ngIf="!fileUpload">
-                      <input #link type="text" (input)="onLinkChange(link.value)" placeholder="Enter youtube link"/>
-                    </div>
-                  </div>
+                <div class="input-commet">(Please submit your proposal here)
                 </div>
                 <!-- <button (click)="onUpload()">Upload File</button> -->
                 <!-- </ng-container> -->
                 
-                <button
+                <div class="btn-end">
+                  <button
                   (click)="onSubmit()"
-                  class="sb-btn sb-btn-primary sb-btn-normal sb-btn-border sb-button"
+                  class="sb-btn sb-btn1 sb-btn-primary sb-btn-border"
                 >
   
                   Submit
                 </button>
+                </div>
               </form>
            
               </div>
