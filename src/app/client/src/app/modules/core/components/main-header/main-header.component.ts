@@ -160,6 +160,14 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   showReportMenu:boolean=false;
   showingDescription: string;
   urlPaths: string;
+
+    // @Hack isLearnathon
+    isLearnathonContentCreator: boolean = false;
+    isContentCreator: boolean = false;
+    userRoles = [];
+    lernathonChannel: string = "nulp-learnathon";
+    isLearnathon: boolean = false;
+
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
     public orgDetailsService: OrgDetailsService, public formService: FormService,
@@ -615,6 +623,26 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     this.setInteractEventData();
     this.cdr.detectChanges();
     this.setWindowConfig();
+
+    // @Hack isLearnathon
+    this.userService.userData$.subscribe(
+      (user: IUserData) => {
+        this.userRoles = user.userProfile.userRoles;
+      });
+      
+    if (_.indexOf(this.userRoles, 'CONTENT_CREATOR') !== -1) {
+        this.isContentCreator = true;
+    }
+
+    if (this.userService.rootOrgName == this.lernathonChannel){
+        this.isLearnathon = true;
+    }
+
+    if (this.isContentCreator && this.isLearnathon)
+    {
+      this.isLearnathonContentCreator = true;
+    }
+    // @Hack isLearnathon
   }
 
   checkFullScreenView() {
