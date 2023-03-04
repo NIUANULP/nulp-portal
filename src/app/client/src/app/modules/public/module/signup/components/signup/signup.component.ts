@@ -16,7 +16,8 @@ import { TelemetryService } from '@sunbird/telemetry';
 import * as _ from 'lodash-es';
 import { IStartEventInput, IImpressionEventInput, IInteractEventEdata } from '@sunbird/telemetry';
 import { DeviceDetectorService } from 'ngx-device-detector';
-import { ActivatedRoute } from '@angular/router';
+// import { ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { RecaptchaComponent } from 'ng-recaptcha';
 import { AddusserService } from '../../../../../dashboard/services/addusser/addusser.service';
 
@@ -62,7 +63,10 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
   isLearnathon: boolean = false;
   showLearnathonLocationPopup = false;
   
-  
+  layoutConfiguration: any;
+ languages = [{ 'value': 'en', 'label': 'English', 'dir': 'ltr', 'accessibleText': 'English' },
+ {'accessibleText': 'Hindi', 'value': 'hi', 'dir': 'ltr', 'label': 'हिंदी'}];
+
   // =======learnathon starts======
 
 userDetailsForm: FormGroup;
@@ -118,7 +122,7 @@ allInstitutions: any;
     public activatedRoute: ActivatedRoute, public telemetryService: TelemetryService,
     public navigationhelperService: NavigationHelperService, public utilService: UtilService,
     public configService: ConfigService,  public recaptchaService: RecaptchaService,
-    public tncService: TncService, public addUserService: AddusserService) {
+    public tncService: TncService, public addUserService: AddusserService, public router: Router,) {
     this.sbFormBuilder = formBuilder;
   }
 
@@ -142,6 +146,7 @@ allInstitutions: any;
         this.toasterService.error(_.get(this.resourceService, 'messages.fmsg.m0004'));
       }
     );
+    
 
     const currentURL = window.location.href;
     console.log("learnathon - ", currentURL);
@@ -790,5 +795,17 @@ allInstitutions: any;
     ]
     }
 
+  }
+  showLanguageDropdown() {
+    const restrictedRoutes = ['workspace', 'manage'];
+    let showLanguageChangeDropdown = true;
+    for (const route of restrictedRoutes) {
+      if (this.router.isActive(route, false)) {
+        showLanguageChangeDropdown = false;
+        break;
+      }
+    }
+    console.log(showLanguageChangeDropdown)
+    return showLanguageChangeDropdown;
   }
 }

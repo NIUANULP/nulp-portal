@@ -9,6 +9,7 @@ import { SignupService } from './services';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { SharedModule } from '@sunbird/shared';
 import {SharedFeatureModule } from '@sunbird/shared-feature';
+import { LearnathonLanguageComponent } from './../../components/learnathon-language/learnathon-language.component'
 
 
 @NgModule({
@@ -23,7 +24,7 @@ import {SharedFeatureModule } from '@sunbird/shared-feature';
     SharedModule,
     SharedFeatureModule
   ],
-  declarations: [SignupComponent, OtpComponent],
+  declarations: [SignupComponent, OtpComponent, LearnathonLanguageComponent],
   providers: [SignupService]
 })
 export class SignupModule { }
