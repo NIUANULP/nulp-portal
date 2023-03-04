@@ -123,15 +123,17 @@
                         </a>
                     </dd>
                 </dl> -->
-                <!-- <dl class="sb-meta-data">
-                    <dt>{{resourceService.frmelmnts.lbl.medium}}</dt>
+                <dl class="sb-meta-data">
+                  <dt>Theme</dt>
+                  <dd *ngIf="contentData.board">{{contentData.board}}</dd>    
+              </dl>
+
+                <dl class="sb-meta-data">
+                    <dt>Sub-Theme</dt>
                     <dd *ngIf="contentData.medium">{{contentData.medium}}</dd>
                 </dl>
-                <dl class="sb-meta-data">
-                    <dt>{{resourceService.frmelmnts.lbl.board}}</dt>
-                    <dd *ngIf="contentData.board">{{contentData.board}}</dd>    
-                </dl>
-                <dl class="sb-meta-data">
+                
+                <!-- <dl class="sb-meta-data">
                     <dt>{{resourceService.frmelmnts.lbl.class}}</dt>
                     <dd *ngIf="contentData.gradeLevel">{{contentData.gradeLevel}}</dd>
                 </dl>

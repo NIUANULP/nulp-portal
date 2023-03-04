@@ -2,7 +2,7 @@
     <div class="fullpage-background-image">
       <div class="container-wrapper">
         <div class="text-center mb-24">
-          isLearnathon -  {{isLearnathon}}
+        
           <div *ngIf="isLearnathon"><h3>Learnathon</h3></div>
           <img class="image centered" *ngIf="!isLearnathon" alt={{tenantName}} height="56" src="{{logo}}">
         </div>
@@ -61,7 +61,7 @@
                 </div>
               </div>
             </div> -->
-            <div class="required field">
+            <div class="required field" *ngIf="!isLearnathon">
               <label class="mb-10 font-weight-bold">{{resourceService.frmelmnts.lbl.OTPmsgforuser}}</label>
             </div>
             <div class="field" *ngIf="showContact === 'email'">
@@ -108,13 +108,58 @@
               </a>
             </label>
             </div>
+            <div class="sb-field" *ngIf="isLearnathon">
+              <label>Category:</label>
+              id="signup-form-name" class="sb-form-control"  
+                <sui-select class="selection form-control" formControlName="category" [options]="allCategories"
+                 labelField="label" id="signup-form-category" valueField="value"(ngModelChange)="categoryChange($event)"
+                            name="category" placeholder="Select Category">
+                  <sui-select-option *ngFor="let category of allCategories"
+                                     [value]="category"></sui-select-option>
+                </sui-select>
+            </div>
+            <div *ngIf="allSubCategories && isLearnathon" class="sb-field">
+              <label>Sub Category:</label>
+                <sui-select class="selection form-control" formControlName="subcategory" [options]="allSubCategories"
+               labelField="label" id="signup-form-subcategory" valueField="value"
+                            name="subcategory" placeholder="Select Sub-Category"
+                            >
+                  <sui-select-option *ngFor="let category of allSubCategories"
+                                     [value]="category"></sui-select-option>
+                </sui-select>
+            </div>
+            <div *ngIf="selectedCategory=='Individual' && isLearnathon" class="sb-field">
+              <label>City:</label>
+              <input formControlName="city" id="city" class="form-control sb-search-input" 
+              placeholder="Name Of Institution">
+                <!-- <sui-select class="selection form-control" formControlName="city" [options]="allCities"
+                            labelField="label" id="city" valueField="value"
+                            name="city" placeholder="Select City"
+                            >
+                  <sui-select-option *ngFor="let category of allCities"
+                                     [value]="category"></sui-select-option>
+                </sui-select> -->
+            </div>
+            <div *ngIf="selectedCategory=='Group' && isLearnathon" class="sb-field">
+              <label>Names Of Institutions:</label>
+              <input formControlName="institution" id="institution" class="form-control, sb-search-input" 
+              placeholder="Name Of Institution">
+                <!-- <sui-select class="selection form-control" formControlName="city" [options]="allCities"
+                            labelField="label" id="city" valueField="value"
+                            name="city" placeholder="Select City"
+                            >
+                  <sui-select-option *ngFor="let category of allCities"
+                                     [value]="category"></sui-select-option>
+                </sui-select> -->
+            </div> 
           </form>
-          <!-- <button [attr.aria-disabled]="disableSubmitBtn" [disabled]="disableSubmitBtn" type="submit" appTelemetryInteract [telemetryInteractEdata]="submitInteractEdata"  [telemetryInteractCdata]="telemetryCdata" [ngClass]="{'sb-btn-disabled':disableSubmitBtn, 'sb-btn-primary':!disableSubmitBtn}" class="sb-btn sb-btn-normal width-100 mt-10" 
-            tabindex="0" (click)="onSubmitLearnathonSignUpAPI()">{{resourceService.frmelmnts.lbl.signUp}} API</button>
-            <button [attr.aria-disabled]="disableSubmitBtn" [disabled]="disableSubmitBtn" type="submit" appTelemetryInteract [telemetryInteractEdata]="submitInteractEdata"  [telemetryInteractCdata]="telemetryCdata" [ngClass]="{'sb-btn-disabled':disableSubmitBtn, 'sb-btn-primary':!disableSubmitBtn}" class="sb-btn sb-btn-normal width-100 mt-10 " 
-            tabindex="0" (click)="onSubmitLearnathonSignUpNew()">{{resourceService.frmelmnts.lbl.signUp}} New</button> -->
-            <button [attr.aria-disabled]="disableSubmitBtn" [disabled]="disableSubmitBtn" type="submit" appTelemetryInteract [telemetryInteractEdata]="submitInteractEdata"  [telemetryInteractCdata]="telemetryCdata" [ngClass]="{'sb-btn-disabled':disableSubmitBtn, 'sb-btn-primary':!disableSubmitBtn}" class="sb-btn sb-btn-normal width-100 mt-10" 
-            tabindex="0" (click)="onSubmitLearnathonSignUp()">{{resourceService.frmelmnts.lbl.signUp}}</button>
+            <!-- =========learnathon starts================ -->
+
+    <!-- <app-learnathon-location (close)="onLearnathonLocationSubmit(event)" *ngIf=" showLearnathonLocationPopup"></app-learnathon-location> -->
+
+<!-- =========learnathon ends================ -->
+         <button [attr.aria-disabled]="disableSubmitBtn" [disabled]="disableSubmitBtn" type="submit" appTelemetryInteract [telemetryInteractEdata]="submitInteractEdata"  [telemetryInteractCdata]="telemetryCdata" [ngClass]="{'sb-btn-disabled':disableSubmitBtn, 'sb-btn-primary':!disableSubmitBtn}" class="sb-btn sb-btn-normal width-100 mt-10" 
+            tabindex="0" (click)="submitSignupForm()">{{resourceService.frmelmnts.lbl.signUp}}</button>
           <a tabindex="0" role="button" aria-label="re captcha" (click)="captchaRef.reset()" id="resetGoogleCaptcha"></a>
         </div>
         <div *ngIf="!showSignUpForm">
