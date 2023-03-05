@@ -131,15 +131,19 @@
 @media (max-width:490px) {
     
     .sb-textbox78{
-        width: 128% !important;
+        width: 93% !important;
     }
     .select-box{
         width: 207px !important;
     }
     .btn-end{
         display: flex;
-        justify-content: center;
+        justify-content: start;
         width: 100%;
         margin-top: 8px !important;
     }
+    .sbt-container1{
+        padding: 50px 41px !important;
+    }
+        
 }
