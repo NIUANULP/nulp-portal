@@ -26,6 +26,7 @@ export class UploadContentLearnathonComponent implements OnInit {
   public formData: any;
   public solutionTitle: string;
   public userEmail: string;
+  public userPhone: string;
   public file!: File;
   userProfile: any;
   categories : any = [];
@@ -101,7 +102,7 @@ export class UploadContentLearnathonComponent implements OnInit {
         },
       ],
     };
-    console.log(this.formFieldProperties.fields);
+  //  console.log(this.formFieldProperties.fields);
   }
 
   ngOnInit(): void {
@@ -145,7 +146,7 @@ export class UploadContentLearnathonComponent implements OnInit {
 
   private isCustodianOrgUser() {
     return this.orgDetailsService.getCustodianOrgDetails().pipe(map((custodianOrg) => {
-      console.log("custodianOrg - ", custodianOrg);
+    //  console.log("custodianOrg - ", custodianOrg);
       if (_.get(this.userService, 'userProfile.rootOrg.rootOrgId') === _.get(custodianOrg, 'result.response.value')) {
         return true;
       }
@@ -351,23 +352,28 @@ export class UploadContentLearnathonComponent implements OnInit {
 
   onUpload(event) {
     this.file = event.target.files[0];
-    console.log(this.file);
+  //  console.log(this.file);
   }
 
   onTitleChange(title) {
-    console.log(title);
+  //  console.log(title);
     this.solutionTitle = title; 
   }
 
-  // onEmailChange(email) {
-  //   console.log(email);
-  //   this.userEmail = email;    
-  // }
-
-  onLinkChange(link) {
-    console.log(link);
-    this.linkToUpload = link; 
+  onEmailChange(email) {
+  //  console.log(email);
+    this.userEmail = email;    
   }
+
+  onMobileChange(phone) {
+  //  console.log(phone);
+    this.userPhone = phone;    
+  }
+
+  // onLinkChange(link) {
+  //   console.log(link);
+  //   this.linkToUpload = link; 
+  // }
 
   onSubmit() {
     // call all methods with respective api in sequence
@@ -385,11 +391,39 @@ export class UploadContentLearnathonComponent implements OnInit {
       return;
     }
 
-    // if(!this?.userEmail?.trim()) {
-    //   alert("Please enter a valid email");
-    // regx
-    //   return;
-    // }
+    if(!this?.userEmail?.trim()) {
+      alert("Please enter email");
+      return;
+    }
+
+    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.userEmail)){
+      console.log("Email is valid");
+    } else {
+      alert("Please enter a valid email!")
+      return;
+    }
+
+    if(!this?.userPhone?.trim()) {
+      alert("Please enter phone number");
+      return;
+    }
+
+    if(!(/^\(?([1-9]{1})\)?([0-9]{9})$/.test(this.userPhone))) {
+      alert("Please enter a valid phone number");
+      return;
+    } else {
+      console.log(this.userPhone);
+    }
+
+    if(!this.formFieldTheme){
+      alert("Please select a Theme");
+      return;
+    }
+
+    if(!this.formFieldSubTheme){
+      alert("Please select a Sub - Theme")
+      return;
+    }
 
     if (this.fileUpload && !this?.file?.name) {
       alert("Please select a file to upload");
@@ -463,7 +497,9 @@ export class UploadContentLearnathonComponent implements OnInit {
         content: {
           name: this.solutionTitle,
 //          description: this.userEmail,
-          code: this.solutionTitle + this.makeRandom(lengthOfCode, possible), //uuid
+          userEmail: this.userEmail,
+          userPhone : this.userPhone,
+          code: this.solutionTitle.split(" ").join("") + this.makeRandom(lengthOfCode, possible), //uuid
           mimeType: this.getContentType(this.file),
           contentType: "Resource",
           resourceType: "Learn",
