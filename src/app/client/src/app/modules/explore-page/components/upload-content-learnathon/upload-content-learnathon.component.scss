@@ -10,7 +10,7 @@
     box-shadow: 0.375rem 0.375rem 0.125rem 0 rgba(0, 0, 0, 0.1);
 }
 .mt-20u{
-    margin-top: 13px;
+    margin-top: 8px;
 }
 .sb-textbox78{
     font-size: 12px; 
@@ -53,6 +53,7 @@
     border: 1px solid #afabab;
     font-size: 10px;
     font-weight: 500;
+    width: 300px !important;
 }
 .up-title{
     font-family: 'EB Garamond';
@@ -84,12 +85,12 @@
     padding: 0px !important;
     margin: 0px !important;
 }
-.mt--17{
-    margin-top: -19px !important;
-}
-.mt-6{
- margin-top: -10px !important;
-}
+// .mt--17{
+//     margin-top: -19px !important;
+// }
+// .mt-6{
+//  margin-top: -10px !important;
+// }
 .file-holder{
     border: 1px solid #afabab;
     padding: 5px;
@@ -100,13 +101,16 @@
 .select-holder9{
     display: -webkit-box !important;
     display: flex !important;
-    gap: 50px !important;
+    /* gap: 50px !important; */
     margin: 13px 0 0 0 !important;
     flex-wrap: wrap;
+    justify-content: space-between;
+    width: 48.5%;
 }
 .btn-end{
     display: flex;
-    justify-content: end;
+    justify-content: center;
+    width: 48.5%;
 }
 .file-upload{
     font-size: 10px !important;
@@ -124,10 +128,12 @@
     border: none;
 }
 
-@media (max-width:390px) {
+@media (max-width:490px) {
     
     .sb-textbox78{
         width: 128% !important;
     }
-    
+    .select-box{
+        width: 207px !important;
+    }
 }
