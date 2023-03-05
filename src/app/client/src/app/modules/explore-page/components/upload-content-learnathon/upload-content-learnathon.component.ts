@@ -105,6 +105,7 @@ export class UploadContentLearnathonComponent implements OnInit {
       ],
     };
   //  console.log(this.formFieldProperties.fields);
+  //  console.log(this.formFieldProperties.fields);
   }
 
   ngOnInit(): void {
@@ -159,6 +160,7 @@ export class UploadContentLearnathonComponent implements OnInit {
 
   private isCustodianOrgUser() {
     return this.orgDetailsService.getCustodianOrgDetails().pipe(map((custodianOrg) => {
+    //  console.log("custodianOrg - ", custodianOrg);
     //  console.log("custodianOrg - ", custodianOrg);
       if (_.get(this.userService, 'userProfile.rootOrg.rootOrgId') === _.get(custodianOrg, 'result.response.value')) {
         return true;
