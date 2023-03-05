@@ -368,7 +368,7 @@
         </div>
         <!-- <div class="fsmall sb-color-gray-400 my-12 profile__info__desc text-left">
           {{resourceService.frmelmnts?.lbl?.useInstanceAs | interpolate:'{instance}': instance}}
-        </div> -->
+        </div> --> 
 
         <!-- <div appOnlineOnly (click)="toggleSideMenu(false);navigate('/profile/create-managed-user')"
         role="button" tabindex="0" class="add-user mb-16" *ngIf="totalUsersCount <1">
@@ -458,7 +458,7 @@
             </svg></i>
             {{resourceService.frmelmnts?.lnk?.programDashboard}}
         </li>
-        <li  *ngIf="userService?.loggedIn" class="list-item d-block item accordion-menu item--courses ng-star-inserted" id="dropdown-menu-list-header">
+        <li  *ngIf="userService?.loggedIn && !isLearnathonContentCreator" class="list-item d-block item accordion-menu item--courses ng-star-inserted" id="dropdown-menu-list-header">
 
             <sui-accordion class="styled fluid sb-accordion">
               <sui-accordion-panel>
@@ -564,21 +564,21 @@
 
           <li class="list-item"  role="link" [class.active]="router.isActive('/workspace')" appTelemetryInteract
             [telemetryInteractEdata]="workspaceMenuIntractEdata" (click)="toggleSideMenu(false)"
-            *ngIf='!isDesktopApp && isLayoutAvailable() && permissionService.permissionAvailable' appPermission
+            *ngIf='!isDesktopApp && isLayoutAvailable() && permissionService.permissionAvailable && !isLearnathon' appPermission
             [permission]='workSpaceRole' [routerLink]="[navigateToWorkspace()]" tabindex="0">
             <i class="icon-svg icon-svg--sm icon-workspace mr-8"><svg class="icon icon-svg--primary">
                 <use xlink:href="./assets/images/sprite.svg#workspace"></use>
               </svg></i>
             {{resourceService?.frmelmnts?.tab?.workspace}}
           </li>
-          <li class="list-item" role="link" tabindex="0" appTelemetryInteract [telemetryInteractEdata]="helpMenuIntractEdata"
+          <li class="list-item" role="link" tabindex="0" appTelemetryInteract [telemetryInteractEdata]="helpMenuIntractEdata" *ngIf="!isLearnathon" 
             (click)="toggleSideMenu(false);navigate('/faq')">
             <i class="icon-svg icon-svg--sm icon-help mr-8"><svg class="icon icon-svg--primary">
                 <use xlink:href="./assets/images/sprite.svg#help"></use>
               </svg></i>
             {{resourceService?.frmelmnts?.tab?.help}}
           </li>
-          <li class="list-item" role="link" tabindex="0" (click)="toggleSideMenu(false);switchLayout()">
+          <li class="list-item" role="link" tabindex="0" *ngIf="!isLearnathon" (click)="toggleSideMenu(false);switchLayout()">
             <i class="icon-svg icon-svg--sm icon-login mr-8"><svg class="icon icon-svg--primary">
                 <use xlink:href="./assets/images/sprite.svg#switchlayout"></use>
               </svg></i>

@@ -108,6 +108,7 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
     userRoles = [];
     lernathonChannel: string = "nulp-learnathon";
     isLearnathon: boolean = false;
+    lernathonUserProfileFramework;
 
     constructor(private searchService: SearchService, private toasterService: ToasterService, public userService: UserService,
         public resourceService: ResourceService, private configService: ConfigService, public activatedRoute: ActivatedRoute,
@@ -260,7 +261,10 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
         if (this.userService.rootOrgName == this.lernathonChannel){
             this.isLearnathon = true;
         }
+
+        this.lernathonUserProfileFramework = _.get(this.userService, 'userProfile.framework');
         // @Hack isLearnathon
+
     }
 
     public fetchEnrolledCoursesSection() {
@@ -1069,6 +1073,7 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
         try {
             if (this.isUserLoggedIn()) {
                 this.userPreference = { framework: this.userService.defaultFrameworkFilters };
+                
             } else {
                 this.userService.getGuestUser().subscribe((response) => {
                     this.userPreference = response;
