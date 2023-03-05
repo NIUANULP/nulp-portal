@@ -27,12 +27,14 @@ export class UploadContentLearnathonComponent implements OnInit {
   public solutionTitle: string;
   public userEmail: string;
   public userPhone: string;
+  public otherSubCategory: string;
   public file!: File;
   userProfile: any;
   categories : any = [];
   subCategories: any = [];
   state: string;
   fileUpload: boolean = true;
+  isOtherCategory: boolean = false;
   linkToUpload : string;  
 
 // Added by komal
@@ -103,6 +105,7 @@ export class UploadContentLearnathonComponent implements OnInit {
       ],
     };
   //  console.log(this.formFieldProperties.fields);
+  //  console.log(this.formFieldProperties.fields);
   }
 
   ngOnInit(): void {
@@ -136,16 +139,28 @@ export class UploadContentLearnathonComponent implements OnInit {
   selectedTheme(theme, themeCode) {
     this.formFieldTheme = theme;
     const isSelectedTheme = this.formFieldOptions[0].range.filter((item) => item.name === theme);
+    // console.log(isSelectedTheme[0]);
+    
     this.selectedSubThemes = isSelectedTheme[0].associations;
+    // console.log(this.selectedSubThemes);
+    
     this.selectedOption['medium'] = "";
+    this.isOtherCategory = false;
   }
 
   selectedSubTheme(subTheme, themeCode){
     this.formFieldSubTheme = subTheme;
+    if(this.formFieldSubTheme === "Other Sub-Domain")
+      this.isOtherCategory = true;
+    else
+      this.isOtherCategory = false;
+    // console.log(subTheme);
+    
   }
 
   private isCustodianOrgUser() {
     return this.orgDetailsService.getCustodianOrgDetails().pipe(map((custodianOrg) => {
+    //  console.log("custodianOrg - ", custodianOrg);
     //  console.log("custodianOrg - ", custodianOrg);
       if (_.get(this.userService, 'userProfile.rootOrg.rootOrgId') === _.get(custodianOrg, 'result.response.value')) {
         return true;
@@ -221,7 +236,7 @@ export class UploadContentLearnathonComponent implements OnInit {
   }
 
   private getUpdatedFilters(field, editMode = false) {
-    console.log("getUpdatedFilters - ", field, editMode);
+    // console.log("getUpdatedFilters - ", field, editMode);
     const targetIndex = field.index + 1; // only update next field if not editMode
     const formFields = _.reduce(this.formFieldProperties, (accumulator, current) => {
       if (current.index === targetIndex || editMode) {
@@ -230,7 +245,7 @@ export class UploadContentLearnathonComponent implements OnInit {
           const selectedFields = this.selectedOption[parentField.code] || [];
           if ((selectedFields.includes(term.name) || selectedFields.includes(term.code))) {
             const selectedAssociations = _.filter(term.associations, { category: current.code }) || [];
-           console.log("selectedAssociations - ", selectedAssociations);
+           // console.log("selectedAssociations - ", selectedAssociations);
             collector = _.concat(collector, selectedAssociations);
           }
           return collector;
@@ -258,7 +273,7 @@ export class UploadContentLearnathonComponent implements OnInit {
   }
 
   public handleFieldChange(event, field) {
-    console.log("Field - ", field);
+    // console.log("Field - ", field);
 
     if ((!this.isGuestUser || field.index !== 1) && (!this.custodianOrg || field.index !== 1)) { // no need to fetch data, just rearrange fields
       this.formFieldOptions = this.getUpdatedFilters(field);
@@ -311,26 +326,25 @@ export class UploadContentLearnathonComponent implements OnInit {
   // End Added by komal
 
   onCategorySelect(category){
-    console.log(category);
+    // console.log(category);
     let subCategoriessss = [];
     subCategoriessss = this.uploadContentService.getSubTheme().filter(
       e => {
         if (e.id == category.target.value){
-          console.log(e.categories);
-          
+          // console.log(e.categories);
           return e.categories;
         }
       }
     );
 
     this.subCategories = subCategoriessss[0].categories;
-    console.log(this.subCategories);
-    console.log("subcategories");
+    // console.log(this.subCategories);
+    // console.log("subcategories");
   }
   
 
   onTypeSelect(event:any) {
-    console.log(event.target.value, "EVT");
+    // console.log(event.target.value, "EVT");
     if(event.target.value === "youtube"){
       this.fileUpload = false;
     } else {
@@ -370,6 +384,9 @@ export class UploadContentLearnathonComponent implements OnInit {
     this.userPhone = phone;    
   }
 
+  onSubCategoryChange(otherSubCategory) {
+    this.otherSubCategory = otherSubCategory;
+  }
   // onLinkChange(link) {
   //   console.log(link);
   //   this.linkToUpload = link; 
@@ -397,7 +414,7 @@ export class UploadContentLearnathonComponent implements OnInit {
     }
 
     if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.userEmail)){
-      console.log("Email is valid");
+      // console.log("Email is valid");
     } else {
       alert("Please enter a valid email!")
       return;
@@ -412,7 +429,7 @@ export class UploadContentLearnathonComponent implements OnInit {
       alert("Please enter a valid phone number");
       return;
     } else {
-      console.log(this.userPhone);
+      // console.log(this.userPhone);
     }
 
     if(!this.formFieldTheme){
@@ -422,6 +439,11 @@ export class UploadContentLearnathonComponent implements OnInit {
 
     if(!this.formFieldSubTheme){
       alert("Please select a Sub - Theme")
+      return;
+    }
+
+    if(this.isOtherCategory && !this?.otherSubCategory?.trim()) {
+      alert("Please specify other sub category");
       return;
     }
 
@@ -499,6 +521,7 @@ export class UploadContentLearnathonComponent implements OnInit {
 //          description: this.userEmail,
           userEmail: this.userEmail,
           userPhone : this.userPhone,
+          specifiedSubCategory : this.otherSubCategory,
           code: this.solutionTitle.split(" ").join("") + this.makeRandom(lengthOfCode, possible), //uuid
           mimeType: this.getContentType(this.file),
           contentType: "Resource",
@@ -605,8 +628,12 @@ export class UploadContentLearnathonComponent implements OnInit {
         break;
       // case "html5" || "html":
       //   break;
-      // case "htmlzip":
-      //   break;
+      case "zip":
+        return "application/vnd.ekstep.html-archive";
+        break;
+      case "h5p":
+        return "application/vnd.ekstep.h5p-archive";
+        break;
       // default:
       // code block
     }
@@ -615,7 +642,7 @@ export class UploadContentLearnathonComponent implements OnInit {
   hasExtension(fileName) {
     console.log(fileName);
 
-    const allowedExtensions = ["pdf", "mp4"]//, "html5", "htmlzip"];
+    const allowedExtensions = ["pdf", "mp4", "zip", "h5p"]//, "html5",];
     const extension = fileName
       .substr(fileName.lastIndexOf(".") + 1)
       .toLowerCase();
