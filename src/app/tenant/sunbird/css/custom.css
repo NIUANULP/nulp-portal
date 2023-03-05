@@ -2200,3 +2200,10 @@ section img{
         font-size: 10px;
     }
 }
+.lg-title{
+    font-weight: 400 !important;
+    font-size: 15.5px !important;
+}
+.mt--15{
+    margin-top: -15px !important;
+}
