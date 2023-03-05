@@ -2,7 +2,7 @@
     <div class="fullpage-background-image">
       <div class="container-wrapper">
         <div class="text-center mb-24">
-        
+
           <div *ngIf="isLearnathon"><h3>Learnathon</h3></div>
           <img class="image centered" *ngIf="!isLearnathon" alt={{tenantName}} height="56" src="{{logo}}">
         </div>
@@ -10,6 +10,13 @@
           <!-- <div *ngIf="telemetryImpression" [appTelemetryImpression]="telemetryImpression" class="fs-1 font-weight-bold mb-16 text-center">{{resourceService.frmelmnts.lbl.signUp}}</div> -->
           <h2 *ngIf="telemetryImpression" [appTelemetryImpression]="telemetryImpression"
             class="title text-center"></h2>
+          <!--/Language Dropdown-->
+          <div  class="year-birth my-16 required">
+          <app-learnathon-language [layoutConfiguration]="layoutConfiguration" [languageRange]='languages'
+            class="computer only  d-flex" *ngIf="languages">
+          </app-learnathon-language> 
+          </div>  
+          <!--/Language Dropdown-->
           <div class="year-birth my-16 required">
             <label class="mr-16">{{resourceService.frmelmnts?.lbl?.yearOfBirth}}<span class="sb-color-red">*</span></label>
            <label *ngIf="!isIOSDevice"> <sui-select attr.aria-label="{{resourceService.frmelmnts?.lbl?.yearOfBirth}}" class="selection" [options]="birthYearOptions" placeholder="{{resourceService.frmelmnts?.lbl?.year}}"
@@ -61,6 +68,9 @@
                 </div>
               </div>
             </div> -->
+
+<!-- =========learnathon starts================ -->
+
             <div class="required field" *ngIf="!isLearnathon">
               <label class="mb-10 font-weight-bold">{{resourceService.frmelmnts.lbl.OTPmsgforuser}}</label>
             </div>
@@ -98,19 +108,9 @@
               {{resourceService.frmelmnts.lbl.fieldsmarked}}<span class="sb-error">*</span>{{resourceService.frmelmnts.lbl.mandatory  }}
           </div>
             <!-- Google invisible recaptcha -->
-            <re-captcha *ngIf="isP1CaptchaEnabled === 'true'" tabindex='-1' #captchaRef="reCaptcha" (resolved)="$event && resolved($event) && captchaRef.reset()" siteKey="{{googleCaptchaSiteKey}}" size="invisible"></re-captcha>
-            <div class="required sb-checkbox sb-checkbox-primary sb-field mt-16">
-              <input type="checkbox" id="tncAccepted" role="checkbox" tabindex="0" (click)="generateTelemetry($event)"
-                     formControlName="tncAccepted" name="tncAccepted">
-              <label for="tncAccepted" class="fsmall mr-0">{{resourceService?.frmelmnts?.lbl?.tncLabel}}
-                <a class="text-underline fsmall" href="javascript:void(0)" tabindex="0" (click)="showAndHidePopup(true)">
-                {{resourceService?.frmelmnts?.lbl?.tncLabelLink | interpolate:'{instance}': instance}}
-              </a>
-            </label>
-            </div>
+            
             <div class="sb-field" *ngIf="isLearnathon">
-              <label>Category:</label>
-              id="signup-form-name" class="sb-form-control"  
+              <label>{{resourceService.frmelmnts?.lbl?.learnathonCategory}}:</label>  
                 <sui-select class="selection form-control" formControlName="category" [options]="allCategories"
                  labelField="label" id="signup-form-category" valueField="value"(ngModelChange)="categoryChange($event)"
                             name="category" placeholder="Select Category">
@@ -119,7 +119,7 @@
                 </sui-select>
             </div>
             <div *ngIf="allSubCategories && isLearnathon" class="sb-field">
-              <label>Sub Category:</label>
+              <label>{{resourceService.frmelmnts?.lbl?.learnathonSubCategory}}:</label>
                 <sui-select class="selection form-control" formControlName="subcategory" [options]="allSubCategories"
                labelField="label" id="signup-form-subcategory" valueField="value"
                             name="subcategory" placeholder="Select Sub-Category"
@@ -129,7 +129,7 @@
                 </sui-select>
             </div>
             <div *ngIf="selectedCategory=='Individual' && isLearnathon" class="sb-field">
-              <label>City:</label>
+              <label>{{resourceService.frmelmnts?.lbl?.learnathonCity}}:</label>
               <input formControlName="city" id="city" class="form-control sb-search-input" 
               placeholder="Name Of Institution">
                 <!-- <sui-select class="selection form-control" formControlName="city" [options]="allCities"
@@ -141,7 +141,7 @@
                 </sui-select> -->
             </div>
             <div *ngIf="selectedCategory=='Group' && isLearnathon" class="sb-field">
-              <label>Names Of Institutions:</label>
+              <label>{{resourceService.frmelmnts?.lbl?.learnathonInstitution}}:</label>
               <input formControlName="institution" id="institution" class="form-control, sb-search-input" 
               placeholder="Name Of Institution">
                 <!-- <sui-select class="selection form-control" formControlName="city" [options]="allCities"
@@ -153,11 +153,19 @@
                 </sui-select> -->
             </div> 
           </form>
-            <!-- =========learnathon starts================ -->
-
-    <!-- <app-learnathon-location (close)="onLearnathonLocationSubmit(event)" *ngIf=" showLearnathonLocationPopup"></app-learnathon-location> -->
 
 <!-- =========learnathon ends================ -->
+
+<re-captcha *ngIf="isP1CaptchaEnabled === 'true'" tabindex='-1' #captchaRef="reCaptcha" (resolved)="$event && resolved($event) && captchaRef.reset()" siteKey="{{googleCaptchaSiteKey}}" size="invisible"></re-captcha>
+            <div class="required sb-checkbox sb-checkbox-primary sb-field mt-16">
+              <input type="checkbox" id="tncAccepted" role="checkbox" tabindex="0" (click)="generateTelemetry($event)"
+                     formControlName="tncAccepted" name="tncAccepted">
+              <label for="tncAccepted" class="fsmall mr-0">{{resourceService?.frmelmnts?.lbl?.tncLabel}}
+                <a class="text-underline fsmall" href="javascript:void(0)" tabindex="0" (click)="showAndHidePopup(true)">
+                {{resourceService?.frmelmnts?.lbl?.tncLabelLink | interpolate:'{instance}': instance}}
+              </a>
+            </label>
+            </div>
          <button [attr.aria-disabled]="disableSubmitBtn" [disabled]="disableSubmitBtn" type="submit" appTelemetryInteract [telemetryInteractEdata]="submitInteractEdata"  [telemetryInteractCdata]="telemetryCdata" [ngClass]="{'sb-btn-disabled':disableSubmitBtn, 'sb-btn-primary':!disableSubmitBtn}" class="sb-btn sb-btn-normal width-100 mt-10" 
             tabindex="0" (click)="submitSignupForm()">{{resourceService.frmelmnts.lbl.signUp}}</button>
           <a tabindex="0" role="button" aria-label="re captcha" (click)="captchaRef.reset()" id="resetGoogleCaptcha"></a>

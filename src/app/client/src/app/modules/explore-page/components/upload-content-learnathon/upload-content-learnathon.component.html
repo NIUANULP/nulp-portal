@@ -36,20 +36,20 @@
                 
                 <form class="sb-form">
                <div class="mt-20u flex-side">
-                <div class="inp-title">Title of the Solution</div>
+                <div class="inp-title">Title of the Solution<span class="mr-8 sb-color-red"> * </span></div>
                 <input placeholder="Title" class="sb-textbox78" #title type="text" (input)="onTitleChange(title.value)" />
                </div>
                <div class="mt-20u flex-side">
-                <div class="inp-title">Email</div>
-                <input placeholder="Email" class="sb-textbox78" #title type="text" />
+                <div class="inp-title">Email<span class="mr-8 sb-color-red"> * </span></div>
+                <input placeholder="Email" class="sb-textbox78" #userEmail type="email" (input)="onEmailChange(userEmail.value)" email="true"/>
                </div>
                <div class="mt-20u flex-side">
-                <div class="inp-title">Phone number</div>
-                <input placeholder="Phone Number" class="sb-textbox78" #title type="text" />
+                <div class="inp-title">Phone number<span class="mr-8 sb-color-red"> * </span></div>
+                <input placeholder="Phone Number" class="sb-textbox78" #userPhone type="number" (input)="onMobileChange(userPhone.value)"/>
                </div>
   
+               <div class="select-holder9">
                <div *ngFor="let field of formFieldOptions">
-                <div class="select-holder9">
                 <div class="required sb-field-form-group"
                   *ngIf="field.code === 'board' && allowedFields.includes(field.code)">
                   <label class="inp-title">Themes
@@ -94,8 +94,12 @@
                 </div>
               </div>
               </div>
+              <div class="mt-20u flex-side" *ngIf="isOtherCategory">
+                <div class="inp-title">Please specify <span class="mr-8 sb-color-red"> * </span></div>
+                <input placeholder="Please specify other Sub-Category" class="sb-textbox78" #othersubcategory type="text" (input)="onSubCategoryChange(othersubcategory.value)" />
+               </div>
                   <div class="flex-side mt-20u mt--17">
-                    <div class="inp-title">Upload your proposal here</div>
+                    <div class="inp-title">Upload your proposal here<span class="mr-8 sb-color-red"> * </span></div>
                     <div class="select-holder file-holder">
                       <div class="" *ngIf="fileUpload">
                         <input type="file" class="file-upload" (change)="onUpload($event)" />
