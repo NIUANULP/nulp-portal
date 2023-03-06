@@ -2068,7 +2068,7 @@ section img{
     }
     .head-content {
         padding: 0 32px !important;
-        margin-top: 103px;
+        margin-top: 50px;
         max-width: 100%;
     }    
     .underline{
@@ -2166,6 +2166,9 @@ section img{
     .owl-next span {
         right: 25px !important;
     }
+    .nav-header-theme{
+        padding: 0px !important;
+    }
 }
 @media (max-width:550px) {
     .nav-header{
@@ -2189,7 +2192,7 @@ section img{
     }
     .learn-btn{
         position: absolute;
-        top: 190px;
+        top: 137px;
         left: 32px;
     }
     .link-holder{
@@ -2198,6 +2201,13 @@ section img{
     }
     .theme-btn{
         font-size: 10px;
+    }
+    .section-holder {
+        margin-top: -54px;
+    }
+    .nav-header{
+        display: unset !important;
+        padding: 0 10px !important;
     }
 }
 .lg-title{
