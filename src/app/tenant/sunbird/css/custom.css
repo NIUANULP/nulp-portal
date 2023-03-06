@@ -2202,6 +2202,7 @@ section img{
     .theme-btn{
         font-size: 10px;
     }
+<<<<<<< HEAD
     .section-holder {
         margin-top: -54px;
     }
@@ -2209,6 +2210,8 @@ section img{
         display: unset !important;
         padding: 0 10px !important;
     }
+=======
+>>>>>>> upstream/release-4.4.1-learnathon
 }
 .lg-title{
     font-weight: 400 !important;
