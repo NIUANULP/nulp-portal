@@ -118,6 +118,19 @@
                                      [value]="category"></sui-select-option>
                 </sui-select>
             </div>
+            <div class="sb-section-preference" *ngIf="isLearnathon && selectedCategory == 'Individual'">
+              <div class="preference"> 
+                <label class="ui basic blue error label pt-0">{{resourceService.frmelmnts.lbl.CityIndiviDesc}}</label>
+                <label class="ui basic blue error label pt-0">{{resourceService.frmelmnts.lbl.AcademiaIndiviDesc}}</label>
+                <label class="ui basic blue error label pt-0">{{resourceService.frmelmnts.lbl.IndustriesIndiviDesc}}</label>
+              </div>
+            </div>
+            <div class="sb-section-preference" *ngIf="isLearnathon && selectedCategory == 'Group'">
+              <div class="preference">
+                <label class="ui basic blue error label pt-0">{{resourceService.frmelmnts.lbl.CityGrpDesc}}</label>
+                <label class="ui basic blue error label pt-0">{{resourceService.frmelmnts.lbl.AcademiaGrpDesc}}</label>
+              </div>
+              </div>
             <div *ngIf="allSubCategories && isLearnathon" class="sb-field">
               <label>{{resourceService.frmelmnts?.lbl?.learnathonSubCategory}}:</label>
                 <sui-select class="selection form-control" formControlName="subcategory" [options]="allSubCategories"
@@ -132,25 +145,11 @@
               <label>{{resourceService.frmelmnts?.lbl?.learnathonCity}}:</label>
               <input formControlName="city" id="city" class="form-control sb-search-input" 
               placeholder="{{resourceService.frmelmnts?.lbl?.learnathonCity}}">
-                <!-- <sui-select class="selection form-control" formControlName="city" [options]="allCities"
-                            labelField="label" id="city" valueField="value"
-                            name="city" placeholder="Select City"
-                            >
-                  <sui-select-option *ngFor="let category of allCities"
-                                     [value]="category"></sui-select-option>
-                </sui-select> -->
+
             </div>
             <div *ngIf="selectedCategory=='Group' && isLearnathon" class="sb-field">
               <label>{{resourceService.frmelmnts?.lbl?.learnathonInstitution}}:</label>
-              <input formControlName="institution" id="institution" class="form-control, sb-search-input" 
-              placeholder="{{resourceService.frmelmnts?.lbl?.learnathonInstitution}">
-                <!-- <sui-select class="selection form-control" formControlName="city" [options]="allCities"
-                            labelField="label" id="city" valueField="value"
-                            name="city" placeholder="Select City"
-                            >
-                  <sui-select-option *ngFor="let category of allCities"
-                                     [value]="category"></sui-select-option>
-                </sui-select> -->
+              <input formControlName="institution" id="institution" class="form-control, sb-search-input">
             </div>
 
 <!-- =========learnathon ends================ -->
