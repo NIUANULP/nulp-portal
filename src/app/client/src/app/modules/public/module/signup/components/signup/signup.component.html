@@ -113,7 +113,7 @@
               <label>{{resourceService.frmelmnts?.lbl?.learnathonCategory}}:</label>  
                 <sui-select class="selection form-control" formControlName="category" [options]="allCategories"
                  labelField="label" id="signup-form-category" valueField="value"(ngModelChange)="categoryChange($event)"
-                            name="category" placeholder="Select Category">
+                            name="category" placeholder="{{resourceService.frmelmnts?.lbl?.learnathonCategory}}">
                   <sui-select-option *ngFor="let category of allCategories"
                                      [value]="category"></sui-select-option>
                 </sui-select>
@@ -122,7 +122,7 @@
               <label>{{resourceService.frmelmnts?.lbl?.learnathonSubCategory}}:</label>
                 <sui-select class="selection form-control" formControlName="subcategory" [options]="allSubCategories"
                labelField="label" id="signup-form-subcategory" valueField="value"
-                            name="subcategory" placeholder="Select Sub-Category"
+                            name="subcategory" placeholder="{{resourceService.frmelmnts?.lbl?.learnathonSubCategory}}"
                             >
                   <sui-select-option *ngFor="let category of allSubCategories"
                                      [value]="category"></sui-select-option>
@@ -131,7 +131,7 @@
             <div *ngIf="selectedCategory=='Individual' && isLearnathon" class="sb-field">
               <label>{{resourceService.frmelmnts?.lbl?.learnathonCity}}:</label>
               <input formControlName="city" id="city" class="form-control sb-search-input" 
-              placeholder="Name Of Institution">
+              placeholder="{{resourceService.frmelmnts?.lbl?.learnathonCity}}">
                 <!-- <sui-select class="selection form-control" formControlName="city" [options]="allCities"
                             labelField="label" id="city" valueField="value"
                             name="city" placeholder="Select City"
@@ -143,7 +143,7 @@
             <div *ngIf="selectedCategory=='Group' && isLearnathon" class="sb-field">
               <label>{{resourceService.frmelmnts?.lbl?.learnathonInstitution}}:</label>
               <input formControlName="institution" id="institution" class="form-control, sb-search-input" 
-              placeholder="Name Of Institution">
+              placeholder="{{resourceService.frmelmnts?.lbl?.learnathonInstitution}">
                 <!-- <sui-select class="selection form-control" formControlName="city" [options]="allCities"
                             labelField="label" id="city" valueField="value"
                             name="city" placeholder="Select City"
@@ -151,12 +151,9 @@
                   <sui-select-option *ngFor="let category of allCities"
                                      [value]="category"></sui-select-option>
                 </sui-select> -->
-            </div> 
-          </form>
+            </div>
 
 <!-- =========learnathon ends================ -->
-
-<re-captcha *ngIf="isP1CaptchaEnabled === 'true'" tabindex='-1' #captchaRef="reCaptcha" (resolved)="$event && resolved($event) && captchaRef.reset()" siteKey="{{googleCaptchaSiteKey}}" size="invisible"></re-captcha>
             <div class="required sb-checkbox sb-checkbox-primary sb-field mt-16">
               <input type="checkbox" id="tncAccepted" role="checkbox" tabindex="0" (click)="generateTelemetry($event)"
                      formControlName="tncAccepted" name="tncAccepted">
@@ -165,7 +162,13 @@
                 {{resourceService?.frmelmnts?.lbl?.tncLabelLink | interpolate:'{instance}': instance}}
               </a>
             </label>
-            </div>
+            </div> 
+<re-captcha *ngIf="isP1CaptchaEnabled === 'true'" tabindex='-1' #captchaRef="reCaptcha" (resolved)="$event && resolved($event) && captchaRef.reset()" siteKey="{{googleCaptchaSiteKey}}" size="invisible"></re-captcha>
+
+          </form>
+
+
+            
          <button [attr.aria-disabled]="disableSubmitBtn" [disabled]="disableSubmitBtn" type="submit" appTelemetryInteract [telemetryInteractEdata]="submitInteractEdata"  [telemetryInteractCdata]="telemetryCdata" [ngClass]="{'sb-btn-disabled':disableSubmitBtn, 'sb-btn-primary':!disableSubmitBtn}" class="sb-btn sb-btn-normal width-100 mt-10" 
             tabindex="0" (click)="submitSignupForm()">{{resourceService.frmelmnts.lbl.signUp}}</button>
           <a tabindex="0" role="button" aria-label="re captcha" (click)="captchaRef.reset()" id="resetGoogleCaptcha"></a>

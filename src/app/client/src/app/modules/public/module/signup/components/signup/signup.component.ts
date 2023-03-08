@@ -285,6 +285,8 @@ allInstitutions: any;
           return null;
         }
       });
+      this.onContactTypeValueChanges();
+    this.enableSignUpSubmitButton();
     }else{
       this.signUpForm = this.sbFormBuilder.group({
         name: new FormControl(null, [Validators.required]),
@@ -312,7 +314,10 @@ allInstitutions: any;
           return null;
         }
       });
+      this.onContactTypeValueChanges();
+    this.enableSignUpSubmitButton();
     }
+
     // this.signUpForm = this.sbFormBuilder.group({
     //   name: new FormControl(null, [Validators.required]),
     //   password: new FormControl(null, [Validators.required, Validators.minLength(8)]),
@@ -322,8 +327,8 @@ allInstitutions: any;
     //   contactType: new FormControl('email'),
     //   uniqueContact: new FormControl(null, [Validators.required]),
     //   tncAccepted: new FormControl(false, [Validators.requiredTrue]),
-    //   category: new FormControl(null,[Validators.requiredTrue]),
-    //   subcategory: new FormControl(null,[Validators.requiredTrue]),
+    //   category: new FormControl(null),
+    //   subcategory: new FormControl(null),
     //   city: new FormControl(null),
     //   institution: new FormControl(null)
     // }, {
@@ -342,8 +347,8 @@ allInstitutions: any;
     //     return null;
     //   }
     // });
-    this.onContactTypeValueChanges();
-    this.enableSignUpSubmitButton();
+    //       this.onContactTypeValueChanges();
+    // this.enableSignUpSubmitButton();
   }
 
   onPasswordChange(passCtrl: FormControl): void {
@@ -387,6 +392,7 @@ allInstitutions: any;
   }
 
   enableSignUpSubmitButton() {
+    console.log("this.signUpForm.status === ",this.signUpForm.status)
     this.signUpForm.valueChanges.subscribe(val => {
       if (this.signUpForm.status === 'VALID') {
         this.disableSubmitBtn = false;
