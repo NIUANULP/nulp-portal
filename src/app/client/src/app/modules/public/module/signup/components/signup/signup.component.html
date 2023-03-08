@@ -3,8 +3,8 @@
       <div class="container-wrapper">
         <div class="text-center mb-24">
 
-          <div *ngIf="isLearnathon"><h3>Learnathon</h3></div>
-          <img class="image centered" *ngIf="!isLearnathon" alt={{tenantName}} height="56" src="{{logo}}">
+          <!-- <div *ngIf="isLearnathon"><h3>Learnathon</h3></div> -->
+          <img class="image centered" alt={{tenantName}} height="56" src="{{logo}}">
         </div>
         <div *ngIf="showSignUpForm" [appTelemetryStart]="telemetryStart">
           <!-- <div *ngIf="telemetryImpression" [appTelemetryImpression]="telemetryImpression" class="fs-1 font-weight-bold mb-16 text-center">{{resourceService.frmelmnts.lbl.signUp}}</div> -->

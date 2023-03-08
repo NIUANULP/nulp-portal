@@ -11,9 +11,8 @@
                   <p class="header font-weight-bold mb-8 up-title">
                     Solution submission form
                   </p>
-                  <p class="para-tit">Please check the guidelines which you
-                    need to follow before submitting</p>
-  
+                  <p class="para-tit">{{resourceService.frmelmnts.label.guidelines}}</p>
+                    <a download href="./document/Learnathon_Guidelines_V2.pdf">{{resourceService.frmelemnts.label.guidelinesfile}}</a>
                   <!-- <p>
                     <span class="mr-24 up-sb-title">
                       NULP for building India's largest urban learning
@@ -36,30 +35,30 @@
                 
                 <form class="sb-form">
                <div class="mt-20u flex-side">
-                <div class="inp-title">Title of the Solution</div>
-                <input placeholder="Title" class="sb-textbox78" #title type="text" (input)="onTitleChange(title.value)" />
+                <div class="inp-title">{{resourceService.frmelmnts.label.titleOfSol}}<span class="mr-8 sb-color-red"> * </span></div>
+                <input placeholder="{{resourceService.frmelmnts.label.titleOfSol}}" class="sb-textbox78" #title type="text" (input)="onTitleChange(title.value)" />
                </div>
                <div class="mt-20u flex-side">
-                <div class="inp-title">Email</div>
-                <input placeholder="Email" class="sb-textbox78" #title type="text" />
+                <div class="inp-title">{{resourceService.frmelmnts.lbl.email}}<span class="mr-8 sb-color-red"> * </span></div>
+                <input placeholder="{{resourceService.frmelmnts.lbl.validEmail}}" class="sb-textbox78" #userEmail type="email" (input)="onEmailChange(userEmail.value)" email="true"/>
                </div>
                <div class="mt-20u flex-side">
-                <div class="inp-title">Phone number</div>
-                <input placeholder="Phone Number" class="sb-textbox78" #title type="text" />
+                <div class="inp-title">{{resourceService.frmelmnts.lbl.phoneNumber}}<span class="mr-8 sb-color-red"> * </span></div>
+                <input placeholder="{{resourceService.frmelmnts.lbl.validPhone}}" class="sb-textbox78" #userPhone type="number" (input)="onMobileChange(userPhone.value)"/>
                </div>
   
+               <div class="select-holder9">
                <div *ngFor="let field of formFieldOptions">
-                <div class="select-holder9">
                 <div class="required sb-field-form-group"
                   *ngIf="field.code === 'board' && allowedFields.includes(field.code)">
-                  <label class="inp-title">Themes
+                  <label class="inp-title">{{resourceService.frmelmnts.lbl.theme}}
                     <span class="mr-8 sb-color-red" *ngIf="field.required"> * </span>
                   </label>
                   <div class="sb-field">
                     <label class="select-box">
                       <sui-select id={{field.code}} [isSearchable]="false" class="selection sb-form-control"
                         [(ngModel)]="selectedOption[field.code]" [options]="options" 
-                        (selectedOptionChange)="selectedTheme($event, field.code)" placeholder="Select Themes"
+                        (selectedOptionChange)="selectedTheme($event, field.code)" placeholder="{{resourceService.frmelmnts.lbl.theme}}"
                         (ngModelChange)="enableSubmitButton()" name={{field.code}}>
                         
                         <sui-select-option *ngFor="let option of field.range | sortBy:'name':'asc'" tabindex="0"
@@ -70,13 +69,13 @@
                 </div>
 
                 <div class="sb-field-form-group mt-6" *ngIf="field.code == 'medium' && allowedFields.includes(field.code)">
-                  <label class="inp-title">Sub - theme
+                  <label class="inp-title">{{resourceService.frmelmnts.lbl.subtheme}}
                     <span class="mr-8 sb-color-red" *ngIf="field.required"> * </span>
                   </label>
                   <div class="sb-field">
                     <label class="select-box">
                       <sui-select id={{field.code}} [isSearchable]="false" class="selection sb-form-control"
-                        [(ngModel)]="selectedOption[field.code]" [options]="options" placeholder="Select Sub-Themes"
+                        [(ngModel)]="selectedOption[field.code]" [options]="options" placeholder="{{resourceService.frmelmnts.lbl.subtheme}}"
                         (selectedOptionChange)="selectedSubTheme($event, field.code)"
                         (ngModelChange)="enableSubmitButton()" name={{field.code}} >
                         <sui-select-option *ngFor="let option of selectedSubThemes" tabindex="0" [value]="option.name">
@@ -94,8 +93,12 @@
                 </div>
               </div>
               </div>
+              <div class="mt-20u flex-side" *ngIf="isOtherCategory">
+                <div class="inp-title">{{resourceService.frmelmnts.label.specify}}<span class="mr-8 sb-color-red"> * </span></div>
+                <input placeholder="{{resourceService.frmelmnts.label.specify}}" class="sb-textbox78" #othersubcategory type="text" (input)="onSubCategoryChange(othersubcategory.value)" />
+               </div>
                   <div class="flex-side mt-20u mt--17">
-                    <div class="inp-title">Upload your proposal here</div>
+                    <div class="inp-title">{{resourceService.frmelmnts.label.uploadProposal}}<span class="mr-8 sb-color-red"> * </span></div>
                     <div class="select-holder file-holder">
                       <div class="" *ngIf="fileUpload">
                         <input type="file" class="file-upload" (change)="onUpload($event)" />
@@ -106,7 +109,7 @@
                       </div>
                     </div>
                   </div>
-                <div class="input-commet">(Please submit your proposal here)
+                <div class="input-commet">({{resourceService.frmelemnts.label.uploadProposaldetail}})
                 </div>
                 <!-- <button (click)="onUpload()">Upload File</button> -->
                 <!-- </ng-container> -->
@@ -116,8 +119,7 @@
                   (click)="onSubmit()"
                   class="sb-btn sb-btn1 sb-btn-primary sb-btn-border"
                 >
-  
-                  Submit
+                {{resourceService.frmelmnts.btn.submit}}
                 </button>
                 </div>
               </form>
