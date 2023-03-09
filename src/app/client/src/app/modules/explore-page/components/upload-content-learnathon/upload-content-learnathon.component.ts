@@ -58,6 +58,11 @@ export class UploadContentLearnathonComponent implements OnInit {
   formFieldTheme: any;
   formFieldSubTheme:any;
 
+  formInvalidMessage: string ;
+  showCenterAlignedModal: boolean = false;
+  showSmallModal:boolean = false;
+  modalHeader: string ;
+
   constructor(
     private learnerService: LearnerService,
     private contentService: ContentService,
@@ -148,6 +153,7 @@ export class UploadContentLearnathonComponent implements OnInit {
       }
     }
     // console.log(this.selectedSubThemes);
+    this.formFieldSubTheme= "";
     this.selectedOption['medium'] = "";
     this.isOtherCategory = false;
   }
@@ -373,111 +379,164 @@ export class UploadContentLearnathonComponent implements OnInit {
   onSubmit() {
     // call all methods with respective api in sequence
 
+    this.modalHeader = this.resourceService.frmelmnts.label.invaliddatamsg ;
+
     if (this.isUserLoggedIn()) {
       this.userProfile = this.userService.userProfile;
     } else {
-      alert("Please login before filling form!");
+      //alert("Please login before filling form!");
+      this.formInvalidMessage = this.resourceService.frmelmnts.label.loginforform;
+      this.showCenterAlignedModal = true;
       return;
     }
 
 
     if(!this?.solutionTitle?.trim()){
-      alert("Please Enter a name");
+      //alert("Please Enter a name");
+      this.formInvalidMessage = this.resourceService.frmelmnts.label.solutiontitlemsg;
+      this.showCenterAlignedModal = true;
       return;
     }
 
     if(!this?.userEmail?.trim()) {
-      alert("Please enter email");
+      //alert("Please enter email");
+      this.formInvalidMessage = this.resourceService.frmelmnts.label.emailmsg;
+      this.showCenterAlignedModal = true;
       return;
     }
 
     if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.userEmail)){
     } else {
-      alert("Please enter a valid email!")
+      //alert("Please enter a valid email!")
+      this.formInvalidMessage = this.resourceService.frmelmnts.label.validemailmsg;
+      this.showCenterAlignedModal = true;
       return;
     }
 
     if(!this?.userPhone?.trim()) {
-      alert("Please enter phone number");
+      // alert("Please enter phone number");
+      this.formInvalidMessage = this.resourceService.frmelmnts.label.mobilemsg;
+      this.showCenterAlignedModal = true;
       return;
     }
 
     if(!(/^\(?([1-9]{1})\)?([0-9]{9})$/.test(this.userPhone))) {
-      alert("Please enter a valid phone number");
+      // alert("Please enter a valid phone number");
+      this.formInvalidMessage = this.resourceService.frmelmnts.label.validmobilemsg;
+      this.showCenterAlignedModal = true;
       return;
     } else {
     }
 
     if(!this.formFieldTheme){
-      alert("Please select a Theme");
+      // alert("Please select a Theme");
+      this.formInvalidMessage = this.resourceService.frmelmnts.label.thememsg;
+      this.showCenterAlignedModal = true;
       return;
     }
 
     if(!this.formFieldSubTheme){
-      alert("Please select a Sub - Theme")
+      // alert("Please select a Sub - Theme")
+      this.formInvalidMessage = this.resourceService.frmelmnts.label.subthememsg;
+      this.showCenterAlignedModal = true;
       return;
     }
 
     if(this.isOtherCategory && !this?.otherSubCategory?.trim()) {
-      alert("Please specify other sub category");
+      // alert("Please specify other sub category");
+      this.formInvalidMessage = this.resourceService.frmelmnts.label.othersubcatmsg;
+      this.showCenterAlignedModal = true;
       return;
     }
 
     if (this.fileUpload && !this?.file?.name) {
-      alert("Please select a file to upload");
+      // alert("Please select a file to upload");
+      this.formInvalidMessage = this.resourceService.frmelmnts.label.fileuploadmsg;
+      this.showCenterAlignedModal = true;
       return;
     }
 
     if (!this.fileUpload && !this.linkToUpload.trim()){
-      alert("Please select a valid Youtube Link to upload");
+      // alert("Please select a valid Youtube Link to upload");
+      this.formInvalidMessage = this.resourceService.frmelmnts.label.youtubelinkmsg;
+      this.showCenterAlignedModal = true;
       return;
     }
 
     if(!this.hasExtension(this.file.name))
       return;
 
-    let confirmation = `Are you sure you want to submit your proposal? You will not be able to edit your proposal once you submit`;
+    this.showSmallModal = true; // confirm ready to submit
+    
 
-    if (confirm(confirmation) !== true) {
-      return;
-      // change UI
+    // if (confirm(confirmation) !== true) {
+      
+    //   console.log(this.showSmallModal);
+      
+    //   return;
+    //   // change UI
+    // } else {
+    //   this.sendToServer();
+    // }
+
+  }
+
+  onSubmitConfirm(confirm){
+    // console.log(confirm);
+    
+    this.showSmallModal = !this.showSmallModal;
+    if(confirm) {
+      this.sendToServer();
     } 
+  }
 
-    this.sendToServer()    
+  onOkClick(flag) {
+    this.showSmallModal = !this.showSmallModal
   }
 
   sendToServer() {
+    //  this.toasterService.info(this.resourceService.frmelmnts.messages.smsg.infodatamsg);
     this.actionService.post(this.getCreateDataOptions()) // first API call to create
       .pipe(
         map((res: any) => {
+          // console.log("res", res);
+          // console.log(res.result.identifier);
           let idOfContentCreated = res.result.identifier;
           forkJoin({
             addUrl : this.actionService.post(this.getUploadURLOptions(idOfContentCreated)), // call for url update
             addFile: this.actionService.post(this.getUploadContentOptions(idOfContentCreated)) // call for upload content
           }).pipe(map((result) => {
+            // console.log(result);
             this.actionService.post(this.getReviewOptions(idOfContentCreated)).subscribe((res2) => { // call for review
-              alert("Your Application was submitted successfully!");
+            //  console.log(res2,"Final success");
+              // alert("Your Application was submitted successfully!");
               // redirection
-
+              this.toasterService.success(_.get(this.resourceService, 'frmelmnts.messages.smsg.successdatamsg'));             
               this.navigationHelperService.navigateToWorkSpace('/resources');
 
             },
             (error) => {
-              console.log(error,"ERROR4")
-              alert("Error4");
+              // console.log(error,"ERROR4")
+              // alert("Error4");
+              this.toasterService.error(_.get(this.resourceService, 'frmelmnts.messages.emsg.invaliddatamsg'));
+              this.navigationHelperService.navigateToWorkSpace('/resources');
             })
           })).subscribe((r) => {},(error) => {
-            console.log(error,"ERROR23")
-            alert("Error23");
+            // console.log(error,"ERROR23")
+            // alert("Error23");
+            this.toasterService.error(_.get(this.resourceService, 'frmelmnts.messages.emsg.invaliddatamsg'));
+            this.navigationHelperService.navigateToWorkSpace('/resources');
          })
         })
       )
-      .subscribe((r) => { console.log("SUCCESSSS")},
+      .subscribe((r) => {
+        // console.log("SUCCESSSS")
+      },
       (error) => {
-         console.log(error,"ERROR1")
-         alert("Error1");
-         this.navigationHelperService.navigateToWorkSpace('/resources');
-        // this.workSpaceService.navigateToContent(content, this.state);
+       // console.log(error,"ERROR1")
+        //  alert("Error1");
+        this.toasterService.error(_.get(this.resourceService, 'frmelmnts.messages.emsg.invaliddatamsg'));
+        this.navigationHelperService.navigateToWorkSpace('/resources');
       })
   }
 
@@ -507,7 +566,7 @@ export class UploadContentLearnathonComponent implements OnInit {
           medium:[this.formFieldSubTheme],
           // gradeLevel:["Good Practices Competition"],
           createdBy: this.userProfile.identifier, // get current userId
-          createdFor: ["0137299712231669762"], //
+          createdFor: ["0137299712231669762","01372785984817561648"], // dev,prod
         },
       },
     };
@@ -583,12 +642,12 @@ export class UploadContentLearnathonComponent implements OnInit {
   }
 
   getContentType(file: File) {
-    console.log(file.name);
+    // console.log(file.name);
 
     const extension = this.hasExtension(file.name);
     if (!extension) return;
 
-    console.log(extension);
+    // console.log(extension);
 
     switch (extension) {
       case "pdf":
@@ -611,21 +670,24 @@ export class UploadContentLearnathonComponent implements OnInit {
   }
 
   hasExtension(fileName) {
-    console.log(fileName);
+    // console.log(fileName);
 
     const allowedExtensions = ["pdf", "mp4", "zip", "h5p"]//, "html5",];
     const extension = fileName
       .substr(fileName.lastIndexOf(".") + 1)
       .toLowerCase();
-    console.log(extension, "extension");
+    // console.log(extension, "extension");
 
     if (fileName.length > 0) {
       if (allowedExtensions.indexOf(extension) === -1) {
-        alert(
-          "Invalid file Format. Only " +
-            allowedExtensions.join(", ") +
-            " are allowed."
-        );
+        // alert(
+        //   "Invalid file Format. Only " +
+        //     allowedExtensions.join(", ") +
+        //     " are allowed."
+        // );
+        // this.formInvalidMessage = "Please select a file with formats .pdf, .mp4, .h5p, .zip";
+        this.formInvalidMessage = this.resourceService.frmelmnts.label.fileformats;
+        this.showCenterAlignedModal = true;
         return "";
       }
       return extension;
