@@ -57,7 +57,7 @@ export class ProfilePageComponent implements OnInit, OnDestroy, AfterViewInit {
   userSubscription: Subscription;
   orgDetails: any = [];
   showContactPopup = false;
-  showEditUserDetailsPopup = true;
+  showEditUserDetailsPopup = false;
   userFrameWork: any;
   telemetryImpression: IImpressionEventInput;
   myFrameworkEditEdata: IInteractEventEdata;
@@ -96,6 +96,10 @@ export class ProfilePageComponent implements OnInit, OnDestroy, AfterViewInit {
   subPersona: string;
   isConnected = true;
   showFullScreenLoader = false;
+
+  // @Hack isLearnathon
+  lernathonChannel: string = "nulp-learnathon";
+  isLearnathon: boolean = false;
 
   constructor(@Inject('CS_COURSE_SERVICE') private courseCService: CsCourseService, private cacheService: CacheService,
   public resourceService: ResourceService, public coursesService: CoursesService,
@@ -160,6 +164,12 @@ export class ProfilePageComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
     });
+
+    // @Hack isLearnathon
+    if (this.userService.rootOrgName == this.lernathonChannel){
+      this.isLearnathon = true;
+  }
+
     this.setInteractEventData();
   }
 

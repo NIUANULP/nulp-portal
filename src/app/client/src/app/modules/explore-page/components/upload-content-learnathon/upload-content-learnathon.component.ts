@@ -141,9 +141,13 @@ export class UploadContentLearnathonComponent implements OnInit {
     const isSelectedTheme = this.formFieldOptions[0].range.filter((item) => item.name === theme);
     // console.log(isSelectedTheme[0]);
     
-    this.selectedSubThemes = isSelectedTheme[0].associations;
+    this.selectedSubThemes = isSelectedTheme[0].associations;    
+    for (let val of this?.selectedSubThemes) {
+      if (val.code === "othersubdomain") {
+        this.selectedSubThemes.push(this.selectedSubThemes.splice(this.selectedSubThemes.indexOf(val), 1)[0]);
+      }
+    }
     // console.log(this.selectedSubThemes);
-    
     this.selectedOption['medium'] = "";
     this.isOtherCategory = false;
   }
@@ -318,20 +322,6 @@ export class UploadContentLearnathonComponent implements OnInit {
   }
 
   // End Added by komal
-
-  onCategorySelect(category){
-    let subCategoriessss = [];
-    subCategoriessss = this.uploadContentService.getSubTheme().filter(
-      e => {
-        if (e.id == category.target.value){
-          return e.categories;
-        }
-      }
-    );
-
-    this.subCategories = subCategoriessss[0].categories;
-  }
-  
 
   onTypeSelect(event:any) {
     if(event.target.value === "youtube"){
