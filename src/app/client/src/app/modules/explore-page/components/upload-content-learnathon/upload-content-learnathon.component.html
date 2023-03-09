@@ -7,46 +7,32 @@
             <div class="" tabindex="0">
 
               <div class="sbt-container1">
-                <div class="preference">
-                  <p class="header font-weight-bold mb-8 up-title">
-                    Solution submission form
-                  </p>
-                  <p class="para-tit">{{resourceService.frmelmnts.label.guidelines}}
-                    <a download href="./document/Learnathon_Guidelines_V2.pdf">{{resourceService.frmelemnts.label.guidelinesfile}}</a>
-                  </p>
-                    <!-- <p>
-                    <span class="mr-24 up-sb-title">
-                      NULP for building India's largest urban learning
-                        community and to curate and collate the best content on
-                        the platform.
-                    </span>
-                  </p> -->
-                </div>
-                <!-- <ng-container *ngIf="formFieldProperties"> -->
-  
-                <!-- <sb-form (initialize)="outputData($event)" (statusChanges)="onStatusChanges($event)" (valueChanges)="valueChanges($event)"></sb-form> -->
-                <!-- <sb-dynamic-form
-                  *ngIf="formFieldProperties"
-                  [config]="formFieldProperties.fields"
-                  (valueChanges)="valueChanges($event)"
-                  (statusChanges)="onStatusChanges($event)"
-                >
-                </sb-dynamic-form> -->
-
-                
-                <form class="sb-form">
-               <div class="mt-20u flex-side">
-                <div class="inp-title">{{resourceService.frmelmnts.label.titleOfSol}}<span class="mr-8 sb-color-red"> * </span></div>
-                <input placeholder="{{resourceService.frmelmnts.label.titleOfSol}}" class="sb-textbox78" #title type="text" (input)="onTitleChange(title.value)" />
-               </div>
-               <div class="mt-20u flex-side">
-                <div class="inp-title">{{resourceService.frmelmnts.lbl.email}}<span class="mr-8 sb-color-red"> * </span></div>
-                <input placeholder="{{resourceService.frmelmnts.lbl.validEmail}}" class="sb-textbox78" #userEmail type="email" (input)="onEmailChange(userEmail.value)" email="true"/>
-               </div>
-               <div class="mt-20u flex-side">
-                <div class="inp-title">{{resourceService.frmelmnts.lbl.phoneNumber}}<span class="mr-8 sb-color-red"> * </span></div>
-                <input placeholder="{{resourceService.frmelmnts.lbl.validPhone}}" class="sb-textbox78" #userPhone type="number" (input)="onMobileChange(userPhone.value)"/>
-               </div>
+                <div class="w-61">
+                  <div class="preference">
+                    <p class="header font-weight-bold mb-8 up-title">
+                      Solution submission form
+                    </p>
+                    <p class="para-tit">{{resourceService.frmelmnts.label.guidelines}}
+                      <a download href="./document/Learnathon_Guidelines_V2.pdf">{{resourceService.frmelemnts.label.guidelinesfile}}</a>
+                    </p>
+                      <!-- <p>
+                      <span class="mr-24 up-sb-title">
+                        NULP for building India's largest urban learning
+                          community and to curate and collate the best content on
+                          the platform.
+                      </span>
+                    </p> -->
+                  </div>
+                  <!-- <ng-container *ngIf="formFieldProperties"> -->
+    
+                  <!-- <sb-form (initialize)="outputData($event)" (statusChanges)="onStatusChanges($event)" (valueChanges)="valueChanges($event)"></sb-form> -->
+                  <!-- <sb-dynamic-form
+                    *ngIf="formFieldProperties"
+                    [config]="formFieldProperties.fields"
+                    (valueChanges)="valueChanges($event)"
+                    (statusChanges)="onStatusChanges($event)"
+                  >
+                  </sb-dynamic-form> -->
   
                   
                   <form class="sb-form">
@@ -108,21 +94,21 @@
                     </div>
                   </div>
                 </div>
-              </div>
-              </div>
-              <div class="mt-20u flex-side" *ngIf="isOtherCategory">
-                <div class="inp-title">{{resourceService.frmelmnts.label.specify}}<span class="mr-8 sb-color-red"> * </span></div>
-                <input placeholder="{{resourceService.frmelmnts.label.specify}}" class="sb-textbox78" #othersubcategory type="text" (input)="onSubCategoryChange(othersubcategory.value)" />
-               </div>
-                  <div class="flex-side mt-20u mt--17">
-                    <div class="inp-title">{{resourceService.frmelmnts.label.uploadProposal}}<span class="mr-8 sb-color-red"> * </span></div>
-                    <div class="select-holder file-holder">
-                      <div class="" *ngIf="fileUpload">
-                        <input type="file" class="file-upload" (change)="onUpload($event)" /> <!-- file upload-->
-                      </div>
-                      <div class="inp-title">{{resourceService.frmelmnts.label.fileformats}}</div>
-                      <div class="" *ngIf="!fileUpload">
-                        <input #link type="text" class="file-upload" (input)="onLinkChange(link.value)" placeholder="Enter youtube link"/>
+                </div>
+                <div class="mt-20u flex-side" *ngIf="isOtherCategory">
+                  <div class="inp-title">{{resourceService.frmelmnts.label.specify}}<span class="mr-8 sb-color-red"> * </span></div>
+                  <input placeholder="{{resourceService.frmelmnts.label.specify}}" class="sb-textbox78" #othersubcategory type="text" (input)="onSubCategoryChange(othersubcategory.value)" />
+                 </div>
+                    <div class="flex-side mt-20u mt--17">
+                      <div class="inp-title">{{resourceService.frmelmnts.label.uploadProposal}}<span class="mr-8 sb-color-red"> * </span></div>
+                      <div class="select-holder file-holder">
+                        <div class="" *ngIf="fileUpload">
+                          <input type="file" class="file-upload" (change)="onUpload($event)" /> <!-- file upload-->
+                        </div>
+                        <div class="inp-title">{{resourceService.frmelmnts.label.fileformats}}</div>
+                        <div class="" *ngIf="!fileUpload">
+                          <input #link type="text" class="file-upload" (input)="onLinkChange(link.value)" placeholder="Enter youtube link"/>
+                        </div>
                       </div>
                     </div>
                   <div class="input-commet">({{resourceService.frmelemnts.label.uploadProposaldetail}})
