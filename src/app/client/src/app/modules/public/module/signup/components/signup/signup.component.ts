@@ -569,17 +569,15 @@ allInstitutions: any;
         'roles':["CONTENT_CREATOR"],
         "framework": {
           "board": [
-              "TTPL Board"
+              "Data Governance and Analysis"
           ],
           "medium": [
-              "teama"
+              "Affordable Housing"
           ],
           "gradeLevel": [
-              "Class AA"
+              "Solutions Hackathon"
           ],
-          "subject": [
-              "AI"
-          ],
+          "subject": [],
           "subcategory":[this.signUpForm.controls.subcategory.value],
           "category":[this.signUpForm.controls.category.value],
           "city":[city],
