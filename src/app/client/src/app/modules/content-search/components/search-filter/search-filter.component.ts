@@ -236,7 +236,6 @@ export class SearchFilterComponent implements OnInit, OnDestroy {
     });
     this.optionData = _.uniqBy(this.optionData, 'label');
     if (this.boards.length) {
-      console.log("this.boards====", this.boards);
       const selectedOption = _.find(this.boards, { name: _.get(this.queryFilters, 'board[0]') }) ||
         _.find(this.boards, { name: _.get(this.defaultFilters, 'board[0]') }) || this.boards[0];
       this.selectedBoard = { label: this.optionLabel.Board, value: 'board', selectedOption: _.get(selectedOption, 'name') };
@@ -421,7 +420,6 @@ export class SearchFilterComponent implements OnInit, OnDestroy {
       switchMap(_ => this._filterConfig$),
       tap((config: IFrameworkCategoryFilterFieldTemplateConfig[]) => {
         this.filterFormTemplateConfig = config;
-        console.log("_filterConfig-----", config);
         this.refreshSearchFilterComponent = false;
         this.cdr.detectChanges();
         this.refreshSearchFilterComponent = true;

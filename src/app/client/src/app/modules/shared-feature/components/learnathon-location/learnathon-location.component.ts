@@ -134,11 +134,9 @@ allInstitutions: any;
   }
 
   updateUserLocation(event) {
-    console.log("userDetailsForm--", this.userDetailsForm.value)
     // this.userDetailsForm.value["id"] = this.userProfile.userid
     localStorage.setItem('learnathonUserDetails', JSON.stringify(this.userDetailsForm.value));
     this.users.push(this.userDetailsForm.value)
-    console.log("userData---", this.users)
     const request = {
       'category': this.userDetailsForm.value.category,
       'city': this.userDetailsForm.value.city,
@@ -147,11 +145,10 @@ allInstitutions: any;
     };
   
   this.profileService.updateProfile(request).subscribe((data) => {
-    console.log("res====",data)
     this.closeModal();
 
   }, (error) => {
-   console.log("err====",error)
+   console.log(error)
   });
    
   }
