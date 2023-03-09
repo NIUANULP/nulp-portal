@@ -8,6 +8,8 @@
     z-index: 8;
     margin-bottom: 30px;
     box-shadow: 0.375rem 0.375rem 0.125rem 0 rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
 }
 .mt-20u{
     margin-top: 8px;
@@ -21,8 +23,8 @@
     border-radius: 7px;
     line-height: normal;
     background: #FFF;
-    color: #9f9999;
-    width: 48.5%;
+    color: black;
+    width: 100% !important;
     border: 1px solid rgb(175, 171, 171);
 }
 .sb-button{
@@ -55,13 +57,16 @@
     font-weight: 500;
     width: 300px !important;
 }
+.w-61{
+    width: 61% !important;
+}
 .up-title{
     font-family: 'EB Garamond';
     font-style: normal;
     font-weight: 400;
     font-size: 20px;
     line-height: 140%;
-    margin-bottom: 16px !important;
+    // margin-bottom: 16px !important;
 }
 .up-sb-title{
     margin-top: 16px;
@@ -104,13 +109,13 @@
     /* gap: 50px !important; */
     margin: 13px 0 0 0 !important;
     flex-wrap: wrap;
-    justify-content: space-between;
-    width: 48.5%;
+    gap: 30px;
+    width: 100%;
 }
 .btn-end{
     display: flex;
     justify-content: center;
-    width: 48.5%;
+    width: 100%;
 }
 .file-upload{
     font-size: 10px !important;
@@ -131,7 +136,7 @@
 @media (max-width:490px) {
     
     .sb-textbox78{
-        width: 93% !important;
+        width: 100% !important;
     }
     .select-box{
         width: 207px !important;
