@@ -1750,6 +1750,9 @@ section img{
     letter-spacing: 0.01em;
     color: #55668A;
 }
+.plr-42{
+    padding: 0 42px;
+}
 .learn-handburger{
     display: none !important;
 }
@@ -1899,7 +1902,7 @@ section img{
     
 }
 .slider-img2{
-    background-image: url("./../images/EnvironmentandClimate.png");
+    background-image: url("./../images/environmentandclimate1234.jpg");
    
 }
 .slider-img3{
