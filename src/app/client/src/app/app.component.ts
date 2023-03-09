@@ -374,7 +374,6 @@ export class AppComponent implements OnInit, OnDestroy {
     const custodianOrgDetails = this.orgDetailsService.getCustodianOrgDetails();
     forkJoin([deviceRegister, custodianOrgDetails]).subscribe((res) => {
       const deviceProfile = res[0];
-      console.log("+++++",deviceProfile)
       this.deviceProfile = deviceProfile;
       if (_.get(this.userService, 'userProfile.rootOrg.rootOrgId') === _.get(res[1], 'result.response.value')) {
         // non state user
@@ -612,7 +611,6 @@ export class AppComponent implements OnInit, OnDestroy {
         if (user.err) {
           return throwError(user.err);
         }
-        console.log("userProfile",user.userProfile)
         this.userProfile = user.userProfile;
         this.channel = this.userService.hashTagId;
         this.botObject['channel'] = this.channel;
@@ -720,7 +718,6 @@ export class AppComponent implements OnInit, OnDestroy {
    * updates user framework. After update redirects to library
    */
   public updateFrameWork(event) {
-    console.log("event------", event);
     if (this.isGuestUser && !this.guestUserDetails) {
       const user = { name: 'guest', formatedName: 'Guest', framework: event };
       this.userService.createGuestUser(user).subscribe(data => {
@@ -958,7 +955,6 @@ export class AppComponent implements OnInit, OnDestroy {
     });
   }
   onLearnathonLocationSubmit(event){
-    console.log("learnathonUserDetails====",JSON.parse( localStorage.getItem('learnathonUserDetails')));
     
   }
 }

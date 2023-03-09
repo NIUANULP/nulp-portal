@@ -119,16 +119,17 @@
                 </sui-select>
             </div>
             <div class="sb-section-preference" *ngIf="isLearnathon && selectedCategory == 'Individual'">
-              <div class="preference"> 
-                <label class="ui basic blue error label pt-0">{{resourceService.frmelmnts.lbl.CityIndiviDesc}}</label>
-                <label class="ui basic blue error label pt-0">{{resourceService.frmelmnts.lbl.AcademiaIndiviDesc}}</label>
-                <label class="ui basic blue error label pt-0">{{resourceService.frmelmnts.lbl.IndustriesIndiviDesc}}</label>
+              <div class="preference field"> 
+                <label class="ui basic label pt-8 p-0 m-0 infotext line-height-1-3">{{resourceService.frmelmnts.lbl.CityIndiviDesc}}</label>
+                <label class="ui basic label pt-8 p-0 m-0 infotext line-height-1-3">{{resourceService.frmelmnts.lbl.AcademiaIndiviDesc}}</label>
+                <label class="ui basic label pt-8 p-0 m-0 infotext line-height-1-3">{{resourceService.frmelmnts.lbl.IndustriesIndiviDesc}}</label>
               </div>
+              
             </div>
             <div class="sb-section-preference" *ngIf="isLearnathon && selectedCategory == 'Group'">
-              <div class="preference">
-                <label class="ui basic blue error label pt-0">{{resourceService.frmelmnts.lbl.CityGrpDesc}}</label>
-                <label class="ui basic blue error label pt-0">{{resourceService.frmelmnts.lbl.AcademiaGrpDesc}}</label>
+              <div class="preference field">
+                <label class="ui basic label pt-8 p-0 m-0 infotext line-height-1-3">{{resourceService.frmelmnts.lbl.CityGrpDesc}}</label>
+                <label class="ui basic label pt-8 p-0 m-0 infotext line-height-1-3">{{resourceService.frmelmnts.lbl.AcademiaGrpDesc}}</label>
               </div>
               </div>
             <div *ngIf="allSubCategories && isLearnathon" class="sb-field">
