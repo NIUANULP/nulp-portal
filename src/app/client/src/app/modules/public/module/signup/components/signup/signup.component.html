@@ -110,7 +110,7 @@
             <!-- Google invisible recaptcha -->
             
             <div class="sb-field" *ngIf="isLearnathon">
-              <label>{{resourceService.frmelmnts?.lbl?.learnathonCategory}}:</label>  
+              <label>{{resourceService.frmelmnts?.lbl?.learnathonCategory}}</label>  
                 <sui-select class="selection form-control" formControlName="category" [options]="allCategories"
                  labelField="label" id="signup-form-category" valueField="value"(ngModelChange)="categoryChange($event)"
                             name="category" placeholder="{{resourceService.frmelmnts?.lbl?.learnathonCategory}}">
@@ -133,7 +133,7 @@
               </div>
               </div>
             <div *ngIf="allSubCategories && isLearnathon" class="sb-field">
-              <label>{{resourceService.frmelmnts?.lbl?.learnathonSubCategory}}:</label>
+              <label>{{resourceService.frmelmnts?.lbl?.learnathonSubCategory}}</label>
                 <sui-select class="selection form-control" formControlName="subcategory" [options]="allSubCategories"
                labelField="label" id="signup-form-subcategory" valueField="value"
                             name="subcategory" placeholder="{{resourceService.frmelmnts?.lbl?.learnathonSubCategory}}"
@@ -143,13 +143,13 @@
                 </sui-select>
             </div>
             <div *ngIf="selectedCategory=='Individual' && isLearnathon" class="sb-field">
-              <label>{{resourceService.frmelmnts?.lbl?.learnathonCity}}:</label>
+              <label>{{resourceService.frmelmnts?.lbl?.learnathonCity}}</label>
               <input formControlName="city" id="city" class="form-control sb-search-input" 
               placeholder="{{resourceService.frmelmnts?.lbl?.learnathonCity}}">
 
             </div>
             <div *ngIf="selectedCategory=='Group' && isLearnathon" class="sb-field">
-              <label>{{resourceService.frmelmnts?.lbl?.learnathonInstitution}}:</label>
+              <label>{{resourceService.frmelmnts?.lbl?.learnathonInstitution}}</label>
               <input formControlName="institution" id="institution" class="form-control, sb-search-input">
             </div>
 
