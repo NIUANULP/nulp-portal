@@ -78,7 +78,11 @@
                 </tr>
                 <tr>
                     <th  *ngFor="let col of columns" [ngSwitch]="col.field">
-                    <p-multiSelect *ngSwitchCase="'UserName'" (onChange)="dtOrg.filter($event.value, col.field, 'in')" [options]="UserNameValues" defaultLabel="All"
+                    <!-- <p-multiSelect *ngSwitchCase="'UserName'" (onChange)="dtOrg.filter($event.value, col.field, 'in')" [options]="UserNameValues" defaultLabel="All"
+                    appendTo="body"></p-multiSelect> -->
+                    <p-multiSelect *ngSwitchCase="'category'" (onChange)="dtOrg.filter($event.value, col.field, 'in')" [options]="CategoryValues" defaultLabel="All"
+                    appendTo="body"></p-multiSelect>
+                    <p-multiSelect *ngSwitchCase="'subcategory'" (onChange)="dtOrg.filter($event.value, col.field, 'in')" [options]="SubCategoryValues" defaultLabel="All"
                     appendTo="body"></p-multiSelect>
                     </th>
                     </tr>
