@@ -132,7 +132,6 @@ allInstitutions: any;
     
 
     const currentURL = window.location.href;
-    console.log("learnathon - ", currentURL);
     if (currentURL.includes("learnathon")){
       this.isLearnathon = true;
     }
@@ -142,11 +141,9 @@ allInstitutions: any;
       data => {
         if (data && !data.err) {
           // if (this.isLearnathon){
-          //   console.log("learnathon - LOGO");
           //   this.logo = '';
           // }
           // else {
-          //   console.log("Normal - LOGO");
             this.logo = data.tenantData.logo;
           // }
           
@@ -375,7 +372,6 @@ allInstitutions: any;
   }
 
   enableSignUpSubmitButton() {
-    console.log("this.signUpForm.status === ",this.signUpForm.status)
     this.signUpForm.valueChanges.subscribe(val => {
       if (this.signUpForm.status === 'VALID') {
         this.disableSubmitBtn = false;
@@ -451,19 +447,13 @@ allInstitutions: any;
   submitSignupForm() {
       // @HACK - Learnathon only
       // const currentURL = window.location.href;
-      // console.log("learnathon - ", currentURL);
 
       if (this.isLearnathon)
       { 
-        // this.showLearnathonLocationPopup = true;
-
-        console.log("learnathon - In", this.signUpForm.controls );
         this.onSubmitLearnathonSignUp();
       }
       else
       {
-        console.log("learnathon - Out", );
-
         if (this.isP1CaptchaEnabled === 'true') {
             this.resetGoogleCaptcha();
             this.captchaRef.execute();
@@ -494,8 +484,6 @@ allInstitutions: any;
   //     createRequest.request['emailVerified'] = true;
   //   }
 
-  //  console.log("onSubmitLearnathonSignUpAPI learnathon - in", );
-  //   console.log('onSubmitLearnathonSignUpAPI createRequest - ', createRequest);
   //   // this.onSubmitSignUpForm();
 
   //   this.addUserService.createUserDetailSaveApi(createRequest).subscribe(res => {
@@ -529,8 +517,6 @@ allInstitutions: any;
   //     createRequest.request['emailVerified'] = true;
   //   }
 
-  //  console.log("onSubmitLearnathonSignUpNew learnathon - in", );
-  //   console.log('onSubmitLearnathonSignUpNew createRequest - ', createRequest);
   //   // this.onSubmitSignUpForm();
 
   //   this.addUserService.createUserDetailSaveNew(createRequest).subscribe(res => {
@@ -599,8 +585,6 @@ allInstitutions: any;
       createRequest.request['emailVerified'] = true;
     }
 
-   console.log("onSubmitLearnathonSignUp learnathon - in", );
-    console.log('onSubmitLearnathonSignUp createRequest - ', createRequest);
     // this.onSubmitSignUpForm();
 
     this.addUserService.createUserV1(createRequest).subscribe(res => {
