@@ -204,8 +204,6 @@ export class CourseReportComponent implements OnInit {
                   }
               });
         });
-      //console.log("Updated userList:-"+JSON.stringify(this.userList));
-      //console.log(this.userList);
       //////////////////////////////////////////////////////////////////////////
       var groupedUserData =   this.userList.reduce(function(rv, x) { // grouping of userdata
         (rv[x['orgNameUser_new']] = rv[x['orgNameUser_new']] || []).push(x);
@@ -217,7 +215,6 @@ export class CourseReportComponent implements OnInit {
       {
         let CityTraced= this.cityList.find(el => el.id === x.channel);
         let UserTraced= this.userList.find(el => el.id === x.createdBy);
-          //console.log("cha:-"+x.createdBy+"  Traced-"+JSON.stringify(UserTraced));
           this.Graph_Data_List.push({
           "identifier":x.identifier,
           "copyright":x.copyright,
@@ -278,8 +275,6 @@ GeneratingChannelList(ResultCN:any)
         //G1_Filter.push(x);
         G1_Colour.push(this.getRandomColorHex());
         });
-        //console.log("----this.G1_Group_list------")
-        //console.log(this.G1_Group_list);
       this.G1_Chart(G1_Name,G1_Value,G1_Filter,G1_Colour);
 }
 

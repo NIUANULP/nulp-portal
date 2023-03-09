@@ -53,38 +53,22 @@ export class LearnathonLocationComponent implements OnInit, OnDestroy {
   selectedCategory:any;
   allCategories:any= [
     {
-        "value": "Individual",
-        "label": "Individual"
-    },
-    {
-        "value": "Group",
-        "label": "Group"
-    }
-]
-allSubCategories:any;
-allCities: any =[
-  {
-      "value": "Mumbai",
-      "label": "Mumbai"
+      "value": "Individual",
+      "label": this.resourceService.frmelmnts.lbl.learnCatIndividual
   },
   {
-      "value": "Pune",
-      "label": "Pune"
-  },{
-    "value": "Dilhi",
-    "label": "Dilhi"
-},{
-  "value": "Banglore",
-  "label": "Banglore"
-}
+      "value": "Group",
+      "label": this.resourceService.frmelmnts.lbl.learnCatGroup
+  }
 ]
-
+allSubCategories:any;
 allInstitutions: any;
   constructor(public resourceService: ResourceService, public toasterService: ToasterService,
               formBuilder: FormBuilder, public profileService: ProfileService, private activatedRoute: ActivatedRoute,
               public router: Router, public userService: UserService, public deviceRegisterService: DeviceRegisterService,
               public navigationhelperService: NavigationHelperService, private telemetryService: TelemetryService,
               public popupControlService: PopupControlService) {
+                console.log(this.allCategories)
     this.sbLocationFormBuilder = formBuilder;
   }
 
@@ -98,29 +82,29 @@ allInstitutions: any;
 
     if(event == 'Individual'){
       this.allSubCategories= [
-        {
-            "value": "Government Official",
-            "label": "Government Official"
-        },
-        {
-            "value": "Urban Scholar",
-            "label": "Urban Scholar"
-        }
+      {
+        "value": "Government Official",
+        "label": this.resourceService.frmelmnts.lbl.learnGvtOfcl
+      },
+      {
+        "value": "Urban Scholar",
+        "label": this.resourceService.frmelmnts.lbl.learnUrbanSchlr
+      }
     ]
     }else{
       this.allSubCategories= [
-        {
-            "value": "Cities",
-            "label": "Cities"
-        },
-        {
-            "value": "Academia & CSOs",
-            "label": "Academia & CSOs"
-        },
-        {
-            "value": "Industries",
-            "label": "Industries"
-        }
+      {
+        "value": "Cities",
+        "label": this.resourceService.frmelmnts.lbl.learnCities
+      },
+      {
+        "value": "Academia & CSOs",
+        "label": this.resourceService.frmelmnts.lbl.learnAcademia
+      },
+      {
+        "value": "Industries",
+        "label": this.resourceService.frmelmnts.lbl.learnIndustries
+      }
     ]
     }
 
@@ -150,11 +134,9 @@ allInstitutions: any;
   }
 
   updateUserLocation(event) {
-    console.log("userDetailsForm--", this.userDetailsForm.value)
     // this.userDetailsForm.value["id"] = this.userProfile.userid
     localStorage.setItem('learnathonUserDetails', JSON.stringify(this.userDetailsForm.value));
     this.users.push(this.userDetailsForm.value)
-    console.log("userData---", this.users)
     const request = {
       'category': this.userDetailsForm.value.category,
       'city': this.userDetailsForm.value.city,
@@ -163,11 +145,10 @@ allInstitutions: any;
     };
   
   this.profileService.updateProfile(request).subscribe((data) => {
-    console.log("res====",data)
     this.closeModal();
 
   }, (error) => {
-   console.log("err====",error)
+   console.log(error)
   });
    
   }
