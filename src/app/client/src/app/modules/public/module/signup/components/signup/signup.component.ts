@@ -88,31 +88,14 @@ userDetailsForm: FormGroup;
   allCategories:any= [
     {
         "value": "Individual",
-        "label": "Individual"
+        "label": this.resourceService.frmelmnts.lbl.learnCatIndividual
     },
     {
         "value": "Group",
-        "label": "Group"
+        "label": this.resourceService.frmelmnts.lbl.learnCatGroup
     }
 ]
 allSubCategories:any;
-allCities: any =[
-  {
-      "value": "Mumbai",
-      "label": "Mumbai"
-  },
-  {
-      "value": "Pune",
-      "label": "Pune"
-  },{
-    "value": "Dilhi",
-    "label": "Dilhi"
-},{
-  "value": "Banglore",
-  "label": "Banglore"
-}
-]
-
 allInstitutions: any;
 
 // =======learnathon ends=======
@@ -777,26 +760,26 @@ allInstitutions: any;
       this.allSubCategories= [
         {
             "value": "Government Official",
-            "label": "Government Official"
+            "label": this.resourceService.frmelmnts.lbl.learnGvtOfcl
         },
         {
             "value": "Urban Scholar",
-            "label": "Urban Scholar"
+            "label": this.resourceService.frmelmnts.lbl.learnUrbanSchlr
         }
     ]
     }else{
       this.allSubCategories= [
         {
             "value": "Cities",
-            "label": "Cities"
+            "label": this.resourceService.frmelmnts.lbl.learnCities
         },
         {
             "value": "Academia & CSOs",
-            "label": "Academia & CSOs"
+            "label": this.resourceService.frmelmnts.lbl.learnAcademia
         },
         {
             "value": "Industries",
-            "label": "Industries"
+            "label": this.resourceService.frmelmnts.lbl.learnIndustries
         }
     ]
     }
