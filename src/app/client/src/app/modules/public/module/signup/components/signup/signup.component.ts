@@ -88,31 +88,14 @@ userDetailsForm: FormGroup;
   allCategories:any= [
     {
         "value": "Individual",
-        "label": "Individual"
+        "label": this.resourceService.frmelmnts.lbl.learnCatIndividual
     },
     {
         "value": "Group",
-        "label": "Group"
+        "label": this.resourceService.frmelmnts.lbl.learnCatGroup
     }
 ]
 allSubCategories:any;
-allCities: any =[
-  {
-      "value": "Mumbai",
-      "label": "Mumbai"
-  },
-  {
-      "value": "Pune",
-      "label": "Pune"
-  },{
-    "value": "Dilhi",
-    "label": "Dilhi"
-},{
-  "value": "Banglore",
-  "label": "Banglore"
-}
-]
-
 allInstitutions: any;
 
 // =======learnathon ends=======
@@ -149,7 +132,6 @@ allInstitutions: any;
     
 
     const currentURL = window.location.href;
-    console.log("learnathon - ", currentURL);
     if (currentURL.includes("learnathon")){
       this.isLearnathon = true;
     }
@@ -159,11 +141,9 @@ allInstitutions: any;
       data => {
         if (data && !data.err) {
           // if (this.isLearnathon){
-          //   console.log("learnathon - LOGO");
           //   this.logo = '';
           // }
           // else {
-          //   console.log("Normal - LOGO");
             this.logo = data.tenantData.logo;
           // }
           
@@ -392,7 +372,6 @@ allInstitutions: any;
   }
 
   enableSignUpSubmitButton() {
-    console.log("this.signUpForm.status === ",this.signUpForm.status)
     this.signUpForm.valueChanges.subscribe(val => {
       if (this.signUpForm.status === 'VALID') {
         this.disableSubmitBtn = false;
@@ -468,19 +447,13 @@ allInstitutions: any;
   submitSignupForm() {
       // @HACK - Learnathon only
       // const currentURL = window.location.href;
-      // console.log("learnathon - ", currentURL);
 
       if (this.isLearnathon)
       { 
-        // this.showLearnathonLocationPopup = true;
-
-        console.log("learnathon - In", this.signUpForm.controls );
         this.onSubmitLearnathonSignUp();
       }
       else
       {
-        console.log("learnathon - Out", );
-
         if (this.isP1CaptchaEnabled === 'true') {
             this.resetGoogleCaptcha();
             this.captchaRef.execute();
@@ -511,8 +484,6 @@ allInstitutions: any;
   //     createRequest.request['emailVerified'] = true;
   //   }
 
-  //  console.log("onSubmitLearnathonSignUpAPI learnathon - in", );
-  //   console.log('onSubmitLearnathonSignUpAPI createRequest - ', createRequest);
   //   // this.onSubmitSignUpForm();
 
   //   this.addUserService.createUserDetailSaveApi(createRequest).subscribe(res => {
@@ -546,8 +517,6 @@ allInstitutions: any;
   //     createRequest.request['emailVerified'] = true;
   //   }
 
-  //  console.log("onSubmitLearnathonSignUpNew learnathon - in", );
-  //   console.log('onSubmitLearnathonSignUpNew createRequest - ', createRequest);
   //   // this.onSubmitSignUpForm();
 
   //   this.addUserService.createUserDetailSaveNew(createRequest).subscribe(res => {
@@ -586,17 +555,15 @@ allInstitutions: any;
         'roles':["CONTENT_CREATOR"],
         "framework": {
           "board": [
-              "TTPL Board"
+              "Data Governance and Analysis"
           ],
           "medium": [
-              "teama"
+              "Affordable Housing"
           ],
           "gradeLevel": [
-              "Class AA"
+              "Solutions Hackathon"
           ],
-          "subject": [
-              "AI"
-          ],
+          "subject": [],
           "subcategory":[this.signUpForm.controls.subcategory.value],
           "category":[this.signUpForm.controls.category.value],
           "city":[city],
@@ -618,8 +585,6 @@ allInstitutions: any;
       createRequest.request['emailVerified'] = true;
     }
 
-   console.log("onSubmitLearnathonSignUp learnathon - in", );
-    console.log('onSubmitLearnathonSignUp createRequest - ', createRequest);
     // this.onSubmitSignUpForm();
 
     this.addUserService.createUserV1(createRequest).subscribe(res => {
@@ -777,26 +742,26 @@ allInstitutions: any;
       this.allSubCategories= [
         {
             "value": "Government Official",
-            "label": "Government Official"
+            "label": this.resourceService.frmelmnts.lbl.learnGvtOfcl
         },
         {
             "value": "Urban Scholar",
-            "label": "Urban Scholar"
+            "label": this.resourceService.frmelmnts.lbl.learnUrbanSchlr
         }
     ]
     }else{
       this.allSubCategories= [
         {
             "value": "Cities",
-            "label": "Cities"
+            "label": this.resourceService.frmelmnts.lbl.learnCities
         },
         {
             "value": "Academia & CSOs",
-            "label": "Academia & CSOs"
+            "label": this.resourceService.frmelmnts.lbl.learnAcademia
         },
         {
             "value": "Industries",
-            "label": "Industries"
+            "label": this.resourceService.frmelmnts.lbl.learnIndustries
         }
     ]
     }
