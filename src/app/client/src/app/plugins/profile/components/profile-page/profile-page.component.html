@@ -255,7 +255,7 @@
      </div>
 
       <!-- Add/edit recovery email/phone-->
-    <div class="d-flex flex-jc-center">
+    <div class="d-flex flex-jc-center"  *ngIf="!isLearnathon">
       <div appOnlineOnly *ngIf="userProfile.recoveryEmail || userProfile.recoveryPhone" tabindex="0" (click)="showRecoveryId=true; mode='edit'" attr.aria-label=“{{userProfile.recoveryEmail}}” class="ui semi-circular dodger-blue basic label cursor-pointer mb-15 d-flex"
       appTelemetryInteract
       [telemetryInteractEdata]="editRecoveryIdInteractEdata">
