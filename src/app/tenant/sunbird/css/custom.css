@@ -2005,6 +2005,9 @@ section img{
 .solution-video{
     width: 50%;
 }
+.learnathon-video{
+    width: 90%;
+}
 
 @media (max-width:1081px) {
     .learn-section{
@@ -2107,9 +2110,15 @@ section img{
     .solution-video{
         width: 90%;
     }
+    .learnathon-video{
+        width: 90%;
+    }
 
 }
 @media (max-width:769px) {
+    .learnathon-video{
+        width: 100%;
+    }
     .text-black{
         color: #000000 !important;
         font-family: 'Roboto';
