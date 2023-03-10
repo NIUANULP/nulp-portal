@@ -1926,7 +1926,7 @@ section img{
    
 }
 .slider-img8{
-    background-image: url("./../images/UrbanMobility.png");
+    background-image: url("./../images/mobility.png");
    
 }
 .slider-img9{
@@ -1936,6 +1936,9 @@ section img{
 .slider-img10{
     background-image: url("./../images/town-planning.png");
     
+}
+.mt---8{
+    margin-top: -8px !important;
 }
 .btn-fixed{
     position: absolute;
@@ -2212,6 +2215,12 @@ section img{
         display: unset !important;
         padding: 0 10px !important;
     }
+    .max-width{
+        max-width: 89% !important;
+    }
+    .plr-42 {
+        padding: 0 16px;
+    }
 }
 .lg-title{
     font-weight: 400 !important;
@@ -2221,89 +2230,67 @@ section img{
     margin-top: -15px !important;
 }
 
+/* drop-down style  */
 
-
-a {
+  .theme-drop {
+      list-style: none;
+      margin: 0;
+  }
+  
+  .theme-drop li {
     color: #fff;
-
-  }
-  
-  .menu {
-    margin: 0;
-    display: flex;
-  
-  }
-  
-  .menu a {
-    position: relative;
-    z-index: 2;
     display: block;
-    letter-spacing: 0.01rem;
-    padding: 1rem 1rem;
+    float: left;
+    padding:1rem;
+    position: relative;
     text-decoration: none;
-    font-size: 16px;
-    -webkit-transition: 0.2s;
-    transition: 0.2s;
-    background-color: transparent !important;
+    transition-duration: 0.5s;
   }
-  
-  .menu a:hover {
-    background: #FFFFFF;
-    color: black;
-  }
-  .menu a .icon{
-    fill: #fff;
-  }
-  .menu a:hover .icon {
-    fill: #fff;
-  }
-  
-  .dropdown > a {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-align: center;
-        -ms-flex-align: center;
-            align-items: center;
-  }
-  
-  .dropdown > a .icon {
-    margin-left: .25em;
+    
+  .theme-drop li a {
     color: #fff;
   }
   
-  .dropdown:hover .dropdown-nav {
-    opacity: 1;
-    -webkit-transform: translateY(0);
-            transform: translateY(0);
-    -webkit-box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  .theme-drop li:hover {
+      cursor: pointer;
   }
   
-  .dropdown-nav {
+  .theme-drop li ul {
+    visibility: hidden;
     opacity: 0;
-    -webkit-transition: opacity 0.3s ease-in-out, -webkit-transform 0.3s cubic-bezier(0.88, -0.72, 0, 1);
-    transition: opacity 0.3s ease-in-out, -webkit-transform 0.3s cubic-bezier(0.88, -0.72, 0, 1);
-    transition: transform 0.3s cubic-bezier(0.88, -0.72, 0, 1), opacity 0.3s ease-in-out;
-    transition: transform 0.3s cubic-bezier(0.88, -0.72, 0, 1), opacity 0.3s ease-in-out, -webkit-transform 0.3s cubic-bezier(0.88, -0.72, 0, 1);
-    -webkit-transform: translateY(-4rem);
-            transform: translateY(-4rem);
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    position: absolute;
-    z-index: 1;
-    background: #fff;
-    color: black;
-  }
-  .dropdown-nav li a{
-    color: black;
+    min-width: 20rem;
+      position: absolute;
+    transition: all 0.5s ease;
+    margin-top: 2rem;
+    left: -30px;
+    display: none;
   }
   
-  .dropdown-nav a {
-    font-weight: 400;
-    font-size: 16px;
+  .theme-drop li:hover > ul,
+  .theme-drop li ul:hover {
+    visibility: visible;
+    opacity: 1;
+    display: inline-block;
   }
-  .dropdown-nav li:hover{
-    background-color: rgb(228, 226, 226);
+  
+  .theme-drop li ul li {
+      clear: both;
+    width: 100%;
+  }
+  .dropdown{
+    background-color: #fff !important;
+    z-index: 9999;
+   
+  }
+  .dropdown li a {
+    color: black !important;
+    margin-left: -40px;
+  }
+  .dropdown li :hover{
+    background-color: rgb(233, 228, 228);
+  }
+  .cenrre{
+    margin-top: 2px;
+    position: absolute;
+    fill: #fff;
   }
