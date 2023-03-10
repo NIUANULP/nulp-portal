@@ -1750,6 +1750,9 @@ section img{
     letter-spacing: 0.01em;
     color: #55668A;
 }
+.plr-42{
+    padding: 0 42px;
+}
 .learn-handburger{
     display: none !important;
 }
@@ -1766,9 +1769,8 @@ section img{
     font-weight: 700;
     font-size: 14px;
     line-height: 170%;
-    text-align: right;
     letter-spacing: 0.01em;
-    color: #000000;
+    color: #011F5B;
 }
 .link-holder{
     padding: 0 42px;
@@ -1899,7 +1901,7 @@ section img{
     
 }
 .slider-img2{
-    background-image: url("./../images/EnvironmentandClimate.png");
+    background-image: url("./../images/environmentandclimate1234.jpg");
    
 }
 .slider-img3{
@@ -1923,7 +1925,7 @@ section img{
    
 }
 .slider-img8{
-    background-image: url("./../images/UrbanMobility.png");
+    background-image: url("./../images/mobility.png");
    
 }
 .slider-img9{
@@ -1933,6 +1935,9 @@ section img{
 .slider-img10{
     background-image: url("./../images/town-planning.png");
     
+}
+.mt---8{
+    margin-top: -8px !important;
 }
 .btn-fixed{
     position: absolute;
@@ -2068,7 +2073,7 @@ section img{
     }
     .head-content {
         padding: 0 32px !important;
-        margin-top: 103px;
+        margin-top: 50px;
         max-width: 100%;
     }    
     .underline{
@@ -2086,6 +2091,9 @@ section img{
     } */
     .logo-mt {
         margin-top: 57px;
+    }
+    .check{
+        display: none !important;
     }
 
 }
@@ -2166,6 +2174,9 @@ section img{
     .owl-next span {
         right: 25px !important;
     }
+    .nav-header-theme{
+        padding: 0px !important;
+    }
 }
 @media (max-width:550px) {
     .nav-header{
@@ -2189,7 +2200,7 @@ section img{
     }
     .learn-btn{
         position: absolute;
-        top: 190px;
+        top: 137px;
         left: 32px;
     }
     .link-holder{
@@ -2199,6 +2210,19 @@ section img{
     .theme-btn{
         font-size: 10px;
     }
+    .section-holder {
+        margin-top: -54px;
+    }
+    .nav-header{
+        display: unset !important;
+        padding: 0 10px !important;
+    }
+    .max-width{
+        max-width: 89% !important;
+    }
+    .plr-42 {
+        padding: 0 16px;
+    }
 }
 .lg-title{
     font-weight: 400 !important;
@@ -2207,3 +2231,79 @@ section img{
 .mt--15{
     margin-top: -15px !important;
 }
+
+/* drop-down style  */
+
+  .theme-drop {
+      list-style: none;
+      margin: 0;
+  }
+  
+  .theme-drop li {
+    color: #fff;
+    display: block;
+    float: left;
+    padding:1rem;
+    position: relative;
+    text-decoration: none;
+    transition-duration: 0.5s;
+  }
+    
+  .theme-drop li a {
+    color: #fff;
+  }
+  
+  .theme-drop li:hover {
+      cursor: pointer;
+  }
+  
+  .theme-drop li ul {
+    visibility: hidden;
+    opacity: 0;
+    min-width: 20rem;
+      position: absolute;
+    transition: all 0.5s ease;
+    margin-top: 2rem;
+    left: -30px;
+    display: none;
+  }
+  
+  .theme-drop li:hover > ul,
+  .theme-drop li ul:hover {
+    visibility: visible;
+    opacity: 1;
+    display: inline-block;
+  }
+  
+  .theme-drop li ul li {
+      clear: both;
+    width: 100%;
+  }
+  .dropdown{
+    background-color: #fff !important;
+    z-index: 9999;
+   
+  }
+  .dropdown li a {
+    color: black !important;
+    margin-left: -40px;
+  }
+  .dropdown li :hover{
+    background-color: rgb(233, 228, 228);
+  }
+  .cenrre{
+    margin-top: 2px;
+    position: absolute;
+    fill: #fff;
+  }
+  .post-rel{
+    position: relative;
+  }
+  .blk-underline{
+    top: 91px;
+    position: absolute;
+    right: 15%;
+    height: 2px;
+    width: 45%;
+    background-color:#011F5B;
+  }

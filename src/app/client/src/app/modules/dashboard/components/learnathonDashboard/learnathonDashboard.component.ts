@@ -37,6 +37,8 @@ export class learnathonDashboardComponent implements OnInit {
   selectedCity: string;
   cols: any[];
   UserNameValues: any[] = new Array();
+  CategoryValues:any[]=[{ "label":'Individual', "value": 'Individual' },{ "label":'Group', "value": 'Group' }];
+  SubCategoryValues:any[] = [{ "label":'Government Official', "value": 'Government Official' },{ "label":'Urban Scholar', "value": 'Urban Scholar' },{ "label":'Cities', "value": 'Cities' },{ "label":'Academia & CSOs', "value": 'Academia & CSOs' },{ "label":'Industries', "value": 'Industries' }]
   noResultMessage: INoResultMessage;
   private activatedRoute: ActivatedRoute;
   telemetryImpression: IImpressionEventInput;
@@ -129,7 +131,7 @@ export class learnathonDashboardComponent implements OnInit {
         element['category']=response.result.response.content[0].framework.category[0]
         element['subcategory']=response.result.response.content[0].framework.subcategory[0]
         element['city']=response.result.response.content[0].framework.city[0]
-        element['institution']=response.result.response.content[0].framework.institution[0]
+        element['institute']=response.result.response.content[0].framework.institution[0]
         });
         finalObj.push(element);
 
@@ -226,9 +228,9 @@ export class learnathonDashboardComponent implements OnInit {
       { field: 'status', header: 'Status' },
       { field: 'contentType', header: 'Content Type' },
       { field: 'category', header: 'Category' },
-      { field: 'subCategory', header: 'Sub-Category' },
+      { field: 'subcategory', header: 'Sub-Category' },
       { field: 'city', header: 'City' },
-      { field: 'Institute', header: 'Institute' },
+      { field: 'institute', header: 'Institute' },
 
     ]
   }

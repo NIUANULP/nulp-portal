@@ -88,11 +88,11 @@ userDetailsForm: FormGroup;
   allCategories:any= [
     {
         "value": "Individual",
-        "label": this.resourceService.frmelmnts.lbl.learnCatIndividual
+        "label":"Individual"
     },
     {
         "value": "Group",
-        "label": this.resourceService.frmelmnts.lbl.learnCatGroup
+        "label": "Group"
     }
 ]
 allSubCategories:any;
@@ -240,10 +240,8 @@ allInstitutions: any;
         contactType: new FormControl('email'),
         uniqueContact: new FormControl(null, [Validators.required]),
         tncAccepted: new FormControl(false, [Validators.requiredTrue]),
-        // category: new FormControl(null,[Validators.required]),
-        // subcategory: new FormControl(null,[Validators.required]),
-        category: new FormControl(null),
-        subcategory: new FormControl(null),
+        category: new FormControl(null,[Validators.required]),
+        subcategory: new FormControl(null,[Validators.required]),
         city: new FormControl(null),
         institution: new FormControl(null)
       }, {
@@ -251,14 +249,18 @@ allInstitutions: any;
           const passCtrl = formControl.controls.password;
           const conPassCtrl = formControl.controls.confirmPassword;
           const nameCtrl = formControl.controls.name;
-          // const category = formControl.controls.category;
-          // const subCategory = formControl.controls.subCategory;
+          const category = formControl.controls.category;
+          const subCategory = formControl.controls.subcategory;
+          // const cityCtrl = formControl.controls.city;
+          // const institutionCtrl = formControl.controls.institution;
           this.onPasswordChange(passCtrl);
           if (_.trim(nameCtrl.value) === '') { nameCtrl.setErrors({ required: true }); }
           if (_.trim(passCtrl.value) === '') { passCtrl.setErrors({ required: true }); }
           if (_.trim(conPassCtrl.value) === '') { conPassCtrl.setErrors({ required: true }); }
-          // if (_.trim(category.value) === '') { category.setErrors({ required: true }); }
-          // if (_.trim(subCategory.value) === '') { subCategory.setErrors({ required: true }); }
+          if (_.trim(category.value) === '') { category.setErrors({ required: true }); }
+          if (_.trim(subCategory.value) === '') { subCategory.setErrors({ required: true }); }
+          // if (_.trim(cityCtrl.value) === '') { cityCtrl.setErrors({ required: true }); }
+          // if (_.trim(institutionCtrl.value) === '') { institutionCtrl.setErrors({ required: true }); }
           if (passCtrl.value !== conPassCtrl.value) {
             conPassCtrl.setErrors({ validatePasswordConfirmation: true });
           } else { conPassCtrl.setErrors(null); }
@@ -591,9 +593,11 @@ allInstitutions: any;
       this.telemetryLogEvents('sign-up', true);
       console.log('onSubmitLearnathonSignUp RES', res)
       if (res.result.response == 'SUCCESS') {
+        this.toasterService.success(_.get(this.resourceService, 'messages.smsg.usercreationsucess'));
         this.redirectToSignPage();
       }
     }, (err) => {
+      this.toasterService.error(this.resourceService.messages.emsg.m0005);
       console.log('onSubmitLearnathonSignUp err', err)
     });
 
@@ -742,26 +746,26 @@ allInstitutions: any;
       this.allSubCategories= [
         {
             "value": "Government Official",
-            "label": this.resourceService.frmelmnts.lbl.learnGvtOfcl
+            "label": "Government Official"
         },
         {
             "value": "Urban Scholar",
-            "label": this.resourceService.frmelmnts.lbl.learnUrbanSchlr
+            "label": "Urban Scholar"
         }
     ]
     }else{
       this.allSubCategories= [
         {
             "value": "Cities",
-            "label": this.resourceService.frmelmnts.lbl.learnCities
+            "label": "Cities"
         },
         {
             "value": "Academia & CSOs",
-            "label": this.resourceService.frmelmnts.lbl.learnAcademia
+            "label": "Academia & CSOs"
         },
         {
             "value": "Industries",
-            "label": this.resourceService.frmelmnts.lbl.learnIndustries
+            "label": "Industries"
         }
     ]
     }

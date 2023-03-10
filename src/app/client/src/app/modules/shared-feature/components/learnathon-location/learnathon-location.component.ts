@@ -82,33 +82,33 @@ allInstitutions: any;
 
     if(event == 'Individual'){
       this.allSubCategories= [
-      {
-        "value": "Government Official",
-        "label": this.resourceService.frmelmnts.lbl.learnGvtOfcl
+        {
+          "value": "Government Official",
+          "label": "Government Official"
       },
       {
-        "value": "Urban Scholar",
-        "label": this.resourceService.frmelmnts.lbl.learnUrbanSchlr
+          "value": "Urban Scholar",
+          "label": "Urban Scholar"
       }
     ]
     }else{
       this.allSubCategories= [
-      {
-        "value": "Cities",
-        "label": this.resourceService.frmelmnts.lbl.learnCities
+        {
+          "value": "Cities",
+          "label": "Cities"
       },
       {
-        "value": "Academia & CSOs",
-        "label": this.resourceService.frmelmnts.lbl.learnAcademia
+          "value": "Academia & CSOs",
+          "label": "Academia & CSOs"
       },
       {
-        "value": "Industries",
-        "label": this.resourceService.frmelmnts.lbl.learnIndustries
+          "value": "Industries",
+          "label": "Industries"
       }
     ]
     }
-
   }
+ 
 
   initializeFormFields() {
     this.userDetailsForm = this.sbLocationFormBuilder.group({
