@@ -1926,7 +1926,7 @@ section img{
    
 }
 .slider-img8{
-    background-image: url("./../images/UrbanMobility.png");
+    background-image: url("./../images/mobility.png");
    
 }
 .slider-img9{
@@ -1936,6 +1936,9 @@ section img{
 .slider-img10{
     background-image: url("./../images/town-planning.png");
     
+}
+.mt---8{
+    margin-top: -8px !important;
 }
 .btn-fixed{
     position: absolute;
