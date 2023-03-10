@@ -174,7 +174,7 @@ resendOtpEnablePostTimer() {
     }
     createRequest.request['reqData'] = _.get(data, 'reqData');
      if (this.signUpdata.controls.tncAccepted.value && this.signUpdata.controls.tncAccepted.status === 'VALID') {
-        
+
         this.signupService.createUserV3(createRequest).subscribe((resp: ServerResponse) => {
           this.telemetryLogEvents('sign-up', true);
           const tncAcceptRequestBody = {
