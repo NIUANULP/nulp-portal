@@ -2002,6 +2002,9 @@ section img{
 .text-underline{
     text-decoration: underline;
 }
+.solution-video{
+    width: 50%;
+}
 
 @media (max-width:1081px) {
     .learn-section{
@@ -2100,6 +2103,9 @@ section img{
     }
     .check{
         display: none !important;
+    }
+    .solution-video{
+        width: 90%;
     }
 
 }
