@@ -472,6 +472,13 @@ export class UploadContentLearnathonComponent implements OnInit {
       }
     }
 
+    if(this.isOtherCategory && !this?.otherCategory?.trim()) {
+      // alert("Please specify other category");
+      this.formInvalidMessage = this.resourceService.frmelmnts.label.othercatmsg ;
+      this.showCenterAlignedModal = true;
+      return;
+    }
+
     if(this.isOtherSubCategory && !this?.otherSubCategory?.trim()) {
       // alert("Please specify other sub category");
       this.formInvalidMessage = this.resourceService.frmelmnts.label.othersubcatmsg;
