@@ -63,14 +63,14 @@
                           (selectedOptionChange)="selectedTheme($event, field.code)" placeholder="{{resourceService.frmelmnts.lbl.theme}}"
                           (ngModelChange)="enableSubmitButton()" name={{field.code}}>
                           
-                          <sui-select-option *ngFor="let option of field.range | sortBy:'name':'asc'" tabindex="0"
-                            [value]="option.name | interpolate: 'CBSE': 'CBSE/NCERT'"></sui-select-option>
+                          <sui-select-option *ngFor="let option of field.range" tabindex="0"
+                            [value]="option.name"></sui-select-option>
                         </sui-select>
                       </label>
                     </div>
                   </div>
   
-                  <div class="sb-field-form-group mt-6" *ngIf="field.code == 'medium' && allowedFields.includes(field.code)">
+                  <div class="sb-field-form-group mt-6" *ngIf="field.code == 'medium' && allowedFields.includes(field.code) && isSubCategory">
                     <label class="inp-title">{{resourceService.frmelmnts.lbl.subtheme}}
                       <span class="mr-8 sb-color-red" *ngIf="field.required"> * </span>
                     </label>
@@ -95,22 +95,26 @@
                   </div>
                 </div>
                 </div>
+                <div class="mt-20u flex-side" *ngIf="isOtherSubCategory">
+                  <div class="inp-title">{{resourceService.frmelmnts.label.othersubcatmsg}}<span class="mr-8 sb-color-red"> * </span></div>
+                  <input placeholder="{{resourceService.frmelmnts.label.othersubcatmsg}}" class="sb-textbox78" #othersubcategory type="text" (input)="onSubCategoryChange(othersubcategory.value)" />
+                </div>
                 <div class="mt-20u flex-side" *ngIf="isOtherCategory">
-                  <div class="inp-title">{{resourceService.frmelmnts.label.specify}}<span class="mr-8 sb-color-red"> * </span></div>
-                  <input placeholder="{{resourceService.frmelmnts.label.specify}}" class="sb-textbox78" #othersubcategory type="text" (input)="onSubCategoryChange(othersubcategory.value)" />
-                 </div>
+                  <div class="inp-title">{{resourceService.frmelmnts.label.othercatmsg}}<span class="mr-8 sb-color-red"> * </span></div>
+                  <input placeholder="{{resourceService.frmelmnts.label.othercatmsg}}" class="sb-textbox78" #othercategory type="text" (input)="onCategoryChange(othercategory.value)" />
+                </div>
                     <div class="flex-side mt-20u mt--17">
                       <div class="inp-title">{{resourceService.frmelmnts.label.uploadProposal}}<span class="mr-8 sb-color-red"> * </span></div>
                       <div class="select-holder file-holder">
                         <div class="" *ngIf="fileUpload">
                           <input type="file" class="file-upload" (change)="onUpload($event)" /> <!-- file upload-->
                         </div>
-                        <div class="inp-title">{{resourceService.frmelmnts.label.fileformats}}</div>
                         <div class="" *ngIf="!fileUpload">
                           <input #link type="text" class="file-upload" (input)="onLinkChange(link.value)" placeholder="Enter youtube link"/>
                         </div>
                       </div>
                     </div>
+                  <div class="inp-title">{{resourceService.frmelmnts.label.fileformats}}</div>
                   <div class="input-commet">({{resourceService.frmelemnts.label.uploadProposaldetail}})
                   </div>
                   <!-- <button (click)="onUpload()">Upload File</button> -->

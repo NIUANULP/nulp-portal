@@ -28,6 +28,7 @@ export class UploadContentLearnathonComponent implements OnInit {
   public userEmail: string;
   public userPhone: string;
   public otherSubCategory: string;
+  public otherCategory: string;
   public file!: File;
   userProfile: any;
   categories : any = [];
@@ -35,6 +36,8 @@ export class UploadContentLearnathonComponent implements OnInit {
   state: string;
   fileUpload: boolean = true;
   isOtherCategory: boolean = false;
+  isSubCategory: boolean = true;
+  isOtherSubCategory: boolean = false;
   linkToUpload : string;  
 
 // Added by komal
@@ -143,27 +146,48 @@ export class UploadContentLearnathonComponent implements OnInit {
 
   selectedTheme(theme, themeCode) {
     this.formFieldTheme = theme;
-    const isSelectedTheme = this.formFieldOptions[0].range.filter((item) => item.name === theme);
-    // console.log(isSelectedTheme[0]);
+    // console.log(this.formFieldTheme);
     
-    this.selectedSubThemes = isSelectedTheme[0].associations;    
-    for (let val of this?.selectedSubThemes) {
-      if (val.code === "othersubdomain") {
-        this.selectedSubThemes.push(this.selectedSubThemes.splice(this.selectedSubThemes.indexOf(val), 1)[0]);
+    if(this.formFieldTheme === "Other Domain") {
+      this.isOtherCategory = true;
+      this.isOtherSubCategory = false;
+      this.isSubCategory = false;
+      // console.log(this.isOtherCategory);
+      // console.log(this.isOtherSubCategory);
+
+      
+    }
+    else {
+      this.isOtherCategory = false;
+      this.isSubCategory = true;
+      // console.log(this.isOtherCategory);
+
+    }
+
+    const isSelectedTheme = this.formFieldOptions[0].range.filter((item) => item.name === theme);
+      // console.log(isSelectedTheme[0]);
+      // console.log(isSelectedTheme[0].associations);
+    
+    this.selectedSubThemes = isSelectedTheme[0].associations;
+    if(this.selectedSubThemes) {
+      for (let val of this?.selectedSubThemes) {
+        if (val.code === "othersubdomain") {
+          this.selectedSubThemes.push(this.selectedSubThemes.splice(this.selectedSubThemes.indexOf(val), 1)[0]);
+        }
       }
     }
     // console.log(this.selectedSubThemes);
     this.formFieldSubTheme= "";
     this.selectedOption['medium'] = "";
-    this.isOtherCategory = false;
+    this.isOtherSubCategory = false;
   }
 
   selectedSubTheme(subTheme, themeCode){
     this.formFieldSubTheme = subTheme;
     if(this.formFieldSubTheme === "Other Sub-Domain")
-      this.isOtherCategory = true;
+      this.isOtherSubCategory = true;
     else
-      this.isOtherCategory = false;
+      this.isOtherSubCategory = false;
     
   }
 
@@ -368,6 +392,10 @@ export class UploadContentLearnathonComponent implements OnInit {
     this.userPhone = phone;    
   }
 
+  onCategoryChange(otherCategory){
+    this.otherCategory = otherCategory;
+  }
+
   onSubCategoryChange(otherSubCategory) {
     this.otherSubCategory = otherSubCategory;
   }
@@ -435,14 +463,23 @@ export class UploadContentLearnathonComponent implements OnInit {
       return;
     }
 
-    if(!this.formFieldSubTheme){
-      // alert("Please select a Sub - Theme")
-      this.formInvalidMessage = this.resourceService.frmelmnts.label.subthememsg;
+    if(this.isSubCategory){
+      if(!this.formFieldSubTheme){
+        // alert("Please select a Sub - Theme")
+        this.formInvalidMessage = this.resourceService.frmelmnts.label.subthememsg;
+        this.showCenterAlignedModal = true;
+        return;
+      }
+    }
+
+    if(this.isOtherCategory && !this?.otherCategory?.trim()) {
+      // alert("Please specify other category");
+      this.formInvalidMessage = this.resourceService.frmelmnts.label.othercatmsg ;
       this.showCenterAlignedModal = true;
       return;
     }
 
-    if(this.isOtherCategory && !this?.otherSubCategory?.trim()) {
+    if(this.isOtherSubCategory && !this?.otherSubCategory?.trim()) {
       // alert("Please specify other sub category");
       this.formInvalidMessage = this.resourceService.frmelmnts.label.othersubcatmsg;
       this.showCenterAlignedModal = true;
@@ -552,6 +589,7 @@ export class UploadContentLearnathonComponent implements OnInit {
 //          description: this.userEmail,
           userEmail: this.userEmail,
           userPhone : this.userPhone,
+          specifiedCategory : this.otherCategory,
           specifiedSubCategory : this.otherSubCategory,
           code: this.solutionTitle.split(" ").join("") + this.makeRandom(lengthOfCode, possible), //uuid
           mimeType: this.getContentType(this.file),
