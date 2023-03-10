@@ -748,27 +748,27 @@ allInstitutions: any;
     if(event == 'Individual'){
       this.allSubCategories= [
         {
-            "value": "Government Official",
-            "label": "Government Official"
+            "value": "Municipal / Smart City Employee",
+            "label": "Municipal / Smart City Employee"
         },
         {
-            "value": "Urban Scholar",
-            "label": "Urban Scholar"
+            "value": "State Govt. Employee",
+            "label": "State Govt. Employee"
         }
     ]
     }else{
       this.allSubCategories= [
         {
-            "value": "Cities",
-            "label": "Cities"
+            "value": "ULBs",
+            "label": "ULBs"
         },
         {
-            "value": "Academia & CSOs",
-            "label": "Academia & CSOs"
+            "value": "Smart City SPVs",
+            "label": "Smart City SPVs"
         },
         {
-            "value": "Industries",
-            "label": "Industries"
+            "value": "State / Parastatal Body",
+            "label": "State / Parastatal Body"
         }
     ]
     }
