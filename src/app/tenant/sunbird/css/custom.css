@@ -1769,9 +1769,8 @@ section img{
     font-weight: 700;
     font-size: 14px;
     line-height: 170%;
-    text-align: right;
     letter-spacing: 0.01em;
-    color: #000000;
+    color: #011F5B;
 }
 .link-holder{
     padding: 0 42px;
@@ -2093,6 +2092,9 @@ section img{
     .logo-mt {
         margin-top: 57px;
     }
+    .check{
+        display: none !important;
+    }
 
 }
 @media (max-width:769px) {
@@ -2293,4 +2295,15 @@ section img{
     margin-top: 2px;
     position: absolute;
     fill: #fff;
+  }
+  .post-rel{
+    position: relative;
+  }
+  .blk-underline{
+    top: 91px;
+    position: absolute;
+    right: 15%;
+    height: 2px;
+    width: 45%;
+    background-color:#011F5B;
   }
