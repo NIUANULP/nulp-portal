@@ -152,16 +152,13 @@ export class UploadContentLearnathonComponent implements OnInit {
       this.isOtherCategory = true;
       this.isOtherSubCategory = false;
       this.isSubCategory = false;
-      // console.log(this.isOtherCategory);
-      // console.log(this.isOtherSubCategory);
-
-      
+      this.formFieldSubTheme ="Theme NA";
     }
     else {
       this.isOtherCategory = false;
       this.isSubCategory = true;
+      this.formFieldSubTheme= "";
       // console.log(this.isOtherCategory);
-
     }
 
     const isSelectedTheme = this.formFieldOptions[0].range.filter((item) => item.name === theme);
@@ -177,7 +174,6 @@ export class UploadContentLearnathonComponent implements OnInit {
       }
     }
     // console.log(this.selectedSubThemes);
-    this.formFieldSubTheme= "";
     this.selectedOption['medium'] = "";
     this.isOtherSubCategory = false;
   }
