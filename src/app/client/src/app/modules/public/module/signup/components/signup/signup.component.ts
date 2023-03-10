@@ -589,31 +589,32 @@ allInstitutions: any;
 
     // this.onSubmitSignUpForm();
 
-    // this.addUserService.createUserV1(createRequest).subscribe(res => {
-    //   this.telemetryLogEvents('sign-up', true);
-    //   console.log('onSubmitLearnathonSignUp RES', res)
-    //   if (res.result.response == 'SUCCESS') {
-    //     this.redirectToSignPage();
-    //   }
-    // }, (err) => {
-    //   console.log('onSubmitLearnathonSignUp err', err)
-    // });
-
-    this.addUserService.createUserDetailSaveNew(createRequest).subscribe(res => {
+    this.addUserService.createUserV1(createRequest).subscribe(res => {
+      console.log('onSubmitLearnathonSignUp RES00', res)
+      this.toasterService.success(_.get(this.resourceService, 'messages.smsg.usercreationsucess'));  
       this.telemetryLogEvents('sign-up', true);
-      this.toasterService.success(_.get(this.resourceService, 'messages.smsg.usercreationsucess'));
-        
-      console.log('onSubmitLearnathonSignUpNew RES', res)
       // if (res.result.response == 'SUCCESS') {
         this.redirectToSignPage();
       // }
     }, (err) => {
-      this.toasterService.error(this.resourceService.messages.emsg.m0005);
-      console.log('onSubmitLearnathonSignUp err', err)
+      // this.toasterService.error(this.resourceService.messages.emsg.m0005);
+      this.addUserService.createUserDetailSaveNew(createRequest).subscribe(res => {
+        this.telemetryLogEvents('sign-up', true);
+        this.toasterService.success(_.get(this.resourceService, 'messages.smsg.usercreationsucess'));  
+        console.log('onSubmitLearnathonSignUpNew RES11', res)
+        // if (res.result.response == 'SUCCESS') {
+          this.redirectToSignPage();
+        // }
+      }, (err) => {
+        this.toasterService.error(this.resourceService.messages.emsg.m0005);
+        console.log('onSubmitLearnathonSignUp err1111', err)
+      });
+      // console.log('onSubmitLearnathonSignUp err00', err)
     });
+
+
   }
   redirectToSignPage() {
-   
     window.location.href = '/resources';
   }
 
