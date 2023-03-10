@@ -52,6 +52,12 @@ header{
 .sb-baner-img2{
     background-image: url(../images/banner2.png) !important;
 }
+.sb-baner-img3{
+    background-image: url(../images/NULP_Learnathon_.jpg) !important;
+    background-size: cover;
+    width: 100%;
+    background-position: right;
+}
 .sb-baner .banner-cover{
     padding-top: 70px;
 }
