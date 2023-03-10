@@ -71,9 +71,9 @@
 
 <!-- =========learnathon starts================ -->
 
-            <div class="required field" *ngIf="!isLearnathon">
+            <!-- <div class="required field" *ngIf="!isLearnathon">
               <label class="mb-10 font-weight-bold">{{resourceService.frmelmnts.lbl.OTPmsgforuser}}</label>
-            </div>
+            </div> -->
             <div class="field" *ngIf="showContact === 'email'">
               <input tabindex="0" class="sb-form-control" type="email" [ngClass]="{'orange-border': signUpForm.controls.email.touched && signUpForm.controls['email'].errors}"
                 formControlName="email" name="email" placeholder="{{resourceService.frmelmnts.lbl.email}}" (blur)="getReCaptchaToken('email')">
@@ -104,13 +104,11 @@
               <input id="signup-form-confirmPassword" tabindex="0" class="sb-form-control" [ngClass]="{'orange-border': signUpForm.controls.confirmPassword.touched && signUpForm.controls['confirmPassword'].errors}"
                 formControlName="confirmPassword" type="password" name="confirmPassword" placeholder="{{resourceService.frmelmnts.lbl.reEnterPassword}}">
             </div>
-            <div class="sb-requirement-field mb-8 font-weight-bold">
-              {{resourceService.frmelmnts.lbl.fieldsmarked}}<span class="sb-error">*</span>{{resourceService.frmelmnts.lbl.mandatory  }}
-          </div>
+            
             <!-- Google invisible recaptcha -->
             
-            <div class="sb-field" *ngIf="isLearnathon">
-              <label>{{resourceService.frmelmnts?.lbl?.learnathonCategory}}</label>  
+            <div class="sb-field required" *ngIf="isLearnathon">
+              <label>{{resourceService.frmelmnts?.lbl?.learnathonCategory}}<span class="sb-color-red">*</span></label>  
                 <sui-select class="selection form-control" formControlName="category" [options]="allCategories"
                  labelField="label" id="signup-form-category" valueField="value"(ngModelChange)="categoryChange($event)"
                             name="category" placeholder="{{resourceService.frmelmnts?.lbl?.learnathonCategory}}">
@@ -118,7 +116,7 @@
                                      [value]="category"></sui-select-option>
                 </sui-select>
             </div>
-            <div class="sb-section-preference" *ngIf="isLearnathon && selectedCategory == 'Individual'">
+            <div class="sb-section-preference required" *ngIf="isLearnathon && selectedCategory == 'Individual'">
               <div class="preference field"> 
                 <label class="ui basic label pt-8 p-0 m-0 infotext line-height-1-3">{{resourceService.frmelmnts.lbl.CityIndiviDesc}}</label>
                 <label class="ui basic label pt-8 p-0 m-0 infotext line-height-1-3">{{resourceService.frmelmnts.lbl.AcademiaIndiviDesc}}</label>
@@ -126,14 +124,14 @@
               </div>
               
             </div>
-            <div class="sb-section-preference" *ngIf="isLearnathon && selectedCategory == 'Group'">
+            <div class="sb-section-preference required" *ngIf="isLearnathon && selectedCategory == 'Group'">
               <div class="preference field">
                 <label class="ui basic label pt-8 p-0 m-0 infotext line-height-1-3">{{resourceService.frmelmnts.lbl.CityGrpDesc}}</label>
                 <label class="ui basic label pt-8 p-0 m-0 infotext line-height-1-3">{{resourceService.frmelmnts.lbl.AcademiaGrpDesc}}</label>
               </div>
               </div>
-            <div *ngIf="allSubCategories && isLearnathon" class="sb-field">
-              <label>{{resourceService.frmelmnts?.lbl?.learnathonSubCategory}}</label>
+            <div *ngIf="allSubCategories && isLearnathon" class="sb-field required">
+              <label>{{resourceService.frmelmnts?.lbl?.learnathonSubCategory}}<span class="sb-color-red">*</span></label>
                 <sui-select class="selection form-control" formControlName="subcategory" [options]="allSubCategories"
                labelField="label" id="signup-form-subcategory" valueField="value"
                             name="subcategory" placeholder="{{resourceService.frmelmnts?.lbl?.learnathonSubCategory}}"
@@ -142,18 +140,21 @@
                                      [value]="category"></sui-select-option>
                 </sui-select>
             </div>
-            <div *ngIf="selectedCategory=='Individual' && isLearnathon" class="sb-field">
-              <label>{{resourceService.frmelmnts?.lbl?.learnathonCity}}</label>
+            <div *ngIf="selectedCategory=='Individual' && isLearnathon" class="sb-field required">
+              <label>{{resourceService.frmelmnts?.lbl?.learnathonCity}}<span class="sb-color-red">*</span></label>
               <input formControlName="city" id="city" class="form-control sb-search-input" 
               placeholder="{{resourceService.frmelmnts?.lbl?.learnathonCity}}">
 
             </div>
-            <div *ngIf="selectedCategory=='Group' && isLearnathon" class="sb-field">
-              <label>{{resourceService.frmelmnts?.lbl?.learnathonInstitution}}</label>
+            <div *ngIf="selectedCategory=='Group' && isLearnathon" class="sb-field required">
+              <label>{{resourceService.frmelmnts?.lbl?.learnathonInstitution}}<span class="sb-color-red">*</span></label>
               <input formControlName="institution" id="institution" class="form-control, sb-search-input">
             </div>
 
 <!-- =========learnathon ends================ -->
+        <div class="sb-requirement-field mb-8 font-weight-bold">
+          {{resourceService.frmelmnts.lbl.fieldsmarked}}<span class="sb-error">*</span>{{resourceService.frmelmnts.lbl.mandatory  }}
+        </div>
             <div class="required sb-checkbox sb-checkbox-primary sb-field mt-16">
               <input type="checkbox" id="tncAccepted" role="checkbox" tabindex="0" (click)="generateTelemetry($event)"
                      formControlName="tncAccepted" name="tncAccepted">
@@ -163,7 +164,7 @@
               </a>
             </label>
             </div> 
-<re-captcha *ngIf="isP1CaptchaEnabled === 'true'" tabindex='-1' #captchaRef="reCaptcha" (resolved)="$event && resolved($event) && captchaRef.reset()" siteKey="{{googleCaptchaSiteKey}}" size="invisible"></re-captcha>
+        <re-captcha *ngIf="isP1CaptchaEnabled === 'true'" tabindex='-1' #captchaRef="reCaptcha" (resolved)="$event && resolved($event) && captchaRef.reset()" siteKey="{{googleCaptchaSiteKey}}" size="invisible"></re-captcha>
 
           </form>
 

@@ -1,47 +1,4 @@
-<!-- <div class="border14"> -->
-  <!-- <form novalidate [ngClass]="{'grey-border': tableData.length > 0 || noResult}">
-    <div class="ui grid stackable top aligned my-0">
-        <div class="four wide tablet  three wide computer column">
-            <div class="field">
-                <label>From Date</label>
-                <div class="mt-10" style="cursor: pointer">
-                    <p-calendar [(ngModel)]="fromDate" [showIcon]=true placeholder="Choose From Date"
-                        [maxDate]="toDate" [ngModelOptions]="{standalone: true}" [readonlyInput]="true">
-                    </p-calendar>
-                </div>
-            </div>
-        </div>
-        <div class="four wide tablet  three wide computer column">
-            <div class="field">
-                <label>To Date</label>
-                <div class="mt-10" style="cursor: pointer">
-                    <p-calendar [(ngModel)]="toDate" [showIcon]=true placeholder="Choose To Date"
-                        [minDate]="fromDate" [maxDate]="currentDate" [ngModelOptions]="{standalone: true}"
-                        [readonlyInput]="true">
-                    </p-calendar>
-                </div>
-            </div>
-        </div>
-        <div class="four wide tablet  three wide computer column">
-            <div class="field">
-                <label>City</label>
-                <div class="mt-10" style="cursor: pointer">
-                    <p-dropdown [options]="cityList" [(ngModel)]="selectedCity" placeholder="Select a City"
-                        optionLabel="orgName" [ngModelOptions]="{standalone: true}">
-                    </p-dropdown>
-                </div>
-            </div>
-        </div>
-        <div class="four wide tablet  three wide computer column mar-31">
-            <label class="computer-only mb-5">&nbsp;</label>
-            <button type="button" class="sb-btn sb-btn-normal sb-btn-primary marg-left"
-                (click)="getContentCreationStaticsReport();">{{resourceService.frmelmnts?.btn?.submit}}</button>
-            <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary ml-10"
-                (click)="resetFields();">{{resourceService.frmelmnts?.btn?.reset}}</button>
-        </div>
-    </div>
-</form><br><br> -->
-<div class="ui container">
+<div class="ui container px-60">
   <div class="ui grid" *ngIf="!noResult && tableData.length > 0">
     <div class="twelve wide column">
         <span>Number of contents created:&nbsp;<b>{{tableData.length}}</b></span>
