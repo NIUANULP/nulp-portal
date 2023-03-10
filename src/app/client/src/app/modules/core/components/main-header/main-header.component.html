@@ -111,7 +111,7 @@
                 <use xlink:href="./assets/images/sprite.svg#qr-code-icon"></use>
               </svg></i>
             <span>{{resourceService.frmelmnts?.lbl?.enterQrCode}}</span>
-          </button>
+          </button> 
           <!--/QR Button-->
           <!--Divider-->
           <span class="computer only search-qrcode-divider" *ngIf="!hideHeader"></span>
@@ -119,7 +119,7 @@
           <!--Search Box-->
           <!--Logged in Pages-->
           <app-search [layoutConfiguration]="layoutConfiguration" class="sb-search-box b-0"
-            *ngIf="!showExploreComponent && !hideHeader"
+            *ngIf="!showExploreComponent && !hideHeader && !isLearnathon"
             [ngClass]="{'ml-auto mr-auto': searchBox.center, 'ml-0': !searchBox.center, 'small': searchBox.smallBox, 'large': searchBox.largeBox, 'medium': searchBox.mediumBox}">
           </app-search>
           <!--/Logged in Pages-->
@@ -236,7 +236,7 @@
           </div>
           <div
             class="sb-g-col-xs-12 sb-g-col-md-4 sb-g-col-lg-5 sb-g-col-xxxl-8 sbt-header-tool-bar flex-jc-center relative">
-            <div class="sbt-search-bar-panel">
+            <div class="sbt-search-bar-panel" *ngIf="!isLearnathon">
               <app-search [layoutConfiguration]="layoutConfiguration" class="sbt-search-box large">
               </app-search>
             </div>
