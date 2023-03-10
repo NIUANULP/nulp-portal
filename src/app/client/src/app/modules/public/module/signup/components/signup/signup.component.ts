@@ -593,9 +593,11 @@ allInstitutions: any;
       this.telemetryLogEvents('sign-up', true);
       console.log('onSubmitLearnathonSignUp RES', res)
       if (res.result.response == 'SUCCESS') {
+        this.toasterService.success(_.get(this.resourceService, 'messages.smsg.usercreationsucess'));
         this.redirectToSignPage();
       }
     }, (err) => {
+      this.toasterService.error(this.resourceService.messages.emsg.m0005);
       console.log('onSubmitLearnathonSignUp err', err)
     });
 

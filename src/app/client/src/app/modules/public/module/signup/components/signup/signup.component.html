@@ -148,7 +148,7 @@
             </div>
             <div *ngIf="selectedCategory=='Group' && isLearnathon" class="sb-field required">
               <label>{{resourceService.frmelmnts?.lbl?.learnathonInstitution}}<span class="sb-color-red">*</span></label>
-              <input formControlName="institution" id="institution" class="form-control, sb-search-input">
+              <input placeholder="{{resourceService.frmelmnts?.lbl?.learnathonInstitution}}" formControlName="institution" id="institution" class="form-control, sb-search-input">
             </div>
 
 <!-- =========learnathon ends================ -->
@@ -165,11 +165,7 @@
             </label>
             </div> 
         <re-captcha *ngIf="isP1CaptchaEnabled === 'true'" tabindex='-1' #captchaRef="reCaptcha" (resolved)="$event && resolved($event) && captchaRef.reset()" siteKey="{{googleCaptchaSiteKey}}" size="invisible"></re-captcha>
-
-          </form>
-
-
-            
+          </form>            
          <button [attr.aria-disabled]="disableSubmitBtn" [disabled]="disableSubmitBtn" type="submit" appTelemetryInteract [telemetryInteractEdata]="submitInteractEdata"  [telemetryInteractCdata]="telemetryCdata" [ngClass]="{'sb-btn-disabled':disableSubmitBtn, 'sb-btn-primary':!disableSubmitBtn}" class="sb-btn sb-btn-normal width-100 mt-10" 
             tabindex="0" (click)="submitSignupForm()">{{resourceService.frmelmnts.lbl.signUp}}</button>
           <a tabindex="0" role="button" aria-label="re captcha" (click)="captchaRef.reset()" id="resetGoogleCaptcha"></a>
