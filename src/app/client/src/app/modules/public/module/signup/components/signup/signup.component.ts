@@ -553,7 +553,7 @@ allInstitutions: any;
         'firstName': _.trim(this.signUpForm.controls.name.value),
         'password': _.trim(this.signUpForm.controls.password.value),
         'dob': this.yearOfBirth,
-        'channel': 'nulp-learnathon',
+        'channel': 'nulp-learn',
         'roles':["CONTENT_CREATOR"],
         "framework": {
           "board": [
@@ -571,7 +571,7 @@ allInstitutions: any;
           "city":[city],
           "institution":[institution],
           "id": [
-              "nulplearnathon"
+              "nulp-learn"
           ]
       }
       }
