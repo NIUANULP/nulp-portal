@@ -20,6 +20,7 @@
 .slick-slide{
     margin: 0 28px;
 }
+
 header{
     position: fixed;
     top: 0;
@@ -2008,7 +2009,9 @@ section img{
 .learnathon-video{
     width: 90%;
 }
-
+.ml-20{
+    margin-left: 20px !important;
+}
 @media (max-width:1081px) {
     .learn-section{
         padding: 0 32px !important;
@@ -2113,6 +2116,7 @@ section img{
     .learnathon-video{
         width: 90%;
     }
+   
 
 }
 @media (max-width:769px) {
@@ -2200,6 +2204,12 @@ section img{
     }
 }
 @media (max-width:550px) {
+    .solution-video{
+        width: 85%;
+    }
+    .title-top-margin{
+        margin-top: 77px !important;
+    }
     .nav-header{
         flex-direction: column;
     }
