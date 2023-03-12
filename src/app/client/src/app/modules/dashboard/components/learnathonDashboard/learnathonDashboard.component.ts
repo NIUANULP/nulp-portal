@@ -38,7 +38,7 @@ export class learnathonDashboardComponent implements OnInit {
   cols: any[];
   UserNameValues: any[] = new Array();
   CategoryValues:any[]=[{ "label":'Individual', "value": 'Individual' },{ "label":'Group', "value": 'Group' }];
-  SubCategoryValues:any[] = [{ "label":'Government Official', "value": 'Government Official' },{ "label":'Urban Scholar', "value": 'Urban Scholar' },{ "label":'Cities', "value": 'Cities' },{ "label":'Academia & CSOs', "value": 'Academia & CSOs' },{ "label":'Industries', "value": 'Industries' }]
+  SubCategoryValues:any[] = [{ "label":'Municipal / Smart City Employee', "value": 'Municipal / Smart City Employee' },{ "label":'State Govt. Employee', "value": 'State Govt. Employee' },{ "label":'ULBs', "value": 'ULBs' },{ "label":'Smart City SPVs', "value": 'Smart City SPVs' },{ "label":'State / Parastatal Body', "value": 'State / Parastatal Body' }]
   noResultMessage: INoResultMessage;
   private activatedRoute: ActivatedRoute;
   telemetryImpression: IImpressionEventInput;

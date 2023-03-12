@@ -20,6 +20,7 @@
 .slick-slide{
     margin: 0 28px;
 }
+
 header{
     position: fixed;
     top: 0;
@@ -51,6 +52,12 @@ header{
 }
 .sb-baner-img2{
     background-image: url(../images/banner2.png) !important;
+}
+.sb-baner-img3{
+    background-image: url(../images/NULP_Learnathon_.jpg) !important;
+    background-size: cover;
+    width: 100%;
+    background-position: right;
 }
 .sb-baner .banner-cover{
     padding-top: 70px;
@@ -1156,6 +1163,9 @@ h1, h2, h3, h4, h5,
 .d-flex-jc-around{
     justify-content: space-around;
 }
+.justify-content-center{
+    justify-content: center !important;
+}
 .footer a{
     color: #fff !important;
     text-decoration: none;
@@ -1556,7 +1566,7 @@ section img{
 }
 .learn-btn{
     display: inline-block;
-    padding: 17px 50px;
+    padding: 17px 24px;
     background: #990000;
     text-decoration: none;
     color: #fff;
@@ -1996,6 +2006,27 @@ section img{
 .text-underline{
     text-decoration: underline;
 }
+.solution-video{
+    width: 50%;
+}
+.learnathon-video{
+    width: 90%;
+}
+.ml-20{
+    margin-left: 20px !important;
+}
+.ml-5{
+    margin-left: 5px !important;
+}
+.learn-padding{
+    background: #990000;
+    text-decoration: none;
+    color: #fff;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 6px 29px !important;
+    margin: 10px 0;
+}
 
 @media (max-width:1081px) {
     .learn-section{
@@ -2095,9 +2126,19 @@ section img{
     .check{
         display: none !important;
     }
+    .solution-video{
+        width: 90%;
+    }
+    .learnathon-video{
+        width: 90%;
+    }
+   
 
 }
 @media (max-width:769px) {
+    .learnathon-video{
+        width: 100%;
+    }
     .text-black{
         color: #000000 !important;
         font-family: 'Roboto';
@@ -2177,8 +2218,30 @@ section img{
     .nav-header-theme{
         padding: 0px !important;
     }
+    /* .learn-padding{
+        position: absolute;
+        right: 46%;
+        top: 72px;
+        background: #990000;
+        text-decoration: none;
+        color: #fff;
+        font-weight: 700;
+        font-size: 12px;
+        padding: 6px 29px !important;
+    } */
 }
 @media (max-width:550px) {
+    .learn-container{
+        display: flex;
+        flex-direction: column-reverse !important;
+        align-items: center;
+    }
+    .solution-video{
+        width: 85%;
+    }
+    .title-top-margin{
+        margin-top: 77px !important;
+    }
     .nav-header{
         flex-direction: column;
     }

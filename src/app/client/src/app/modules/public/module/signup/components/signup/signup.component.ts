@@ -553,7 +553,7 @@ allInstitutions: any;
         'firstName': _.trim(this.signUpForm.controls.name.value),
         'password': _.trim(this.signUpForm.controls.password.value),
         'dob': this.yearOfBirth,
-        'channel': 'nulp-learnathon',
+        'channel': 'nulp-learn',
         'roles':["CONTENT_CREATOR"],
         "framework": {
           "board": [
@@ -571,7 +571,7 @@ allInstitutions: any;
           "city":[city],
           "institution":[institution],
           "id": [
-              "nulplearnathon"
+              "nulp-learn"
           ]
       }
       }
@@ -590,27 +590,31 @@ allInstitutions: any;
     // this.onSubmitSignUpForm();
 
     this.addUserService.createUserV1(createRequest).subscribe(res => {
+      console.log('onSubmitLearnathonSignUp RES00', res)
+      this.toasterService.success(_.get(this.resourceService, 'messages.smsg.usercreationsucess'));  
       this.telemetryLogEvents('sign-up', true);
-      console.log('onSubmitLearnathonSignUp RES', res)
-      if (res.result.response == 'SUCCESS') {
-        this.toasterService.success(_.get(this.resourceService, 'messages.smsg.usercreationsucess'));
-        this.redirectToSignPage();
-      }
-    }, (err) => {
-      this.toasterService.error(this.resourceService.messages.emsg.m0005);
-      console.log('onSubmitLearnathonSignUp err', err)
-    });
-
-    this.addUserService.createUserDetailSaveNew(createRequest).subscribe(res => {
-      this.telemetryLogEvents('sign-up', true);
-      console.log('onSubmitLearnathonSignUpNew RES', res)
       // if (res.result.response == 'SUCCESS') {
         this.redirectToSignPage();
       // }
+    }, (err) => {
+      // this.toasterService.error(this.resourceService.messages.emsg.m0005);
+      this.addUserService.createUserDetailSaveNew(createRequest).subscribe(res => {
+        this.telemetryLogEvents('sign-up', true);
+        this.toasterService.success(_.get(this.resourceService, 'messages.smsg.usercreationsucess'));  
+        console.log('onSubmitLearnathonSignUpNew RES11', res)
+        // if (res.result.response == 'SUCCESS') {
+          this.redirectToSignPage();
+        // }
+      }, (err) => {
+        this.toasterService.error(this.resourceService.messages.emsg.m0005);
+        console.log('onSubmitLearnathonSignUp err1111', err)
+      });
+      // console.log('onSubmitLearnathonSignUp err00', err)
     });
+
+
   }
   redirectToSignPage() {
-   
     window.location.href = '/resources';
   }
 
@@ -745,27 +749,27 @@ allInstitutions: any;
     if(event == 'Individual'){
       this.allSubCategories= [
         {
-            "value": "Government Official",
-            "label": "Government Official"
+            "value": "Municipal / Smart City Employee",
+            "label": "Municipal / Smart City Employee"
         },
         {
-            "value": "Urban Scholar",
-            "label": "Urban Scholar"
+            "value": "State Govt. Employee",
+            "label": "State Govt. Employee"
         }
     ]
     }else{
       this.allSubCategories= [
         {
-            "value": "Cities",
-            "label": "Cities"
+            "value": "ULBs",
+            "label": "ULBs"
         },
         {
-            "value": "Academia & CSOs",
-            "label": "Academia & CSOs"
+            "value": "Smart City SPVs",
+            "label": "Smart City SPVs"
         },
         {
-            "value": "Industries",
-            "label": "Industries"
+            "value": "State / Parastatal Body",
+            "label": "State / Parastatal Body"
         }
     ]
     }
