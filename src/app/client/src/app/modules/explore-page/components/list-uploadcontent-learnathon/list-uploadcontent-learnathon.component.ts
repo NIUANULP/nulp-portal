@@ -52,7 +52,7 @@ export class ListUploadcontentLearnathonComponent  extends WorkSpace implements 
   */
   showError = false;
   state: string;
-  lernathonChannel: string = "nulp-learnathon";
+  lernathonChannel: string = "nulp-learn";
   isLearnathon: boolean = false;
   isContentCreator: boolean = false;
   /**
