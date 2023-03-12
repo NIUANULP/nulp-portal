@@ -593,14 +593,14 @@ export class UploadContentLearnathonComponent implements OnInit {
           resourceType: "Learn",
           creator:
             this.userProfile?.firstName + " " + this.userProfile?.lastName, // name of creator
-          framework: "nulplearnathon",
-          organisation: ["nulp-learnathon"],
+          framework: "nulp-learn",
+          organisation: ["nulp-learn"],
           primaryCategory: "Learning Resource",
           board:this.formFieldTheme,
           medium:[this.formFieldSubTheme],
           // gradeLevel:["Good Practices Competition"],
           createdBy: this.userProfile.identifier, // get current userId
-          createdFor: ["0137299712231669762","01372785984817561648"], // dev,prod
+          createdFor: ["0137299712231669762","0137506576041902087"], // dev,prod
         },
       },
     };
