@@ -165,7 +165,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     isLearnathonContentCreator: boolean = false;
     isContentCreator: boolean = false;
     userRoles = [];
-    lernathonChannel: string = "nulp-learnathon";
+    lernathonChannel: string = "nulp-learn";
     isLearnathon: boolean = false;
 
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,

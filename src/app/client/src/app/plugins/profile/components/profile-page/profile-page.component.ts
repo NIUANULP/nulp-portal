@@ -98,7 +98,7 @@ export class ProfilePageComponent implements OnInit, OnDestroy, AfterViewInit {
   showFullScreenLoader = false;
 
   // @Hack isLearnathon
-  lernathonChannel: string = "nulp-learnathon";
+  lernathonChannel: string = "nulp-learn";
   isLearnathon: boolean = false;
 
   constructor(@Inject('CS_COURSE_SERVICE') private courseCService: CsCourseService, private cacheService: CacheService,
