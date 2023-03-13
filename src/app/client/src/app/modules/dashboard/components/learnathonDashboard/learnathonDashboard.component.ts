@@ -67,7 +67,7 @@ export class learnathonDashboardComponent implements OnInit {
         status:["Draft", "FlagDraft", "Review", "Processing", "Live", "Unlisted", "FlagReview"],
         primaryCategory:["Course","Digital Textbook","Content Playlist","Explanation Content","Learning Resource","Practice Question Set","eTextbook","Teacher Resource","Course Assessment"],
         objectType:"Content",
-        framework: ["nulp-learn"],
+        framework: ["nulplearnathon"],
         // channel: "nulp-learnathon",
         mimeType:["application/pdf", "video/x-youtube", "application/vnd.ekstep.html-archive", "application/epub", "application/vnd.ekstep.h5p-archive", "video/mp4", "video/webm", "text/x-url"],
         contentType: ["Course", 'Resource', 'Collection'],
@@ -137,6 +137,7 @@ export class learnathonDashboardComponent implements OnInit {
 
         this.UserNameValues.push({ "label":element.UserName, "value": element.UserName })
         });
+        
         this.tableData = finalObj;
             // this.finalObj.push(this.tableData);
             // this.tableData = _.get(this.selectedCity, 'orgName') != 'All' ? _.filter(tempObj, { OrgName: _.get(this.selectedCity, 'orgName') }) : tempObj;
@@ -231,7 +232,8 @@ export class learnathonDashboardComponent implements OnInit {
       { field: 'subcategory', header: 'Sub-Category' },
       { field: 'city', header: 'City' },
       { field: 'institute', header: 'Institute' },
-
+      { field: 'board', header: 'Theme' },
+      { field: 'medium', header: 'Sub-Theme' }
     ]
   }
   resetFields() {
