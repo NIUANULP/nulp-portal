@@ -536,20 +536,24 @@ allInstitutions: any;
     let subCategory=this.signUpForm.controls.subcategory.value;
     let city =this.signUpForm.controls.city.value;
     let institution =this.signUpForm.controls.institution.value;
-    if(city==null){
-     city =""
-    }
-    if(institution==null){
+
+
+    if(this.signUpForm.controls.category.value == 'Individual'){ 
       institution =""
-     }
-     if(category==null){
-      category =""
-     }
-     if(subCategory==null){
-      subCategory =""
-     }
+      if(city==null){
+        this.disableSubmitBtn = true;
+        this.toasterService.success(_.get(this.resourceService, 'messages.smsg.enterCity'));
+      }    
+    }else if(this.signUpForm.controls.category.value == 'Group'){
+      city =""
+      if(institution==null){
+        this.disableSubmitBtn = true;
+        this.toasterService.success(_.get(this.resourceService, 'messages.smsg.enterInstitutuion'));
+      }
+    }
+
     const createRequest = {
-      'request': {
+      request: {
         'firstName': _.trim(this.signUpForm.controls.name.value),
         'password': _.trim(this.signUpForm.controls.password.value),
         'dob': this.yearOfBirth,
