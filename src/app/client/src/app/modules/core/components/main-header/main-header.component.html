@@ -204,7 +204,9 @@
               <!--Logo-->
               <a class="logo sbt-logo" tabindex="0" title="{{tenantInfo.titleName}}" role="link"
                 aria-label="Navigate to Homepage">
-                <img (click)="navigateToHome()" class="cursor-pointer" alt={{tenantInfo.titleName}}
+                <img (click)="navigateToHome()" class="cursor-pointer" alt={{tenantInfo.titleName}} *ngIf="!isLearnathon"
+                  src="assets/images/logo.png">
+                  <img class="cursor-pointer" alt={{tenantInfo.titleName}} *ngIf="isLearnathon"
                   src="assets/images/logo.png">
               </a>
               <!--/Logo-->

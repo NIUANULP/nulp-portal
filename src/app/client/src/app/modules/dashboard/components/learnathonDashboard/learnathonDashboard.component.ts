@@ -137,6 +137,7 @@ export class learnathonDashboardComponent implements OnInit {
 
         this.UserNameValues.push({ "label":element.UserName, "value": element.UserName })
         });
+        
         this.tableData = finalObj;
             // this.finalObj.push(this.tableData);
             // this.tableData = _.get(this.selectedCity, 'orgName') != 'All' ? _.filter(tempObj, { OrgName: _.get(this.selectedCity, 'orgName') }) : tempObj;
@@ -231,7 +232,8 @@ export class learnathonDashboardComponent implements OnInit {
       { field: 'subcategory', header: 'Sub-Category' },
       { field: 'city', header: 'City' },
       { field: 'institute', header: 'Institute' },
-
+      { field: 'board', header: 'Theme' },
+      { field: 'medium', header: 'Sub-Theme' }
     ]
   }
   resetFields() {
