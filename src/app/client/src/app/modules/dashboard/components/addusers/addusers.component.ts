@@ -460,7 +460,7 @@ export class AddusersComponent implements OnInit {
             'filters': {
 
             },
-            'limit': 3000
+            'limit': 10000
           }
         }
       }
@@ -472,7 +472,7 @@ export class AddusersComponent implements OnInit {
             'filters': {
               "channel": userLoginDataChannel
             },
-            'limit': 1000
+            'limit': 10000
           }
         }
       }
@@ -485,7 +485,7 @@ export class AddusersComponent implements OnInit {
           'query': organisationId,
           'filters': {
           },
-          'limit': 1000
+          'limit': 10000
         }
       }
 
@@ -549,7 +549,8 @@ export class AddusersComponent implements OnInit {
 
         if (element.firstName == 'Medical') {
         }
-        this.showUserData.push({ "orgType": this.orgTypeUser, "userId": element.id, "uStatus": element.status, "createdDate": element.createdDate, "firstName": element.firstName, "lastName": element.lastName, "email": element.email, "phone": element.phone, "orgLength": element.organisations.length, "orgName": this.orgNameUser, "status": this.status, "userOrglengths": this.userOrgLength, "userName": element.userName })
+        console.log("")
+        this.showUserData.push({ "orgType": this.orgTypeUser, "userId": element.id, "uStatus": element.status, "createdDate": element.createdDate, "firstName": element.firstName, "lastName": element.lastName, "email": element.email, "phone": element.phone, "orgLength": element.organisations.length, "orgName": this.orgNameUser, "status": this.status, "userOrglengths": this.userOrgLength, "userName": element.userName, "createdOn": element.createdDate })
         // this.showUserData.push({"userId":element.id,"uStatus":element.status,"firstName": element.firstName,"lastName":element.lastName,"email":element.email,"phone":element.phone,"orgLength":  element.organisations.length,"orgName":this.orgName})
 
 
@@ -617,6 +618,7 @@ export class AddusersComponent implements OnInit {
       { field: 'description', header: 'Description', width: '170px' },
       { field: 'channel', header: 'Channel', width: '170px' },
       { field: 'status', header: 'Status', width: '170px' },
+      { field: 'createdOn', header: 'Created On', width: '170px' }
     ]
   }
 
