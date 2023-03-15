@@ -67,7 +67,9 @@ export class learnathonDashboardComponent implements OnInit {
         status:["Draft", "FlagDraft", "Review", "Processing", "Live", "Unlisted", "FlagReview"],
         primaryCategory:["Course","Digital Textbook","Content Playlist","Explanation Content","Learning Resource","Practice Question Set","eTextbook","Teacher Resource","Course Assessment"],
         objectType:"Content",
-        framework: ["nulp-learn"],
+        // framework: ["nulp-learn"],
+        framework: localStorage.getItem('learnathonFramework'),
+
         // channel: "nulp-learnathon",
         mimeType:["application/pdf", "video/x-youtube", "application/vnd.ekstep.html-archive", "application/epub", "application/vnd.ekstep.h5p-archive", "video/mp4", "video/webm", "text/x-url"],
         contentType: ["Course", 'Resource', 'Collection'],
