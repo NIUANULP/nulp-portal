@@ -536,85 +536,78 @@ allInstitutions: any;
     let subCategory=this.signUpForm.controls.subcategory.value;
     let city =this.signUpForm.controls.city.value;
     let institution =this.signUpForm.controls.institution.value;
-    if(city==null){
-     city =""
-    }
-    if(institution==null){
+
+    if(this.signUpForm.controls.category.value == 'Individual'){ 
       institution =""
-     }
-     if(category==null){
-      category =""
-     }
-     if(subCategory==null){
-      subCategory =""
-     }
-    const createRequest = {
-      'request': {
-        'firstName': _.trim(this.signUpForm.controls.name.value),
-        'password': _.trim(this.signUpForm.controls.password.value),
-        'dob': this.yearOfBirth,
-        // 'channel': 'nulp-learn',
-        'channel': localStorage.getItem('learnathonChannel'),
-
-        'roles':["CONTENT_CREATOR"],
-        "framework": {
-          "board": [
-              "Data Governance and Analysis"
-          ],
-          "medium": [
-              "Affordable Housing"
-          ],
-          "gradeLevel": [
-              "Solutions Hackathon"
-          ],
-          "subject": [],
-          "subcategory":[this.signUpForm.controls.subcategory.value],
-          "category":[this.signUpForm.controls.category.value],
-          "city":[city],
-          "institution":[institution],
-          "id": [
-            localStorage.getItem('learnathonFramework')
-          ]
+      if(city==null){
+        this.disableSubmitBtn = true;
+        this.toasterService.error(_.get(this.resourceService, 'messages.smsg.enterCity'));
+      }    
+    }else if(this.signUpForm.controls.category.value == 'Group'){
+      city =""
+      if(institution==null){
+        this.disableSubmitBtn = true;
+        this.toasterService.error(_.get(this.resourceService, 'messages.smsg.enterInstitutuion'));
       }
+    }
+    if((this.signUpForm.controls.category.value == 'Individual' && city!=null)||(this.signUpForm.controls.category.value == 'Group' && institution!=null))
+    {
+      const createRequest = {
+        request: {
+          'firstName': _.trim(this.signUpForm.controls.name.value),
+          'password': _.trim(this.signUpForm.controls.password.value),
+          'dob': this.yearOfBirth,
+          'channel': 'nulp-learn',
+          'roles':["CONTENT_CREATOR"],
+          "framework": {
+            "board": [
+                "Data Governance and Analysis"
+            ],
+            "medium": [
+                "Affordable Housing"
+            ],
+            "gradeLevel": [
+                "Solutions Hackathon"
+            ],
+            "subject": [],
+            "subcategory":[this.signUpForm.controls.subcategory.value],
+            "category":[this.signUpForm.controls.category.value],
+            "city":[city],
+            "institution":[institution],
+            "id": [
+                "nulp-learn"
+            ]
+        }
+        }
+      };
+  
+      if (this.signUpForm.controls.phone.value.toString()){
+        createRequest.request['phone'] = this.signUpForm.controls.phone.value.toString();
+        createRequest.request['phoneVerified'] = true;
       }
-    };
+  
+      if (this.signUpForm.controls.email.value){
+        createRequest.request['email']  = this.signUpForm.controls.email.value;
+        createRequest.request['emailVerified'] = true;
+      }
 
-    if (this.signUpForm.controls.phone.value.toString()){
-      createRequest.request['phone'] = this.signUpForm.controls.phone.value.toString();
-      createRequest.request['phoneVerified'] = true;
-    }
-
-    if (this.signUpForm.controls.email.value){
-      createRequest.request['email']  = this.signUpForm.controls.email.value;
-      createRequest.request['emailVerified'] = true;
-    }
-
-    // this.onSubmitSignUpForm();
-
-    this.addUserService.createUserV1(createRequest).subscribe(res => {
-      console.log('onSubmitLearnathonSignUp RES00', res)
-      this.toasterService.success(_.get(this.resourceService, 'messages.smsg.usercreationsucess'));  
-      this.telemetryLogEvents('sign-up', true);
-      // if (res.result.response == 'SUCCESS') {
-        this.redirectToSignPage();
-      // }
-    }, (err) => {
-      // this.toasterService.error(this.resourceService.messages.emsg.m0005);
-      this.addUserService.createUserDetailSaveNew(createRequest).subscribe(res => {
-        this.telemetryLogEvents('sign-up', true);
+      this.addUserService.createUserV1(createRequest).subscribe(res => {
+        console.log('onSubmitLearnathonSignUp RES00', res)
         this.toasterService.success(_.get(this.resourceService, 'messages.smsg.usercreationsucess'));  
-        console.log('onSubmitLearnathonSignUpNew RES11', res)
-        // if (res.result.response == 'SUCCESS') {
+        this.telemetryLogEvents('sign-up', true);
           this.redirectToSignPage();
-        // }
       }, (err) => {
-        this.toasterService.error(this.resourceService.messages.emsg.m0005);
-        console.log('onSubmitLearnathonSignUp err1111', err)
+        this.addUserService.createUserDetailSaveNew(createRequest).subscribe(res => {
+          this.telemetryLogEvents('sign-up', true);
+          this.toasterService.success(_.get(this.resourceService, 'messages.smsg.usercreationsucess'));  
+          console.log('onSubmitLearnathonSignUpNew RES11', res)
+            this.redirectToSignPage();
+        }, (err) => {
+          this.toasterService.error(this.resourceService.messages.emsg.m0005);
+          console.log('onSubmitLearnathonSignUp err1111', err)
+        });
       });
-      // console.log('onSubmitLearnathonSignUp err00', err)
-    });
-
-
+    }
   }
   redirectToSignPage() {
     window.location.href = '/resources';
