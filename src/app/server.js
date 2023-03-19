@@ -129,7 +129,7 @@ app.post('/learnCount', bodyParser.json({limit:'10mb'}),(req, res) => {
   // stringify JSON Object
   var jsonContent = JSON.stringify(req.body);
 
-  fs.writeFile("tenant/sunbird/liveLearnDashboardCounts.json", jsonContent, 'utf8', function (err) {
+  fs.writeFile("liveLearnDashboardCounts.json", jsonContent, 'utf8', function (err) {
       if (err) {
       console.log("An error occured while writing Live learnathon dashboard JSON Object to File.");
           return console.log(err);
