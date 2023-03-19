@@ -120,8 +120,10 @@ export class UploadContentLearnathonComponent implements OnInit {
     this.categories = this.uploadContentService.getTheme();
 
     // Added by komal
-    this.selectedOption = _.pickBy(_.cloneDeep(this.formInput), 'length') || { "board": [], "gradeLevel": [],"medium": [],"id": [ "nulp-learnathon" ] }; // clone selected field inputs from parent
-      
+    // this.selectedOption = _.pickBy(_.cloneDeep(this.formInput), 'length') || { "board": [], "gradeLevel": [],"medium": [],"id": [ "nulp-learnathon" ] }; // clone selected field inputs from parent
+      //added by Shivani
+    this.selectedOption = _.pickBy(_.cloneDeep(this.formInput), 'length') || { "board": [], "gradeLevel": [],"medium": [],"id": [ localStorage.getItem('learnathonFramework') ] }; // clone selected field inputs from parent
+
     this.userFramework = this.isCustodianOrgUser().pipe(
       mergeMap((custodianOrgUser: boolean) => {
         this.custodianOrg = custodianOrgUser;
@@ -593,8 +595,12 @@ export class UploadContentLearnathonComponent implements OnInit {
           resourceType: "Learn",
           creator:
             this.userProfile?.firstName + " " + this.userProfile?.lastName, // name of creator
-          framework: "nulp-learn",
-          organisation: ["nulp-learn"],
+          // framework: "nulp-learn",
+        framework: localStorage.getItem('learnathonFramework'),
+
+          // organisation: ["nulp-learn"],
+          organisation:  localStorage.getItem('learnathonChannel'),
+
           primaryCategory: "Learning Resource",
           board:this.formFieldTheme,
           medium:[this.formFieldSubTheme],

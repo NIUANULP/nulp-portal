@@ -106,7 +106,9 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
     // @Hack isLearnathon
     isContentCreator: boolean = false;
     userRoles = [];
-    lernathonChannel: string = "nulp-learn";
+    // lernathonChannel: string = "nulp-learn";
+    lernathonChannel: string = localStorage.getItem('learnathonChannel');
+
     isLearnathon: boolean = false;
     lernathonUserProfileFramework;
 

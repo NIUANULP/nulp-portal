@@ -536,8 +536,6 @@ allInstitutions: any;
     let subCategory=this.signUpForm.controls.subcategory.value;
     let city =this.signUpForm.controls.city.value;
     let institution =this.signUpForm.controls.institution.value;
-
-
     if(this.signUpForm.controls.category.value == 'Individual'){ 
       institution =""
       if(city==null){

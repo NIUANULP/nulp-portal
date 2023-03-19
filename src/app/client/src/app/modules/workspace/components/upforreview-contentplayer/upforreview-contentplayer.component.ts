@@ -101,7 +101,9 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
   public playerLoaded = false;
 
   // @Hack isLearnathon
-  lernathonChannel: string = "nulp-learn";
+  // lernathonChannel: string = "nulp-learn";
+  lernathonChannel:string = localStorage.getItem('learnathonChannel');
+
   isLearnathon: boolean = false;
   // @Hack isLearnathon
 
