@@ -120,6 +120,27 @@ app.all('/logoff', endSession, (req, res) => {
   req.session.destroy(function (err) { res.redirect('/logout') });
 })
 
+
+app.post('/learnCount', bodyParser.json({limit:'10mb'}),(req, res) => {
+
+  // file system module to perform file operations
+  const fs = require('fs');
+
+  // stringify JSON Object
+  var jsonContent = JSON.stringify(req.body);
+
+  fs.writeFile("tenant/sunbird/liveLearnDashboardCounts.json", jsonContent, 'utf8', function (err) {
+      if (err) {
+      console.log("An error occured while writing Live learnathon dashboard JSON Object to File.");
+          return console.log(err);
+      }
+
+      console.log("Live learnathon dashboard JSON file has been saved.");
+  });
+
+  res.status(200).send();
+})
+
 const morganConfig = (tokens, req, res) => {
   let edata = {
     "eid": "LOG",
