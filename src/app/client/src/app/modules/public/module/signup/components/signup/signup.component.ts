@@ -764,6 +764,10 @@ allInstitutions: any;
         {
             "value": "State / Parastatal Body",
             "label": "State / Parastatal Body"
+        },
+        {
+          "value": "Other urban development bodies",
+          "label": "Other urban development bodies"
         }
     ]
     }
