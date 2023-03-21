@@ -141,6 +141,25 @@ app.post('/learnCount', bodyParser.json({limit:'10mb'}),(req, res) => {
   res.status(200).send();
 })
 
+app.get('/counts', (req, res, next) => {
+  const fs1 = require('fs');
+  const countData = JSON.parse(fs1.readFileSync('liveLearnDashboardCounts.json', 'utf8'))
+  res.send({
+    ts: new Date().toISOString(),
+    params: {
+      resmsgid: uuid(),
+      msgid: uuid(),
+      status: "successful",
+      err: null,
+      errmsg: null,
+    },
+    responseCode: "OK",
+    result: {
+      data : {...countData} 
+    }
+  });
+})
+
 const morganConfig = (tokens, req, res) => {
   let edata = {
     "eid": "LOG",

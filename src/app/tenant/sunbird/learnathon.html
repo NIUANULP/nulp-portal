@@ -140,19 +140,19 @@
 
   <div class="total-section">
     <div>
-      <div class="number">656</div>
+      <div id="total" class="number">656</div>
       <div class="num-cont">Total Registrations</div>
     </div>
     <div>
-      <div class="number">86</div>
+      <div id="individual" class="number">86</div>
       <div class="num-cont">Individuals</div>
     </div>
     <div>
-      <div class="number">187</div>
+      <div id="institution" class="number">187</div>
       <div class="num-cont">Institutions</div>
     </div>
     <div>
-      <div class="number">634</div>
+      <div id="cities" class="number">634</div>
       <div class="num-cont">Cities</div>
     </div>
   </div>
@@ -420,6 +420,17 @@
     });
 
   </script>
+    <script>
+      fetch("/counts")
+        .then((response) => response.json())
+        .then((data) => {
+          ({cityCount,groupCategoryCount,individualCategoryCount,institutionCount,totalCount} = data.result.data.liveLearnCounts[0]);
+          document.querySelector("#total").innerText = totalCount - 1;
+          document.querySelector("#individual").innerText = individualCategoryCount;
+          document.querySelector("#institution").innerText = institutionCount;
+          document.querySelector("#cities").innerText = cityCount;
+        })
+      </script>
 </body>
 
 </html>
