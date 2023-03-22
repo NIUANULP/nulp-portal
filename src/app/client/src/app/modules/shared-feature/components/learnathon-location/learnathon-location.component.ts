@@ -96,20 +96,20 @@ allInstitutions: any;
         {
           "value": "ULBs",
           "label": "ULBs"
-      },
-      {
-          "value": "Smart City SPVs",
-          "label": "Smart City SPVs"
-      },
-      {
-          "value": "State / Parastatal Body",
-          "label": "State / Parastatal Body"
-      },
-      {
-        "value": "Other urban development bodies",
-        "label": "Other urban development bodies"
-      }
-    ]
+        },
+        {
+            "value": "Smart City SPVs",
+            "label": "Smart City SPVs"
+        },
+        {
+            "value": "State / Parastatal Body",
+            "label": "State / Parastatal Body"
+        },
+        {
+          "value": "Other urban development bodies",
+          "label": "Other urban development bodies"
+        }
+      ]
     }
   }
  

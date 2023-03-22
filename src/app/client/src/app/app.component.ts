@@ -231,22 +231,9 @@ export class AppComponent implements OnInit, OnDestroy {
     document.documentElement.setAttribute('data-theme', themeColour);
     this.layoutService.setLayoutConfig(this.layoutConfiguration);
   }
- ngOnLoad()
- {
-  console.log("environment===",environment)
-  if(environment.env == "dev"){
-    localStorage.setItem('learnathonFramework', 'nulplearnathon');
-    localStorage.setItem('learnathonChannel', 'nulp-learnathon');
 
-  }else{
-    localStorage.setItem('learnathonFramework', 'nulp-learn');
-    localStorage.setItem('learnathonChannel', 'nulp-learn');
-
-  }
- }
   ngOnInit() {
-    console.log("environment===",environment)
-    if(environment.env == "dev"){
+    if(window.location.href.includes("localhost") || window.location.href.includes("devnulp")){
       localStorage.setItem('learnathonFramework', 'nulplearnathon');
       localStorage.setItem('learnathonOrg', 'nulp-learnathon');
 
