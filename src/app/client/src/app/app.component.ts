@@ -235,12 +235,12 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit() {
     if(window.location.href.includes("localhost") || window.location.href.includes("devnulp")){
       localStorage.setItem('learnathonFramework', 'nulplearnathon');
-      localStorage.setItem('learnathonOrg', 'nulp-learnathon');
-
+      localStorage.setItem('learnathonChannel', 'nulp-learnathon');
+      console.log("On Development");
     }else{
       localStorage.setItem('learnathonFramework', 'nulp-learn');
-      localStorage.setItem('learnathonOrg', 'nulp-learn');
-
+      localStorage.setItem('learnathonChannel', 'nulp-learn'); // channel
+      console.log("On Production");
     }
     this.isIOS = this.utilService.isIos;
     this.isDesktopApp = this.utilService.isDesktopApp;
