@@ -556,7 +556,7 @@ allInstitutions: any;
           'firstName': _.trim(this.signUpForm.controls.name.value),
           'password': _.trim(this.signUpForm.controls.password.value),
           'dob': this.yearOfBirth,
-          'channel': 'nulp-learn',
+          'channel': localStorage.getItem('learnathonChannel'),
           'roles':["CONTENT_CREATOR"],
           "framework": {
             "board": [
@@ -574,7 +574,7 @@ allInstitutions: any;
             "city":[city],
             "institution":[institution],
             "id": [
-                "nulp-learn"
+              localStorage.getItem('learnathonFramework')
             ]
         }
         }
