@@ -596,11 +596,9 @@ export class UploadContentLearnathonComponent implements OnInit {
           creator:
             this.userProfile?.firstName + " " + this.userProfile?.lastName, // name of creator
           // framework: "nulp-learn",
-        framework: localStorage.getItem('learnathonFramework'),
-
+          framework: localStorage.getItem('learnathonFramework'),
           // organisation: ["nulp-learn"],
-          organisation:  localStorage.getItem('learnathonChannel'),
-
+          organisation:  [localStorage.getItem('learnathonChannel')],
           primaryCategory: "Learning Resource",
           board:this.formFieldTheme,
           medium:[this.formFieldSubTheme],
