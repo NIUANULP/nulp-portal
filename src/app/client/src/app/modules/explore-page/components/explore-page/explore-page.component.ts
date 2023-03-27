@@ -260,11 +260,16 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
             this.isContentCreator = true;
         }
 
-        if (this.userService.rootOrgName == this.lernathonChannel){
+        // if (this.userService.rootOrgName == this.lernathonChannel){
+        //     this.isLearnathon = true;
+        // }
+
+        this.lernathonUserProfileFramework = _.get(this.userService, 'userProfile.framework');
+        if (this.lernathonUserProfileFramework.id == this.lernathonChannel){
             this.isLearnathon = true;
         }
 
-        this.lernathonUserProfileFramework = _.get(this.userService, 'userProfile.framework');
+        // console.log(this.userService.rootOrgName,this.lernathonChannel,"here")
         // @Hack isLearnathon
 
     }
