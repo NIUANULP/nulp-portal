@@ -260,14 +260,24 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
             this.isContentCreator = true;
         }
 
-        // if (this.userService.rootOrgName == this.lernathonChannel){
-        //     this.isLearnathon = true;
-        // }
-
-        this.lernathonUserProfileFramework = _.get(this.userService, 'userProfile.framework');
-        if (this.lernathonUserProfileFramework.id == this.lernathonChannel){
+        if (this.userService.rootOrgName == this.lernathonChannel  || this.userService.rootOrgName =="Harayana" || this.userService.rootOrgName== "channel_67285"){
             this.isLearnathon = true;
         }
+
+        this.userService.userData$.subscribe(
+            (user: IUserData) => {
+              if(user.userProfile['channel'] == "channel_67285" || user.userProfile['channel'] == "nulp-learn"){
+              this.isLearnathon = true;             
+              }
+            });
+
+        this.lernathonUserProfileFramework = _.get(this.userService, 'userProfile.framework');
+        
+      
+        // if (this.lernathonUserProfileFramework.id == this.lernathonChannel  || this.userService.rootOrgName =="Harayana" || this.userService.rootOrgName== "channel_67285" ){
+      
+        //     this.isLearnathon = true;
+        // }
 
         // console.log(this.userService.rootOrgName,this.lernathonChannel,"here")
         // @Hack isLearnathon

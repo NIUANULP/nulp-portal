@@ -168,7 +168,7 @@ export class ProfilePageComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     // @Hack isLearnathon
-    if (this.userService.rootOrgName == this.lernathonChannel){
+    if (this.userService.rootOrgName == this.lernathonChannel || this.userService.rootOrgName =="Haryana" || this.userService.rootOrgName== "channel_67285"){
       this.isLearnathon = true;
   }
 
