@@ -233,7 +233,8 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    if(window.location.href.includes("localhost") || window.location.href.includes("devnulp")){
+    // if(window.location.href.includes("localhost") || window.location.href.includes("devnulp")){
+      if( window.location.href.includes("devnulp")){
       localStorage.setItem('learnathonFramework', 'nulplearnathon');
       localStorage.setItem('learnathonChannel', 'nulp-learnathon');
       console.log("On Development");
@@ -276,7 +277,16 @@ export class AppComponent implements OnInit, OnDestroy {
           this.navigationHelperService.initialize();
           this.userService.initialize(this.userService.loggedIn);
           this.getOrgDetails();
+
           if (this.userService.loggedIn) {
+            this.userService.userData$.subscribe(
+              (user: IUserData) => {
+                if(user.userProfile['channel'] == "channel_67285" || user.userProfile['channel'] == "nulp-learn"){
+                  localStorage.setItem('isLearnathon', 'true');
+                }
+              });
+            console.log("this.userService===" , this.userService)
+           
             this.isGuestUser = false;
             this.permissionService.initialize();
             this.courseService.initialize();
