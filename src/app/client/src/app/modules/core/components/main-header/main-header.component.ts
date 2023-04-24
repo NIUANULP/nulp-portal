@@ -635,8 +635,9 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
         this.isContentCreator = true;
     }
 
-    if (this.userService.rootOrgName == this.lernathonChannel){
-        this.isLearnathon = true;
+
+    if (this.userService.rootOrgName == this.lernathonChannel || this.userService.rootOrgName =="Haryana" || this.userService.rootOrgName== "channel_67285" ){
+      this.isLearnathon = true;
     }
 
     if (this.isContentCreator && this.isLearnathon)
