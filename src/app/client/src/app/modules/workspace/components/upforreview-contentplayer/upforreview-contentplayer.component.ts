@@ -133,7 +133,7 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
     };
 
     // @Hack isLearnathon
-    if (this.userService.rootOrgName == this.lernathonChannel){
+    if (this.userService.rootOrgName == this.lernathonChannel || this.userService.rootOrgName =="Haryana" || this.userService.rootOrgName== "channel_67285"){
       this.isLearnathon = true;
     }
     // @Hack isLearnathon
