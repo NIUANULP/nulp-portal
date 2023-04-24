@@ -122,7 +122,6 @@ export class UploadContentLearnathonComponent implements OnInit {
     // Added by komal
     // this.selectedOption = _.pickBy(_.cloneDeep(this.formInput), 'length') || { "board": [], "gradeLevel": [],"medium": [],"id": [ "nulp-learnathon" ] }; // clone selected field inputs from parent
       //added by Shivani
-    
     this.selectedOption = _.pickBy(_.cloneDeep(this.formInput), 'length') || { "board": [], "gradeLevel": [],"medium": [],"id": [ localStorage.getItem('learnathonFramework') ] }; // clone selected field inputs from parent
 
     this.userFramework = this.isCustodianOrgUser().pipe(
@@ -235,14 +234,10 @@ export class UploadContentLearnathonComponent implements OnInit {
         return true;
       }),
       mergeMap((frameworkDetails) => {
-        console.log("frameworkDetails----",frameworkDetails)
         if (!frameworkDetails.err) {
           const framework = this.frameWorkId ? this.frameWorkId : 'defaultFramework';
           const frameworkData = _.get(frameworkDetails.frameworkdata, framework);
           this.frameWorkId = frameworkData.identifier;
-          // this.frameWorkId = 'nulp-learn'
-          console.log("frameworkData",this.frameWorkId)
-          // this.frameWorkId = 'nulp-learn'
           this.categoryMasterList = frameworkData.categories;
           return this.getFormDetails();
         } else {
@@ -584,6 +579,7 @@ export class UploadContentLearnathonComponent implements OnInit {
 
     let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
     const lengthOfCode = 10;
+    
     const createData = {
       request: {
         content: {
