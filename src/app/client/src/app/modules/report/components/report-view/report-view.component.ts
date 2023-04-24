@@ -8,7 +8,8 @@ import {
   INoResultMessage,
   ResourceService,
   ToasterService,
-  ILoaderMessage
+  ILoaderMessage,
+  NavigationHelperService
 } from '@sunbird/shared';
 import * as _ from 'lodash-es';
 import { ChangeDetectorRef } from '@angular/core';
@@ -60,7 +61,8 @@ export class ReportViewComponent implements OnInit {
     private routerParam: ActivatedRoute,
     private cdref: ChangeDetectorRef,
     public toasterService: ToasterService,
-    public locations: LocationStrategy
+    public locations: LocationStrategy,
+    private navigationhelperService: NavigationHelperService
   ) {
     this.config = config;
     this.locations.onPopState(() => {
@@ -194,19 +196,18 @@ export class ReportViewComponent implements OnInit {
 
   getconfig(element) {
     const config = {
-      labels: element.chart.data.labels,
-      datasets: [{ data: element.chart.data.datasets[0].data }],
-      options: element.chart.options,
+      labels: _.get(element,'chart.data.labels'),
+      datasets: [{ data: _.get(element,'chart.data.datasets[0].data'),label:_.get(element,'chart.data.labels[0]') }],
+      options: _.get(element,'chart.options'),
       colors: [
-        { backgroundColor: element.chart.data.datasets[0].backgroundColor },
-      ],
-      legend: true,
+        { backgroundColor: _.get(element,'chart.data.datasets[0].backgroundColor') },
+      ]
     };
     return config;
   }
 
   handleParameterChange(event) {
-    this.state['submissionId'] = event._id;
+    this.state['submissionId'] = _.get(event, 'value._id');
     this.getReport();
   }
 
@@ -241,7 +242,6 @@ export class ReportViewComponent implements OnInit {
   }
 
   public closeModal() {
-    this.modal.approve();
     this.filterModal = false;
   }
 
@@ -311,6 +311,9 @@ export class ReportViewComponent implements OnInit {
   selectedTabChange(event) {
     const { tabHeader } = _.get(event, 'tab.textLabel');
     tabHeader && this.segmentChanged(tabHeader);
+  }
+  goBack() {
+    this.navigationhelperService.goBack();
   }
 
 }

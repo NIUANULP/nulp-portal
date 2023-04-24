@@ -1,5 +1,5 @@
 import { ActivatedRoute } from '@angular/router';
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService, PlayerService, CopyContentService, PermissionService } from '@sunbird/core';
 import * as _ from 'lodash-es';
@@ -62,7 +62,7 @@ export class ContentPlayerComponent implements OnInit, AfterViewInit, OnDestroy,
     public playerService: PlayerService, public publicPlayerService: PublicPlayerService,
     public copyContentService: CopyContentService, public permissionService: PermissionService,
     public contentUtilsServiceService: ContentUtilsServiceService, public popupControlService: PopupControlService,
-    private configService: ConfigService, public navigationhelperService: NavigationHelperService,
+    private configService: ConfigService,
     public layoutService: LayoutService, public telemetryService: TelemetryService) {
     this.playerOption = {
       showContentRating: true
@@ -101,7 +101,6 @@ export class ContentPlayerComponent implements OnInit, AfterViewInit, OnDestroy,
 
   initLayout() {
     this.layoutConfiguration = this.layoutService.initlayoutConfig();
-    this.layoutService.scrollTop();
     this.layoutService.switchableLayout().
       pipe(takeUntil(this.unsubscribe)).subscribe(layoutConfig => {
         if (layoutConfig != null) {
@@ -139,6 +138,10 @@ export class ContentPlayerComponent implements OnInit, AfterViewInit, OnDestroy,
       type: 'click',
       pageid: this.activatedRoute.snapshot.data.telemetry.pageid
     };
+  }
+
+  goBack() {
+    this.navigationHelperService.goBack();
   }
 
   getContent() {
@@ -243,7 +246,7 @@ export class ContentPlayerComponent implements OnInit, AfterViewInit, OnDestroy,
   }
 
   ngAfterViewInit() {
-    this.pageLoadDuration = this.navigationhelperService.getPageLoadTime();
+    this.pageLoadDuration = this.navigationHelperService.getPageLoadTime();
   }
 
   setTelemetryShareData(param) {

@@ -99,9 +99,9 @@ export class OnboardingUserSelectionComponent implements OnInit, OnDestroy {
         switchMap(userType => {
           const payload = {
             userId: _.get(this.userService, 'userid'),
-            profileUserType: {
+            profileUserTypes: [{
               'type': userType.toLowerCase()
-            }
+            }]
           };
           return this.profileService.updateProfile(payload)
             .pipe(
@@ -163,7 +163,7 @@ export class OnboardingUserSelectionComponent implements OnInit, OnDestroy {
       'context': {
         'env': 'onboarding',
         'cdata': [
-          { id: code, type: 'UserType' },     
+          { id: code, type: 'UserType' },
         ]
       },
       'object': {
@@ -177,7 +177,7 @@ export class OnboardingUserSelectionComponent implements OnInit, OnDestroy {
           'profile_type'
         ],
         'type': 'set-usertype',
-        'prevstate':'set-usertype',
+        'prevstate': 'set-usertype',
       }
     };
     this.telemetryService.audit(auditEventInput);
