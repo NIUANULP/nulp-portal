@@ -61,7 +61,6 @@ export class ListUploadcontentLearnathonComponent  extends WorkSpace implements 
    * userRoles
   */
   userRoles = [];
-  canCreate: boolean = false;
 
   /**
     * Constructor to create injected service(s) object
@@ -84,9 +83,6 @@ export class ListUploadcontentLearnathonComponent  extends WorkSpace implements 
     this.userService.userData$.subscribe(
       (user: IUserData) => {
         this.userRoles = user.userProfile.userRoles;
-        if(user.userProfile['channel']=="nulp-learn"){
-          this.canCreate = true;
-        }
       });
     
     if (_.indexOf(this.userRoles, 'CONTENT_CREATOR') !== -1) {
