@@ -1,6 +1,6 @@
 
 import { map } from 'rxjs/operators';
-import { Injectable, Input } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { UserService } from './../user/user.service';
 import { ContentService } from './../content/content.service';
 import { ConfigService, ServerResponse, ResourceService } from '@sunbird/shared';
@@ -21,7 +21,7 @@ export class SearchService {
   /**
    * Contains searched content list
    */
-  private _searchedContentList: any;
+  _searchedContentList: any;
   /**
    * Contains searched organization list
    */
@@ -575,4 +575,19 @@ export class SearchService {
     return (_.lowerCase(_.get(content, 'trackable.enabled')) === 'yes'
       || (_.lowerCase(type) === _.lowerCase(this.config.appConfig.contentType.Course)));
   }
+
+  /**
+   * global User Search.
+  */
+ globalUserSearch(requestParam: SearchParam): Observable<ServerResponse> {
+  const option = {
+    url: this.config.urlConFig.URLS.ADMIN.USER_SEARCH,
+    data: {
+      request: {
+        filters: requestParam.filters,
+      }
+    }
+  };
+  return this.learnerService.post(option);
+}
 }

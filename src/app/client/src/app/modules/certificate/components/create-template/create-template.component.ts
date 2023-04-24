@@ -54,7 +54,7 @@ export class CreateTemplateComponent implements OnInit, OnDestroy {
     'STATE_TITLE': 'state-title',
     'SIGN_LOGO': ['signatureImg1', 'signatureImg2'],
     'CERT_TITLE': 'cert-title',
-    'DESIGNATIONS_NAMES': ['signatureTitle1a', 'signatureTitle2a'],
+    'DESIGNATIONS_NAMES': ['signatureTitle1', 'signatureTitle2'],
     'DESIGNATIONS': ['signatureTitle1a', 'signatureTitle2a']
   };
   optionSing = 'SIGN2';
@@ -85,18 +85,11 @@ export class CreateTemplateComponent implements OnInit, OnDestroy {
   }
 
   getDefaultTemplates() {
-  /*
-    #TODO:There is no option to configure cert template layout at system level. 
-          Due to this we are adding the harcoded channel for which assets are configured. 
-          Please remove this when a better way can be found.
-
-    Refer Ticket: https://github.com/Sunbird-Knowlg/Community/discussions/39
-  */
     const request = {
       'request': {
           'filters': {
               'certType': 'cert template layout',
-              'channel': "0135693330130780161", 
+              'channel': this.userService.channel,
               'mediaType': 'image'
           },
           'fields': ['identifier', 'name', 'code', 'certType', 'data', 'issuer', 'signatoryList', 'artifactUrl', 'primaryCategory', 'channel'],
