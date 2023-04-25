@@ -93,11 +93,11 @@
                 </dl>
                 <dl class="sb-meta-data" >
                   <dt>{{resourceService.frmelmnts.lbl.email}}</dt>
-                  <dd *ngIf="metadata.name">{{metadata.userEmail}}</dd>
+                  <dd *ngIf="contentData.name">{{contentData.userEmail}}</dd>
               </dl>
               <dl class="sb-meta-data" >
                   <dt>{{resourceService.frmelmnts.lbl.phoneNumber}}</dt>
-                  <dd *ngIf="metadata.name">{{metadata.userPhone}}</dd>
+                  <dd *ngIf="contentData.name">{{contentData.userPhone}}</dd>
               </dl>
                 <!-- <dl class="sb-meta-data">
                     <dt>{{resourceService.frmelmnts?.lbl?.createdInstanceName  | interpolate:'{instance}': instance}}</dt>
