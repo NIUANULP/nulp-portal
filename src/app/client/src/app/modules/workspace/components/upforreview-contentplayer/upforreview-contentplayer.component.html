@@ -63,8 +63,6 @@
           <!-- @Hack isLearnathon -->
           <div class="eight wide column" *ngIf="isLearnathon">
             <div *ngIf="contentData">
-              
-
               <div class="sb-meta-data-container sb-meta-data-row-facing mt-24 content-player-metadata">
 
                 <ng-container *ngIf="contentData.description">
@@ -93,6 +91,14 @@
                     <dt>{{resourceService.frmelmnts.lbl.title}}</dt>
                     <dd *ngIf="contentData.name">{{contentData.name}}</dd>
                 </dl>
+                <dl class="sb-meta-data" >
+                  <dt>{{resourceService.frmelmnts.lbl.email}}</dt>
+                  <dd *ngIf="metadata.name">{{metadata.userEmail}}</dd>
+              </dl>
+              <dl class="sb-meta-data" >
+                  <dt>{{resourceService.frmelmnts.lbl.phoneNumber}}</dt>
+                  <dd *ngIf="metadata.name">{{metadata.userPhone}}</dd>
+              </dl>
                 <!-- <dl class="sb-meta-data">
                     <dt>{{resourceService.frmelmnts?.lbl?.createdInstanceName  | interpolate:'{instance}': instance}}</dt>
                     <dd *ngIf="contentData.creator">{{contentData.creator}}</dd>

@@ -549,7 +549,6 @@ export class AddusersComponent implements OnInit {
 
         if (element.firstName == 'Medical') {
         }
-        console.log("")
         this.showUserData.push({ "orgType": this.orgTypeUser, "userId": element.id, "uStatus": element.status, "createdDate": element.createdDate, "firstName": element.firstName, "lastName": element.lastName, "email": element.email, "phone": element.phone, "orgLength": element.organisations.length, "orgName": this.orgNameUser, "status": this.status, "userOrglengths": this.userOrgLength, "userName": element.userName, "createdOn": element.createdDate })
         // this.showUserData.push({"userId":element.id,"uStatus":element.status,"firstName": element.firstName,"lastName":element.lastName,"email":element.email,"phone":element.phone,"orgLength":  element.organisations.length,"orgName":this.orgName})
 

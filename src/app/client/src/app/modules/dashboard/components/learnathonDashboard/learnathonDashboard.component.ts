@@ -225,17 +225,19 @@ export class learnathonDashboardComponent implements OnInit {
   }
   initializeColumns() {
     this.cols = [
-      { field: 'name', header: 'Name' },
-      { field: 'UserName', header: 'Created By' },
+      { field: 'name', header: 'Name', width: '170px' },
+      { field: 'UserName', header: 'Created By', width: '170px' },
+      { field: 'userEmail', header: 'Email ID' , width: '190px'},
+      { field: 'userPhone', header: 'Phone No', width: '170px' },
       // { field: 'createdOn', header: 'Created On' },
-      { field: 'status', header: 'Status' },
-      { field: 'contentType', header: 'Content Type' },
-      { field: 'category', header: 'Category' },
-      { field: 'subcategory', header: 'Sub-Category' },
-      { field: 'city', header: 'City' },
-      { field: 'institute', header: 'Institute' },
-      { field: 'board', header: 'Theme' },
-      { field: 'medium', header: 'Sub-Theme' }
+      { field: 'status', header: 'Status', width: '170px'},
+      { field: 'contentType', header: 'Content Type', width: '170px' },
+      { field: 'category', header: 'Category', width: '170px' },
+      { field: 'subcategory', header: 'Sub-Category', width: '170px' },
+      { field: 'city', header: 'City', width: '170px' },
+      { field: 'institute', header: 'Institute', width: '170px' },
+      { field: 'board', header: 'Theme', width: '170px' },
+      { field: 'medium', header: 'Sub-Theme', width: '170px' }
     ]
   }
   resetFields() {

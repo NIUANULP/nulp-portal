@@ -285,8 +285,7 @@ export class AppComponent implements OnInit, OnDestroy {
                   localStorage.setItem('isLearnathon', 'true');
                 }
               });
-            console.log("this.userService===" , this.userService)
-           
+
             this.isGuestUser = false;
             this.permissionService.initialize();
             this.courseService.initialize();
