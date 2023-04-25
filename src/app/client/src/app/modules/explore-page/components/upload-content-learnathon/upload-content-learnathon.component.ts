@@ -235,13 +235,10 @@ export class UploadContentLearnathonComponent implements OnInit {
         return true;
       }),
       mergeMap((frameworkDetails) => {
-        console.log("frameworkDetails----",frameworkDetails)
         if (!frameworkDetails.err) {
           const framework = this.frameWorkId ? this.frameWorkId : 'defaultFramework';
           const frameworkData = _.get(frameworkDetails.frameworkdata, framework);
           this.frameWorkId = frameworkData.identifier;
-          // this.frameWorkId = 'nulp-learn'
-          console.log("frameworkData",this.frameWorkId)
           // this.frameWorkId = 'nulp-learn'
           this.categoryMasterList = frameworkData.categories;
           return this.getFormDetails();
