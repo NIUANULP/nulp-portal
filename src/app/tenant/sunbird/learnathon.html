@@ -35,11 +35,24 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js" type="text/javascript"></script>
   <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
   <!-- javascript -->
+  <!-- Google tag (gtag.js) -->
+
+<script async src=https://www.googletagmanager.com/gtag/js?id=G-QH3SHT9MTG></script>
+
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-QH3SHT9MTG');
+</script>
 </head>
 
 <body>
   <!-- new header design start here -->
   <div class="header-bg">
+    <div class="deadline-ext-bar">
+      The submission deadline of the learnathon has been extended till <span class="font-700">15th May 2023</span>
+    </div>
     <div class="nav-header">
       <div>
         <img class="img-fluid" width="253.23px" height="72px" src="./images/learathon_header_lgo.png" alt="">
@@ -47,7 +60,6 @@
       <div class="nav-left">
         <a class=" nav-itmes1 text-white d-sm-none" href="./index.html">NULP</a>
         <a class=" nav-itmes1 text-white d-sm-none" target="_blank" href="./document/Learnathon_Guidelines_V2.pdf">SUBMISSION GUIDELINES</a>
-
         <div class="ui compact menu">
           <div class="ui simple dropdown item">
             <div class="identive-theme d-sm-none">INDICATIVE THEMES &nbsp;
@@ -68,7 +80,10 @@
             </div>
           </div>
         </div>
-              
+       
+
+        
+
         <a class="text-white d-sm-none" href="./participate.html">WHO CAN PARTICIPATE</a>
         <a href="/resources?learnathon" class="learn-btn text-white">REGISTER/ SIGN IN</a>
         <div class="ui compact menu learn-handburger">
@@ -122,7 +137,7 @@
       </div>
       <div class="banner-cover flx-bsic">
         <div class="iframe-container">
-          <iframe class="responsive-iframe" width="560" height="315" src="https://www.youtube.com/embed/8Ieqpy3-TnQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          <iframe class="responsive-iframe" width="560" height="315" src="https://www.youtube.com/embed/88NCXKtetT4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
         </div>
       </div>
     </div>
@@ -133,19 +148,19 @@
 
   <div class="total-section">
     <div>
-      <div id="total" class="number">656</div>
+      <div id="total" class="number">19</div>
       <div class="num-cont">Total Registrations</div>
     </div>
     <div>
-      <div id="individual" class="number">86</div>
+      <div id="individual" class="number">16</div>
       <div class="num-cont">Individuals</div>
     </div>
     <div>
-      <div id="institution" class="number">187</div>
+      <div id="institution" class="number">2</div>
       <div class="num-cont">Groups</div>
     </div>
     <div>
-      <div id="cities" class="number">634</div>
+      <div id="cities" class="number">6</div>
       <div class="num-cont">Cities</div>
     </div>
   </div>
@@ -257,6 +272,16 @@
     </div>
   </div>
   <!-- Themes section end here -->
+
+
+
+
+
+
+
+
+
+
   <!-- registration section start here -->
   <div class="section-holder solution-holder">
     <div>
@@ -290,15 +315,15 @@
         <div class="num-cont1 text-white">Registration Start</div>
       </div>
       <div>
-        <div class="number1 text-white"> 28 April</div>
+        <div class="number1 text-white"> 15th May</div>
         <div class="num-cont1 text-white">Final Submission</div>
       </div>
       <div>
-        <div class="number1 text-white">16 May</div>
+        <div class="number1 text-white">22nd May</div>
         <div class="num-cont1 text-white">First Phase Results</div>
       </div>
       <div>
-        <div class="number1 text-white">8 June</div>
+        <div class="number1 text-white">12th June</div>
         <div class="num-cont1 text-white">Final Results</div>
       </div>
     </div>
@@ -403,17 +428,17 @@
     });
 
   </script>
-    <script>
-      fetch("/counts")
-        .then((response) => response.json())
-        .then((data) => {
-          ({cityCount,groupCategoryCount,individualCategoryCount,institutionCount,totalCount} = data.result.data.liveLearnCounts[0]);
-          document.querySelector("#total").innerText = totalCount - 1;
-          document.querySelector("#individual").innerText = individualCategoryCount;
-          document.querySelector("#institution").innerText = institutionCount;
-          document.querySelector("#cities").innerText = cityCount;
-        })
-      </script>
+      <script>
+        fetch("/counts")
+          .then((response) => response.json())
+          .then((data) => {
+            ({cityCount,groupCategoryCount,individualCategoryCount,institutionCount,totalCount} = data.result.data.liveLearnCounts[0]);
+            document.querySelector("#total").innerText = totalCount - 1;
+            document.querySelector("#individual").innerText = individualCategoryCount;
+            document.querySelector("#institution").innerText = institutionCount;
+            document.querySelector("#cities").innerText = cityCount;
+          })
+        </script>
 </body>
 
 </html>

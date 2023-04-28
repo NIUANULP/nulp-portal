@@ -1503,7 +1503,7 @@ section img{
 .nav-header{
     height: 123px;
     position: absolute;
-    top: 0px;
+    top: 45px;
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -2418,4 +2418,16 @@ section img{
     background: #990000 !important;
     color: #fff !important;
 }
-  
+
+.font-700{
+    font-weight: 700;
+}
+.deadline-ext-bar{
+    position: absolute;
+    top: 0;
+    width: 100%;
+    padding: 10px 0;
+    background: #FFC142;
+    font-size: 20px;
+    text-align: center;
+}
