@@ -160,6 +160,54 @@ app.get('/counts', (req, res, next) => {
   });
 })
 
+app.post('/learnVote', bodyParser.json({limit:'10mb'}),(req, res) => {
+
+  const voteData = JSON.parse(fs1.readFileSync('liveLearnVotes.json', 'utf8'))
+
+  // file system module to perform file operations
+  const fs = require('fs');
+
+  // stringify JSON Object
+  const jsonvoteData = fs1.readFileSync('liveLearnVotes.json', 'utf8')
+  if (jsonvoteData){
+    console.log("jsonvoteData========",jsonvoteData)
+    // jsonvoteData.append( JSON.stringify(req.body))
+  }
+ else{
+  fs.writeFile("liveLearnVotes.json", JSON.stringify(req.body), 'utf8', function (err) {
+    if (err) {
+    console.log("An error occured while writing Live learnathon dashboard JSON Object to File.");
+        return console.log(err);
+    }
+
+    console.log("Live learnathon dashboard JSON file has been saved.");
+});
+
+res.status(200).send();
+ }
+
+
+})
+
+app.get('/counts', (req, res, next) => {
+  const fs1 = require('fs');
+  const countData = JSON.parse(fs1.readFileSync('liveLearnDashboardCounts.json', 'utf8'))
+  res.send({
+    ts: new Date().toISOString(),
+    params: {
+      resmsgid: uuid(),
+      msgid: uuid(),
+      status: "successful",
+      err: null,
+      errmsg: null,
+    },
+    responseCode: "OK",
+    result: {
+      data : {...countData} 
+    }
+  });
+})
+
 const morganConfig = (tokens, req, res) => {
   let edata = {
     "eid": "LOG",
