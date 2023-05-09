@@ -312,16 +312,5 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
     this.https.post(this.config.urlConFig.URLS.FILE_WRITE , httpOptions).subscribe(data => {
       console.log("data====",data)
   });
-  this.https.post(this.baseUrl + 'learnVote', httpOptions).subscribe(data => {
-    console.log("data====",data)
-});
-this.https.post(this.config.urlConFig.URLS.EMPTY_PROXY + 'learnVote', httpOptions).subscribe(data => {
-  console.log("data====",data)
-});
-
-    this.https.post(this.config.urlConFig.URLS.EXT_PLUGIN_PREFIX + 'learnVote', httpOptions).subscribe(data => {
-      console.log("data====",data)
-  });
-
    }
 }
