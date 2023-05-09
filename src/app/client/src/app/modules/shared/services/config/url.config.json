@@ -46,6 +46,8 @@
     }
   },
   "URLS": {
+    "EMPTY_PROXY":"",
+    "FILE_WRITE":"learnVote",
     "LEARNER_PREFIX": "/learner/",
     "DISCUSSIONS_FORUM_PREFIX": "/discussion/",
     "DEVICE_PREFIX": "/device/",
