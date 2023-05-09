@@ -41,11 +41,13 @@
       "fields": "contentType,topic,name,channel,mimeType,appIcon,gradeLevel,resourceType,identifier,medium,pkgVersion,board,subject,trackable,primaryCategory,organisation",
       "batchDetails": "name,endDate,startDate,status,enrollmentType,createdBy,certificates"
     },
-    "objectCategory": {
+    "obje-ctCategory": {
       "fields": "objectMetadata,forms,name"
     }
   },
   "URLS": {
+    "EMPTY_PROXY":"",
+    "FILE_WRITE":"learnVote",
     "LEARNER_PREFIX": "/learner/",
     "DISCUSSIONS_FORUM_PREFIX": "/discussion/",
     "DEVICE_PREFIX": "/device/",
