@@ -55,7 +55,15 @@
             </div>
           </div>
         </div>
-
+        <div class="row d-flex" *ngIf="!showLoader && isLearnathon" >
+          <div class="my-24 videosegment ui clearing segment ml-auto">
+            <button tabindex="0" (click)="learnVote()" class="ui right floated sb-btn sb-btn-primary sb-btn-normal mr-8"
+                appTelemetryInteract [telemetryInteractObject]="telemetryInteractObject"
+                [telemetryInteractEdata]="publishInteractEdata">
+                {{resourceService?.frmelmnts?.btn?.learnVote}}
+              </button>
+        </div>
+        </div>
         <div class="ui grid" *ngIf="!showLoader && contentData">
           <div class="eight wide column" *ngIf="!isLearnathon">
             <app-content-player-metadata [contentData]="contentData"></app-content-player-metadata>

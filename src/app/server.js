@@ -174,13 +174,18 @@ app.post('/learnVote', bodyParser.json({limit:'10mb'}),(req, res) => {
 //     // jsonvoteData.append( JSON.stringify(req.body))
 //   }
 //  else{
+  console.log("jsonvoteData========",req)
   fs.writeFile("liveLearnVotes.json", JSON.stringify(req.body), 'utf8', function (err) {
     if (err) {
     console.log("An error occured while writing Live learnathon dashboard JSON Object to File.");
         return console.log(err);
+    }else{
+        console.log("File written successfully\n");       
+        console.log(fs.readFileSync("books.txt", "utf8"));
+        return JSON.parse(fs1.readFileSync('liveLearnVotes.json', 'utf8'))      
     }
 
-    console.log("Live learnathon dashboard JSON file has been saved.");
+    console.log("Live learnathon dashboard JSON file has been saved=======.");
 });
 
 res.status(200).send();

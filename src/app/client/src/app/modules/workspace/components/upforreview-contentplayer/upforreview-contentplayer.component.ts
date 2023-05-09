@@ -27,7 +27,7 @@ import { ConfigService } from '@sunbird/shared';
   styleUrls: ['./upforreview-contentplayer.component.scss']
 })
 export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
-  public config: ConfigService;
+  // public config: ConfigService;
   // public DataService: DataService
   public requestForChangesInteractEdata: IInteractEventEdata;
   public publishInteractEdata: IInteractEventEdata;
@@ -139,7 +139,7 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
   */
   constructor(resourceService: ResourceService, public activatedRoute: ActivatedRoute, userService: UserService,
     playerService: PlayerService, windowScrollService: WindowScrollService, permissionService: PermissionService,
-    toasterService: ToasterService, public layoutService: LayoutService,public https: HttpClient,
+    toasterService: ToasterService, public layoutService: LayoutService,public https: HttpClient,public config: ConfigService,
     public navigationHelperService: NavigationHelperService, router: Router) {
     this.resourceService = resourceService;
     this.playerService = playerService;
@@ -297,9 +297,6 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
   }
 
   learnVote(){
-    // const options = {headers: {'Content-Type': 'application/json'}};
-    // return this.http.post(this.baseUrl + '/learnCount', request, options);
-
     const httpOptions: HttpOptions = {
       headers:{'Content-Type': 'application/json'} ,
       body: {
@@ -311,9 +308,8 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
       }
     }
     };
-    console.log("----",this.baseUrl + '/learnVote',"++++", httpOptions)
 
-    this.https.post(this.baseUrl + '/learnVote', httpOptions).subscribe(data => {
+    this.https.post(this.config.urlConFig.URLS.EXT_PLUGIN_PREFIX + 'learnVote', httpOptions).subscribe(data => {
       console.log("data====",data)
   });
 
