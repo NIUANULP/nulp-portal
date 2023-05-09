@@ -36,7 +36,7 @@
           </div>
         </div>
 
-        <div class="row d-flex" *ngIf="!showLoader">
+        <div class="row d-flex" *ngIf="!showLoader && !isLearnathon" >
           <div class="my-24 videosegment ui clearing segment ml-auto">
             <div
               *ngIf="permissionService.permissionAvailable && contentData && 
@@ -55,6 +55,7 @@
             </div>
           </div>
         </div>
+
         <div class="ui grid" *ngIf="!showLoader && contentData">
           <div class="eight wide column" *ngIf="!isLearnathon">
             <app-content-player-metadata [contentData]="contentData"></app-content-player-metadata>
@@ -91,13 +92,13 @@
                     <dt>{{resourceService.frmelmnts.lbl.title}}</dt>
                     <dd *ngIf="contentData.name">{{contentData.name}}</dd>
                 </dl>
-                <dl class="sb-meta-data" >
+                <dl *ngIf="contentData.userEmail" class="sb-meta-data" >
                   <dt>{{resourceService.frmelmnts.lbl.email}}</dt>
-                  <dd *ngIf="contentData.name">{{contentData.userEmail}}</dd>
+                  <dd *ngIf="contentData.userEmail">{{contentData.userEmail}}</dd>
               </dl>
-              <dl class="sb-meta-data" >
+              <dl *ngIf="contentData.userPhone" class="sb-meta-data" >
                   <dt>{{resourceService.frmelmnts.lbl.phoneNumber}}</dt>
-                  <dd *ngIf="contentData.name">{{contentData.userPhone}}</dd>
+                  <dd *ngIf="contentData.userPhone">{{contentData.userPhone}}</dd>
               </dl>
                 <!-- <dl class="sb-meta-data">
                     <dt>{{resourceService.frmelmnts?.lbl?.createdInstanceName  | interpolate:'{instance}': instance}}</dt>

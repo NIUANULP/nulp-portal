@@ -9,12 +9,26 @@ import * as _ from 'lodash-es';
 import { IInteractEventObject, IInteractEventEdata } from '@sunbird/telemetry';
 import { takeUntil } from 'rxjs/operators';
 import { Subject} from 'rxjs';
+
+import { of as observableOf, throwError as observableThrowError, Observable } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
+import { ServerResponse, RequestParam, HttpOptions } from '@sunbird/shared';
+import { HttpClient,HttpResponse } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { UUID } from 'angular2-uuid';
+// import * as _ from 'lodash-es';
+import dayjs from 'dayjs';
+// import { DataService } from 'src/app/modules/core';
+import { ConfigService } from '@sunbird/shared';
+
 @Component({
   selector: 'app-upforreview-contentplayer',
   templateUrl: './upforreview-contentplayer.component.html',
   styleUrls: ['./upforreview-contentplayer.component.scss']
 })
 export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
+  public config: ConfigService;
+  // public DataService: DataService
   public requestForChangesInteractEdata: IInteractEventEdata;
   public publishInteractEdata: IInteractEventEdata;
   public reviewCommentsWarningYesInteractEdata: IInteractEventEdata;
@@ -107,6 +121,12 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
   isLearnathon: boolean = false;
   // @Hack isLearnathon
 
+    /**
+   * Contains base Url for api end points
+   */
+     baseUrl: string;
+
+
   @ViewChild('publishWarningModal') publishWarningModal;
 
   showPublishWarningModal = false;
@@ -119,7 +139,7 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
   */
   constructor(resourceService: ResourceService, public activatedRoute: ActivatedRoute, userService: UserService,
     playerService: PlayerService, windowScrollService: WindowScrollService, permissionService: PermissionService,
-    toasterService: ToasterService, public layoutService: LayoutService,
+    toasterService: ToasterService, public layoutService: LayoutService,public https: HttpClient,
     public navigationHelperService: NavigationHelperService, router: Router) {
     this.resourceService = resourceService;
     this.playerService = playerService;
@@ -131,7 +151,7 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
     this.loaderMessage = {
       'loaderMessage': this.resourceService.messages.stmsg.m0025,
     };
-
+    
     // @Hack isLearnathon
     if (this.userService.rootOrgName == this.lernathonChannel || this.userService.rootOrgName =="Haryana" || this.userService.rootOrgName== "channel_67285"){
       this.isLearnathon = true;
@@ -149,6 +169,8 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
     }
   }
   ngOnInit() {
+    //this.baseUrl = this.config.urlConFig.URLS.EXT_PLUGIN_PREFIX;
+    this.baseUrl = "https://nulp.niua.org/"
     this.initLayout();
     this.userService.userData$.subscribe(userdata => {
       if (userdata && !userdata.err) {
@@ -273,4 +295,27 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
       ver: this.contentData.pkgVersion ? this.contentData.pkgVersion.toString() : '1.0'
     };
   }
+
+  learnVote(){
+    // const options = {headers: {'Content-Type': 'application/json'}};
+    // return this.http.post(this.baseUrl + '/learnCount', request, options);
+
+    const httpOptions: HttpOptions = {
+      headers:{'Content-Type': 'application/json'} ,
+      body: {
+      type: 'json',
+      data:  {
+           userId:this.userId,
+           contentId:this.contentId,
+           vote:'1' 
+      }
+    }
+    };
+    console.log("----",this.baseUrl + '/learnVote',"++++", httpOptions)
+
+    this.https.post(this.baseUrl + '/learnVote', httpOptions).subscribe(data => {
+      console.log("data====",data)
+  });
+
+   }
 }
