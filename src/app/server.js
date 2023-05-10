@@ -162,18 +162,18 @@ app.get('/counts', (req, res, next) => {
 
 app.post('/learnVote', bodyParser.json({limit:'10mb'}),(req, res) => {
 
-  // const voteData = JSON.parse(fs1.readFileSync('liveLearnVotes.json', 'utf8'))
+  const voteData = JSON.parse(fs1.readFileSync('liveLearnVotes.json', 'utf8'))
 
-  // // file system module to perform file operations
-  // const fs = require('fs');
+  // file system module to perform file operations
+  const fs = require('fs');
 
-  // // stringify JSON Object
-  // const jsonvoteData = fs1.readFileSync('liveLearnVotes.json', 'utf8')
-//   if (jsonvoteData){
-//     console.log("jsonvoteData========",jsonvoteData)
-//     // jsonvoteData.append( JSON.stringify(req.body))
-//   }
-//  else{
+  // stringify JSON Object
+  const jsonvoteData = fs1.readFileSync('liveLearnVotes.json', 'utf8')
+  if (jsonvoteData){
+    console.log("jsonvoteData========",jsonvoteData)
+    jsonvoteData.append( JSON.stringify(req.body))
+  }
+ else{
   console.log("jsonvoteData========",req)
   fs.writeFile("liveLearnVotes.json", JSON.stringify(req.body), 'utf8', function (err) {
     if (err) {
@@ -189,7 +189,7 @@ app.post('/learnVote', bodyParser.json({limit:'10mb'}),(req, res) => {
 });
 
 res.status(200).send();
-//  }
+ }
 
 
 })
