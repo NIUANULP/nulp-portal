@@ -56,7 +56,8 @@
           </div>
         </div>
         <div class="row d-flex" *ngIf="!showLoader && isLearnathon" >
-          <div class="my-24 videosegment ui clearing segment ml-auto">
+          <div *ngIf= "userId=='9a1ae74c-4035-4bf7-ab8c-7738231d8f50' || userId=='4288bdc5-164f-4c0c-a8dc-57001bea0e7d'"
+          class="my-24 videosegment ui clearing segment ml-auto">
             <button tabindex="0" (click)="learnVote()" class="ui right floated sb-btn sb-btn-primary sb-btn-normal mr-8"
                 appTelemetryInteract [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractEdata]="publishInteractEdata">
