@@ -1,30 +1,40 @@
-import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit, ViewChild, OnDestroy } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
 import {
-  ResourceService, ILoaderMessage, PlayerConfig, ContentData,
-  WindowScrollService, ToasterService, NavigationHelperService, LayoutService
-} from '@sunbird/shared';
-import { PlayerService, PermissionService, UserService } from '@sunbird/core';
-import * as _ from 'lodash-es';
-import { IInteractEventObject, IInteractEventEdata } from '@sunbird/telemetry';
-import { takeUntil } from 'rxjs/operators';
-import { Subject} from 'rxjs';
+  ResourceService,
+  ILoaderMessage,
+  PlayerConfig,
+  ContentData,
+  WindowScrollService,
+  ToasterService,
+  NavigationHelperService,
+  LayoutService,
+} from "@sunbird/shared";
+import { PlayerService, PermissionService, UserService } from "@sunbird/core";
+import * as _ from "lodash-es";
+import { IInteractEventObject, IInteractEventEdata } from "@sunbird/telemetry";
+import { takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
 
-import { of as observableOf, throwError as observableThrowError, Observable } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
-import { ServerResponse, RequestParam, HttpOptions } from '@sunbird/shared';
-import { HttpClient,HttpResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { UUID } from 'angular2-uuid';
+import {
+  of as observableOf,
+  throwError as observableThrowError,
+  Observable,
+} from "rxjs";
+import { mergeMap } from "rxjs/operators";
+import { ServerResponse, RequestParam, HttpOptions } from "@sunbird/shared";
+import { HttpClient, HttpResponse } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { UUID } from "angular2-uuid";
 // import * as _ from 'lodash-es';
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 // import { DataService } from 'src/app/modules/core';
-import { ConfigService } from '@sunbird/shared';
+import { ConfigService } from "@sunbird/shared";
 
 @Component({
-  selector: 'app-upforreview-contentplayer',
-  templateUrl: './upforreview-contentplayer.component.html',
-  styleUrls: ['./upforreview-contentplayer.component.scss']
+  selector: "app-upforreview-contentplayer",
+  templateUrl: "./upforreview-contentplayer.component.html",
+  styleUrls: ["./upforreview-contentplayer.component.scss"],
 })
 export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
   // public config: ConfigService;
@@ -43,15 +53,15 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
   router: Router;
   /**
    * loader message
-  */
- loaderMessage: ILoaderMessage;
+   */
+  loaderMessage: ILoaderMessage;
   /**
    * To close url
-  */
- closeUrl: any;
+   */
+  closeUrl: any;
   /**
-  * To show / hide loader
-  */
+   * To show / hide loader
+   */
   showLoader = true;
   /**
    * Flag to show error
@@ -66,34 +76,34 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
    */
   userId: string;
   /**
-  * contain error message
-  */
+   * contain error message
+   */
   errorMessage: string;
-    /**
-    * This variable is used to increase/decrease the player width
-    * according to content mime type
-    */
-  showCommentBoxClass = 'twelve wide column';
- /**
-  * To call resource service which helps to use language constant
-  */
- public resourceService: ResourceService;
   /**
-  * To call user service
-  */
- public userService: UserService;
+   * This variable is used to increase/decrease the player width
+   * according to content mime type
+   */
+  showCommentBoxClass = "twelve wide column";
+  /**
+   * To call resource service which helps to use language constant
+   */
+  public resourceService: ResourceService;
+  /**
+   * To call user service
+   */
+  public userService: UserService;
 
   /**
-  * To call PlayerService service
-  */
+   * To call PlayerService service
+   */
   public playerService: PlayerService;
   /**
-  * To call Permission service
-  */
- public permissionService: PermissionService;
+   * To call Permission service
+   */
+  public permissionService: PermissionService;
   /**
-  * To call PlayerService service
-  */
+   * To call PlayerService service
+   */
   public windowScrollService: WindowScrollService;
   /**
    * contains player configuration
@@ -101,11 +111,11 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
   playerConfig: PlayerConfig;
   /**
    * contain contentData
-  */
+   */
   contentData: ContentData;
   /**
-  * To show toaster(error, success etc) after any API calls
-  */
+   * To show toaster(error, success etc) after any API calls
+   */
   private toasterService: ToasterService;
 
   public stageId: string;
@@ -116,31 +126,46 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
 
   // @Hack isLearnathon
   // lernathonChannel: string = "nulp-learn";
-  lernathonChannel:string = localStorage.getItem('learnathonChannel');
+  lernathonChannel: string = localStorage.getItem("learnathonChannel");
 
   isLearnathon: boolean = false;
   // @Hack isLearnathon
 
-    /**
+  /**
    * Contains base Url for api end points
    */
-     baseUrl: string;
+  baseUrl: string;
 
-
-  @ViewChild('publishWarningModal') publishWarningModal;
+  @ViewChild("publishWarningModal") publishWarningModal;
 
   showPublishWarningModal = false;
   layoutConfiguration: any;
+  name: any;
+  mobile: any;
+  email: any;
+  city: any;
+  reason: any;
+  showNormalModal: boolean = false;
   /**
   * Constructor to create injected service(s) object
   Default method of Draft Component class
   * @param {ResourceService} resourceService Reference of resourceService
   * @param {ToasterService} toasterService Reference of ToasterService
   */
-  constructor(resourceService: ResourceService, public activatedRoute: ActivatedRoute, userService: UserService,
-    playerService: PlayerService, windowScrollService: WindowScrollService, permissionService: PermissionService,
-    toasterService: ToasterService, public layoutService: LayoutService,public https: HttpClient,public config: ConfigService,
-    public navigationHelperService: NavigationHelperService, router: Router) {
+  constructor(
+    resourceService: ResourceService,
+    public activatedRoute: ActivatedRoute,
+    userService: UserService,
+    playerService: PlayerService,
+    windowScrollService: WindowScrollService,
+    permissionService: PermissionService,
+    toasterService: ToasterService,
+    public layoutService: LayoutService,
+    public https: HttpClient,
+    public config: ConfigService,
+    public navigationHelperService: NavigationHelperService,
+    router: Router
+  ) {
     this.resourceService = resourceService;
     this.playerService = playerService;
     this.userService = userService;
@@ -149,17 +174,21 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
     this.toasterService = toasterService;
     this.router = router;
     this.loaderMessage = {
-      'loaderMessage': this.resourceService.messages.stmsg.m0025,
+      loaderMessage: this.resourceService.messages.stmsg.m0025,
     };
-    
+
     // @Hack isLearnathon
-    if (this.userService.rootOrgName == this.lernathonChannel || this.userService.rootOrgName =="Haryana" || this.userService.rootOrgName== "channel_67285"){
+    if (
+      this.userService.rootOrgName == this.lernathonChannel ||
+      this.userService.rootOrgName == "Haryana" ||
+      this.userService.rootOrgName == "channel_67285"
+    ) {
       this.isLearnathon = true;
     }
     // @Hack isLearnathon
   }
   goToPublish() {
-    this.router.navigate(['publish'], {relativeTo: this.activatedRoute});
+    this.router.navigate(["publish"], { relativeTo: this.activatedRoute });
   }
   checkComments() {
     if (!_.isEmpty(this.commentList)) {
@@ -170,9 +199,9 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
   }
   ngOnInit() {
     //this.baseUrl = this.config.urlConFig.URLS.EXT_PLUGIN_PREFIX;
-    this.baseUrl = "https://nulp.niua.org/"
+    this.baseUrl = "https://nulp.niua.org/";
     this.initLayout();
-    this.userService.userData$.subscribe(userdata => {
+    this.userService.userData$.subscribe((userdata) => {
       if (userdata && !userdata.err) {
         this.userId = userdata.userProfile.userId;
         this.activatedRoute.params.subscribe((params) => {
@@ -192,8 +221,10 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
   }
   initLayout() {
     this.layoutConfiguration = this.layoutService.initlayoutConfig();
-    this.layoutService.switchableLayout().
-        pipe(takeUntil(this.unsubscribe$)).subscribe(layoutConfig => {
+    this.layoutService
+      .switchableLayout()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((layoutConfig) => {
         if (layoutConfig != null) {
           this.layoutConfiguration = layoutConfig.layout;
         }
@@ -208,7 +239,7 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
     }
   }
   public contentProgressEvent(event) {
-    if (_.get(event, 'detail.telemetryData.eid') === 'END') {
+    if (_.get(event, "detail.telemetryData.eid") === "END") {
       this.stageId = undefined;
     }
   }
@@ -221,21 +252,26 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
   getContent() {
     this.showLoader = true;
     const option = {
-          params: {mode: 'edit'}
+      params: { mode: "edit" },
     };
     this.playerService.getContent(this.contentId, option).subscribe(
       (response) => {
         if (response.result.content) {
           const contentDetails = {
             contentId: this.contentId,
-            contentData: response.result.content
+            contentData: response.result.content,
           };
           this.playerConfig = this.playerService.getConfig(contentDetails);
-          this.playerConfig.data = this.playerService.updateContentBodyForReviewer(this.playerConfig.data);
+          this.playerConfig.data =
+            this.playerService.updateContentBodyForReviewer(
+              this.playerConfig.data
+            );
           this.contentData = response.result.content;
           this.setInteractEventData();
-          this.showCommentBoxClass = this.contentData.mimeType ===
-          'application/vnd.ekstep.ecml-archive' ? 'eight wide column' : 'twelve wide column';
+          this.showCommentBoxClass =
+            this.contentData.mimeType === "application/vnd.ekstep.ecml-archive"
+              ? "eight wide column"
+              : "twelve wide column";
           this.showLoader = false;
         } else {
           this.toasterService.warning(this.resourceService.messages.imsg.m0027);
@@ -245,7 +281,8 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
       (err) => {
         this.showError = true;
         this.errorMessage = this.resourceService.messages.stmsg.m0009;
-      });
+      }
+    );
   }
   /**
    * retry launching player with same content details
@@ -256,61 +293,90 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
     this.getContent();
   }
   /**
-  * closes conent player and revert to previous url
-  * @memberof ContentPlayerComponent
-  */
+   * closes conent player and revert to previous url
+   * @memberof ContentPlayerComponent
+   */
   close() {
-    this.navigationHelperService.navigateToWorkSpace('/workspace/content/upForReview/1');
+    this.navigationHelperService.navigateToWorkSpace(
+      "/workspace/content/upForReview/1"
+    );
   }
 
   setInteractEventData() {
     this.requestForChangesInteractEdata = {
-      id: 'request-for-changes',
-      type: 'click',
-      pageid: 'upForReview-content-player'
+      id: "request-for-changes",
+      type: "click",
+      pageid: "upForReview-content-player",
     };
     this.publishInteractEdata = {
-      id: 'publish',
-      type: 'click',
-      pageid: 'upForReview-content-player'
+      id: "publish",
+      type: "click",
+      pageid: "upForReview-content-player",
     };
     this.reviewCommentsWarningYesInteractEdata = {
-      id: 'review-comments-warning-yes',
-      type: 'click',
-      pageid: 'upForReview-content-player'
+      id: "review-comments-warning-yes",
+      type: "click",
+      pageid: "upForReview-content-player",
     };
     this.reviewCommentsWarningNoInteractEdata = {
-      id: 'review-comments-warning-no',
-      type: 'click',
-      pageid: 'upForReview-content-player'
+      id: "review-comments-warning-no",
+      type: "click",
+      pageid: "upForReview-content-player",
     };
     this.closeInteractEdata = {
-      id: 'close-button',
-      type: 'click',
-      pageid: 'upForReview-content-player'
+      id: "close-button",
+      type: "click",
+      pageid: "upForReview-content-player",
     };
     this.telemetryInteractObject = {
       id: this.contentId,
       type: this.contentData.contentType,
-      ver: this.contentData.pkgVersion ? this.contentData.pkgVersion.toString() : '1.0'
+      ver: this.contentData.pkgVersion
+        ? this.contentData.pkgVersion.toString()
+        : "1.0",
     };
   }
 
-  learnVote(){
+  learnVote() {
     const httpOptions: HttpOptions = {
-      headers:{'Content-Type': 'application/json'} ,
-      body: {
-      type: 'json',
-      data:  {
-           userId:this.userId,
-           contentId:this.contentId,
-           vote:'1' 
-      }
-    }
+      // headers: { "Content-Type": "application/json" },
+      body: [
+        {
+          userId: this.userId,
+          contentId: this.contentId,
+          vote: "1",
+          userName: this.name,
+          UserMobile: this.mobile,
+          userEmail: this.email,
+          userCity: this.city,
+          reasonOfVote: this.reason,
+        },
+      ],
     };
-    
-    this.https.post(this.config.urlConFig.URLS.FILE_WRITE , httpOptions).subscribe(data => {
-      console.log("data====",data)
-  });
-   }
+    console.log("httpOptions====", httpOptions);
+    this.https
+      .post(this.config.urlConFig.URLS.FILE_WRITE, httpOptions)
+      .subscribe((data) => {
+        console.log("data====", data);
+      });
+    this.https.get(this.config.urlConFig.URLS.FILE_READ).subscribe((data) => {
+      console.log("data count====", data);
+    });
+  }
+
+  onNameChange(name) {
+    this.name = name;
+  }
+  onMobileChange(mobile) {
+    this.mobile = mobile;
+  }
+  onEmailChange(email) {
+    this.email = email;
+  }
+  onCityChange(city) {
+    this.city = city;
+  }
+  onReasonOfVoteChange(reason) {
+    this.reason = reason;
+  }
 }
