@@ -346,7 +346,7 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
     if (!this?.name?.trim()) {
       //alert("Please Enter a name");
       this.formInvalidMessage =
-        this.resourceService.frmelmnts.label.solutiontitlemsg;
+        this.resourceService.frmelmnts.label.enterValidName;
       this.showCenterAlignedModal = true;
       return;
     }
