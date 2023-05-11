@@ -146,6 +146,9 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
   city: any;
   reason: any;
   showNormalModal: boolean = false;
+  formInvalidMessage: any;
+  showCenterAlignedModal: boolean;
+  modalHeader: any;
   /**
   * Constructor to create injected service(s) object
   Default method of Draft Component class
@@ -338,6 +341,59 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
   }
 
   learnVote() {
+    this.modalHeader = this.resourceService.frmelmnts.label.invaliddatamsg;
+
+    if (!this?.name?.trim()) {
+      //alert("Please Enter a name");
+      this.formInvalidMessage =
+        this.resourceService.frmelmnts.label.solutiontitlemsg;
+      this.showCenterAlignedModal = true;
+      return;
+    }
+
+    if (!this?.email?.trim()) {
+      //alert("Please enter email");
+      this.formInvalidMessage = this.resourceService.frmelmnts.label.validEmail;
+      this.showCenterAlignedModal = true;
+      return;
+    }
+
+    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.email)) {
+    } else {
+      //alert("Please enter a valid email!")
+      this.formInvalidMessage = this.resourceService.frmelmnts.label.validEmail;
+      this.showCenterAlignedModal = true;
+      return;
+    }
+
+    if (!this?.mobile?.trim()) {
+      // alert("Please enter phone number");
+      this.formInvalidMessage = this.resourceService.frmelmnts.label.validPhone;
+      this.showCenterAlignedModal = true;
+      return;
+    }
+
+    if (!/^\(?([1-9]{1})\)?([0-9]{9})$/.test(this.mobile)) {
+      // alert("Please enter a valid phone number");
+      this.formInvalidMessage = this.resourceService.frmelmnts.label.validEmail;
+      this.showCenterAlignedModal = true;
+      return;
+    }
+
+    if (!this?.city?.trim()) {
+      // alert("Please enter phone number");
+      this.formInvalidMessage = this.resourceService.frmelmnts.label.validCity;
+      this.showCenterAlignedModal = true;
+      return;
+    }
+    if (!this?.reason?.trim()) {
+      // alert("Please enter phone number");
+      this.formInvalidMessage =
+        this.resourceService.frmelmnts.label.validReasonOfVote;
+      this.showCenterAlignedModal = true;
+      return;
+    }
+
     const httpOptions: HttpOptions = {
       // headers: { "Content-Type": "application/json" },
       body: [

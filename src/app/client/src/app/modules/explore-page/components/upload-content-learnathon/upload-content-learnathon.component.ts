@@ -1,20 +1,28 @@
 import { Component, OnInit } from "@angular/core";
 
-import { LearnerService, ActionService, UserService, OrgDetailsService, FrameworkService, FormService } from "@sunbird/core";import { ContentService } from "./../../../../modules/core/services/content/content.service";
+import {
+  LearnerService,
+  ActionService,
+  UserService,
+  OrgDetailsService,
+  FrameworkService,
+  FormService,
+} from "@sunbird/core";
+import { ContentService } from "./../../../../modules/core/services/content/content.service";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { Observable } from "rxjs/internal/Observable";
 import { HttpClient, HttpResponse } from "@angular/common/http";
 import { UploadContentService } from "./upload-content.service";
 import { forkJoin } from "rxjs";
-import { NavigationHelperService } from '@sunbird/shared';
+import { NavigationHelperService } from "@sunbird/shared";
 
 // Added by Komal
-import { first, mergeMap, map, filter } from 'rxjs/operators';
-import { of, throwError, Subscription } from 'rxjs';
-import * as _ from 'lodash-es';
-import { ResourceService, ToasterService } from '@sunbird/shared';
-import {FormControl} from '@angular/forms';
+import { first, mergeMap, map, filter } from "rxjs/operators";
+import { of, throwError, Subscription } from "rxjs";
+import * as _ from "lodash-es";
+import { ResourceService, ToasterService } from "@sunbird/shared";
+import { FormControl } from "@angular/forms";
 
 @Component({
   selector: "app-upload-content-learnathon",
@@ -31,16 +39,16 @@ export class UploadContentLearnathonComponent implements OnInit {
   public otherCategory: string;
   public file!: File;
   userProfile: any;
-  categories : any = [];
+  categories: any = [];
   subCategories: any = [];
   state: string;
   fileUpload: boolean = true;
   isOtherCategory: boolean = false;
   isSubCategory: boolean = true;
   isOtherSubCategory: boolean = false;
-  linkToUpload : string;  
+  linkToUpload: string;
 
-// Added by komal
+  // Added by komal
   private userFramework: Subscription;
   private custodianOrg = false;
   private custodianOrgBoard: any = {};
@@ -48,7 +56,7 @@ export class UploadContentLearnathonComponent implements OnInit {
   public selectedOption: any = {};
   private frameWorkId: string;
   private custOrgFrameworks: any;
-  public allowedFields = ['board', 'medium', 'gradeLevel', 'subject'];
+  public allowedFields = ["board", "medium", "gradeLevel", "subject"];
   private _formFieldProperties: any;
   guestUserHashTagId;
   private categoryMasterList: any = {};
@@ -59,12 +67,12 @@ export class UploadContentLearnathonComponent implements OnInit {
   uploadContentSbForm: FormBuilder;
   selectedSubThemes: any;
   formFieldTheme: any;
-  formFieldSubTheme:any;
+  formFieldSubTheme: any;
 
-  formInvalidMessage: string ;
+  formInvalidMessage: string;
   showCenterAlignedModal: boolean = false;
-  showSmallModal:boolean = false;
-  modalHeader: string ;
+  showSmallModal: boolean = false;
+  modalHeader: string;
 
   constructor(
     private learnerService: LearnerService,
@@ -81,7 +89,7 @@ export class UploadContentLearnathonComponent implements OnInit {
     formBuilder: FormBuilder,
     private uploadContentService: UploadContentService
   ) {
-    this.state = 'upForReview';
+    this.state = "upForReview";
     this.formFieldProperties = {
       fields: [
         {
@@ -112,8 +120,8 @@ export class UploadContentLearnathonComponent implements OnInit {
         },
       ],
     };
-  //  console.log(this.formFieldProperties.fields);
-  //  console.log(this.formFieldProperties.fields);
+    //  console.log(this.formFieldProperties.fields);
+    //  console.log(this.formFieldProperties.fields);
   }
 
   ngOnInit(): void {
@@ -121,28 +129,39 @@ export class UploadContentLearnathonComponent implements OnInit {
 
     // Added by komal
     // this.selectedOption = _.pickBy(_.cloneDeep(this.formInput), 'length') || { "board": [], "gradeLevel": [],"medium": [],"id": [ "nulp-learnathon" ] }; // clone selected field inputs from parent
-      //added by Shivani
-    
-    this.selectedOption = _.pickBy(_.cloneDeep(this.formInput), 'length') || { "board": [], "gradeLevel": [],"medium": [],"id": [ localStorage.getItem('learnathonFramework') ] }; // clone selected field inputs from parent
+    //added by Shivani
 
-    this.userFramework = this.isCustodianOrgUser().pipe(
-      mergeMap((custodianOrgUser: boolean) => {
-        this.custodianOrg = custodianOrgUser;
-        if (this.isGuestUser) {
-          //return this.getFormOptionsForCustodianOrgForGuestUser();
-        } else if (custodianOrgUser) {
-          return this.getFormOptionsForCustodianOrg();
-        } else {
-          return this.getFormOptionsForOnboardedUser();
+    this.selectedOption = _.pickBy(_.cloneDeep(this.formInput), "length") || {
+      board: [],
+      gradeLevel: [],
+      medium: [],
+      id: [localStorage.getItem("learnathonFramework")],
+    }; // clone selected field inputs from parent
+
+    this.userFramework = this.isCustodianOrgUser()
+      .pipe(
+        mergeMap((custodianOrgUser: boolean) => {
+          this.custodianOrg = custodianOrgUser;
+          if (this.isGuestUser) {
+            //return this.getFormOptionsForCustodianOrgForGuestUser();
+          } else if (custodianOrgUser) {
+            return this.getFormOptionsForCustodianOrg();
+          } else {
+            return this.getFormOptionsForOnboardedUser();
+          }
+        }),
+        first()
+      )
+      .subscribe(
+        (data) => {
+          this.formFieldOptions = data;
+          // console.log('formFieldOptions - ', data);
+        },
+        (err) => {
+          this.toasterService.warning(this.resourceService.messages.emsg.m0012);
+          // this.navigateToLibrary();
         }
-      }), first()).subscribe(data => {
-        this.formFieldOptions = data;
-        // console.log('formFieldOptions - ', data);
-      }, err => {
-        this.toasterService.warning(this.resourceService.messages.emsg.m0012);
-        // this.navigateToLibrary();
-      });
-
+      );
   }
 
   // Added by komal
@@ -150,84 +169,106 @@ export class UploadContentLearnathonComponent implements OnInit {
   selectedTheme(theme, themeCode) {
     this.formFieldTheme = theme;
     // console.log(this.formFieldTheme);
-    
-    if(this.formFieldTheme === "Other Domain") {
+
+    if (this.formFieldTheme === "Other Domain") {
       this.isOtherCategory = true;
       this.isOtherSubCategory = false;
       this.isSubCategory = false;
-      this.formFieldSubTheme ="Theme NA";
-    }
-    else {
+      this.formFieldSubTheme = "Theme NA";
+    } else {
       this.isOtherCategory = false;
       this.isSubCategory = true;
-      this.formFieldSubTheme= "";
+      this.formFieldSubTheme = "";
       // console.log(this.isOtherCategory);
     }
 
-    const isSelectedTheme = this.formFieldOptions[0].range.filter((item) => item.name === theme);
-      // console.log(isSelectedTheme[0]);
-      // console.log(isSelectedTheme[0].associations);
-    
+    const isSelectedTheme = this.formFieldOptions[0].range.filter(
+      (item) => item.name === theme
+    );
+    // console.log(isSelectedTheme[0]);
+    // console.log(isSelectedTheme[0].associations);
+
     this.selectedSubThemes = isSelectedTheme[0].associations;
-    if(this.selectedSubThemes) {
+    if (this.selectedSubThemes) {
       for (let val of this?.selectedSubThemes) {
         if (val.code === "othersubdomain") {
-          this.selectedSubThemes.push(this.selectedSubThemes.splice(this.selectedSubThemes.indexOf(val), 1)[0]);
+          this.selectedSubThemes.push(
+            this.selectedSubThemes.splice(
+              this.selectedSubThemes.indexOf(val),
+              1
+            )[0]
+          );
         }
       }
     }
     // console.log(this.selectedSubThemes);
-    this.selectedOption['medium'] = "";
+    this.selectedOption["medium"] = "";
     this.isOtherSubCategory = false;
   }
 
-  selectedSubTheme(subTheme, themeCode){
+  selectedSubTheme(subTheme, themeCode) {
     this.formFieldSubTheme = subTheme;
-    if(this.formFieldSubTheme === "Other Sub-Domain")
+    if (this.formFieldSubTheme === "Other Sub-Domain")
       this.isOtherSubCategory = true;
-    else
-      this.isOtherSubCategory = false;
-    
+    else this.isOtherSubCategory = false;
   }
 
   private isCustodianOrgUser() {
-    return this.orgDetailsService.getCustodianOrgDetails().pipe(map((custodianOrg) => {
-      if (_.get(this.userService, 'userProfile.rootOrg.rootOrgId') === _.get(custodianOrg, 'result.response.value')) {
-        return true;
-      }
-      return false;
-    }));
+    return this.orgDetailsService.getCustodianOrgDetails().pipe(
+      map((custodianOrg) => {
+        if (
+          _.get(this.userService, "userProfile.rootOrg.rootOrgId") ===
+          _.get(custodianOrg, "result.response.value")
+        ) {
+          return true;
+        }
+        return false;
+      })
+    );
   }
 
   private getFormOptionsForCustodianOrg() {
-    this.selectedOption.board = _.get(this.selectedOption, 'board[0]');
-    this.frameWorkId = _.get(_.find(this.custOrgFrameworks, { 'name': this.selectedOption.board }), 'identifier');
-    return this.getFormatedFilterDetails().pipe(map((formFieldProperties) => {
-      this._formFieldProperties = formFieldProperties;
-      return this._formFieldProperties;
-    }));
+    this.selectedOption.board = _.get(this.selectedOption, "board[0]");
+    this.frameWorkId = _.get(
+      _.find(this.custOrgFrameworks, { name: this.selectedOption.board }),
+      "identifier"
+    );
+    return this.getFormatedFilterDetails().pipe(
+      map((formFieldProperties) => {
+        this._formFieldProperties = formFieldProperties;
+        return this._formFieldProperties;
+      })
+    );
   }
 
   private getFormOptionsForOnboardedUser() {
-    return this.getFormatedFilterDetails().pipe(map((formFieldProperties) => {
-      this._formFieldProperties = formFieldProperties;
-      if (_.get(this.selectedOption, 'board[0]')) {
-        this.selectedOption.board = _.get(this.selectedOption, 'board[0]');
-      }
-      return this._formFieldProperties;
-    }));
+    return this.getFormatedFilterDetails().pipe(
+      map((formFieldProperties) => {
+        this._formFieldProperties = formFieldProperties;
+        if (_.get(this.selectedOption, "board[0]")) {
+          this.selectedOption.board = _.get(this.selectedOption, "board[0]");
+        }
+        return this._formFieldProperties;
+      })
+    );
   }
 
   private getFormatedFilterDetails() {
     if (this.isGuestUser) {
-      this.frameworkService.initialize(this.frameWorkId, this.guestUserHashTagId);
+      this.frameworkService.initialize(
+        this.frameWorkId,
+        this.guestUserHashTagId
+      );
     } else {
       this.frameworkService.initialize(this.frameWorkId);
     }
     return this.frameworkService.frameworkData$.pipe(
-      filter((frameworkDetails) => { // wait to get the framework name if passed as input
+      filter((frameworkDetails) => {
+        // wait to get the framework name if passed as input
         if (!frameworkDetails.err) {
-          const framework = this.frameWorkId ? this.frameWorkId : 'defaultFramework';
+          const framework = this.frameWorkId
+            ? this.frameWorkId
+            : "defaultFramework";
           if (!_.get(frameworkDetails.frameworkdata, framework)) {
             return false;
           }
@@ -236,8 +277,13 @@ export class UploadContentLearnathonComponent implements OnInit {
       }),
       mergeMap((frameworkDetails) => {
         if (!frameworkDetails.err) {
-          const framework = this.frameWorkId ? this.frameWorkId : 'defaultFramework';
-          const frameworkData = _.get(frameworkDetails.frameworkdata, framework);
+          const framework = this.frameWorkId
+            ? this.frameWorkId
+            : "defaultFramework";
+          const frameworkData = _.get(
+            frameworkDetails.frameworkdata,
+            framework
+          );
           this.frameWorkId = frameworkData.identifier;
           // this.frameWorkId = 'nulp-learn'
           this.categoryMasterList = frameworkData.categories;
@@ -245,96 +291,143 @@ export class UploadContentLearnathonComponent implements OnInit {
         } else {
           return throwError(frameworkDetails.err);
         }
-      }), map((formData: any) => {
+      }),
+      map((formData: any) => {
         const formFieldProperties = _.filter(formData, (formFieldCategory) => {
-          formFieldCategory.range = _.get(_.find(this.categoryMasterList, { code: formFieldCategory.code }), 'terms') || [];
+          formFieldCategory.range =
+            _.get(
+              _.find(this.categoryMasterList, { code: formFieldCategory.code }),
+              "terms"
+            ) || [];
           return true;
         });
-        return _.sortBy(_.uniqBy(formFieldProperties, 'code'), 'index');
-      }), first());
+        return _.sortBy(_.uniqBy(formFieldProperties, "code"), "index");
+      }),
+      first()
+    );
   }
-
 
   private getFormDetails() {
     const formServiceInputParams = {
-      formType: 'user',
-      formAction: 'update',
-      contentType: 'framework',
-      framework: this.frameWorkId
+      formType: "user",
+      formAction: "update",
+      contentType: "framework",
+      framework: this.frameWorkId,
     };
-    const hashTagId = this.isGuestUser ? this.guestUserHashTagId : _.get(this.userService, 'hashTagId');
+    const hashTagId = this.isGuestUser
+      ? this.guestUserHashTagId
+      : _.get(this.userService, "hashTagId");
     return this.formService.getFormConfig(formServiceInputParams, hashTagId);
   }
 
   private getUpdatedFilters(field, editMode = false) {
     const targetIndex = field.index + 1; // only update next field if not editMode
-    const formFields = _.reduce(this.formFieldProperties, (accumulator, current) => {
-      if (current.index === targetIndex || editMode) {
-        const parentField: any = _.find(this.formFieldProperties, { index: current.index - 1 }) || {};
-        const parentAssociations = _.reduce(parentField.range, (collector, term) => {
-          const selectedFields = this.selectedOption[parentField.code] || [];
-          if ((selectedFields.includes(term.name) || selectedFields.includes(term.code))) {
-            const selectedAssociations = _.filter(term.associations, { category: current.code }) || [];
-            collector = _.concat(collector, selectedAssociations);
+    const formFields = _.reduce(
+      this.formFieldProperties,
+      (accumulator, current) => {
+        if (current.index === targetIndex || editMode) {
+          const parentField: any =
+            _.find(this.formFieldProperties, { index: current.index - 1 }) ||
+            {};
+          const parentAssociations = _.reduce(
+            parentField.range,
+            (collector, term) => {
+              const selectedFields =
+                this.selectedOption[parentField.code] || [];
+              if (
+                selectedFields.includes(term.name) ||
+                selectedFields.includes(term.code)
+              ) {
+                const selectedAssociations =
+                  _.filter(term.associations, { category: current.code }) || [];
+                collector = _.concat(collector, selectedAssociations);
+              }
+              return collector;
+            },
+            []
+          );
+          const updatedRange = _.filter(current.range, (range) =>
+            _.find(parentAssociations, { code: range.code })
+          );
+          current.range = updatedRange.length ? updatedRange : current.range;
+          current.range = _.unionBy(current.range, "identifier");
+          if (!editMode) {
+            this.selectedOption[current.code] = [];
           }
-          return collector;
-        }, []);
-        const updatedRange = _.filter(current.range, range => _.find(parentAssociations, { code: range.code }));
-        current.range = updatedRange.length ? updatedRange : current.range;
-        current.range = _.unionBy(current.range, 'identifier');
-        if (!editMode) {
-          this.selectedOption[current.code] = [];
-        }
-        accumulator.push(current);
-      } else {
-        if (current.index <= field.index) { // retain options for already selected fields
-          const updateField = current.code === 'board' ? current : _.find(this.formFieldOptions, { index: current.index });
-          accumulator.push(updateField);
-        } else { // empty filters and selection
-          current.range = [];
-          this.selectedOption[current.code] = [];
           accumulator.push(current);
+        } else {
+          if (current.index <= field.index) {
+            // retain options for already selected fields
+            const updateField =
+              current.code === "board"
+                ? current
+                : _.find(this.formFieldOptions, { index: current.index });
+            accumulator.push(updateField);
+          } else {
+            // empty filters and selection
+            current.range = [];
+            this.selectedOption[current.code] = [];
+            accumulator.push(current);
+          }
         }
-      }
-      return accumulator;
-    }, []);
+        return accumulator;
+      },
+      []
+    );
     return formFields;
   }
 
   public handleFieldChange(event, field) {
-
-    if ((!this.isGuestUser || field.index !== 1) && (!this.custodianOrg || field.index !== 1)) { // no need to fetch data, just rearrange fields
+    if (
+      (!this.isGuestUser || field.index !== 1) &&
+      (!this.custodianOrg || field.index !== 1)
+    ) {
+      // no need to fetch data, just rearrange fields
       this.formFieldOptions = this.getUpdatedFilters(field);
       this.enableSubmitButton();
       return;
     }
-    if (_.get(this.selectedOption, field.code) === 'CBSE/NCERT') {
-      this.frameWorkId = _.get(_.find(field.range, { name: 'CBSE' }), 'identifier');
+    if (_.get(this.selectedOption, field.code) === "CBSE/NCERT") {
+      this.frameWorkId = _.get(
+        _.find(field.range, { name: "CBSE" }),
+        "identifier"
+      );
     } else {
-      this.frameWorkId = _.get(_.find(field.range, { name: _.get(this.selectedOption, field.code) }), 'identifier');
+      this.frameWorkId = _.get(
+        _.find(field.range, { name: _.get(this.selectedOption, field.code) }),
+        "identifier"
+      );
     }
-    if (this.userFramework) { // cancel if any previous api call in progress
+    if (this.userFramework) {
+      // cancel if any previous api call in progress
       this.userFramework.unsubscribe();
     }
-    this.userFramework = this.getFormatedFilterDetails().pipe().subscribe(
-      (formFieldProperties) => {
-        if (!formFieldProperties.length) {
-        } else {
-          this._formFieldProperties = formFieldProperties;
-          this.mergeBoard();
-          this.formFieldOptions = this.getUpdatedFilters(field);
-          this.enableSubmitButton();
+    this.userFramework = this.getFormatedFilterDetails()
+      .pipe()
+      .subscribe(
+        (formFieldProperties) => {
+          if (!formFieldProperties.length) {
+          } else {
+            this._formFieldProperties = formFieldProperties;
+            this.mergeBoard();
+            this.formFieldOptions = this.getUpdatedFilters(field);
+            this.enableSubmitButton();
+          }
+        },
+        (error) => {
+          this.toasterService.warning(this.resourceService.messages.emsg.m0012);
+          // this.navigateToLibrary();
         }
-      }, (error) => {
-        this.toasterService.warning(this.resourceService.messages.emsg.m0012);
-        // this.navigateToLibrary();
-      });
+      );
   }
 
   private mergeBoard() {
     _.forEach(this._formFieldProperties, (field) => {
-      if (field.code === 'board') {
-        field.range = _.unionBy(_.concat(field.range, this.custodianOrgBoard.range), 'name');
+      if (field.code === "board") {
+        field.range = _.unionBy(
+          _.concat(field.range, this.custodianOrgBoard.range),
+          "name"
+        );
       }
     });
   }
@@ -353,8 +446,8 @@ export class UploadContentLearnathonComponent implements OnInit {
 
   // End Added by komal
 
-  onTypeSelect(event:any) {
-    if(event.target.value === "youtube"){
+  onTypeSelect(event: any) {
+    if (event.target.value === "youtube") {
       this.fileUpload = false;
     } else {
       this.fileUpload = true;
@@ -363,8 +456,7 @@ export class UploadContentLearnathonComponent implements OnInit {
 
   outputData(eventData: any) {}
 
-  onStatusChanges(event) {
-  }
+  onStatusChanges(event) {}
 
   valueChanges(value: any) {
     this.formData = value;
@@ -374,25 +466,25 @@ export class UploadContentLearnathonComponent implements OnInit {
 
   onUpload(event) {
     this.file = event.target.files[0];
-  //  console.log(this.file);
+    //  console.log(this.file);
   }
 
   onTitleChange(title) {
-  //  console.log(title);
-    this.solutionTitle = title; 
+    //  console.log(title);
+    this.solutionTitle = title;
   }
 
   onEmailChange(email) {
-  //  console.log(email);
-    this.userEmail = email;    
+    //  console.log(email);
+    this.userEmail = email;
   }
 
   onMobileChange(phone) {
-  //  console.log(phone);
-    this.userPhone = phone;    
+    //  console.log(phone);
+    this.userPhone = phone;
   }
 
-  onCategoryChange(otherCategory){
+  onCategoryChange(otherCategory) {
     this.otherCategory = otherCategory;
   }
 
@@ -401,211 +493,258 @@ export class UploadContentLearnathonComponent implements OnInit {
   }
   // onLinkChange(link) {
   //   console.log(link);
-  //   this.linkToUpload = link; 
+  //   this.linkToUpload = link;
   // }
 
   onSubmit() {
     // call all methods with respective api in sequence
 
-    this.modalHeader = this.resourceService.frmelmnts.label.invaliddatamsg ;
+    this.modalHeader = this.resourceService.frmelmnts.label.invaliddatamsg;
 
     if (this.isUserLoggedIn()) {
       this.userProfile = this.userService.userProfile;
     } else {
       //alert("Please login before filling form!");
-      this.formInvalidMessage = this.resourceService.frmelmnts.label.loginforform;
+      this.formInvalidMessage =
+        this.resourceService.frmelmnts.label.loginforform;
       this.showCenterAlignedModal = true;
       return;
     }
 
-
-    if(!this?.solutionTitle?.trim()){
+    if (!this?.solutionTitle?.trim()) {
       //alert("Please Enter a name");
-      this.formInvalidMessage = this.resourceService.frmelmnts.label.solutiontitlemsg;
+      this.formInvalidMessage =
+        this.resourceService.frmelmnts.label.solutiontitlemsg;
       this.showCenterAlignedModal = true;
       return;
     }
 
-    if(!this?.userEmail?.trim()) {
+    if (!this?.userEmail?.trim()) {
       //alert("Please enter email");
       this.formInvalidMessage = this.resourceService.frmelmnts.label.emailmsg;
       this.showCenterAlignedModal = true;
       return;
     }
 
-    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.userEmail)){
+    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.userEmail)) {
     } else {
       //alert("Please enter a valid email!")
-      this.formInvalidMessage = this.resourceService.frmelmnts.label.validemailmsg;
+      this.formInvalidMessage =
+        this.resourceService.frmelmnts.label.validemailmsg;
       this.showCenterAlignedModal = true;
       return;
     }
 
-    if(!this?.userPhone?.trim()) {
+    if (!this?.userPhone?.trim()) {
       // alert("Please enter phone number");
       this.formInvalidMessage = this.resourceService.frmelmnts.label.mobilemsg;
       this.showCenterAlignedModal = true;
       return;
     }
 
-    if(!(/^\(?([1-9]{1})\)?([0-9]{9})$/.test(this.userPhone))) {
+    if (!/^\(?([1-9]{1})\)?([0-9]{9})$/.test(this.userPhone)) {
       // alert("Please enter a valid phone number");
-      this.formInvalidMessage = this.resourceService.frmelmnts.label.validmobilemsg;
+      this.formInvalidMessage =
+        this.resourceService.frmelmnts.label.validmobilemsg;
       this.showCenterAlignedModal = true;
       return;
-    } else {
     }
 
-    if(!this.formFieldTheme){
+    if (!this.formFieldTheme) {
       // alert("Please select a Theme");
       this.formInvalidMessage = this.resourceService.frmelmnts.label.thememsg;
       this.showCenterAlignedModal = true;
       return;
     }
 
-    if(this.isSubCategory){
-      if(!this.formFieldSubTheme){
+    if (this.isSubCategory) {
+      if (!this.formFieldSubTheme) {
         // alert("Please select a Sub - Theme")
-        this.formInvalidMessage = this.resourceService.frmelmnts.label.subthememsg;
+        this.formInvalidMessage =
+          this.resourceService.frmelmnts.label.subthememsg;
         this.showCenterAlignedModal = true;
         return;
       }
     }
 
-    if(this.isOtherCategory && !this?.otherCategory?.trim()) {
+    if (this.isOtherCategory && !this?.otherCategory?.trim()) {
       // alert("Please specify other category");
-      this.formInvalidMessage = this.resourceService.frmelmnts.label.othercatmsg ;
+      this.formInvalidMessage =
+        this.resourceService.frmelmnts.label.othercatmsg;
       this.showCenterAlignedModal = true;
       return;
     }
 
-    if(this.isOtherSubCategory && !this?.otherSubCategory?.trim()) {
+    if (this.isOtherSubCategory && !this?.otherSubCategory?.trim()) {
       // alert("Please specify other sub category");
-      this.formInvalidMessage = this.resourceService.frmelmnts.label.othersubcatmsg;
+      this.formInvalidMessage =
+        this.resourceService.frmelmnts.label.othersubcatmsg;
       this.showCenterAlignedModal = true;
       return;
     }
 
     if (this.fileUpload && !this?.file?.name) {
       // alert("Please select a file to upload");
-      this.formInvalidMessage = this.resourceService.frmelmnts.label.fileuploadmsg;
+      this.formInvalidMessage =
+        this.resourceService.frmelmnts.label.fileuploadmsg;
       this.showCenterAlignedModal = true;
       return;
     }
 
-    if (!this.fileUpload && !this.linkToUpload.trim()){
+    if (!this.fileUpload && !this.linkToUpload.trim()) {
       // alert("Please select a valid Youtube Link to upload");
-      this.formInvalidMessage = this.resourceService.frmelmnts.label.youtubelinkmsg;
+      this.formInvalidMessage =
+        this.resourceService.frmelmnts.label.youtubelinkmsg;
       this.showCenterAlignedModal = true;
       return;
     }
 
-    if(!this.hasExtension(this.file.name))
-      return;
+    if (!this.hasExtension(this.file.name)) return;
 
     this.showSmallModal = true; // confirm ready to submit
-    
 
     // if (confirm(confirmation) !== true) {
-      
+
     //   console.log(this.showSmallModal);
-      
+
     //   return;
     //   // change UI
     // } else {
     //   this.sendToServer();
     // }
-
   }
 
-  onSubmitConfirm(confirm){
+  onSubmitConfirm(confirm) {
     // console.log(confirm);
-    
+
     this.showSmallModal = !this.showSmallModal;
-    if(confirm) {
+    if (confirm) {
       this.sendToServer();
-    } 
+    }
   }
 
   onOkClick(flag) {
-    this.showSmallModal = !this.showSmallModal
+    this.showSmallModal = !this.showSmallModal;
   }
 
   sendToServer() {
     //  this.toasterService.info(this.resourceService.frmelmnts.messages.smsg.infodatamsg);
-    this.actionService.post(this.getCreateDataOptions()) // first API call to create
+    this.actionService
+      .post(this.getCreateDataOptions()) // first API call to create
       .pipe(
         map((res: any) => {
           // console.log("res", res);
           // console.log(res.result.identifier);
           let idOfContentCreated = res.result.identifier;
           forkJoin({
-            addUrl : this.actionService.post(this.getUploadURLOptions(idOfContentCreated)), // call for url update
-            addFile: this.actionService.post(this.getUploadContentOptions(idOfContentCreated)) // call for upload content
-          }).pipe(map((result) => {
-            // console.log(result);
-            this.actionService.post(this.getReviewOptions(idOfContentCreated)).subscribe((res2) => { // call for review
-            //  console.log(res2,"Final success");
-              // alert("Your Application was submitted successfully!");
-              // redirection
-              this.toasterService.success(_.get(this.resourceService, 'frmelmnts.messages.smsg.successdatamsg'));             
-              this.navigationHelperService.navigateToWorkSpace('/resources');
-
-            },
-            (error) => {
-              // console.log(error,"ERROR4")
-              // alert("Error4");
-              this.toasterService.error(_.get(this.resourceService, 'frmelmnts.messages.emsg.invaliddatamsg'));
-              this.navigationHelperService.navigateToWorkSpace('/resources');
-            })
-          })).subscribe((r) => {},(error) => {
-            // console.log(error,"ERROR23")
-            // alert("Error23");
-            this.toasterService.error(_.get(this.resourceService, 'frmelmnts.messages.emsg.invaliddatamsg'));
-            this.navigationHelperService.navigateToWorkSpace('/resources');
-         })
+            addUrl: this.actionService.post(
+              this.getUploadURLOptions(idOfContentCreated)
+            ), // call for url update
+            addFile: this.actionService.post(
+              this.getUploadContentOptions(idOfContentCreated)
+            ), // call for upload content
+          })
+            .pipe(
+              map((result) => {
+                // console.log(result);
+                this.actionService
+                  .post(this.getReviewOptions(idOfContentCreated))
+                  .subscribe(
+                    (res2) => {
+                      // call for review
+                      //  console.log(res2,"Final success");
+                      // alert("Your Application was submitted successfully!");
+                      // redirection
+                      this.toasterService.success(
+                        _.get(
+                          this.resourceService,
+                          "frmelmnts.messages.smsg.successdatamsg"
+                        )
+                      );
+                      this.navigationHelperService.navigateToWorkSpace(
+                        "/resources"
+                      );
+                    },
+                    (error) => {
+                      // console.log(error,"ERROR4")
+                      // alert("Error4");
+                      this.toasterService.error(
+                        _.get(
+                          this.resourceService,
+                          "frmelmnts.messages.emsg.invaliddatamsg"
+                        )
+                      );
+                      this.navigationHelperService.navigateToWorkSpace(
+                        "/resources"
+                      );
+                    }
+                  );
+              })
+            )
+            .subscribe(
+              (r) => {},
+              (error) => {
+                // console.log(error,"ERROR23")
+                // alert("Error23");
+                this.toasterService.error(
+                  _.get(
+                    this.resourceService,
+                    "frmelmnts.messages.emsg.invaliddatamsg"
+                  )
+                );
+                this.navigationHelperService.navigateToWorkSpace("/resources");
+              }
+            );
         })
       )
-      .subscribe((r) => {
-        // console.log("SUCCESSSS")
-      },
-      (error) => {
-       // console.log(error,"ERROR1")
-        //  alert("Error1");
-        this.toasterService.error(_.get(this.resourceService, 'frmelmnts.messages.emsg.invaliddatamsg'));
-        this.navigationHelperService.navigateToWorkSpace('/resources');
-      })
+      .subscribe(
+        (r) => {
+          // console.log("SUCCESSSS")
+        },
+        (error) => {
+          // console.log(error,"ERROR1")
+          //  alert("Error1");
+          this.toasterService.error(
+            _.get(
+              this.resourceService,
+              "frmelmnts.messages.emsg.invaliddatamsg"
+            )
+          );
+          this.navigationHelperService.navigateToWorkSpace("/resources");
+        }
+      );
   }
 
   getCreateDataOptions() {
-
     let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
     const lengthOfCode = 10;
     const createData = {
       request: {
         content: {
           name: this.solutionTitle,
-//          description: this.userEmail,
+          //          description: this.userEmail,
           userEmail: this.userEmail,
-          userPhone : this.userPhone,
-          specifiedCategory : this.otherCategory,
-          specifiedSubCategory : this.otherSubCategory,
-          code: this.solutionTitle.split(" ").join("") + this.makeRandom(lengthOfCode, possible), //uuid
+          userPhone: this.userPhone,
+          specifiedCategory: this.otherCategory,
+          specifiedSubCategory: this.otherSubCategory,
+          code:
+            this.solutionTitle.split(" ").join("") +
+            this.makeRandom(lengthOfCode, possible), //uuid
           mimeType: this.getContentType(this.file),
           contentType: "Resource",
           resourceType: "Learn",
           creator:
             this.userProfile?.firstName + " " + this.userProfile?.lastName, // name of creator
           // framework: "nulp-learn",
-          framework: localStorage.getItem('learnathonFramework'),
+          framework: localStorage.getItem("learnathonFramework"),
           // organisation: ["nulp-learn"],
-          organisation:  [localStorage.getItem('learnathonChannel')],
+          organisation: [localStorage.getItem("learnathonChannel")],
           primaryCategory: "Learning Resource",
-          board:this.formFieldTheme,
-          medium:[this.formFieldSubTheme],
+          board: this.formFieldTheme,
+          medium: [this.formFieldSubTheme],
           // gradeLevel:["Good Practices Competition"],
           createdBy: this.userProfile.identifier, // get current userId
-          createdFor: ["0137299712231669762","0137506576041902087"], // dev,prod
+          createdFor: ["0137299712231669762", "0137506576041902087"], // dev,prod
         },
       },
     };
@@ -653,13 +792,13 @@ export class UploadContentLearnathonComponent implements OnInit {
     formData.append("file", this.file);
     const options = {
       url: "content/v3/upload/" + identifier,
-      data: formData
-    }
+      data: formData,
+    };
 
     return options;
   }
 
-  getReviewOptions(identifier){
+  getReviewOptions(identifier) {
     const options = {
       url: "content/v3/review/" + identifier,
       data: {},
@@ -711,7 +850,7 @@ export class UploadContentLearnathonComponent implements OnInit {
   hasExtension(fileName) {
     // console.log(fileName);
 
-    const allowedExtensions = ["pdf", "mp4", "zip", "h5p"]//, "html5",];
+    const allowedExtensions = ["pdf", "mp4", "zip", "h5p"]; //, "html5",];
     const extension = fileName
       .substr(fileName.lastIndexOf(".") + 1)
       .toLowerCase();
@@ -725,7 +864,8 @@ export class UploadContentLearnathonComponent implements OnInit {
         //     " are allowed."
         // );
         // this.formInvalidMessage = "Please select a file with formats .pdf, .mp4, .h5p, .zip";
-        this.formInvalidMessage = this.resourceService.frmelmnts.label.fileformats;
+        this.formInvalidMessage =
+          this.resourceService.frmelmnts.label.fileformats;
         this.showCenterAlignedModal = true;
         return "";
       }
@@ -736,5 +876,4 @@ export class UploadContentLearnathonComponent implements OnInit {
   public isUserLoggedIn(): boolean {
     return this.userService && (this.userService.loggedIn || false);
   }
-
 }
