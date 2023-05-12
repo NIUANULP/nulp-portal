@@ -346,78 +346,89 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
     if (!this?.name?.trim()) {
       //alert("Please Enter a name");
       this.formInvalidMessage =
-        this.resourceService.frmelmnts.label.enterValidName;
+        this.resourceService.frmelmnts.lbl.enterValidName;
+      this.toasterService.error(
+        this.resourceService.frmelmnts.lbl.enterValidName
+      );
+
       this.showCenterAlignedModal = true;
-      return;
     }
 
     if (!this?.email?.trim()) {
       //alert("Please enter email");
-      this.formInvalidMessage = this.resourceService.frmelmnts.label.validEmail;
-      this.showCenterAlignedModal = true;
-      return;
-    }
+      this.formInvalidMessage = this.resourceService.frmelmnts.lbl.validEmail;
+      this.toasterService.error(this.resourceService.frmelmnts.lbl.validEmail);
 
-    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.email)) {
+      this.showCenterAlignedModal = true;
+    } else if (
+      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.email)
+    ) {
     } else {
       //alert("Please enter a valid email!")
-      this.formInvalidMessage = this.resourceService.frmelmnts.label.validEmail;
+      this.formInvalidMessage = this.resourceService.frmelmnts.lbl.validEmail;
+      this.toasterService.error(this.resourceService.frmelmnts.lbl.validEmail);
       this.showCenterAlignedModal = true;
-      return;
     }
 
     if (!this?.mobile?.trim()) {
       // alert("Please enter phone number");
-      this.formInvalidMessage = this.resourceService.frmelmnts.label.validPhone;
+      this.formInvalidMessage = this.resourceService.frmelmnts.lbl.validPhone;
+      this.toasterService.error(this.resourceService.frmelmnts.lbl.validPhone);
       this.showCenterAlignedModal = true;
-      return;
-    }
-
-    if (!/^\(?([1-9]{1})\)?([0-9]{9})$/.test(this.mobile)) {
-      // alert("Please enter a valid phone number");
-      this.formInvalidMessage = this.resourceService.frmelmnts.label.validEmail;
+    } else if (!/^\(?([1-9]{1})\)?([0-9]{9})$/.test(this.mobile)) {
+      this.formInvalidMessage = this.resourceService.frmelmnts.lbl.validPhone;
+      this.toasterService.error(this.resourceService.frmelmnts.lbl.validPhone);
       this.showCenterAlignedModal = true;
-      return;
     }
 
     if (!this?.city?.trim()) {
       // alert("Please enter phone number");
-      this.formInvalidMessage = this.resourceService.frmelmnts.label.validCity;
+      this.formInvalidMessage = this.resourceService.frmelmnts.lbl.validCity;
+      this.toasterService.error(this.resourceService.frmelmnts.lbl.validCity);
       this.showCenterAlignedModal = true;
-      return;
     }
     if (!this?.reason?.trim()) {
       // alert("Please enter phone number");
       this.formInvalidMessage =
-        this.resourceService.frmelmnts.label.validReasonOfVote;
+        this.resourceService.frmelmnts.lbl.validReasonOfVote;
+      this.toasterService.error(
+        this.resourceService.frmelmnts.lbl.validReasonOfVote
+      );
       this.showCenterAlignedModal = true;
-      return;
     }
-
-    const httpOptions: HttpOptions = {
-      // headers: { "Content-Type": "application/json" },
-      body: [
-        {
-          userId: this.userId,
-          contentId: this.contentId,
-          vote: "1",
-          userName: this.name,
-          UserMobile: this.mobile,
-          userEmail: this.email,
-          userCity: this.city,
-          reasonOfVote: this.reason,
-        },
-      ],
-    };
-    console.log("httpOptions====", httpOptions);
-    this.https
-      .post(this.config.urlConFig.URLS.FILE_WRITE, httpOptions)
-      .subscribe((data) => {
-        console.log("data====", data);
+    if (this.showCenterAlignedModal == true) {
+      return;
+    } else {
+      const httpOptions: HttpOptions = {
+        // headers: { "Content-Type": "application/json" },
+        body: [
+          {
+            userId: this.userId,
+            contentId: this.contentId,
+            vote: "1",
+            userName: this.name,
+            UserMobile: this.mobile,
+            userEmail: this.email,
+            userCity: this.city,
+            reasonOfVote: this.reason,
+          },
+        ],
+      };
+      console.log("httpOptions====", httpOptions);
+      this.https
+        .post(this.config.urlConFig.URLS.FILE_WRITE, httpOptions)
+        .subscribe(
+          (data) => {
+            this.showNormalModal = !this.showNormalModal;
+          },
+          (err) => {
+            this.toasterService.error(this.resourceService.messages.emsg.m0005);
+          }
+        );
+      this.https.get(this.config.urlConFig.URLS.FILE_READ).subscribe((data) => {
+        console.log("data count====", data);
       });
-    this.https.get(this.config.urlConFig.URLS.FILE_READ).subscribe((data) => {
-      console.log("data count====", data);
-    });
+    }
   }
 
   onNameChange(name) {
