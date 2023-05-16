@@ -1,43 +1,27 @@
 <div class="sb-pageSection" *ngIf="isContentCreator">
+  
   <div class="sb-pageSection-header">
     <h4 class="sb-pageSection-title m-0">My Uploaded Content</h4>
     <span class="sb-pageSection-count sb-label sb-label-xs sb-label-warning ml-8">{{totalCount}}</span>
-    <button class="sb-btn sb-btn-md sb-btn-primary sb-btn-normal ml-auto" routerLink="learnathon">Upload Content 
+    <button class="sb-btn sb-btn-md sb-btn-primary sb-btn-normal ml-auto sb-btn-disabled">Upload Content 
+      <!-- <button class="sb-btn sb-btn-md sb-btn-primary sb-btn-normal ml-auto" routerLink="learnathon">Upload Content  -->
       <!-- <i class="plus icon"></i> -->
     </button>
   </div>
+  <!-- <div class="sb-label sb-label-table sb-label-error-0">Submision of entries is closed. Voting for the shortlisted solutions will start on 24th May</div> -->
+
 </div>
+<div class="sb-pageSection" *ngIf="isContentCreator">
+  <div class="sb-pageSection-header">
+    <h4 class="sb-pageSection-title m-0"></h4>
+    <!-- <span class="sb-pageSection-count sb-label sb-label-xs sb-label-warning ml-8"></span> -->
+    <h1 class="ml-auto sb-label sb-label-table sb-label-error-0">Submision of entries is closed. Voting for the shortlisted solutions will start on 24th May</h1>
+  </div>
+
+
+</div>
+
 <hr class="sb-break-line my-24" />
-<div class="sb-table-container" *ngIf="allContent.length > 0 && !showLoader && !noResult ">
-  <!-- <table class="sb-table sb-table-fixed sb-table-hover sb-table-lg">
-    <thead>
-      <tr>
-        <th>Content</th>
-        <th>Status</th>
-        <th>Preview</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr in-view-item class="UpForReviewListHover cursor-pointer" *ngFor="let content of allContent let i = index;" [id]="i" [data]="content"
-      appTelemetryInteract [telemetryInteractObject]="{id:content.identifier,type:content.contentType,ver:content.pkgVersion ? content.pkgVersion.toString(): '1.0' }"
-      [telemetryInteractEdata]="{id:'allcontent',type:'click',pageid:'AllContent'}">
-        <td data-label="Content" (click)="contentClick(content)" tabindex="i">
-            <div class="sb-media">
-            <img src="{{content.appIcon || 'assets/images/default.png' | cdnprefixurl}}" alt="" class="sb-media-object mr-15">
-            <div class="sb-media-body">
-                <h6 class="media-heading">{{content.name | slice:0:30}}<i *ngIf="content.name.length > 30">...</i></h6>
-                <p class="media-description">{{content.primaryCategory}}</p>
-            </div>
-            </div>
-        </td>
-
-        <td data-label="Status" class="UpForReviewStatusOrange">{{content.status}}</td>
-        <td data-label="Preview" class="mr-auto" (click)="contentClick(content)" tabindex="i"><i class="search icon"></i></td>
-      </tr>
-    </tbody>
-  </table> -->
-</div>
-
 
 <div class="sb-table-container" *ngIf="allContent.length > 0 && !showLoader && !noResult ">
   <table class="ui upForReviewTable table">
