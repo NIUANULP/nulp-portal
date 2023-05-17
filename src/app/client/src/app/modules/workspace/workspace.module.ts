@@ -28,7 +28,7 @@ import { PlayerHelperModule } from '@sunbird/player-helper';
 import { ContentSearchModule } from '@sunbird/content-search';
 import { CollectionEditorLibraryModule } from '@project-sunbird/sunbird-collection-editor-v9';
 import { MatTooltipModule } from '@angular/material/tooltip';
-
+import { HttpClientModule } from '@angular/common/http';
 @NgModule({
   imports: [
     CommonModule,
@@ -45,7 +45,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     PlayerHelperModule,
     ContentSearchModule,
     CollectionEditorLibraryModule,
-    MatTooltipModule
+    MatTooltipModule,
+    HttpClientModule
   ],
   declarations: [WorkspaceComponent, WorkspacesidebarComponent, DateFilterXtimeAgoPipe,
     CreateContentComponent, DraftComponent, ReviewSubmissionsComponent,
