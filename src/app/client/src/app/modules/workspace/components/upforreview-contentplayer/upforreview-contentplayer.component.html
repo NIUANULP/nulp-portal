@@ -29,6 +29,8 @@
               tabindex="0"
               (click)="showNormalModal = true"
               class="sb-btn sb-btn-md sb-btn-primary sb-btn-normal ml-auto"
+              [disabled]="!canVote"
+              [ngClass]="{ 'sb-btn-disabled': createOrgForm.invalid }"
               appTelemetryInteract
               [telemetryInteractObject]="telemetryInteractObject"
               [telemetryInteractEdata]="publishInteractEdata"

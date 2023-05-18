@@ -149,6 +149,8 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
   formInvalidMessage: any;
   showCenterAlignedModal: boolean;
   modalHeader: any;
+  votelist: any;
+  canVote: boolean = true;
   /**
   * Constructor to create injected service(s) object
   Default method of Draft Component class
@@ -203,6 +205,7 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
   ngOnInit() {
     //this.baseUrl = this.config.urlConFig.URLS.EXT_PLUGIN_PREFIX;
     this.baseUrl = "https://nulp.niua.org/";
+
     this.initLayout();
     this.userService.userData$.subscribe((userdata) => {
       if (userdata && !userdata.err) {
@@ -213,6 +216,12 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
         });
       }
       this.closeUrl = this.navigationHelperService.getPreviousUrl();
+    });
+    this.https.get(this.config.urlConFig.URLS.FILE_READ).subscribe((data) => {
+      this.votelist = data["result"].data;
+      if (JSON.stringify(this.votelist).includes(this.userId)) {
+        this.canVote = false;
+      }
     });
   }
   ngOnDestroy() {
@@ -414,20 +423,21 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
           },
         ],
       };
-      console.log("httpOptions====", httpOptions);
+
       this.https
         .post(this.config.urlConFig.URLS.FILE_WRITE, httpOptions)
         .subscribe(
           (data) => {
             this.showNormalModal = !this.showNormalModal;
+            this.toasterService.success(
+              this.resourceService.messages.smsg.voteSuccess
+            );
+            this.votelist = data["result"].data;
           },
           (err) => {
             this.toasterService.error(this.resourceService.messages.emsg.m0005);
           }
         );
-      this.https.get(this.config.urlConFig.URLS.FILE_READ).subscribe((data) => {
-        console.log("data count====", data);
-      });
     }
   }
 
