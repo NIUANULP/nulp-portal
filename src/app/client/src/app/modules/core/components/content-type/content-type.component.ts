@@ -37,6 +37,7 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
   subscription: any;
   userType: any;
   returnTo: string;
+  userId: any;
   constructor(
     public formService: FormService,
     public resourceService: ResourceService,
@@ -59,6 +60,7 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.userId = this.userService.userid;
     this.getContentTypes();
     this.isDesktopApp = this.utilService.isDesktopApp;
     this.layoutService.updateSelectedContentType.subscribe((data) => {

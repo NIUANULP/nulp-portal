@@ -126,7 +126,12 @@
         {{ getTitle(contentType) }}
       </a>
     </ng-container>
-    <div>
+    <div
+      *ngIf="
+        userId == '9a1ae74c-4035-4bf7-ab8c-7738231d8f50' ||
+        userId == '4288bdc5-164f-4c0c-a8dc-57001bea0e7d'
+      "
+    >
       <a
         class="item item--event"
         *ngIf="!isDesktopApp"
