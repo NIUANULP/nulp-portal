@@ -286,22 +286,51 @@ app.post("/learnVote", bodyParser.json({ limit: "10mb" }), (req, res) => {
   }
 });
 
-app.get("/voteCount", (res) => {
-  const countData = JSON.parse(fs.readFileSync("liveLearnVotes.json", "utf8"));
-  res.send({
-    ts: new Date().toISOString(),
-    params: {
-      resmsgid: uuid(),
-      msgid: uuid(),
-      status: "successful",
-      err: null,
-      errmsg: null,
-    },
-    responseCode: "OK",
-    result: {
-      data: { ...countData },
-    },
-  });
+app.get("/voteCount", (req, res, next) => {
+  var fileExists;
+  var countData;
+  if (fs.existsSync("liveLearnVotes.json")) {
+    fileExists = true;
+
+    if (fs.readFileSync("liveLearnVotes.json", "utf8").length != 0) {
+      countData = JSON.parse(fs.readFileSync("liveLearnVotes.json", "utf8"));
+    } else {
+      countData = [];
+    }
+
+    res.send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuid(),
+        msgid: uuid(),
+        status: "successful",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {
+        data: { ...countData },
+        count: countData.length,
+      },
+    });
+  } else {
+    fileExists = false;
+    res.send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuid(),
+        msgid: uuid(),
+        status: "successful",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {
+        data: {},
+        msg: "no data found",
+      },
+    });
+  }
 });
 
 const morganConfig = (tokens, req, res) => {
