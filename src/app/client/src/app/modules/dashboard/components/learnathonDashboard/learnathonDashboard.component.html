@@ -103,6 +103,7 @@
             <td *ngFor="let col of columns" class="ui-resizable-column">
               {{ rowData[col.field] }}
             </td>
+
             <td *ngIf="this.pageName == 'upForVote'">
               <button
                 class="sb-btn sb-btn-normal sb-btn-primary"

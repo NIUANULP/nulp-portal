@@ -17,6 +17,8 @@ import {
   INoResultMessage,
   ConfigService,
 } from "@sunbird/shared";
+import { HttpClient, HttpResponse } from "@angular/common/http";
+
 // import { UUID } from 'angular2-uuid';
 import { ActivatedRoute, Router } from "@angular/router";
 import { ReportService } from "../../services/report/report.service";
@@ -52,6 +54,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
   queryParams: any;
   pageName: any;
   UserNameValues: any[] = new Array();
+  votelist: any;
   CategoryValues: any[] = [
     { label: "Individual", value: "Individual" },
     { label: "Group", value: "Group" },
@@ -73,6 +76,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
     public searchService: SearchService,
     private configService: ConfigService,
     public userService: UserService,
+    public https: HttpClient,
     private toasterService: ToasterService,
     public resourceService: ResourceService,
     activatedRoute: ActivatedRoute,
@@ -85,6 +89,11 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
     this.activatedRoute = activatedRoute;
   }
   ngOnInit() {
+    this.https
+      .get(this.configService.urlConFig.URLS.FILE_READ)
+      .subscribe((data) => {
+        this.votelist = data["result"].data;
+      });
     this.activatedRoute.queryParams.subscribe((params) => {
       this.queryParams = params;
       if (this.pageName != undefined && this.pageName != this.queryParams) {
@@ -251,14 +260,19 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
                 element["institute"] =
                   response.result.response.content[0].framework.institution[0];
               });
-              finalObj.push(element);
 
               this.UserNameValues.push({
                 label: element.UserName,
                 value: element.UserName,
               });
-            });
 
+              let tempData = JSON.stringify(this.votelist);
+              let count = tempData.split(element.identifier).length - 1;
+
+              element["votes"] = count;
+              finalObj.push(element);
+            });
+            console.log("finalObj-----", finalObj);
             this.tableData = finalObj;
             // this.finalObj.push(this.tableData);
             // this.tableData = _.get(this.selectedCity, 'orgName') != 'All' ? _.filter(tempObj, { OrgName: _.get(this.selectedCity, 'orgName') }) : tempObj;
@@ -374,6 +388,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
         { field: "institute", header: "Institute", width: "170px" },
         { field: "board", header: "Theme", width: "170px" },
         { field: "medium", header: "Sub-Theme", width: "170px" },
+        { field: "votes", header: "Votes", width: "170px" },
       ];
     }
   }
