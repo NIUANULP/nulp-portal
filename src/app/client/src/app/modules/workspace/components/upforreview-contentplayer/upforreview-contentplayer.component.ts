@@ -219,15 +219,13 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
     });
     this.https.get(this.config.urlConFig.URLS.FILE_READ).subscribe((data) => {
       this.votelist = data["result"].data;
-
       const arrayOfObj = Object.entries(this.votelist).map((e) => ({
         [e[0]]: e[1],
       }));
-
       arrayOfObj.forEach((element) => {
         if (
-          element.userId === this.userId &&
-          element.contentId == this.contentId
+          element[0]["userId"] === this.userId &&
+          element[0]["contentId"] == this.contentId
         ) {
           this.canVote = false;
         }
@@ -439,6 +437,8 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
         .subscribe(
           (data) => {
             this.showNormalModal = !this.showNormalModal;
+            this.canVote = false;
+            // window.location.reload();
             this.toasterService.success(
               this.resourceService.messages.smsg.voteSuccess
             );
