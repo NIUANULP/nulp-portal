@@ -1,125 +1,241 @@
-<app-landing-section [noTitle]= "true"
-[layoutConfiguration]="layoutConfiguration"></app-landing-section>
-<div [ngClass]="layoutConfiguration ? 'sbt-inside-page-container relative9': 'ui container mt-24'">
-    <div [ngClass]="layoutConfiguration ? '' :'ui stackable grid'">
-      <div class="twele wide column">
-        <div class="row" *ngIf="showLoader">
-          <app-loader [data]="loaderMessage"></app-loader>
+<app-landing-section
+  [noTitle]="true"
+  [layoutConfiguration]="layoutConfiguration"
+></app-landing-section>
+<div
+  [ngClass]="
+    layoutConfiguration
+      ? 'sbt-inside-page-container relative9'
+      : 'ui container mt-24'
+  "
+>
+  <div [ngClass]="layoutConfiguration ? '' : 'ui stackable grid'">
+    <div class="twele wide column">
+      <div class="row" *ngIf="showLoader">
+        <app-loader [data]="loaderMessage"></app-loader>
+      </div>
+
+      <div *ngIf="!showLoader && contentData">
+        <div class="sb-pageSection mb-16">
+          <div class="sb-pageSection-header">
+            <h1 class="sb-pageSection-title m-0 mr-8">
+              {{ contentData.name }}
+            </h1>
+            <button
+              *ngIf="
+                userId == '9a1ae74c-4035-4bf7-ab8c-7738231d8f50' ||
+                userId == '4288bdc5-164f-4c0c-a8dc-57001bea0e7d'
+              "
+              tabindex="0"
+              (click)="showNormalModal = true"
+              class="sb-btn sb-btn-md sb-btn-primary sb-btn-normal ml-auto"
+              [disabled]="!canVote"
+              [ngClass]="{ 'sb-btn-disabled': !canVote }"
+              appTelemetryInteract
+              [telemetryInteractObject]="telemetryInteractObject"
+              [telemetryInteractEdata]="publishInteractEdata"
+            >
+              <!-- class="sb-btn sb-btn-md sb-btn-primary sb-btn-normal ml-auto" -->
+              {{ resourceService?.frmelmnts?.btn?.learnVote }}
+            </button>
+            <button
+              class="sb-btn-normal sb-btn-error ml-10 mouse-pointer"
+              appTelemetryInteract
+              [telemetryInteractObject]="telemetryInteractObject"
+              [telemetryInteractEdata]="closeInteractEdata"
+              tabindex="0"
+              (click)="close()"
+            >
+              Close
+              <i class="ui remove icon"></i>
+            </button>
+          </div>
         </div>
 
-        <div *ngIf="!showLoader && contentData">
-          <div class="sb-pageSection mb-16">
-            <div class="sb-pageSection-header">
-              <h1 class="sb-pageSection-title m-0 mr-8"> {{contentData.name}} </h1>
-              <button class="sb-btn sb-btn-normal sb-btn-error ml-auto mouse-pointer" appTelemetryInteract
-                [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractEdata]="closeInteractEdata"
-                tabindex="0" (click)="close()"> Close
-                <i class="ui remove icon"></i>
-              </button>
-            </div>
-          </div>
-
-
-          <div class="ui grid">
-            <div [ngClass]="showCommentBoxClass">
-              <div class="aspectratio sbt-shadow-radius" data-ratio="16:9" #aspectRatio>
-              <app-player class="content-player" [playerConfig]="playerConfig"
-                (contentProgressEvent)="contentProgressEvent($event)" (sceneChangeEvent)="handleSceneChangeEvent($event)">
+        <div class="ui grid">
+          <div [ngClass]="showCommentBoxClass">
+            <div
+              class="aspectratio sbt-shadow-radius"
+              data-ratio="16:9"
+              #aspectRatio
+            >
+              <app-player
+                class="content-player"
+                [playerConfig]="playerConfig"
+                (contentProgressEvent)="contentProgressEvent($event)"
+                (sceneChangeEvent)="handleSceneChangeEvent($event)"
+              >
               </app-player>
             </div>
-            </div>
-            <div class="four wide column"
-              *ngIf="contentData.mimeType === 'application/vnd.ekstep.ecml-archive' && stageId">
-              <app-review-comments [contentData]="contentData" [playerLoaded]="playerLoaded" [stageId]="stageId"
-                (reviewCommentEvent)="handleReviewCommentEvent($event)"></app-review-comments>
-            </div>
+          </div>
+          <div
+            class="four wide column"
+            *ngIf="
+              contentData.mimeType === 'application/vnd.ekstep.ecml-archive' &&
+              stageId
+            "
+          >
+            <app-review-comments
+              [contentData]="contentData"
+              [playerLoaded]="playerLoaded"
+              [stageId]="stageId"
+              (reviewCommentEvent)="handleReviewCommentEvent($event)"
+            ></app-review-comments>
           </div>
         </div>
+      </div>
 
-        <div class="row d-flex" *ngIf="!showLoader">
-          <div class="my-24 videosegment ui clearing segment ml-auto">
+      <div class="row d-flex" *ngIf="!showLoader && !isLearnathon">
+        <div class="my-24 videosegment ui clearing segment ml-auto">
+          <div
+            *ngIf="
+              permissionService.permissionAvailable &&
+              contentData &&
+              (contentData.status === 'Review' ||
+                contentData.status === 'FlagReview') &&
+              userId !== contentData.createdBy
+            "
+            appPermission
+            [permission]="[
+              'CONTENT_REVIEWER',
+              'CONTENT_REVIEW',
+              'BOOK_REVIEWER',
+              'FLAG_REVIEWER'
+            ]"
+          >
+            <button
+              tabindex="0"
+              (click)="checkComments()"
+              class="ui right floated sb-btn sb-btn-primary sb-btn-normal mr-8"
+              appTelemetryInteract
+              [telemetryInteractObject]="telemetryInteractObject"
+              [telemetryInteractEdata]="publishInteractEdata"
+            >
+              {{ resourceService?.frmelmnts?.btn?.publish }}
+            </button>
+            <button
+              [routerLink]="['requestchanges']"
+              class="ui right floated sb-btn sb-btn-primary sb-btn-normal"
+              appTelemetryInteract
+              [telemetryInteractObject]="telemetryInteractObject"
+              [telemetryInteractEdata]="requestForChangesInteractEdata"
+            >
+              {{ resourceService?.frmelmnts?.btn?.requestChanges }}
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="row d-flex" *ngIf="!showLoader && isLearnathon">
+        <div
+          *ngIf="
+            userId == '9a1ae74c-4035-4bf7-ab8c-7738231d8f50' ||
+            userId == '4288bdc5-164f-4c0c-a8dc-57001bea0e7d'
+          "
+          class="my-24 videosegment ui clearing segment ml-auto"
+        >
+          <button
+            tabindex="0"
+            (click)="showNormalModal = true"
+            class="ui right floated sb-btn sb-btn-primary sb-btn-normal mr-8"
+            appTelemetryInteract
+            [telemetryInteractObject]="telemetryInteractObject"
+            [telemetryInteractEdata]="publishInteractEdata"
+          >
+            {{ resourceService?.frmelmnts?.btn?.learnVote }}
+          </button>
+        </div>
+      </div> -->
+      <div class="ui grid" *ngIf="!showLoader && contentData">
+        <div class="eight wide column" *ngIf="!isLearnathon">
+          <app-content-player-metadata
+            [contentData]="contentData"
+          ></app-content-player-metadata>
+        </div>
+
+        <!-- @Hack isLearnathon -->
+        <div class="eight wide column" *ngIf="isLearnathon">
+          <div *ngIf="contentData">
             <div
-              *ngIf="permissionService.permissionAvailable && contentData && 
-                  (contentData.status === 'Review' || contentData.status === 'FlagReview') && userId !== contentData.createdBy"
-              appPermission [permission]="['CONTENT_REVIEWER', 'CONTENT_REVIEW','BOOK_REVIEWER','FLAG_REVIEWER']">
-              <button tabindex="0" (click)="checkComments()" class="ui right floated sb-btn sb-btn-primary sb-btn-normal mr-8"
-                appTelemetryInteract [telemetryInteractObject]="telemetryInteractObject"
-                [telemetryInteractEdata]="publishInteractEdata">
-                {{resourceService?.frmelmnts?.btn?.publish}}
-              </button>
-              <button [routerLink]="['requestchanges']" class="ui right floated sb-btn sb-btn-primary sb-btn-normal"
-                appTelemetryInteract [telemetryInteractObject]="telemetryInteractObject"
-                [telemetryInteractEdata]="requestForChangesInteractEdata">
-                {{resourceService?.frmelmnts?.btn?.requestChanges}}
-              </button>
-            </div>
-          </div>
-        </div>
-        <div class="ui grid" *ngIf="!showLoader && contentData">
-          <div class="eight wide column" *ngIf="!isLearnathon">
-            <app-content-player-metadata [contentData]="contentData"></app-content-player-metadata>
-          </div>
-
-          <!-- @Hack isLearnathon -->
-          <div class="eight wide column" *ngIf="isLearnathon">
-            <div *ngIf="contentData">
-              <div class="sb-meta-data-container sb-meta-data-row-facing mt-24 content-player-metadata">
-
-                <ng-container *ngIf="contentData.description">
-                    <h4 class="sb-section-title text-capitalize mb-16 d-block">
-                        {{resourceService.frmelmnts.lbl.description}}
-                    </h4>
-                    <div *ngIf="!readMore">
-                        <span class="overflow-word-wrap">{{contentData.description | slice:0:150 }}&nbsp;</span>
-                        <span class="ui expand-or-minimize mouse-pointer" tabindex="0" (click)="readMore = !readMore" *ngIf="contentData.description.length > 150 && readMore === false">
-                            {{resourceService.frmelmnts.lbl.readmore}}
-                        </span>
-                    </div>
-                    <div *ngIf="readMore">
-                        <span class="overflow-word-wrap">{{contentData.description}}&nbsp;</span>
-                        <span class="ui expand-or-minimize mouse-pointer" tabindex="0" (click)="readMore = false">
-                            {{resourceService.frmelmnts.lbl.readless}}
-                        </span>
-                    </div>
-                    <div class="ui divider mt-24 mb-24"></div>
-                </ng-container>
-            
+              class="
+                sb-meta-data-container sb-meta-data-row-facing
+                mt-24
+                content-player-metadata
+              "
+            >
+              <ng-container *ngIf="contentData.description">
                 <h4 class="sb-section-title text-capitalize mb-16 d-block">
-                    {{resourceService.frmelmnts.lbl.contentinformation}}
+                  {{ resourceService.frmelmnts.lbl.description }}
                 </h4>
-                <dl class="sb-meta-data">
-                    <dt>{{resourceService.frmelmnts.lbl.title}}</dt>
-                    <dd *ngIf="contentData.name">{{contentData.name}}</dd>
-                </dl>
-                <dl class="sb-meta-data" >
-                  <dt>{{resourceService.frmelmnts.lbl.email}}</dt>
-                  <dd *ngIf="contentData.name">{{contentData.userEmail}}</dd>
+                <div *ngIf="!readMore">
+                  <span class="overflow-word-wrap"
+                    >{{ contentData.description | slice: 0:150 }}&nbsp;</span
+                  >
+                  <span
+                    class="ui expand-or-minimize mouse-pointer"
+                    tabindex="0"
+                    (click)="readMore = !readMore"
+                    *ngIf="
+                      contentData.description.length > 150 && readMore === false
+                    "
+                  >
+                    {{ resourceService.frmelmnts.lbl.readmore }}
+                  </span>
+                </div>
+                <div *ngIf="readMore">
+                  <span class="overflow-word-wrap"
+                    >{{ contentData.description }}&nbsp;</span
+                  >
+                  <span
+                    class="ui expand-or-minimize mouse-pointer"
+                    tabindex="0"
+                    (click)="readMore = false"
+                  >
+                    {{ resourceService.frmelmnts.lbl.readless }}
+                  </span>
+                </div>
+                <div class="ui divider mt-24 mb-24"></div>
+              </ng-container>
+
+              <h4 class="sb-section-title text-capitalize mb-16 d-block">
+                {{ resourceService.frmelmnts.lbl.contentinformation }}
+              </h4>
+              <dl class="sb-meta-data">
+                <dt>{{ resourceService.frmelmnts.lbl.title }}</dt>
+                <dd *ngIf="contentData.name">{{ contentData.name }}</dd>
               </dl>
-              <dl class="sb-meta-data" >
-                  <dt>{{resourceService.frmelmnts.lbl.phoneNumber}}</dt>
-                  <dd *ngIf="contentData.name">{{contentData.userPhone}}</dd>
+              <dl *ngIf="contentData.userEmail" class="sb-meta-data">
+                <dt>{{ resourceService.frmelmnts.lbl.email }}</dt>
+                <dd *ngIf="contentData.userEmail">
+                  {{ contentData.userEmail }}
+                </dd>
               </dl>
-                <!-- <dl class="sb-meta-data">
+              <dl *ngIf="contentData.userPhone" class="sb-meta-data">
+                <dt>{{ resourceService.frmelmnts.lbl.phoneNumber }}</dt>
+                <dd *ngIf="contentData.userPhone">
+                  {{ contentData.userPhone }}
+                </dd>
+              </dl>
+              <!-- <dl class="sb-meta-data">
                     <dt>{{resourceService.frmelmnts?.lbl?.createdInstanceName  | interpolate:'{instance}': instance}}</dt>
                     <dd *ngIf="contentData.creator">{{contentData.creator}}</dd>
                 </dl> -->
-                <!-- <dl class="sb-meta-data">
+              <!-- <dl class="sb-meta-data">
                     <dt>{{resourceService.frmelmnts.lbl?.originalAuthor}}</dt>
                     <dd *ngIf="contentData.author">{{contentData.author}}</dd>
                 </dl> -->
-                <!-- <dl class="sb-meta-data">
+              <!-- <dl class="sb-meta-data">
                     <dt>{{resourceService.frmelmnts.lbl?.licenseTerms}}</dt>
                     <dd *ngIf="contentData && !(contentData.licenseDetails && contentData.licenseDetails['name']) && contentData.license">{{contentData.license}}&#x200E;</dd>
                     <dd *ngIf="contentData && contentData.licenseDetails && contentData.licenseDetails['name']">{{contentData.licenseDetails['name']}} {{contentData.licenseDetails['description']}}&#x200E; <br /><a href="{{contentData.licenseDetails['url']}}" target="_blank">{{contentData.licenseDetails['url']}}</a></dd>
                 </dl> -->
-                <!-- <dl class="sb-meta-data" *ngIf="contentData && contentData.orgName">
+              <!-- <dl class="sb-meta-data" *ngIf="contentData && contentData.orgName">
                     <dt>{{resourceService.frmelmnts.lbl?.publishedOnInstanceName | interpolate:'{instance}': instance}}</dt>
                     <dd>
                         <span class="d-inline-block">{{contentData?.organisation?.join(', ')}}</span>
                         <a ng-if="contentData?.email" href="mailto:{{contentData?.email}}?subject={{contentData.name}}">{{contentData.orgDetails?.email}}</a>
                     </dd>
                 </dl> -->
-                <!-- <dl class="sb-meta-data">
+              <!-- <dl class="sb-meta-data">
                     <dt>{{resourceService.frmelmnts.lbl?.copyRight}}</dt>
                     <dd>
                         <span *ngIf="contentData.copyright" class="d-inline-block mr-20">{{contentData.copyright}}
@@ -129,17 +245,17 @@
                         </a>
                     </dd>
                 </dl> -->
-                <dl class="sb-meta-data">
-                  <dt>Theme</dt>
-                  <dd *ngIf="contentData.board">{{contentData.board}}</dd>    
+              <dl class="sb-meta-data">
+                <dt>Theme</dt>
+                <dd *ngIf="contentData.board">{{ contentData.board }}</dd>
               </dl>
 
-                <dl class="sb-meta-data">
-                    <dt>Sub-Theme</dt>
-                    <dd *ngIf="contentData.medium">{{contentData.medium}}</dd>
-                </dl>
-                
-                <!-- <dl class="sb-meta-data">
+              <dl class="sb-meta-data">
+                <dt>Sub-Theme</dt>
+                <dd *ngIf="contentData.medium">{{ contentData.medium }}</dd>
+              </dl>
+
+              <!-- <dl class="sb-meta-data">
                     <dt>{{resourceService.frmelmnts.lbl.class}}</dt>
                     <dd *ngIf="contentData.gradeLevel">{{contentData.gradeLevel}}</dd>
                 </dl>
@@ -147,27 +263,27 @@
                     <dt>{{resourceService.frmelmnts.lbl.subject}}</dt>
                     <dd *ngIf="contentData.subject">{{contentData.subject}}</dd>
                 </dl> -->
-                <dl class="sb-meta-data" *ngIf="contentData.createdOn">
-                    <dt>{{resourceService.frmelmnts.lbl.createdon}}</dt>
-                    <dd>{{contentData.createdOn | dateFormat }}</dd>
-                </dl>
-                <dl class="sb-meta-data" *ngIf="contentData.lastUpdatedOn">
-                    <dt>{{resourceService.frmelmnts.lbl.lastupdate}}</dt>
-                    <dd>{{contentData.lastUpdatedOn | dateFormat }}</dd>
-                </dl>
-                <!-- <dl class="sb-meta-data">
+              <dl class="sb-meta-data" *ngIf="contentData.createdOn">
+                <dt>{{ resourceService.frmelmnts.lbl.createdon }}</dt>
+                <dd>{{ contentData.createdOn | dateFormat }}</dd>
+              </dl>
+              <dl class="sb-meta-data" *ngIf="contentData.lastUpdatedOn">
+                <dt>{{ resourceService.frmelmnts.lbl.lastupdate }}</dt>
+                <dd>{{ contentData.lastUpdatedOn | dateFormat }}</dd>
+              </dl>
+              <!-- <dl class="sb-meta-data">
                     <dt>{{resourceService.frmelmnts.lbl.keywords}}</dt>
                     <dd *ngIf="contentData.keywords">{{contentData.keywords}}</dd>
                 </dl> -->
-                <!-- <dl class="sb-meta-data">
+              <!-- <dl class="sb-meta-data">
                     <dt>{{resourceService.frmelmnts.lbl.contentType}}</dt>
                     <dd *ngIf="contentData.primaryCategory">{{contentData.primaryCategory}}</dd>
                 </dl> -->
-                <!-- <dl class="sb-meta-data">
+              <!-- <dl class="sb-meta-data">
                     <dt>{{resourceService.frmelmnts.lbl.additionalCategory}}</dt>
                     <dd *ngIf="contentData.additionalCategories">{{contentData.additionalCategories}}</dd>
                 </dl> -->
-                <!-- <dl class="sb-meta-data" *ngIf="contentData.status === 'Flagged' && contentData.flagReasons">
+              <!-- <dl class="sb-meta-data" *ngIf="contentData.status === 'Flagged' && contentData.flagReasons">
                     <dt>{{resourceService.frmelmnts.lbl.flaggedreason}}</dt>
                     <dd>{{contentData.flagReasons}}</dd>
                 </dl>
@@ -180,7 +296,7 @@
                     <dd>{{contentData.flags}}</dd>
                 </dl> -->
             </div>
-            
+
             <!-- <div *ngIf="contentData && contentData.originData">
                 <div class="ui divider my-24"></div>
                 <h4 class="sb-section-title mb-16 d-block">{{resourceService.frmelmnts?.lbl?.contentcopiedtitle}}</h4>
@@ -206,45 +322,55 @@
                     </dl>
                 </div>
             </div> -->
-
-
-
-            </div>
-          </div>
-          <!-- @Hack isLearnathon -->
-          <div class="four wide column">
           </div>
         </div>
+        <!-- @Hack isLearnathon -->
+        <div class="four wide column"></div>
+      </div>
 
-        <div *ngIf="showError">
-          <div class="ui active dimmer inverted">
-            <div class="content">
-              <div class="center">
-                <h2 class="ui header red">
-                  {{errorMessage}}
-                </h2>
-                <span>
-                  <button class="ui button" tabindex="0" (click)="tryAgain()">{{resourceService.frmelmnts.btn.tryagain}}</button>
-                </span>
-                <span>
-                  <button class="ui red button" tabindex="0" (click)="close()">{{resourceService.frmelmnts.btn.close}}</button>
-                </span>
-              </div>
+      <div *ngIf="showError">
+        <div class="ui active dimmer inverted">
+          <div class="content">
+            <div class="center">
+              <h2 class="ui header red">
+                {{ errorMessage }}
+              </h2>
+              <span>
+                <button class="ui button" tabindex="0" (click)="tryAgain()">
+                  {{ resourceService.frmelmnts.btn.tryagain }}
+                </button>
+              </span>
+              <span>
+                <button class="ui red button" tabindex="0" (click)="close()">
+                  {{ resourceService.frmelmnts.btn.close }}
+                </button>
+              </span>
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 </div>
 <!-- publish warning modal -->
 
-<sui-modal [mustScroll]="true" [isClosable]="false" [transitionDuration]="0" [size]="'small'" class="sb-modal"
-  appBodyScroll *ngIf="showPublishWarningModal" #publishWarningModal>
+<sui-modal
+  [mustScroll]="true"
+  [isClosable]="false"
+  [transitionDuration]="0"
+  [size]="'small'"
+  class="sb-modal"
+  appBodyScroll
+  *ngIf="showPublishWarningModal"
+  #publishWarningModal
+>
   <!--Header-->
-  <i class="icon close" (click)="showPublishWarningModal = false" tabindex="0"></i>
-  <div class="sb-modal-header">
-    &nbsp;
-  </div>
+  <i
+    class="icon close"
+    (click)="showPublishWarningModal = false"
+    tabindex="0"
+  ></i>
+  <div class="sb-modal-header">&nbsp;</div>
   <!--/Header-->
 
   <!--Content-->
@@ -257,7 +383,7 @@
       </div>
       <div class="row">
         <div class="ui small header">
-          <h4>{{resourceService?.frmelmnts?.lbl?.publhwarng}}</h4>
+          <h4>{{ resourceService?.frmelmnts?.lbl?.publhwarng }}</h4>
         </div>
       </div>
     </div>
@@ -266,19 +392,149 @@
 
   <!--Actions-->
   <div class="sb-modal-actions">
-    <button class="sb-btn sb-btn-normal sb-btn-primary" type="button "
-      tabindex="0" (click)="showPublishWarningModal = false; goToPublish();" appTelemetryInteract
+    <button
+      class="sb-btn sb-btn-normal sb-btn-primary"
+      type="button "
+      tabindex="0"
+      (click)="showPublishWarningModal = false; goToPublish()"
+      appTelemetryInteract
       [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractEdata]="reviewCommentsWarningYesInteractEdata">
-      {{resourceService?.frmelmnts?.btn?.yes}}
+      [telemetryInteractEdata]="reviewCommentsWarningYesInteractEdata"
+    >
+      {{ resourceService?.frmelmnts?.btn?.yes }}
     </button>
-    <button class="sb-btn sb-btn-normal sb-btn-outline-primary" type="button " tabindex="0" (click)="showPublishWarningModal = false"
-      appTelemetryInteract [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractEdata]="reviewCommentsWarningNoInteractEdata">
-      {{resourceService?.frmelmnts?.btn?.no}}
+    <button
+      class="sb-btn sb-btn-normal sb-btn-outline-primary"
+      type="button "
+      tabindex="0"
+      (click)="showPublishWarningModal = false"
+      appTelemetryInteract
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractEdata]="reviewCommentsWarningNoInteractEdata"
+    >
+      {{ resourceService?.frmelmnts?.btn?.no }}
     </button>
   </div>
   <!--Actions-->
-
 </sui-modal>
 <router-outlet></router-outlet>
+<sui-modal
+  *ngIf="showNormalModal"
+  [mustScroll]="true"
+  [isClosable]="true"
+  [transitionDuration]="0"
+  [size]="'normal'"
+  class="sb-modal"
+  appBodyScroll
+  (dismissed)="showNormalModal = !showNormalModal"
+  #modal
+>
+  <div class="sb-modal-header">Vote the content</div>
+  <div class="sb-modal-content">
+    <div class="mt-20u flex-side">
+      <div class="inp-title">
+        {{ resourceService.frmelmnts.lbl.name
+        }}<span class="mr-8 sb-color-red"> * </span>
+      </div>
+      <input
+        placeholder="{{ resourceService.frmelmnts.lbl.enterValidName }}"
+        class="sb-textbox78 sb-form-control"
+        #userName
+        type="text"
+        (input)="onNameChange(userName.value)"
+        email="true"
+      />
+    </div>
+    <div class="mt-20u flex-side">
+      <div class="inp-title">
+        {{ resourceService.frmelmnts.lbl.phoneNumber
+        }}<span class="mr-8 sb-color-red"> * </span>
+      </div>
+      <input
+        placeholder="{{ resourceService.frmelmnts.lbl.validPhone }}"
+        class="sb-textbox78 sb-form-control"
+        #userPhone
+        type="number"
+        (input)="onMobileChange(userPhone.value)"
+      />
+    </div>
+    <div class="mt-20u flex-side">
+      <div class="inp-title">
+        {{ resourceService.frmelmnts.lbl.email
+        }}<span class="mr-8 sb-color-red"> * </span>
+      </div>
+      <input
+        placeholder="{{ resourceService.frmelmnts.lbl.validEmail }}"
+        class="sb-textbox78 sb-form-control"
+        #userEmail
+        type="email"
+        (input)="onEmailChange(userEmail.value)"
+        email="true"
+      />
+    </div>
+    <div class="mt-20u flex-side">
+      <div class="inp-title">
+        {{ resourceService.frmelmnts.lbl.learnathonCity
+        }}<span class="mr-8 sb-color-red"> * </span>
+      </div>
+      <input
+        placeholder="{{ resourceService.frmelmnts.lbl.validCity }}"
+        class="sb-textbox78 sb-form-control"
+        #userCity
+        type="text"
+        (input)="onCityChange(userCity.value)"
+      />
+    </div>
+    <div class="mt-20u flex-side">
+      <div class="inp-title">
+        {{ resourceService.frmelmnts.lbl.resonofvote
+        }}<span class="mr-8 sb-color-red"> * </span>
+      </div>
+      <textarea
+        _ngcontent-yrf-c67=""
+        class="sb-textbox78 sb-form-control"
+        placeholder="{{ resourceService.frmelmnts.lbl.resonofvote }}"
+        rows="8"
+        #userReasonOfVote
+        (input)="onReasonOfVoteChange(userReasonOfVote.value)"
+      ></textarea>
+    </div>
+  </div>
+  <div class="sb-modal-actions">
+    <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="learnVote()">
+      Vote
+    </button>
+    <button
+      class="sb-btn sb-btn-normal sb-btn-outline-primary"
+      (click)="showNormalModal = !showNormalModal"
+    >
+      cancel
+    </button>
+  </div>
+</sui-modal>
+<!-- <sui-modal
+  *ngIf="showCenterAlignedModal"
+  [mustScroll]="true"
+  [isClosable]="true"
+  [transitionDuration]="0"
+  [size]="'small'"
+  class="sb-modal sb-modal-center"
+  appBodyScroll
+  (dismissed)="showSuccessModalCenter = !showSuccessModalCenter"
+  #modal
+>
+  <div class="sb-modal-header">
+    {{ modalHeader }}
+  </div>
+  <div class="sb-modal-content">
+    {{ formInvalidMessage }}
+  </div>
+  <div class="sb-modal-actions">
+    <button
+      class="sb-btn sb-btn-normal sb-btn-primary"
+      (click)="showCenterAlignedModal = !showCenterAlignedModal"
+    >
+      {{ resourceService.frmelmnts.btn.ok }}
+    </button>
+  </div>
+</sui-modal> -->

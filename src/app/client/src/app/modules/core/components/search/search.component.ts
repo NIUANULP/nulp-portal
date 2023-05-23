@@ -1,17 +1,30 @@
-import { filter } from 'rxjs/operators';
-import { Component, OnInit, ChangeDetectorRef, OnDestroy, Input } from '@angular/core';
-import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-import { UserService } from './../../services';
-import { ResourceService, ConfigService, IUserProfile, LayoutService, UtilService, ConnectionService } from '@sunbird/shared';
-import { Subscription } from 'rxjs';
-import * as _ from 'lodash-es';
+import { filter } from "rxjs/operators";
+import {
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  OnDestroy,
+  Input,
+} from "@angular/core";
+import { ActivatedRoute, Router, NavigationEnd } from "@angular/router";
+import { UserService } from "./../../services";
+import {
+  ResourceService,
+  ConfigService,
+  IUserProfile,
+  LayoutService,
+  UtilService,
+  ConnectionService,
+} from "@sunbird/shared";
+import { Subscription } from "rxjs";
+import * as _ from "lodash-es";
 /**
  * Main menu component
  */
 @Component({
-  selector: 'app-search',
-  templateUrl: './search.component.html',
-  styleUrls: ['./search.component.scss']
+  selector: "app-search",
+  templateUrl: "./search.component.html",
+  styleUrls: ["./search.component.scss"],
 })
 export class SearchComponent implements OnInit, OnDestroy {
   /**
@@ -36,7 +49,6 @@ export class SearchComponent implements OnInit, OnDestroy {
   resourceService: ResourceService;
   resourceDataSubscription: Subscription;
 
-
   /**
    * option selected on dropdown
    */
@@ -56,7 +68,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   config: ConfigService;
   userProfile: IUserProfile;
 
-  searchDropdownValues: Array<string> = ['All', 'Courses', 'Library'];
+  searchDropdownValues: Array<string> = ["All", "Courses", "Library"];
 
   searchPlaceHolderValue: string;
 
@@ -74,58 +86,66 @@ export class SearchComponent implements OnInit, OnDestroy {
    */
   private route: Router;
   /**
-  * To send activatedRoute.snapshot to router navigation
-  * service for redirection to parent component
-  */
+   * To send activatedRoute.snapshot to router navigation
+   * service for redirection to parent component
+   */
   @Input() layoutConfiguration: any;
   private activatedRoute: ActivatedRoute;
   /**
-     * Constructor to create injected service(s) object
-     * Default method of Draft Component class
-     * @param {Router} route Reference of Router
-     * @param {ActivatedRoute} activatedRoute Reference of ActivatedRoute
+   * Constructor to create injected service(s) object
+   * Default method of Draft Component class
+   * @param {Router} route Reference of Router
+   * @param {ActivatedRoute} activatedRoute Reference of ActivatedRoute
    */
-  constructor(route: Router, activatedRoute: ActivatedRoute, userService: UserService,
-    resourceService: ResourceService, config: ConfigService, public utilService: UtilService,
-    private cdr: ChangeDetectorRef, public layoutService: LayoutService, public connectionService: ConnectionService) {
+  constructor(
+    route: Router,
+    activatedRoute: ActivatedRoute,
+    userService: UserService,
+    resourceService: ResourceService,
+    config: ConfigService,
+    public utilService: UtilService,
+    private cdr: ChangeDetectorRef,
+    public layoutService: LayoutService,
+    public connectionService: ConnectionService
+  ) {
     this.route = route;
     this.activatedRoute = activatedRoute;
     this.resourceService = resourceService;
     this.config = config;
     this.userService = userService;
     this.searchDisplayValueMappers = {
-      'Users': 'users'
+      Users: "users",
     };
   }
 
   ngOnInit() {
     this.isDesktopApp = this.utilService.isDesktopApp;
     this.showInput = true;
-    this.activatedRoute.queryParams.subscribe(queryParams => {
+    this.activatedRoute.queryParams.subscribe((queryParams) => {
       this.queryParam = { ...queryParams };
-      this.key = this.queryParam['key'];
+      this.key = this.queryParam["key"];
     });
-    this.userService.userData$.subscribe(userdata => {
+    this.userService.userData$.subscribe((userdata) => {
       if (userdata && !userdata.err) {
         this.userProfile = userdata.userProfile;
         if (this.userProfile.rootOrgAdmin) {
-            this.searchDropdownValues.push('Users');
+          this.searchDropdownValues.push("Users");
         }
       }
       this.setFilters();
-      this.route.events.pipe(
-        filter(e => e instanceof NavigationEnd)).subscribe((params: any) => {
+      this.route.events
+        .pipe(filter((e) => e instanceof NavigationEnd))
+        .subscribe((params: any) => {
           this.setFilters();
         });
     });
     this.showSuiSelectDropdown = true;
-    this.resourceDataSubscription = this.resourceService.languageSelected$
-      .subscribe(item => {
+    this.resourceDataSubscription =
+      this.resourceService.languageSelected$.subscribe((item) => {
         this.setSearchPlaceHolderValue();
-      }
-    );
-    this.connectionService.monitor().subscribe(isConnected => {
-        this.isConnected = isConnected;
+      });
+    this.connectionService.monitor().subscribe((isConnected) => {
+      this.isConnected = isConnected;
     });
   }
 
@@ -144,7 +164,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   /**
    * search input box placeholder value
    */
-  setSearchPlaceHolderValue () {
+  setSearchPlaceHolderValue() {
     const keyName = this.searchDisplayValueMappers[this.selectedOption];
     if (keyName) {
       this.searchPlaceHolderValue = this.selectedOption;
@@ -156,28 +176,35 @@ export class SearchComponent implements OnInit, OnDestroy {
    * it navigate
    */
   onEnter(key) {
+    console.log("+++++++++++++++++", key);
     this.key = key;
     this.queryParam = {};
-    this.queryParam['key'] = this.key;
+    this.queryParam["key"] = this.key;
     if (this.key && this.key.length > 0) {
-      this.queryParam['key'] = this.key;
+      this.queryParam["key"] = this.key;
     } else {
-      delete this.queryParam['key'];
+      delete this.queryParam["key"];
     }
-    const url = this.route.url.split('?')[0];
+    const url = this.route.url.split("?")[0];
     let redirectUrl;
     if (this.selectedOption) {
+      console.log("search+++++++++++++++++", this.search);
+
       redirectUrl = this.search[this.selectedOption];
     } else {
-      redirectUrl = url.substring(0, url.indexOf('explore')) + 'explore';
+      redirectUrl = url.substring(0, url.indexOf("explore")) + "explore";
     }
 
-    if (!_.includes(['Users', 'profile'], this.selectedOption)) {
-      this.queryParam['selectedTab'] = this.isDesktopApp && !this.isConnected ? 'mydownloads' : 'all';
+    console.log("redirectUrl+++++++++++++++++", redirectUrl);
 
+    if (!_.includes(["Users", "profile"], this.selectedOption)) {
+      this.queryParam["selectedTab"] =
+        this.isDesktopApp && !this.isConnected ? "mydownloads" : "all";
     }
+    console.log("queryParams+++++++++++++++++", redirectUrl);
+
     if (this.isDesktopApp && !this.isConnected) {
-      this.route.navigate(['mydownloads'], { queryParams: this.queryParam });
+      this.route.navigate(["mydownloads"], { queryParams: this.queryParam });
     } else {
       this.route.navigate([redirectUrl, 1], { queryParams: this.queryParam });
     }
@@ -186,26 +213,33 @@ export class SearchComponent implements OnInit, OnDestroy {
   setFilters() {
     this.search = this.config.dropDownConfig.FILTER.SEARCH.search;
     this.searchUrl = this.config.dropDownConfig.FILTER.SEARCH.searchUrl;
-    const currUrl = this.route.url.split('?');
-    this.value = currUrl[0].split('/', 3);
-    const searchEnabledStates = this.config.dropDownConfig.FILTER.SEARCH.searchEnabled;
-    if (this.searchUrl[this.value[1]] && searchEnabledStates.includes(this.value[1])) {
+    const currUrl = this.route.url.split("?");
+    this.value = currUrl[0].split("/", 3);
+    const searchEnabledStates =
+      this.config.dropDownConfig.FILTER.SEARCH.searchEnabled;
+    if (
+      this.searchUrl[this.value[1]] &&
+      searchEnabledStates.includes(this.value[1])
+    ) {
       this.setDropdownSelectedOption(this.searchUrl[this.value[1]]);
-    } else if (this.value[1] === 'search' && searchEnabledStates.includes(this.value[1])) {
+    } else if (
+      this.value[1] === "search" &&
+      searchEnabledStates.includes(this.value[1])
+    ) {
       this.setDropdownSelectedOption(this.value[2]);
-    } else if (this.value[1] === 'observation') {
+    } else if (this.value[1] === "observation") {
       this.showInput = true;
     } else {
-      this.selectedOption = 'All';
+      this.selectedOption = "All";
       this.setSearchPlaceHolderValue();
       this.showInput = false;
     }
   }
 
-  setDropdownSelectedOption (value) {
-    if ( value === 'Users' ) {
-      if ( !this.userProfile.rootOrgAdmin ) {
-        this.selectedOption = 'All';
+  setDropdownSelectedOption(value) {
+    if (value === "Users") {
+      if (!this.userProfile.rootOrgAdmin) {
+        this.selectedOption = "All";
       } else {
         this.selectedOption = value;
         this.showSuiSelectDropdown = false;
@@ -219,16 +253,15 @@ export class SearchComponent implements OnInit, OnDestroy {
     this.showInput = true;
   }
 
-
   getInteractEdata(key) {
     const searchInteractEdata = {
       id: `search-${_.lowerCase(this.searchPlaceHolderValue)}-button`,
-      type: 'click',
-      pageid: this.route.url.split('/')[1]
+      type: "click",
+      pageid: this.route.url.split("/")[1],
     };
     if (key) {
-      searchInteractEdata['extra'] = {
-        query: key
+      searchInteractEdata["extra"] = {
+        query: key,
       };
     }
     return searchInteractEdata;
