@@ -186,9 +186,16 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
     if (
       this.userService.rootOrgName == this.lernathonChannel ||
       this.userService.rootOrgName == "Haryana" ||
-      this.userService.rootOrgName == "channel_67285"
+      this.userService.rootOrgName == "channel_67285" 
     ) {
+     const loggedInUserRoles = _.get(this.userService, 'userProfile.userRoles');
+     if (_.includes(loggedInUserRoles, 'CONTENT_REVIEWER'))
+     {
+      this.isLearnathon = false;
+     }
+     else{
       this.isLearnathon = true;
+     }
     }
     // @Hack isLearnathon
   }
