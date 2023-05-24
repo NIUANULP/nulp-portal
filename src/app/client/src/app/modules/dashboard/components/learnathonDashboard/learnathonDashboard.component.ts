@@ -115,7 +115,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
   getAllContent() {
     let status: any[];
     if (this.pageName == "upForVote") {
-      status = ["Review", "Live"];
+      status = ["Live"];
     } else if (this.pageName == "report") {
       status = [
         "Draft",
