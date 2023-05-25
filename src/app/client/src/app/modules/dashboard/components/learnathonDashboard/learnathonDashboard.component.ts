@@ -185,7 +185,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
       query: "",
     };
 
-    this.searchService.compositeSearch(data).subscribe(
+    this.searchService.contentSearch(data).subscribe(
       (response) => {
         this.UserNameValues = [];
         if (_.get(response, "responseCode") === "OK") {
