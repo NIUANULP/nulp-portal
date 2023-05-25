@@ -22,10 +22,7 @@
               {{ contentData.name }}
             </h1>
             <button
-              *ngIf="
-                userId == '9a1ae74c-4035-4bf7-ab8c-7738231d8f50' ||
-                userId == '4288bdc5-164f-4c0c-a8dc-57001bea0e7d'
-              "
+              *ngIf="learnathonContent"
               tabindex="0"
               (click)="showNormalModal = true"
               class="sb-btn sb-btn-md sb-btn-primary sb-btn-normal ml-auto"

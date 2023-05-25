@@ -151,6 +151,7 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
   modalHeader: any;
   votelist: any;
   canVote: boolean = true;
+  learnathonContent: boolean = false;
   /**
   * Constructor to create injected service(s) object
   Default method of Draft Component class
@@ -284,6 +285,9 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
     this.playerService.getContent(this.contentId, option).subscribe(
       (response) => {
         if (response.result.content) {
+          if (response.result.content.framework == "nulp-learn") {
+            this.learnathonContent = true;
+          }
           const contentDetails = {
             contentId: this.contentId,
             contentData: response.result.content,

@@ -735,7 +735,6 @@ export class UploadContentLearnathonComponent implements OnInit {
           resourceType: "Learn",
           creator:
             this.userProfile?.firstName + " " + this.userProfile?.lastName, // name of creator
-          // framework: "nulp-learn",
           framework: localStorage.getItem("learnathonFramework"),
           // organisation: ["nulp-learn"],
           organisation: [localStorage.getItem("learnathonChannel")],
