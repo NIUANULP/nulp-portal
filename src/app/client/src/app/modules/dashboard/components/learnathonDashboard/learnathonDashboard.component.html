@@ -1,10 +1,33 @@
-<div class="ui container px-60">
+<div class="ui container">
+  <!-- <div [ngClass]="layoutConfiguration ? 'sbt-page-content-area' : 'ui container'"> -->
   <div class="ui grid" *ngIf="!noResult && tableData.length > 0">
     <div class="twelve wide column">
       <span
         >Number of contents created:&nbsp;<b>{{ tableData.length }}</b></span
       >
     </div>
+
+    <div class="sb-notification-list p-8" tabindex="0">
+      <div class="sb-notification-data d-flex flex-ai-center">
+        <div class="ml-12 notification-content">
+          <div class="title"><b>POINTS TO REMEMBER WHILE VOTING:</b></div>
+          <div class="sub-title py-8">
+            1. The voting process is simple, just click on the "vote for
+            content", fill in your details, to vote for the entries you choose
+          </div>
+          <div class="sub-title py-8">
+            2. You can vote once for one particular solution but vote across
+            multiple solutions, you like
+          </div>
+          <div class="sub-title py-8">
+            3. Your vote is significant in identifying the winning solution for
+            the Learnathon, hence register your vote after seeing all the 50
+            solutions
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="twelve wide column">
       <p-table
         #dtOrg
@@ -59,6 +82,7 @@
         </ng-template>
         <ng-template pTemplate="header" let-columns>
           <tr>
+            <th>Action</th>
             <th
               *ngFor="let col of columns"
               pResizableColumn
@@ -74,7 +98,6 @@
                 ariaLabelAsc="Activate to sort in ascending order"
               ></p-sortIcon>
             </th>
-            <th *ngIf="this.pageName == 'upForVote'">Action</th>
           </tr>
           <tr>
             <th *ngFor="let col of columns" [ngSwitch]="col.field">
@@ -100,17 +123,17 @@
         </ng-template>
         <ng-template pTemplate="body" let-rowData let-columns="columns">
           <tr>
-            <td *ngFor="let col of columns" class="ui-resizable-column">
-              {{ rowData[col.field] }}
-            </td>
-
             <td *ngIf="this.pageName == 'upForVote'">
               <button
                 class="sb-btn sb-btn-normal sb-btn-primary"
                 (click)="giveVote(rowData)"
               >
-                Read and Vote</button
-              >&nbsp;
+                Read and Vote
+              </button>
+              <!-- &nbsp; -->
+            </td>
+            <td *ngFor="let col of columns" class="ui-resizable-column">
+              {{ rowData[col.field] }}
             </td>
           </tr>
         </ng-template>
