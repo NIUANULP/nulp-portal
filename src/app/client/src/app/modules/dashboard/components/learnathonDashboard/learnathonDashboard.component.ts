@@ -72,6 +72,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
   noResultMessage: INoResultMessage;
   private activatedRoute: ActivatedRoute;
   telemetryImpression: IImpressionEventInput;
+  layoutConfiguration: any;
   constructor(
     public searchService: SearchService,
     private configService: ConfigService,
@@ -87,6 +88,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
   ) {
     super(searchService, workSpaceService, userService);
     this.activatedRoute = activatedRoute;
+    this.layoutConfiguration = this.configService.appConfig.layoutConfiguration;
   }
   ngOnInit() {
     this.https
@@ -183,7 +185,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
       query: "",
     };
 
-    this.searchService.compositeSearch(data).subscribe(
+    this.searchService.contentSearch(data).subscribe(
       (response) => {
         this.UserNameValues = [];
         if (_.get(response, "responseCode") === "OK") {
@@ -381,14 +383,14 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
       ];
     } else if (this.pageName == "upForVote") {
       this.cols = [
-        { field: "name", header: "Name", width: "170px" },
-        { field: "category", header: "Category", width: "170px" },
-        { field: "subcategory", header: "Sub-Category", width: "170px" },
-        { field: "city", header: "City", width: "170px" },
-        { field: "institute", header: "Institute", width: "170px" },
-        { field: "board", header: "Theme", width: "170px" },
-        { field: "medium", header: "Sub-Theme", width: "170px" },
-        { field: "votes", header: "Votes", width: "170px" },
+        { field: "name", header: "Name" },
+        { field: "votes", header: "Votes" },
+        { field: "category", header: "Category" },
+        { field: "subcategory", header: "Sub-Category" },
+        { field: "city", header: "City" },
+        { field: "institute", header: "Institute" },
+        { field: "board", header: "Theme" },
+        { field: "medium", header: "Sub-Theme" },
       ];
     }
   }
