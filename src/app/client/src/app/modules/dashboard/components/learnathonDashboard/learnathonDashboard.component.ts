@@ -72,7 +72,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
   noResultMessage: INoResultMessage;
   private activatedRoute: ActivatedRoute;
   telemetryImpression: IImpressionEventInput;
-  layoutConfiguration: any;
+  // layoutConfiguration: any;
   constructor(
     public searchService: SearchService,
     private configService: ConfigService,
@@ -88,7 +88,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
   ) {
     super(searchService, workSpaceService, userService);
     this.activatedRoute = activatedRoute;
-    this.layoutConfiguration = this.configService.appConfig.layoutConfiguration;
+    // this.layoutConfiguration = this.configService.appConfig.layoutConfiguration;
   }
   ngOnInit() {
     this.https
@@ -185,7 +185,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
       query: "",
     };
 
-    this.searchService.contentSearch(data).subscribe(
+    this.searchService.compositeSearch(data).subscribe(
       (response) => {
         this.UserNameValues = [];
         if (_.get(response, "responseCode") === "OK") {
@@ -390,7 +390,16 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
         { field: "city", header: "City" },
         { field: "institute", header: "Institute" },
         { field: "board", header: "Theme" },
-        { field: "medium", header: "Sub-Theme" },
+        { field: "medium", header: "Sub-Theme" }
+
+        // { field: "name", header: "Name", width: "170px" },
+        // { field: "category", header: "Category", width: "170px" },
+        // { field: "subcategory", header: "Sub-Category", width: "170px" },
+        // { field: "city", header: "City", width: "170px" },
+        // { field: "institute", header: "Institute", width: "170px" },
+        // { field: "board", header: "Theme", width: "170px" },
+        // { field: "medium", header: "Sub-Theme", width: "170px" },
+        // { field: "votes", header: "Votes", width: "170px" },
       ];
     }
   }
@@ -403,6 +412,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
     this.unsubscribe.complete();
   }
   giveVote(content) {
+    console.log("upForReview - ", content);
     this.workSpaceService.navigateToContent(content, "upForReview");
   }
 }
