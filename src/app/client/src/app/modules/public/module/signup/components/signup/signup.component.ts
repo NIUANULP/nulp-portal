@@ -133,7 +133,7 @@ allInstitutions: any;
 
     const currentURL = window.location.href;
     if (currentURL.includes("learnathon")){
-      this.isLearnathon = true;
+      this.isLearnathon = false;
     }
 
     this.instance = _.upperCase(this.resourceService.instance || 'SUNBIRD');
