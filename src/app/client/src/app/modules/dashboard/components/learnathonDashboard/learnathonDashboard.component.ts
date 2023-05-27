@@ -30,6 +30,7 @@ import * as moment from "moment";
 import { windowWhen } from "rxjs/operators";
 import { WorkSpace } from "../../../workspace/classes/workspace";
 import { WorkSpaceService } from "../../../workspace/services";
+// import { Console } from "console";
 // import { ContentSectionModule } from 'content-section';
 
 @Component({
@@ -205,132 +206,27 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
           "video/webm",
           "text/x-url",
         ],
+
         contentType: ["Course", "Resource", "Collection"],
       },
       limit: 50,
       offset: (1 - 1) * 10,
     };
 
-    this.search(searchParams).subscribe(
-      (response: ServerResponse) => {
-        this.UserNameValues = [];
-        if (_.get(response, "responseCode") === "OK") {
-          if (response.result.count > 0) {
-            this.tableData = [];
-            let tempObj = _.cloneDeep(response.result.content);
-            var self = this;
-            _.map(tempObj, function (obj) {
-              obj.createdOn = self.datePipe.transform(
-                obj.lastPublishedOn,
-                "MM/dd/yyyy"
-              );
-              obj.OrgName = _.get(self.selectedCity, "orgName");
-              if (_.toArray(obj.createdFor).length === 1) {
-                // obj.departmentName = _.toArray(obj.organisation)[0];
-                obj.departmentName = _.get(
-                  _.find(self.allOrgName, { id: _.toArray(obj.createdFor)[0] }),
-                  "orgName"
-                );
-              } else if (_.toArray(obj.createdFor).length > 1) {
-                if (
-                  _.get(self.selectedCity, "identifier") ===
-                  _.toArray(obj.createdFor)[0]
-                ) {
-                  // obj.departmentName = _.toArray(obj.organisation)[1];
-                  obj.departmentName = _.get(
-                    _.find(self.allOrgName, {
-                      id: _.toArray(obj.createdFor)[1],
-                    }),
-                    "orgName"
-                  );
-                } else {
-                  // obj.departmentName = _.toArray(obj.organisation)[0];
-                  obj.departmentName = _.get(
-                    _.find(self.allOrgName, {
-                      id: _.toArray(obj.createdFor)[0],
-                    }),
-                    "orgName"
-                  );
-                }
-              }
-              // if (!_.isEmpty(obj.channel)) {
-              //   obj.departmentName = _.lowerCase(_.get(_.find(self.allOrgName, { 'id': obj.channel }), 'orgName'));
-              // } else {
-              //   obj.departmentName = '';
-              // }
-              obj.UserName = obj.creator;
-              // if (!_.isEmpty(obj.createdBy)) {
-              //   obj.UserName = _.get(_.find(self.allUserName, { 'id': obj.createdBy }), 'firstName') + " " + _.get(_.find(self.allUserName, { 'id': obj.createdBy }), 'lastName');
-              // } else {
-              //   obj.UserName = '';
-              // }
-            });
-            this.noResult = false;
-            this.tableData = [];
-            let finalObj = [];
-            tempObj.forEach((element) => {
-              const options = {
-                url: this.configService.urlConFig.URLS.ADMIN.USER_SEARCH,
-                data: {
-                  request: {
-                    filters: { id: element.createdBy },
-                    limit: 5000,
-                  },
-                },
-              };
-              this.learnerService.post(options).subscribe((response) => {
-                element["category"] =
-                  response.result.response.content[0].framework.category[0];
-                element["subcategory"] =
-                  response.result.response.content[0].framework.subcategory[0];
-                element["city"] =
-                  response.result.response.content[0].framework.city[0];
-                element["institute"] =
-                  response.result.response.content[0].framework.institution[0];
-              });
+    this.search(searchParams).subscribe((response: ServerResponse) => {
+      console.log("search 111111====", response);
+    });
 
-              this.UserNameValues.push({
-                label: element.UserName,
-                value: element.UserName,
-              });
+    this.searchService.compositeSearch(searchParams).subscribe((response) => {
+      console.log("comosite ====", response);
+    });
 
-              let tempData = JSON.stringify(this.votelist);
-              let count = tempData.split(element.identifier).length - 1;
+    this.searchService.contentSearch(searchParams).subscribe((response) => {
+      console.log("content ====", response);
+    });
 
-              element["votes"] = count;
-              element["voteButton"] = "";
-              finalObj.push(element);
-            });
-            console.log("finalObj-----", finalObj);
-            this.tableData = finalObj;
-            // this.finalObj.push(this.tableData);
-            // this.tableData = _.get(this.selectedCity, 'orgName') != 'All' ? _.filter(tempObj, { OrgName: _.get(this.selectedCity, 'orgName') }) : tempObj;
-            this.initializeColumns();
-            // if (_.isEmpty(this.tableData)) {
-            //   this.noResultMessage = {
-            //     'messageText': 'messages.stmsg.m0131'
-            //   };
-            //   this.noResult = true;
-            // }
-          } else {
-            this.noResultMessage = {
-              messageText: "messages.stmsg.m0131",
-            };
-            this.noResult = true;
-          }
-        } else {
-          this.toasterService.error(this.resourceService.messages.emsg.m0007);
-        }
-      },
-      (err: ServerResponse) => {
-        this.toasterService.error(this.resourceService.messages.emsg.m0007);
-      }
-    );
-
-    // =======================
-
-    // this.searchService.compositeSearch(data).subscribe(
-    //   (response) => {
+    // this.search(searchParams).subscribe(
+    //   (response: ServerResponse) => {
     //     this.UserNameValues = [];
     //     if (_.get(response, "responseCode") === "OK") {
     //       if (response.result.count > 0) {
@@ -440,8 +336,126 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
     //       this.toasterService.error(this.resourceService.messages.emsg.m0007);
     //     }
     //   },
-    //   () => {}
+    //   (err: ServerResponse) => {
+    //     this.toasterService.error(this.resourceService.messages.emsg.m0007);
+    //   }
     // );
+
+    // =======================
+
+    this.searchService.contentSearch(searchParams).subscribe(
+      (response) => {
+        this.UserNameValues = [];
+        if (_.get(response, "responseCode") === "OK") {
+          if (response.result.count > 0) {
+            this.tableData = [];
+            let tempObj = _.cloneDeep(response.result.content);
+            var self = this;
+            _.map(tempObj, function (obj) {
+              obj.createdOn = self.datePipe.transform(
+                obj.lastPublishedOn,
+                "MM/dd/yyyy"
+              );
+              obj.OrgName = _.get(self.selectedCity, "orgName");
+              if (_.toArray(obj.createdFor).length === 1) {
+                // obj.departmentName = _.toArray(obj.organisation)[0];
+                obj.departmentName = _.get(
+                  _.find(self.allOrgName, { id: _.toArray(obj.createdFor)[0] }),
+                  "orgName"
+                );
+              } else if (_.toArray(obj.createdFor).length > 1) {
+                if (
+                  _.get(self.selectedCity, "identifier") ===
+                  _.toArray(obj.createdFor)[0]
+                ) {
+                  // obj.departmentName = _.toArray(obj.organisation)[1];
+                  obj.departmentName = _.get(
+                    _.find(self.allOrgName, {
+                      id: _.toArray(obj.createdFor)[1],
+                    }),
+                    "orgName"
+                  );
+                } else {
+                  // obj.departmentName = _.toArray(obj.organisation)[0];
+                  obj.departmentName = _.get(
+                    _.find(self.allOrgName, {
+                      id: _.toArray(obj.createdFor)[0],
+                    }),
+                    "orgName"
+                  );
+                }
+              }
+              // if (!_.isEmpty(obj.channel)) {
+              //   obj.departmentName = _.lowerCase(_.get(_.find(self.allOrgName, { 'id': obj.channel }), 'orgName'));
+              // } else {
+              //   obj.departmentName = '';
+              // }
+              obj.UserName = obj.creator;
+              // if (!_.isEmpty(obj.createdBy)) {
+              //   obj.UserName = _.get(_.find(self.allUserName, { 'id': obj.createdBy }), 'firstName') + " " + _.get(_.find(self.allUserName, { 'id': obj.createdBy }), 'lastName');
+              // } else {
+              //   obj.UserName = '';
+              // }
+            });
+            this.noResult = false;
+            this.tableData = [];
+            let finalObj = [];
+            tempObj.forEach((element) => {
+              const options = {
+                url: this.configService.urlConFig.URLS.ADMIN.USER_SEARCH,
+                data: {
+                  request: {
+                    filters: { id: element.createdBy },
+                    limit: 5000,
+                  },
+                },
+              };
+              this.learnerService.post(options).subscribe((response) => {
+                element["category"] =
+                  response.result.response.content[0].framework.category[0];
+                element["subcategory"] =
+                  response.result.response.content[0].framework.subcategory[0];
+                element["city"] =
+                  response.result.response.content[0].framework.city[0];
+                element["institute"] =
+                  response.result.response.content[0].framework.institution[0];
+              });
+
+              this.UserNameValues.push({
+                label: element.UserName,
+                value: element.UserName,
+              });
+
+              let tempData = JSON.stringify(this.votelist);
+              let count = tempData.split(element.identifier).length - 1;
+
+              element["votes"] = count;
+              element["voteButton"] = "";
+              finalObj.push(element);
+            });
+            console.log("finalObj-----", finalObj);
+            this.tableData = finalObj;
+            // this.finalObj.push(this.tableData);
+            // this.tableData = _.get(this.selectedCity, 'orgName') != 'All' ? _.filter(tempObj, { OrgName: _.get(this.selectedCity, 'orgName') }) : tempObj;
+            this.initializeColumns();
+            // if (_.isEmpty(this.tableData)) {
+            //   this.noResultMessage = {
+            //     'messageText': 'messages.stmsg.m0131'
+            //   };
+            //   this.noResult = true;
+            // }
+          } else {
+            this.noResultMessage = {
+              messageText: "messages.stmsg.m0131",
+            };
+            this.noResult = true;
+          }
+        } else {
+          this.toasterService.error(this.resourceService.messages.emsg.m0007);
+        }
+      },
+      () => {}
+    );
   }
 
   getOrgList() {
