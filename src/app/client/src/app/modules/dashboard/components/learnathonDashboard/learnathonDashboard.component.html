@@ -1,5 +1,5 @@
 <!-- <div class="ui container px-60"> -->
-  <div class="sbt-page-content-area px-60">
+<div class="sbt-page-content-area px-60">
   <!-- <div [ngClass]="layoutConfiguration ? 'sbt-page-content-area' : 'ui container'"> -->
   <div class="ui grid" *ngIf="!noResult && tableData.length > 0">
     <!-- <div class="twelve wide column">
@@ -102,7 +102,10 @@
             <th *ngIf="this.pageName == 'upForVote'">Action</th>
           </tr>
           <tr>
-            <th *ngFor="let col of columns && this.pageName != 'upForVote'" [ngSwitch]="col.field">
+            <th
+              *ngFor="let col of columns && this.pageName != 'upForVote'"
+              [ngSwitch]="col.field"
+            >
               <!-- <p *ngIf="this.pageName == 'upForVote'">&nbsp;</p> -->
               <!-- <p-multiSelect *ngSwitchCase="'UserName'" (onChange)="dtOrg.filter($event.value, col.field, 'in')" [options]="UserNameValues" defaultLabel="All"
                     appendTo="body"></p-multiSelect> -->
@@ -126,8 +129,13 @@
         </ng-template>
         <ng-template pTemplate="body" let-rowData let-columns="columns">
           <tr>
-            
             <td *ngFor="let col of columns" class="ui-resizable-column">
+              <!-- <button *ngIf="this.pageName == 'upForVote'"
+              class="sb-btn sb-btn-normal sb-btn-primary"
+              (click)="giveVote(rowData)"
+            >
+              Vote Here
+            </button>  -->
               {{ rowData[col.field] }}
             </td>
 
