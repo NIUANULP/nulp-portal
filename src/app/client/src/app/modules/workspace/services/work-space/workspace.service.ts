@@ -172,7 +172,7 @@ export class WorkSpaceService {
         state,
         content.framework,
       ];
-      if (content.status) {
+      if (content.status && content.framework != "nulp-learn") {
         navigationParams.push(content.status);
       }
       console.log("navigationParams ----", navigationParams);
@@ -209,7 +209,6 @@ export class WorkSpaceService {
    * @param {string}  state - Present state
    */
   openGenericEditor(content, state) {
-    console.log("content, state ----", state, "--------------------", content);
     if (this.config.appConfig.WORKSPACE.states.includes(state)) {
       const navigationParams = [
         "/workspace/content/edit/generic/",
@@ -217,9 +216,17 @@ export class WorkSpaceService {
         state,
         content.framework,
       ];
+
       if (content.status) {
         navigationParams.push(content.status);
       }
+      console.log(
+        "content, state ----",
+        state,
+        "--------------------",
+        content
+      );
+
       this.route.navigate(navigationParams);
     } else {
       if (state === "review") {

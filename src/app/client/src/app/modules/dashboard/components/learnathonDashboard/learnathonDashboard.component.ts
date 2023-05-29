@@ -281,14 +281,22 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
                 },
               };
               this.learnerService.post(options).subscribe((response) => {
-                element["category"] =
-                  response.result.response.content[0].framework.category[0];
-                element["subcategory"] =
-                  response.result.response.content[0].framework.subcategory[0];
-                element["city"] =
-                  response.result.response.content[0].framework.city[0];
-                element["institute"] =
-                  response.result.response.content[0].framework.institution[0];
+                element["category"] = response.result.response.content[0]
+                  .framework.category[0]
+                  ? response.result.response.content[0].framework.category[0]
+                  : "";
+                element["subcategory"] = response.result.response.content[0]
+                  .framework.subcategory[0]
+                  ? response.result.response.content[0].framework.subcategory[0]
+                  : "";
+                element["city"] = response.result.response.content[0].framework
+                  .city[0]
+                  ? response.result.response.content[0].framework.subcategory[0]
+                  : "";
+                element["institute"] = response.result.response.content[0]
+                  .framework.institution[0]
+                  ? response.result.response.content[0].framework.institution[0]
+                  : "";
               });
 
               this.UserNameValues.push({
