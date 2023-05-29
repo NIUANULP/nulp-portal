@@ -93,7 +93,13 @@ export class WorkSpaceService {
    * @param {string}  state - Present state
    */
   navigateToContent(content, state) {
-    this.navigationHelperService.storeWorkSpaceCloseUrl();
+    console.log(
+      "navigateToContent --- content, state ----",
+      state,
+      "--------------------",
+      content
+    );
+    // this.navigationHelperService.storeWorkSpaceCloseUrl();
     const mimeType = content.mimeType;
     if (mimeType === "application/vnd.ekstep.content-collection") {
       this.openCollectionEditor(content, state);
@@ -158,6 +164,7 @@ export class WorkSpaceService {
    * @param {string}  state - Present state
    */
   openContent(content, state) {
+    console.log("content, state ----", state, "--------------------", content);
     if (this.config.appConfig.WORKSPACE.states.includes(state)) {
       const navigationParams = [
         "/workspace/content/edit/content/",
@@ -168,6 +175,8 @@ export class WorkSpaceService {
       if (content.status) {
         navigationParams.push(content.status);
       }
+      console.log("navigationParams ----", navigationParams);
+
       this.route.navigate(navigationParams);
     } else {
       if (state === "upForReview") {
@@ -200,6 +209,7 @@ export class WorkSpaceService {
    * @param {string}  state - Present state
    */
   openGenericEditor(content, state) {
+    console.log("content, state ----", state, "--------------------", content);
     if (this.config.appConfig.WORKSPACE.states.includes(state)) {
       const navigationParams = [
         "/workspace/content/edit/generic/",
