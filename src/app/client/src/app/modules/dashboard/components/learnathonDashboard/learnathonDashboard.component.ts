@@ -426,7 +426,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
       this.cols = [
         { field: "voteButton", header: "Action" },
         { field: "name", header: "Name" },
-        // { field: "votes", header: "Votes" },
+        { field: "votes", header: "Votes" },
         { field: "category", header: "Category" },
         { field: "subcategory", header: "Sub-Category" },
         { field: "city", header: "City" },
