@@ -74,6 +74,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
   noResultMessage: INoResultMessage;
   private activatedRoute: ActivatedRoute;
   telemetryImpression: IImpressionEventInput;
+  exportAccess: boolean = false;
   // layoutConfiguration: any;
   constructor(
     public searchService: SearchService,
@@ -106,6 +107,11 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
       }
       this.pageName = _.get(this.queryParams, "selectedTab");
     });
+    const loggedInUserRoles = _.get(this.userService, 'userProfile.userRoles');
+
+     if( _.includes(loggedInUserRoles, 'SYSTEM_ADMINISTRATION')){
+      this.exportAccess = true;
+    }
     this.cols = [];
     this.initializeDateFields();
     this.getAllContent();
@@ -292,7 +298,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
                   : "";
                 element["city"] = response.result.response.content[0].framework
                   .city[0]
-                  ? response.result.response.content[0].framework.subcategory[0]
+                  ? response.result.response.content[0].framework.city[0]
                   : "";
                 element["institute"] = response.result.response.content[0]
                   .framework.institution[0]
@@ -313,7 +319,6 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
               }
 
               element["votes"] = count;
-              element["voteButton"] = "";
               finalObj.push(element);
             });
             this.tableData = finalObj;
@@ -424,7 +429,6 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
       ];
     } else if (this.pageName == "upForVote") {
       this.cols = [
-        { field: "voteButton", header: "Action" },
         { field: "name", header: "Name" },
         { field: "votes", header: "Votes" },
         { field: "category", header: "Category" },
