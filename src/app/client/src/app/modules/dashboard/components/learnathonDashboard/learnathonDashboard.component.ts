@@ -96,6 +96,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
     this.https
       .get(this.configService.urlConFig.URLS.FILE_READ)
       .subscribe((data) => {
+        console.log(data);
         this.votelist = data["result"].data;
       });
     this.activatedRoute.queryParams.subscribe((params) => {
@@ -303,11 +304,15 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
                 label: element.UserName,
                 value: element.UserName,
               });
-
+              var count = 0;
               let tempData = JSON.stringify(this.votelist);
-              // let count = tempData.split(element.identifier).length - 1;
+              if (tempData) {
+                count = tempData.split(element.identifier).length - 1;
+              } else {
+                count = 0;
+              }
 
-              element["votes"] = "";
+              element["votes"] = count;
               element["voteButton"] = "";
               finalObj.push(element);
             });
