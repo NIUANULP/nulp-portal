@@ -213,21 +213,8 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
       offset: (1 - 1) * 10,
     };
 
-    this.search(searchParams).subscribe((response: ServerResponse) => {
-      console.log("search 111111====", response);
-    });
-
-    this.searchService.compositeSearch(searchParams).subscribe((response) => {
-      console.log("comosite ====", response);
-    });
-
-    this.searchService.contentSearch(searchParams).subscribe((response) => {
-      console.log("content ====", response);
-    });
-
     this.searchService.contentSearch(searchParams).subscribe(
       (response) => {
-        console.log("response-----", response);
         this.UserNameValues = [];
         if (_.get(response, "responseCode") === "OK") {
           if (response.result.count > 0) {
@@ -294,14 +281,22 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
                 },
               };
               this.learnerService.post(options).subscribe((response) => {
-                element["category"] =
-                  response.result.response.content[0].framework.category[0];
-                element["subcategory"] =
-                  response.result.response.content[0].framework.subcategory[0];
-                element["city"] =
-                  response.result.response.content[0].framework.city[0];
-                element["institute"] =
-                  response.result.response.content[0].framework.institution[0];
+                element["category"] = response.result.response.content[0]
+                  .framework.category[0]
+                  ? response.result.response.content[0].framework.category[0]
+                  : "";
+                element["subcategory"] = response.result.response.content[0]
+                  .framework.subcategory[0]
+                  ? response.result.response.content[0].framework.subcategory[0]
+                  : "";
+                element["city"] = response.result.response.content[0].framework
+                  .city[0]
+                  ? response.result.response.content[0].framework.subcategory[0]
+                  : "";
+                element["institute"] = response.result.response.content[0]
+                  .framework.institution[0]
+                  ? response.result.response.content[0].framework.institution[0]
+                  : "";
               });
 
               this.UserNameValues.push({
@@ -310,13 +305,12 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
               });
 
               let tempData = JSON.stringify(this.votelist);
-              let count = tempData.split(element.identifier).length - 1;
+              // let count = tempData.split(element.identifier).length - 1;
 
-              element["votes"] = count;
+              element["votes"] = "";
               element["voteButton"] = "";
               finalObj.push(element);
             });
-            console.log("finalObj-----", finalObj);
             this.tableData = finalObj;
             // this.finalObj.push(this.tableData);
             // this.tableData = _.get(this.selectedCity, 'orgName') != 'All' ? _.filter(tempObj, { OrgName: _.get(this.selectedCity, 'orgName') }) : tempObj;
@@ -427,7 +421,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
       this.cols = [
         { field: "voteButton", header: "Action" },
         { field: "name", header: "Name" },
-        { field: "votes", header: "Votes" },
+        // { field: "votes", header: "Votes" },
         { field: "category", header: "Category" },
         { field: "subcategory", header: "Sub-Category" },
         { field: "city", header: "City" },
