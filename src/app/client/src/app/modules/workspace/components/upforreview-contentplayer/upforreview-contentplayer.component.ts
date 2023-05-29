@@ -30,6 +30,8 @@ import { UUID } from "angular2-uuid";
 import dayjs from "dayjs";
 // import { DataService } from 'src/app/modules/core';
 import { ConfigService } from "@sunbird/shared";
+import { Location } from '@angular/common';
+
 
 @Component({
   selector: "app-upforreview-contentplayer",
@@ -170,7 +172,8 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
     public https: HttpClient,
     public config: ConfigService,
     public navigationHelperService: NavigationHelperService,
-    router: Router
+    router: Router,
+    private location: Location
   ) {
     this.resourceService = resourceService;
     this.playerService = playerService;
@@ -328,9 +331,12 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
    * @memberof ContentPlayerComponent
    */
   close() {
-    this.navigationHelperService.navigateToWorkSpace(
-      "/workspace/content/upForReview/1"
-    );
+    if(this.contentData.framework == "nulp-learn"){
+      this.location.back();
+    }else{
+      this.navigationHelperService.navigateToWorkSpace(
+      "/workspace/content/upForReview/1");
+    }  
   }
 
   setInteractEventData() {
