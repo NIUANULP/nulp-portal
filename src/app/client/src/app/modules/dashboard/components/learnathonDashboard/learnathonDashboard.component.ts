@@ -97,16 +97,14 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
     this.https
       .get(this.configService.urlConFig.URLS.FILE_READ)
       .subscribe((data) => {
-        console.log(data);
-
-        this.votelist = data["result"].data;
         this.getAllContent();
+        this.votelist = data["result"].data;
       },(err) => {
         console.log(err);
         this.getAllContent();
-
         // this.toasterService.error(this.resourceService.messages.emsg.m0007);
       });
+      
     this.activatedRoute.queryParams.subscribe((params) => {
       this.queryParams = params;
       if (this.pageName != undefined && this.pageName != this.queryParams) {
@@ -218,7 +216,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
             this.noResult = false;
             this.tableData = [];
             let finalObj = [];
-            tempObj.forEach(async (element) => {
+            tempObj.forEach((element) => {
               const options = {
                 url: this.configService.urlConFig.URLS.ADMIN.USER_SEARCH,
                 data: {
@@ -228,8 +226,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
                   },
                 },
               };
-              await this.learnerService.post(options).subscribe((response) => {
-                console.log("response++++",response.result.response)
+               this.learnerService.post(options).subscribe((response) => {
                 if(response.result.response.content.framework){
                   element["category"] = response.result.response.content[0]
                   .framework.category[0]
@@ -265,11 +262,9 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
               var count = 0;
               let tempData = JSON.stringify(this.votelist);
               if (tempData) {
-                console.log("tempData++++",tempData)
                 count = tempData.split(element.identifier).length - 1;
               element["votes"] = count;
 
-                console.log("count++++",count,"===",element.identifier)
               } else {
                 count = 0;
               }
@@ -277,7 +272,6 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
               element["votes"] = count;
               finalObj.push(element);
             });
-            console.log("finalObj===",finalObj)
             this.tableData = finalObj;
             // this.finalObj.push(this.tableData);
             // this.tableData = _.get(this.selectedCity, 'orgName') != 'All' ? _.filter(tempObj, { OrgName: _.get(this.selectedCity, 'orgName') }) : tempObj;
@@ -415,7 +409,6 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
     this.unsubscribe.complete();
   }
   giveVote(content) {
-    console.log("upForReview - ", content);
     this.workSpaceService.navigateToContent(content, "upForReview");
   }
 }
