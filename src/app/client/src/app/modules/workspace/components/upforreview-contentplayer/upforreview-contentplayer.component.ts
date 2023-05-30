@@ -233,13 +233,15 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
       const arrayOfObj = Object.entries(this.votelist).map((e) => ({
         [e[0]]: e[1],
       }));
+      var i = 0
       arrayOfObj.forEach((element) => {
-        if (
-          element[0]["userId"] === this.userId &&
-          element[0]["contentId"] == this.contentId
-        ) {
+        if (element[i]["userId"] === this.userId && element[i]["contentId"] == this.contentId ) {
+      
           this.canVote = false;
+         
+          return;
         }
+        i++;
       });
     });
   }
