@@ -98,7 +98,14 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
       .get(this.configService.urlConFig.URLS.FILE_READ)
       .subscribe((data) => {
         console.log(data);
+
         this.votelist = data["result"].data;
+        this.getAllContent();
+      },(err) => {
+        console.log(err);
+        this.getAllContent();
+
+        // this.toasterService.error(this.resourceService.messages.emsg.m0007);
       });
     this.activatedRoute.queryParams.subscribe((params) => {
       this.queryParams = params;
@@ -114,7 +121,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
     }
     this.cols = [];
     this.initializeDateFields();
-    this.getAllContent();
+    
     // this.getOrgList();
     this.getOrgDetails();
   }
@@ -123,7 +130,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
     this.fromDate = new Date(this.moment.subtract(7, "days"));
     this.toDate = new Date();
   }
-  getAllContent() {
+   getAllContent() {
     let status: any[];
     if (this.pageName == "upForVote") {
       status = ["Live"];
@@ -138,62 +145,6 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
         "FlagReview",
       ];
     }
-    const data = {
-      filters: {
-        status: status,
-        primaryCategory: [
-          "Course",
-          "Digital Textbook",
-          "Content Playlist",
-          "Explanation Content",
-          "Learning Resource",
-          "Practice Question Set",
-          "eTextbook",
-          "Teacher Resource",
-          "Course Assessment",
-        ],
-        objectType: "Content",
-        // framework: ["nulp-learn"],
-        framework: localStorage.getItem("learnathonFramework"),
-
-        // channel: "nulp-learnathon",
-        mimeType: [
-          "application/pdf",
-          "video/x-youtube",
-          "application/vnd.ekstep.html-archive",
-          "application/epub",
-          "application/vnd.ekstep.h5p-archive",
-          "video/mp4",
-          "video/webm",
-          "text/x-url",
-        ],
-        contentType: ["Course", "Resource", "Collection"],
-      },
-      fields: [
-        "identifier",
-        "creator",
-        "organisation",
-        "name",
-        "contentType",
-        "createdFor",
-        "channel",
-        "board",
-        "medium",
-        "gradeLevel",
-        "subject",
-        "category",
-        "lastUpdatedOn",
-        "status",
-        "createdBy",
-        "createdOn",
-        "framework",
-      ],
-      limit: 10000,
-      // offset: (pageNumber - 1) * (limit),
-      offset: 0,
-      query: "",
-    };
-    // ==========================
 
     const searchParams = {
       filters: {
@@ -262,22 +213,12 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
                   );
                 }
               }
-              // if (!_.isEmpty(obj.channel)) {
-              //   obj.departmentName = _.lowerCase(_.get(_.find(self.allOrgName, { 'id': obj.channel }), 'orgName'));
-              // } else {
-              //   obj.departmentName = '';
-              // }
               obj.UserName = obj.creator;
-              // if (!_.isEmpty(obj.createdBy)) {
-              //   obj.UserName = _.get(_.find(self.allUserName, { 'id': obj.createdBy }), 'firstName') + " " + _.get(_.find(self.allUserName, { 'id': obj.createdBy }), 'lastName');
-              // } else {
-              //   obj.UserName = '';
-              // }
             });
             this.noResult = false;
             this.tableData = [];
             let finalObj = [];
-            tempObj.forEach((element) => {
+            tempObj.forEach(async (element) => {
               const options = {
                 url: this.configService.urlConFig.URLS.ADMIN.USER_SEARCH,
                 data: {
@@ -287,11 +228,14 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
                   },
                 },
               };
-              this.learnerService.post(options).subscribe((response) => {
-                element["category"] = response.result.response.content[0]
+              await this.learnerService.post(options).subscribe((response) => {
+                console.log("response++++",response.result.response)
+                if(response.result.response.content.framework){
+                  element["category"] = response.result.response.content[0]
                   .framework.category[0]
                   ? response.result.response.content[0].framework.category[0]
                   : "";
+                
                 element["subcategory"] = response.result.response.content[0]
                   .framework.subcategory[0]
                   ? response.result.response.content[0].framework.subcategory[0]
@@ -304,6 +248,14 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
                   .framework.institution[0]
                   ? response.result.response.content[0].framework.institution[0]
                   : "";
+                }
+                else{
+                  element["category"] ="";
+                  element["subcategory"] = "";
+                element["city"] ="";
+                element["institute"] ="";
+                }
+               
               });
 
               this.UserNameValues.push({
@@ -313,7 +265,11 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
               var count = 0;
               let tempData = JSON.stringify(this.votelist);
               if (tempData) {
+                console.log("tempData++++",tempData)
                 count = tempData.split(element.identifier).length - 1;
+              element["votes"] = count;
+
+                console.log("count++++",count,"===",element.identifier)
               } else {
                 count = 0;
               }
@@ -321,6 +277,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
               element["votes"] = count;
               finalObj.push(element);
             });
+            console.log("finalObj===",finalObj)
             this.tableData = finalObj;
             // this.finalObj.push(this.tableData);
             // this.tableData = _.get(this.selectedCity, 'orgName') != 'All' ? _.filter(tempObj, { OrgName: _.get(this.selectedCity, 'orgName') }) : tempObj;
