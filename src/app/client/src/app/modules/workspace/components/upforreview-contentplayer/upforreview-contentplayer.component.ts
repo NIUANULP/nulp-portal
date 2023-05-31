@@ -154,6 +154,7 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
   votelist: any;
   canVote: boolean = true;
   learnathonContent: boolean = false;
+  now:any;
   /**
   * Constructor to create injected service(s) object
   Default method of Draft Component class
@@ -214,7 +215,6 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
     }
   }
   ngOnInit() {
-    //this.baseUrl = this.config.urlConFig.URLS.EXT_PLUGIN_PREFIX;
     this.baseUrl = "https://nulp.niua.org/";
 
     this.initLayout();
@@ -236,9 +236,7 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
       var i = 0
       arrayOfObj.forEach((element) => {
         if (element[i]["userId"] === this.userId && element[i]["contentId"] == this.contentId ) {
-      
-          this.canVote = false;
-         
+          this.canVote = false; 
           return;
         }
         i++;
@@ -435,8 +433,12 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
     if (this.showCenterAlignedModal == true) {
       return;
     } else {
-      const httpOptions: HttpOptions = {
-        // headers: { "Content-Type": "application/json" },
+      var today = new Date();
+      var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+      var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+      this.now = date+' '+time;
+
+      const httpOptions: HttpOptions = {       
         body: [
           {
             userId: this.userId,
@@ -446,7 +448,8 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
             UserMobile: this.mobile,
             userEmail: this.email,
             userCity: this.city,
-            reasonOfVote: this.reason,
+            reasonOfVote: this.reason.replace(/['"]+/g, ''),
+            votedOn:this.now 
           },
         ],
       };
