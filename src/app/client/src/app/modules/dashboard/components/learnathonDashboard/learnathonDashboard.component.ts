@@ -227,7 +227,6 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
                 },
               };
                this.learnerService.post(options).subscribe((response) => {
-                // if(response.result.response.content.framework){
                   element["category"] = response.result.response.content[0]
                   .framework.category[0]
                   ? response.result.response.content[0].framework.category[0]
@@ -245,14 +244,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
                   .framework.institution[0]
                   ? response.result.response.content[0].framework.institution[0]
                   : "";
-                // }
-                // else{
-                //   element["category"] ="";
-                //   element["subcategory"] = "";
-                // element["city"] ="";
-                // element["institute"] ="";
-                // }
-               
+                
               });
 
               this.UserNameValues.push({
