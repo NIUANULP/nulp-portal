@@ -22,7 +22,7 @@ enableLogger({
     adopter: "winston",
   },
 });
-console.log("++++++++++++++++++++++" ,envHelper.learnathon_voting_table_user, envHelper.learnathon_voting_table_host,envHelper.learnathon_voting_table_port)
+console.log("++++++++++++++++++++++" ,envHelper.learnathon_voting_table_user, envHelper.learnathon_voting_table_host,envHelper.learnathon_voting_table_port, envHelper.learnathon_voting_table_database,envHelper.learnathon_voting_table_password)
 
 const { Client } = require('pg')
 const client = new Client({
@@ -31,6 +31,18 @@ const client = new Client({
   // database: envHelper.learnathon_voting_table_database,
   // password: envHelper.learnathon_voting_table_password,
   // port: envHelper.learnathon_voting_table_port
+
+  // user:'postgres',
+  // host: '127.0.0.1',
+  // database: 'postgres',
+  // password: 'postgres',
+  // port: 4000,
+
+  user: envHelper.learnathon_voting_table_user,
+  host: envHelper.learnathon_voting_table_host,
+  database: envHelper.learnathon_voting_table_database,
+  password: envHelper.learnathon_voting_table_password,
+  port: envHelper.learnathon_voting_table_port
 
   // user: 'postgres', //envHelper.learnathon_voting_table_user
   // host: '10.50.10.6', //envHelper.learnathon_voting_table_host
@@ -41,7 +53,7 @@ const client = new Client({
 client.connect(function(err) {
   if (err) throw err;
   console.log("Connected!");
-  // client.query('SELECT * FROM public.learnvote').then((data) =>{console.log("Connected!", data);})
+  // client.query('SELECT * FROM learnathon_voting').then((data) =>{console.log("Connected!", data);})
   // console.log("Connected!", res);
    // Hello world!await client.end()
 });
@@ -242,7 +254,7 @@ app.post("/learnVote", bodyParser.json({ limit: "10mb" }), (req, res) => {
     const { userId, contentId , vote,userName,UserMobile, userEmail,userCity, reasonOfVote, votedOn } = req.body.body[0]
     const body = [userId, contentId , vote,userName,UserMobile, userEmail,userCity, reasonOfVote, votedOn ]
     
-    client.query('INSERT INTO learnvote (user_id, content_id, vote, user_name,user_mobile, user_email, user_city, reason, voted_on) VALUES ($1, $2,$3,$4,$5,$6,$7,$8,$9) RETURNING *', body, (error, results) => {
+    client.query('INSERT INTO learnathon_voting (user_id, content_id, vote, user_name,user_mobile, user_email, user_city, reason, voted_on) VALUES ($1, $2,$3,$4,$5,$6,$7,$8,$9) RETURNING *', body, (error, results) => {
     
       if (error) {
         console.log("errr-----------", error)
@@ -333,14 +345,14 @@ app.get("/voteCountDatabase", (req, res, next) => {
 
 var query;
 if(contentId && userId){
-   query = "SELECT * FROM public.learnvote WHERE content_id = '"+ contentId +"'AND"+"user_id = '"+ userId + "'";
+   query = "SELECT * FROM learnathon_voting WHERE content_id = '"+ contentId +"'AND"+"user_id = '"+ userId + "'";
 
 }else if(contentId)
 {
-  query = "SELECT * FROM public.learnvote WHERE content_id = '"+ contentId + "'";
+  query = "SELECT * FROM learnathon_voting WHERE content_id = '"+ contentId + "'";
 
 }else{
-  query = "SELECT * FROM public.learnvote ";
+  query = "SELECT * FROM learnathon_voting ";
 }
 console.log("query-----------", query);
 
