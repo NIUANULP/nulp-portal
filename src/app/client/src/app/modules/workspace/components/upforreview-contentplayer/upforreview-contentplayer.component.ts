@@ -376,9 +376,8 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
 
   learnVote() {
     this.modalHeader = this.resourceService.frmelmnts.label.invaliddatamsg;
-    alert("here")
     if (!this?.name?.trim()) {
-      alert("11111")
+
       //alert("Please Enter a name");
       this.formInvalidMessage =
         this.resourceService.frmelmnts.lbl.enterValidName;
@@ -438,7 +437,6 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
       var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
       var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
       this.now = date+' '+time;
-alert(";;;;;;;;")
       const httpOptions: HttpOptions = {       
         body: [
           {
