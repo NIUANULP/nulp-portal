@@ -22,14 +22,21 @@ enableLogger({
     adopter: "winston",
   },
 });
+console.log("++++++++++++++++++++++" ,envHelper.learnathon_voting_table_user, envHelper.learnathon_voting_table_host,envHelper.learnathon_voting_table_port)
 
 const { Client } = require('pg')
 const client = new Client({
-  user: envHelper.learnathon_voting_table_user,
-  host: envHelper.learnathon_voting_table_host,
-  database: envHelper.learnathon_voting_table_database,
-  password: envHelper.learnathon_voting_table_password,
-  port: envHelper.learnathon_voting_table_port
+  // user: envHelper.learnathon_voting_table_user,
+  // host: envHelper.learnathon_voting_table_host,
+  // database: envHelper.learnathon_voting_table_database,
+  // password: envHelper.learnathon_voting_table_password,
+  // port: envHelper.learnathon_voting_table_port
+
+  user: 'postgres',
+  host: "192.168.2.5",
+  database: 'learnathon',
+  password: '4f487e7141307c67ef7c',
+  port: '5432'
 
   // user: 'postgres', //envHelper.learnathon_voting_table_user
   // host: '10.50.10.6', //envHelper.learnathon_voting_table_host
