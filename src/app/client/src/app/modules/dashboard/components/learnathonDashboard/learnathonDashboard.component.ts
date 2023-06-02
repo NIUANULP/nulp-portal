@@ -18,7 +18,7 @@ import {
   INoResultMessage,
   ConfigService,
 } from "@sunbird/shared";
-import { HttpClient, HttpResponse } from "@angular/common/http";
+import { HttpClient, HttpResponse,HttpParams } from "@angular/common/http";
 
 // import { UUID } from 'angular2-uuid';
 import { ActivatedRoute, Router } from "@angular/router";
@@ -104,6 +104,17 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
         this.getAllContent();
         // this.toasterService.error(this.resourceService.messages.emsg.m0007);
       });
+      this.https
+      .get(this.configService.urlConFig.URLS.FILE_READ_DATABASE)
+      .subscribe((data) => {
+        this.getAllContent();
+        // this.votelist = data["result"].data;
+      },(err) => {
+        console.log(err);
+        this.getAllContent();
+        // this.toasterService.error(this.resourceService.messages.emsg.m0007);
+      });
+      this.getAllContent();
       
     this.activatedRoute.queryParams.subscribe((params) => {
       this.queryParams = params;
@@ -129,6 +140,19 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
     this.toDate = new Date();
   }
    getAllContent() {
+    // let queryParams = new HttpParams();
+    // queryParams = queryParams.append("contentId",);
+    // console.log("-----------",{params:queryParams})
+    // this.https
+    //           .get(this.configService.urlConFig.URLS.FILE_READ,{params:queryParams} )
+    //           .subscribe((data) => {
+               
+    //             this.votelist = data["result"].data;
+    //           },(err) => {
+    //             console.log(err);
+               
+    //             // this.toasterService.error(this.resourceService.messages.emsg.m0007);
+    //           });
     let status: any[];
     if (this.pageName == "upForVote") {
       status = ["Live"];
@@ -217,6 +241,25 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
             this.tableData = [];
             let finalObj = [];
             tempObj.forEach((element) => {
+              let queryParams = new HttpParams();
+              queryParams = queryParams.append("contentId",element.identifier);
+              // this.https
+              // .get(this.configService.urlConFig.URLS.FILE_READ,{params:queryParams} )
+              // .subscribe((data) => {
+               
+              //   this.votelist = data["result"].data;
+              // },(err) => {
+              //   console.log(err);
+               
+              //   // this.toasterService.error(this.resourceService.messages.emsg.m0007);
+              // });
+
+
+
+
+
+
+
               const options = {
                 url: this.configService.urlConFig.URLS.ADMIN.USER_SEARCH,
                 data: {
@@ -381,14 +424,6 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
         { field: "board", header: "Theme" },
         { field: "medium", header: "Sub-Theme" },
 
-        // { field: "name", header: "Name", width: "170px" },
-        // { field: "category", header: "Category", width: "170px" },
-        // { field: "subcategory", header: "Sub-Category", width: "170px" },
-        // { field: "city", header: "City", width: "170px" },
-        // { field: "institute", header: "Institute", width: "170px" },
-        // { field: "board", header: "Theme", width: "170px" },
-        // { field: "medium", header: "Sub-Theme", width: "170px" },
-        // { field: "votes", header: "Votes", width: "170px" },
       ];
     }
   }

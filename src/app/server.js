@@ -22,6 +22,28 @@ enableLogger({
     adopter: "winston",
   },
 });
+
+const { Client } = require('pg')
+const client = new Client({
+  user: envHelper.learnathon_voting_table_user,
+  host: envHelper.learnathon_voting_table_host,
+  database: envHelper.learnathon_voting_table_database,
+  password: envHelper.learnathon_voting_table_password,
+  port: envHelper.learnathon_voting_table_port
+
+  // user: 'postgres', //envHelper.learnathon_voting_table_user
+  // host: '10.50.10.6', //envHelper.learnathon_voting_table_host
+  // database: 'learnathon', //envHelper.learnathon_voting_table_database
+  // password: '4f487e7141307c67ef7c', //envHelper.learnathon_voting_table_password
+  // port: 5432,
+})
+client.connect(function(err) {
+  if (err) throw err;
+  console.log("Connected!");
+  // client.query('SELECT * FROM public.learnvote').then((data) =>{console.log("Connected!", data);})
+  // console.log("Connected!", res);
+   // Hello world!await client.end()
+});
 const { logger, enableDebugMode } = require("@project-sunbird/logger");
 const express = require("express");
 const gracefulShutdown = require("http-graceful-shutdown");
@@ -215,7 +237,34 @@ app.get("/counts", (req, res, next) => {
 });
 
 app.post("/learnVote", bodyParser.json({ limit: "10mb" }), (req, res) => {
-  // const voteData = JSON.parse(fs.readFileSync("liveLearnVotes.json", "utf8"));
+
+    const { userId, contentId , vote,userName,UserMobile, userEmail,userCity, reasonOfVote, votedOn } = req.body.body[0]
+    const body = [userId, contentId , vote,userName,UserMobile, userEmail,userCity, reasonOfVote, votedOn ]
+    
+    client.query('INSERT INTO learnvote (user_id, content_id, vote, user_name,user_mobile, user_email, user_city, reason, voted_on) VALUES ($1, $2,$3,$4,$5,$6,$7,$8,$9) RETURNING *', body, (error, results) => {
+    
+      if (error) {
+        console.log("errr-----------", error)
+        throw error
+      }
+      if(results){
+        console.log("results----",results)
+        res.send({
+          ts: new Date().toISOString(),
+          params: {
+            resmsgid: uuid(),
+            msgid: uuid(),
+            status: "successful",
+            err: null,
+            errmsg: null,
+          },
+          responseCode: "OK",
+          result: {
+            data: { ...results },
+          },
+        })
+      }
+    })
   var fileExists;
   // stringify JSON Object
   if (fs.existsSync("liveLearnVotes.json")) {
@@ -267,25 +316,56 @@ app.post("/learnVote", bodyParser.json({ limit: "10mb" }), (req, res) => {
           );
           return console.log(err);
         }
-      },
-      res.send({
-        ts: new Date().toISOString(),
-        params: {
-          resmsgid: uuid(),
-          msgid: uuid(),
-          status: "successful",
-          err: null,
-          errmsg: null,
-        },
-        responseCode: "OK",
-        result: {
-          data: { ...jsonvoteData },
-        },
-      })
+      }
+     
     );
   }
 });
 
+app.get("/voteCountDatabase", (req, res, next) => {
+  var fileExists;
+  var countData;
+  const contentId = req.query.contentId
+  const userId = req.query.userId
+  console.log("contentId-----------", contentId);
+  console.log("userId-----------", userId);
+
+var query;
+if(contentId && userId){
+   query = "SELECT * FROM public.learnvote WHERE content_id = '"+ contentId +"'AND"+"user_id = '"+ userId + "'";
+
+}else if(contentId)
+{
+  query = "SELECT * FROM public.learnvote WHERE content_id = '"+ contentId + "'";
+
+}else{
+  query = "SELECT * FROM public.learnvote ";
+}
+console.log("query-----------", query);
+
+client.query(query).then(( results) =>{
+ 
+    console.log("results-----",results);
+    res.send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuid(),
+        msgid: uuid(),
+        status: "successful",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {
+        data: { ...results.rows },
+        count:results.rowCount,
+      },
+    });  
+},err=>{
+  console.log("errr-----------", err);
+})
+
+});
 app.get("/voteCount", (req, res, next) => {
   var fileExists;
   var countData;
@@ -427,7 +507,7 @@ app.get("/enableDebugMode", (req, res, next) => {
   const timeInterval = req.query.timeInterval
     ? parseInt(req.query.timeInterval)
     : 1000 * 60 * 10;
-  console.log("enable debug mode called", logLevel, timeInterval);
+  // console.log("enable debug mode called", logLevel, timeInterval);
   enableDebugMode(timeInterval, logLevel);
   res.send({
     id: "enabledDebugMode",
@@ -694,7 +774,7 @@ process.on("unhandledRejection", (reason, p) =>
   console.log("Unhandled Rejection", p, reason)
 );
 process.on("uncaughtException", (err) => {
-  console.log("Uncaught Exception", err);
+  // console.log("Uncaught Exception", err);
   process.exit(1);
 });
 
