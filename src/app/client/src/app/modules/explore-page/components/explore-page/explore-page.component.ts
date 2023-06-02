@@ -467,6 +467,10 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
                         this.segmentationTagService.getUpdatedCommands().then(() => {
                             this.showorHideBanners();
                         });
+                    }
+                    else if (_.get(currentPageData, 'contentType') === 'sbmcourse'){
+                        // @Hack for SBM Courses Menu 
+                        _reqFilters = this.contentSearchService.mapCategories({ filters });
                     } else {
                         _reqFilters = this.contentSearchService.mapCategories({ filters: { ...this.selectedFilters, ...filters } });
                     }
