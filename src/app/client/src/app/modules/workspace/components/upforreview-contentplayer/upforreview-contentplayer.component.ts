@@ -23,7 +23,7 @@ import {
 } from "rxjs";
 import { mergeMap } from "rxjs/operators";
 import { ServerResponse, RequestParam, HttpOptions } from "@sunbird/shared";
-import { HttpClient, HttpResponse } from "@angular/common/http";
+import { HttpClient, HttpResponse,HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { UUID } from "angular2-uuid";
 // import * as _ from 'lodash-es';
@@ -228,20 +228,24 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
       }
       this.closeUrl = this.navigationHelperService.getPreviousUrl();
     });
-    this.https.get(this.config.urlConFig.URLS.FILE_READ).subscribe((data) => {
-      this.votelist = data["result"].data;
-      const arrayOfObj = Object.entries(this.votelist).map((e) => ({
-        [e[0]]: e[1],
-      }));
-      var i = 0
-      arrayOfObj.forEach((element) => {
-        if (element[i]["userId"] === this.userId && element[i]["contentId"] == this.contentId ) {
-          this.canVote = false; 
-          return;
-        }
-        i++;
-      });
-    });
+
+    let queryParams = new HttpParams();
+              queryParams = queryParams.append("contentId",this.contentId);
+              queryParams = queryParams.append("userId",this.userId);
+              this.https
+              .get(this.config.urlConFig.URLS.FILE_READ,{params:queryParams} )
+              .subscribe((data) => {
+               if(data["result"].count == 0){
+                this.canVote= true;
+               }else{
+                this.canVote= false;
+               }
+               
+              },(err) => {
+                console.log(err);
+               
+                // this.toasterService.error(this.resourceService.messages.emsg.m0007);
+              });
   }
   ngOnDestroy() {
     this.unsubscribe$.next();
@@ -464,7 +468,23 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
             this.toasterService.success(
               this.resourceService.messages.smsg.voteSuccess
             );
-            this.votelist = data["result"].data;
+            let queryParams = new HttpParams();
+              queryParams = queryParams.append("contentId",this.contentId);
+              queryParams = queryParams.append("userId",this.userId);
+              this.https
+              .get(this.config.urlConFig.URLS.FILE_READ,{params:queryParams} )
+              .subscribe((data) => {
+               if(data["result"].count == 0){
+                this.canVote= true;
+               }else{
+                this.canVote= false;
+               }
+               
+              },(err) => {
+                console.log(err);
+               
+                // this.toasterService.error(this.resourceService.messages.emsg.m0007);
+              });
           },
           (err) => {
             this.toasterService.error(this.resourceService.messages.emsg.m0005);
