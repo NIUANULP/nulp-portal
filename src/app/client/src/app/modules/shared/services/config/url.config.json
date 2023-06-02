@@ -49,6 +49,7 @@
     "EMPTY_PROXY": "",
     "FILE_WRITE": "learnVote",
     "FILE_READ": "voteCount",
+    "FILE_READ_DATABASE": "voteCountDatabase",
     "LEARNER_PREFIX": "/learner/",
     "DISCUSSIONS_FORUM_PREFIX": "/discussion/",
     "DEVICE_PREFIX": "/device/",

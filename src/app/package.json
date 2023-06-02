@@ -96,6 +96,7 @@
     "multiparty": "^4.2.1",
     "node-rsa": "^1.1.1",
     "path-to-regexp": "^6.1.0",
+    "pg": "^8.11.0",
     "properties": "1.2.1",
     "redis": "3.0.2",
     "request": "2.81.0",
