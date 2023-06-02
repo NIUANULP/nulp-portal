@@ -87,6 +87,8 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
     targetedCategorytheme:any;
     showTargetedCategory:boolean=false;
     selectedTab:any;
+    isSbmcourse = false;
+
     get slideConfig() {
         return cloneDeep(this.configService.appConfig.LibraryCourses.slideConfig);
     }
@@ -217,6 +219,7 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
         this.selectedTab=queryParams.selectedTab; 
         this.showTargetedCategory=false;   
         this.getFormConfigs();
+        this.isSbmcourse = this.selectedTab === 'sbmcourse'
         });
         this.initConfiguration();
 
