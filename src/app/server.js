@@ -22,15 +22,14 @@ enableLogger({
     adopter: "winston",
   },
 });
-console.log("++++++++++++++++++++++" ,envHelper.learnathon_voting_table_user, envHelper.learnathon_voting_table_host,envHelper.learnathon_voting_table_port, envHelper.learnathon_voting_table_database,envHelper.learnathon_voting_table_password)
 
 const { Client } = require('pg')
 const client = new Client({
-  // user: envHelper.learnathon_voting_table_user,
-  // host: envHelper.learnathon_voting_table_host,
-  // database: envHelper.learnathon_voting_table_database,
-  // password: envHelper.learnathon_voting_table_password,
-  // port: envHelper.learnathon_voting_table_port
+  user: envHelper.learnathon_voting_table_user,
+  host: envHelper.learnathon_voting_table_host,
+  database: envHelper.learnathon_voting_table_database,
+  password: envHelper.learnathon_voting_table_password,
+  port: envHelper.learnathon_voting_table_port
 
   // user:'postgres',
   // host: '127.0.0.1',
@@ -38,24 +37,9 @@ const client = new Client({
   // password: 'postgres',
   // port: 4000,
 
-  user: envHelper.learnathon_voting_table_user,
-  host: envHelper.learnathon_voting_table_host,
-  database: envHelper.learnathon_voting_table_database,
-  password: envHelper.learnathon_voting_table_password,
-  port: envHelper.learnathon_voting_table_port
-
-  // user: 'postgres', //envHelper.learnathon_voting_table_user
-  // host: '10.50.10.6', //envHelper.learnathon_voting_table_host
-  // database: 'learnathon', //envHelper.learnathon_voting_table_database
-  // password: '4f487e7141307c67ef7c', //envHelper.learnathon_voting_table_password
-  // port: 5432,
 })
 client.connect(function(err) {
   if (err) throw err;
-  console.log("Connected!");
-  // client.query('SELECT * FROM learnathon_voting').then((data) =>{console.log("Connected!", data);})
-  // console.log("Connected!", res);
-   // Hello world!await client.end()
 });
 const { logger, enableDebugMode } = require("@project-sunbird/logger");
 const express = require("express");
@@ -250,18 +234,20 @@ app.get("/counts", (req, res, next) => {
 });
 
 app.post("/learnVote", bodyParser.json({ limit: "10mb" }), (req, res) => {
-
+    let date_time = new Date();
+    let date =  dateFormat(date_time, 'yyyy-mm-dd');
+      let time =  date_time.getHours() + ":" +  date_time.getMinutes() + ":" + date_time.getSeconds();
     const { userId, contentId , vote,userName,UserMobile, userEmail,userCity, reasonOfVote, votedOn } = req.body.body[0]
-    const body = [userId, contentId , vote,userName,UserMobile, userEmail,userCity, reasonOfVote, votedOn ]
-    
-    client.query('INSERT INTO learnathon_voting (user_id, content_id, vote, user_name,user_mobile, user_email, user_city, reason, voted_on) VALUES ($1, $2,$3,$4,$5,$6,$7,$8,$9) RETURNING *', body, (error, results) => {
+    const body = [userId, contentId , vote,userName,UserMobile, userEmail,userCity, reasonOfVote, date, time]
+
+    client.query('INSERT INTO learnvote (user_id, content_id, vote, user_name,user_mobile, user_email, user_city, reason_of_vote, voting_date, voting_time) VALUES ($1, $2,$3,$4,$5,$6,$7,$8,$9, $10) RETURNING *', body, (error, results) => {
     
       if (error) {
         console.log("errr-----------", error)
         throw error
       }
       if(results){
-        console.log("results----",results)
+
         res.send({
           ts: new Date().toISOString(),
           params: {
@@ -340,25 +326,21 @@ app.get("/voteCountDatabase", (req, res, next) => {
   var countData;
   const contentId = req.query.contentId
   const userId = req.query.userId
-  console.log("contentId-----------", contentId);
-  console.log("userId-----------", userId);
 
 var query;
 if(contentId && userId){
-   query = "SELECT * FROM learnathon_voting WHERE content_id = '"+ contentId +"'AND"+"user_id = '"+ userId + "'";
+   query = "SELECT * FROM public.learnvote WHERE content_id = '"+ contentId +"'AND"+"user_id = '"+ userId + "'";
 
 }else if(contentId)
 {
-  query = "SELECT * FROM learnathon_voting WHERE content_id = '"+ contentId + "'";
+  query = "SELECT * FROM public.learnvote WHERE content_id = '"+ contentId + "'";
 
 }else{
-  query = "SELECT * FROM learnathon_voting ";
+  query = "SELECT * FROM public.learnvote ";
 }
-console.log("query-----------", query);
 
 client.query(query).then(( results) =>{
  
-    console.log("results-----",results);
     res.send({
       ts: new Date().toISOString(),
       params: {
@@ -382,15 +364,23 @@ client.query(query).then(( results) =>{
 app.get("/voteCount", (req, res, next) => {
   var fileExists;
   var countData;
-  if (fs.existsSync("liveLearnVotes.json")) {
-    fileExists = true;
+  const contentId = req.query.contentId
+  const userId = req.query.userId
 
-    if (fs.readFileSync("liveLearnVotes.json", "utf8").length != 0) {
-      countData = JSON.parse(fs.readFileSync("liveLearnVotes.json", "utf8"));
-    } else {
-      countData = [];
-    }
+var query;
+if(contentId && userId){
+   query = "SELECT * FROM public.learnvote WHERE content_id = '"+ contentId +"'AND "+"user_id = '"+ userId + "'";
 
+}else if(contentId)
+{
+  query = "SELECT * FROM public.learnvote WHERE content_id = '"+ contentId + "'";
+
+}else{
+  query = "SELECT * FROM public.learnvote ";
+}
+
+client.query(query).then(( results) =>{
+ 
     res.send({
       ts: new Date().toISOString(),
       params: {
@@ -402,10 +392,38 @@ app.get("/voteCount", (req, res, next) => {
       },
       responseCode: "OK",
       result: {
-        data: { ...countData },
-        count: countData.length,
+        data: { ...results.rows },
+        count:results.rowCount,
       },
-    });
+    });  
+},err=>{
+  console.log("errr-----------", err);
+})
+
+  if (fs.existsSync("liveLearnVotes.json")) {
+    fileExists = true;
+
+    if (fs.readFileSync("liveLearnVotes.json", "utf8").length != 0) {
+      countData = JSON.parse(fs.readFileSync("liveLearnVotes.json", "utf8"));
+    } else {
+      countData = [];
+    }
+
+    // res.send({
+    //   ts: new Date().toISOString(),
+    //   params: {
+    //     resmsgid: uuid(),
+    //     msgid: uuid(),
+    //     status: "successful",
+    //     err: null,
+    //     errmsg: null,
+    //   },
+    //   responseCode: "OK",
+    //   result: {
+    //     data: { ...countData },
+    //     count: countData.length,
+    //   },
+    // });
   } else {
     fileExists = false;
     res.send({
