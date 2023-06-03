@@ -103,11 +103,12 @@
             <!-- <th *ngIf="this.pageName == 'upForVote'">Action</th> -->
           </tr>
           <tr>
+            <th *ngIf="this.pageName == 'upForVote'">&nbsp;</th>
             <th
               *ngFor="let col of columns"
               [ngSwitch]="col.field"
             >
-              <p *ngIf="this.pageName == 'upForVote'">&nbsp;</p>
+              
               <!-- <p-multiSelect *ngSwitchCase="'UserName'" (onChange)="dtOrg.filter($event.value, col.field, 'in')" [options]="UserNameValues" defaultLabel="All"
                     appendTo="body"></p-multiSelect> -->
                     <!-- <p-multiSelect
@@ -132,7 +133,7 @@
                 appendTo="body"
               ></p-multiSelect>
             </th>
-            <th *ngIf="this.pageName == 'upForVote'"></th>
+            <!-- <th *ngIf="this.pageName == 'upForVote'"></th> -->
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-rowData let-columns="columns">
