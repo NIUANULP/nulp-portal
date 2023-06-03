@@ -94,7 +94,28 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
     // this.layoutConfiguration = this.configService.appConfig.layoutConfiguration;
   }
   ngOnInit() {
-           
+    this.https
+      .get(this.configService.urlConFig.URLS.FILE_READ)
+      .subscribe((data) => {
+        this.getAllContent();
+        this.votelist = data["result"].data;
+      },(err) => {
+        console.log(err);
+        this.getAllContent();
+        // this.toasterService.error(this.resourceService.messages.emsg.m0007);
+      });
+      this.https
+      .get(this.configService.urlConFig.URLS.FILE_READ_DATABASE)
+      .subscribe((data) => {
+        this.getAllContent();
+        // this.votelist = data["result"].data;
+      },(err) => {
+        console.log(err);
+        this.getAllContent();
+        // this.toasterService.error(this.resourceService.messages.emsg.m0007);
+      });
+      this.getAllContent();
+      
     this.activatedRoute.queryParams.subscribe((params) => {
       this.queryParams = params;
       if (this.pageName != undefined && this.pageName != this.queryParams) {
@@ -109,7 +130,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
     }
     this.cols = [];
     this.initializeDateFields();
-    this.getAllContent();
+    
     // this.getOrgList();
     this.getOrgDetails();
   }
@@ -119,6 +140,19 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
     this.toDate = new Date();
   }
    getAllContent() {
+    // let queryParams = new HttpParams();
+    // queryParams = queryParams.append("contentId",);
+    // console.log("-----------",{params:queryParams})
+    // this.https
+    //           .get(this.configService.urlConFig.URLS.FILE_READ,{params:queryParams} )
+    //           .subscribe((data) => {
+               
+    //             this.votelist = data["result"].data;
+    //           },(err) => {
+    //             console.log(err);
+               
+    //             // this.toasterService.error(this.resourceService.messages.emsg.m0007);
+    //           });
     let status: any[];
     if (this.pageName == "upForVote") {
       status = ["Live"];
@@ -209,17 +243,22 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
             tempObj.forEach((element) => {
               let queryParams = new HttpParams();
               queryParams = queryParams.append("contentId",element.identifier);
-              this.https
-              .get(this.configService.urlConFig.URLS.FILE_READ,{params:queryParams} )
-              .subscribe((data) => {
-              element["votes"] =  data["result"].count;
-
-                this.votelist = data["result"].data;
-              },(err) => {
-                console.log(err);
+              // this.https
+              // .get(this.configService.urlConFig.URLS.FILE_READ,{params:queryParams} )
+              // .subscribe((data) => {
                
-                // this.toasterService.error(this.resourceService.messages.emsg.m0007);
-              });
+              //   this.votelist = data["result"].data;
+              // },(err) => {
+              //   console.log(err);
+               
+              //   // this.toasterService.error(this.resourceService.messages.emsg.m0007);
+              // });
+
+
+
+
+
+
 
               const options = {
                 url: this.configService.urlConFig.URLS.ADMIN.USER_SEARCH,
@@ -255,17 +294,17 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
                 label: element.UserName,
                 value: element.UserName,
               });
-              // var count = 0;
-              // let tempData = JSON.stringify(this.votelist);
-              // if (tempData) {
-              //   count = tempData.split(element.identifier).length - 1;
-              // element["votes"] = count;
+              var count = 0;
+              let tempData = JSON.stringify(this.votelist);
+              if (tempData) {
+                count = tempData.split(element.identifier).length - 1;
+              element["votes"] = count;
 
-              // } else {
-              //   count = 0;
-              // }
+              } else {
+                count = 0;
+              }
 
-              // element["votes"] = count;
+              element["votes"] = count;
               finalObj.push(element);
             });
             this.tableData = finalObj;
@@ -377,7 +416,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
     } else if (this.pageName == "upForVote") {
       this.cols = [
         { field: "name", header: "Name" },
-        { field: "votes", header: "Votes" },
+        // { field: "votes", header: "Votes" },
         { field: "category", header: "Category" },
         { field: "subcategory", header: "Sub-Category" },
         { field: "city", header: "City" },
