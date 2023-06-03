@@ -25,17 +25,17 @@ enableLogger({
 
 const { Client } = require('pg')
 const client = new Client({
-  user: envHelper.learnathon_voting_table_user,
-  host: envHelper.learnathon_voting_table_host,
-  database: envHelper.learnathon_voting_table_database,
-  password: envHelper.learnathon_voting_table_password,
-  port: envHelper.learnathon_voting_table_port
+  // user: envHelper.learnathon_voting_table_user,
+  // host: envHelper.learnathon_voting_table_host,
+  // database: envHelper.learnathon_voting_table_database,
+  // password: envHelper.learnathon_voting_table_password,
+  // port: envHelper.learnathon_voting_table_port
 
-  // user:'postgres',
-  // host: '127.0.0.1',
-  // database: 'postgres',
-  // password: 'postgres',
-  // port: 4000,
+  user:'postgres',
+  host: '192.168.2.5',
+  database: 'learnathon',
+  password: '4f487e7141307c67ef7c',
+  port: 5432,
 
 })
 client.connect(function(err) {
