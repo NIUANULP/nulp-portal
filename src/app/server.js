@@ -37,6 +37,12 @@ const client = new Client({
   password: '4f487e7141307c67ef7c',
   port: 5432,
 
+  // user:'postgres',
+  // host: '127.0.0.1',
+  // database: 'postgres',
+  // password: 'postgres',
+  // port: 4000,
+
 })
 client.connect(function(err) {
   if (err) throw err;
@@ -247,7 +253,7 @@ app.post("/learnVote", bodyParser.json({ limit: "10mb" }), (req, res) => {
         throw error
       }
       if(results){
-
+        console.log("errr-----------", error)
         res.send({
           ts: new Date().toISOString(),
           params: {
@@ -264,103 +270,103 @@ app.post("/learnVote", bodyParser.json({ limit: "10mb" }), (req, res) => {
         })
       }
     })
-  var fileExists;
-  // stringify JSON Object
-  if (fs.existsSync("liveLearnVotes.json")) {
-    fileExists = true;
-    var jsonvoteData = fs.readFileSync("liveLearnVotes.json", "utf8");
-  } else {
-    fileExists = false;
-  }
-  if (jsonvoteData && fileExists) {
-    jsonvoteData = JSON.parse(jsonvoteData);
-    jsonvoteData.push(req.body.body[0]);
-    fs.writeFile(
-      "liveLearnVotes.json",
-      JSON.stringify(jsonvoteData),
-      "utf8",
-      function (err) {
-        if (err) {
-          console.log(
-            "An error occured while writing Live learnathon dashboard JSON Object to File."
-          );
-          return console.log(err);
-        } else {
-        }
-      },
-      res.send({
-        ts: new Date().toISOString(),
-        params: {
-          resmsgid: uuid(),
-          msgid: uuid(),
-          status: "successful",
-          err: null,
-          errmsg: null,
-        },
-        responseCode: "OK",
-        result: {
-          data: { ...jsonvoteData },
-        },
-      })
-    );
-  } else {
-    fs.writeFile(
-      "liveLearnVotes.json",
-      JSON.stringify(req.body.body),
-      "utf8",
-      function (err) {
-        if (err) {
-          console.log(
-            "An error occured while writing Live learnathon dashboard JSON Object to File."
-          );
-          return console.log(err);
-        }
-      }
+  // var fileExists;
+  // // stringify JSON Object
+  // if (fs.existsSync("liveLearnVotes.json")) {
+  //   fileExists = true;
+  //   var jsonvoteData = fs.readFileSync("liveLearnVotes.json", "utf8");
+  // } else {
+  //   fileExists = false;
+  // }
+  // if (jsonvoteData && fileExists) {
+  //   jsonvoteData = JSON.parse(jsonvoteData);
+  //   jsonvoteData.push(req.body.body[0]);
+  //   fs.writeFile(
+  //     "liveLearnVotes.json",
+  //     JSON.stringify(jsonvoteData),
+  //     "utf8",
+  //     function (err) {
+  //       if (err) {
+  //         console.log(
+  //           "An error occured while writing Live learnathon dashboard JSON Object to File."
+  //         );
+  //         return console.log(err);
+  //       } else {
+  //       }
+  //     },
+  //     res.send({
+  //       ts: new Date().toISOString(),
+  //       params: {
+  //         resmsgid: uuid(),
+  //         msgid: uuid(),
+  //         status: "successful",
+  //         err: null,
+  //         errmsg: null,
+  //       },
+  //       responseCode: "OK",
+  //       result: {
+  //         data: { ...jsonvoteData },
+  //       },
+  //     })
+  //   );
+  // } else {
+  //   fs.writeFile(
+  //     "liveLearnVotes.json",
+  //     JSON.stringify(req.body.body),
+  //     "utf8",
+  //     function (err) {
+  //       if (err) {
+  //         console.log(
+  //           "An error occured while writing Live learnathon dashboard JSON Object to File."
+  //         );
+  //         return console.log(err);
+  //       }
+  //     }
      
-    );
-  }
+  //   );
+  // }
 });
 
-app.get("/voteCountDatabase", (req, res, next) => {
-  var fileExists;
-  var countData;
-  const contentId = req.query.contentId
-  const userId = req.query.userId
+// app.get("/voteCountDatabase", (req, res, next) => {
+//   var fileExists;
+//   var countData;
+//   const contentId = req.query.contentId
+//   const userId = req.query.userId
 
-var query;
-if(contentId && userId){
-   query = "SELECT * FROM public.learnvote WHERE content_id = '"+ contentId +"'AND"+"user_id = '"+ userId + "'";
+// var query;
+// if(contentId && userId){
+//    query = "SELECT * FROM public.learnvote WHERE content_id = '"+ contentId +"'AND"+"user_id = '"+ userId + "'";
 
-}else if(contentId)
-{
-  query = "SELECT * FROM public.learnvote WHERE content_id = '"+ contentId + "'";
+// }else if(contentId)
+// {
+//   query = "SELECT * FROM public.learnvote WHERE content_id = '"+ contentId + "'";
 
-}else{
-  query = "SELECT * FROM public.learnvote ";
-}
+// }else{
+//   query = "SELECT * FROM public.learnvote ";
+// }
 
-client.query(query).then(( results) =>{
+// client.query(query).then(( results) =>{
  
-    res.send({
-      ts: new Date().toISOString(),
-      params: {
-        resmsgid: uuid(),
-        msgid: uuid(),
-        status: "successful",
-        err: null,
-        errmsg: null,
-      },
-      responseCode: "OK",
-      result: {
-        data: { ...results.rows },
-        count:results.rowCount,
-      },
-    });  
-},err=>{
-  console.log("errr-----------", err);
-})
+//     res.send({
+//       ts: new Date().toISOString(),
+//       params: {
+//         resmsgid: uuid(),
+//         msgid: uuid(),
+//         status: "successful",
+//         err: null,
+//         errmsg: null,
+//       },
+//       responseCode: "OK",
+//       result: {
+//         data: { ...results.rows },
+//         count:results.rowCount,
+//       },
+//     });  
+// },err=>{
+//   console.log("errr-----------", err);
+// })
 
-});
+// });
 app.get("/voteCount", (req, res, next) => {
   var fileExists;
   var countData;
@@ -380,7 +386,7 @@ if(contentId && userId){
 }
 
 client.query(query).then(( results) =>{
- 
+  console.log("results voteCount-----------", results);
     res.send({
       ts: new Date().toISOString(),
       params: {
@@ -400,48 +406,48 @@ client.query(query).then(( results) =>{
   console.log("errr-----------", err);
 })
 
-  if (fs.existsSync("liveLearnVotes.json")) {
-    fileExists = true;
+  // if (fs.existsSync("liveLearnVotes.json")) {
+  //   fileExists = true;
 
-    if (fs.readFileSync("liveLearnVotes.json", "utf8").length != 0) {
-      countData = JSON.parse(fs.readFileSync("liveLearnVotes.json", "utf8"));
-    } else {
-      countData = [];
-    }
+  //   if (fs.readFileSync("liveLearnVotes.json", "utf8").length != 0) {
+  //     countData = JSON.parse(fs.readFileSync("liveLearnVotes.json", "utf8"));
+  //   } else {
+  //     countData = [];
+  //   }
 
-    // res.send({
-    //   ts: new Date().toISOString(),
-    //   params: {
-    //     resmsgid: uuid(),
-    //     msgid: uuid(),
-    //     status: "successful",
-    //     err: null,
-    //     errmsg: null,
-    //   },
-    //   responseCode: "OK",
-    //   result: {
-    //     data: { ...countData },
-    //     count: countData.length,
-    //   },
-    // });
-  } else {
-    fileExists = false;
-    res.send({
-      ts: new Date().toISOString(),
-      params: {
-        resmsgid: uuid(),
-        msgid: uuid(),
-        status: "successful",
-        err: null,
-        errmsg: null,
-      },
-      responseCode: "OK",
-      result: {
-        data: {},
-        msg: "no data found",
-      },
-    });
-  }
+  //   // res.send({
+  //   //   ts: new Date().toISOString(),
+  //   //   params: {
+  //   //     resmsgid: uuid(),
+  //   //     msgid: uuid(),
+  //   //     status: "successful",
+  //   //     err: null,
+  //   //     errmsg: null,
+  //   //   },
+  //   //   responseCode: "OK",
+  //   //   result: {
+  //   //     data: { ...countData },
+  //   //     count: countData.length,
+  //   //   },
+  //   // });
+  // } else {
+  //   fileExists = false;
+  //   res.send({
+  //     ts: new Date().toISOString(),
+  //     params: {
+  //       resmsgid: uuid(),
+  //       msgid: uuid(),
+  //       status: "successful",
+  //       err: null,
+  //       errmsg: null,
+  //     },
+  //     responseCode: "OK",
+  //     result: {
+  //       data: {},
+  //       msg: "no data found",
+  //     },
+  //   });
+  // }
 });
 
 const morganConfig = (tokens, req, res) => {

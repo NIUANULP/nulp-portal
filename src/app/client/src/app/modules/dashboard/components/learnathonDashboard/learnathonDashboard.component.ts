@@ -212,7 +212,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
               this.https
               .get(this.configService.urlConFig.URLS.FILE_READ,{params:queryParams} )
               .subscribe((data) => {
-              element["votes"] =  data["result"].count;
+              element["votes"] =  data["result"].count? data["result"].count:0;
 
                 this.votelist = data["result"].data;
               },(err) => {
