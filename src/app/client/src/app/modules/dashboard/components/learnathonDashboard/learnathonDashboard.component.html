@@ -39,7 +39,7 @@
         [resizableColumns]="true"
       >
         <ng-template pTemplate="caption">
-          <tr class="d-flex d-jc-space-between">
+          <tr class="d-flex d-jc-space-between min-160">
             <td>
               <div class="ui small left icon input align-left">
                 <i class="search icon"></i>
@@ -50,6 +50,7 @@
                   placeholder="Search"
                   (input)="dtOrg.filterGlobal($event.target.value, 'contains')"
                   style="width: auto"
+                  class="inp-50"
                 />
               </div>
             </td>
@@ -83,7 +84,7 @@
         </ng-template>
         <ng-template pTemplate="header" let-columns>
           <tr>
-            <!-- <th *ngIf="this.pageName == 'upForVote'">Action</th> -->
+            <th *ngIf="this.pageName == 'upForVote'">Action</th>
             <th
               *ngFor="let col of columns"
               pResizableColumn
@@ -99,7 +100,7 @@
                 ariaLabelAsc="Activate to sort in ascending order"
               ></p-sortIcon>
             </th>
-            <th *ngIf="this.pageName == 'upForVote'">Action</th>
+            <!-- <th *ngIf="this.pageName == 'upForVote'">Action</th> -->
           </tr>
           <tr>
             <th
@@ -129,6 +130,15 @@
         </ng-template>
         <ng-template pTemplate="body" let-rowData let-columns="columns">
           <tr>
+            <td *ngIf="this.pageName == 'upForVote'">
+              <button
+                class="sb-btn sb-btn-normal sb-btn-primary"
+                (click)="giveVote(rowData)"
+              >
+                Vote Here
+              </button>
+              <!-- &nbsp; -->
+            </td>
             <td *ngFor="let col of columns" class="ui-resizable-column">
               <!-- <button *ngIf="this.pageName == 'upForVote'"
               class="sb-btn sb-btn-normal sb-btn-primary"
@@ -139,15 +149,7 @@
               {{ rowData[col.field] }}
             </td>
 
-            <td *ngIf="this.pageName == 'upForVote'">
-              <button
-                class="sb-btn sb-btn-normal sb-btn-primary"
-                (click)="giveVote(rowData)"
-              >
-                Vote Here
-              </button>
-              <!-- &nbsp; -->
-            </td>
+           
           </tr>
         </ng-template>
       </p-table>
