@@ -235,7 +235,7 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
               this.https
               .get(this.config.urlConFig.URLS.FILE_READ,{params:queryParams} )
               .subscribe((data) => {
-               if(data["result"].count == 0){
+               if( data["result"].count != 'undefined' && data["result"].count == 0){
                 this.canVote= true;
                }else{
                 this.canVote= false;

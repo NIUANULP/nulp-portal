@@ -107,10 +107,17 @@
               *ngFor="let col of columns"
               [ngSwitch]="col.field"
             >
-              <!-- <p *ngIf="this.pageName == 'upForVote'">&nbsp;</p> -->
+              <p *ngIf="this.pageName == 'upForVote'">&nbsp;</p>
               <!-- <p-multiSelect *ngSwitchCase="'UserName'" (onChange)="dtOrg.filter($event.value, col.field, 'in')" [options]="UserNameValues" defaultLabel="All"
                     appendTo="body"></p-multiSelect> -->
-              <p-multiSelect
+                    <!-- <p-multiSelect
+                    *ngSwitchCase="'votes'"
+                    (onChange)="dtOrg.filter($event.value, col.field, 'in')"
+                    [options]=""
+                    defaultLabel="All"
+                    appendTo="body"
+                  ></p-multiSelect> -->
+                    <p-multiSelect
                 *ngSwitchCase="'category'"
                 (onChange)="dtOrg.filter($event.value, col.field, 'in')"
                 [options]="CategoryValues"
