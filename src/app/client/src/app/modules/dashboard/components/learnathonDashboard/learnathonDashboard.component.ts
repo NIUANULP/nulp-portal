@@ -155,7 +155,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
 
         contentType: ["Course", "Resource", "Collection"],
       },
-      limit: 100
+      limit: 100,
       offset: (1 - 1) * 10,
     };
 
