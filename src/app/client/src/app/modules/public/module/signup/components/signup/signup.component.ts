@@ -55,7 +55,7 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
   passwordError: string;
   showTncPopup = false;
   birthYearOptions: Array<number> = [];
-  isMinor: Boolean = false;
+  isMinor: Boolean = true;
   formInputType: string;
   isP1CaptchaEnabled: any;
   yearOfBirth: string;
@@ -97,6 +97,7 @@ userDetailsForm: FormGroup;
 ]
 allSubCategories:any;
 allInstitutions: any;
+isSBM: boolean=false;
 
 // =======learnathon ends=======
   constructor(formBuilder: FormBuilder, public resourceService: ResourceService,
@@ -132,9 +133,21 @@ allInstitutions: any;
     
 
     const currentURL = window.location.href;
+
+// learnathon starts
     if (currentURL.includes("learnathon")){
       this.isLearnathon = false;
     }
+// learnathon ends
+// ============================
+// ============================
+// sbm starts
+    // const currentURL = window.location.href;
+    if (currentURL.includes("SBMRegistration")){
+      this.isSBM = true;
+    }
+// sbm ends
+// ============================
 
     this.instance = _.upperCase(this.resourceService.instance || 'SUNBIRD');
     this.tenantDataSubscription = this.tenantService.tenantData$.subscribe(
@@ -269,6 +282,46 @@ allInstitutions: any;
       });
       this.onContactTypeValueChanges();
     this.enableSignUpSubmitButton();
+    }else if(this.isSBM){
+      console.log(this.isSBM)
+      this.signUpForm = this.sbFormBuilder.group({
+        name: new FormControl(null, [Validators.required]),
+        password: new FormControl(null, [Validators.required, Validators.minLength(8)]),
+        confirmPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
+        phone: new FormControl(null, [Validators.required, Validators.pattern(/^[6-9]\d{9}$/)]),
+        email: new FormControl(null, [Validators.required, Validators.email]),
+        contactType: new FormControl('email'),
+        uniqueContact: new FormControl(null, [Validators.required]),
+        tncAccepted: new FormControl(false, [Validators.requiredTrue]),
+        state: new FormControl(null,[Validators.required]),
+        urbanLocalBody: new FormControl(null,[Validators.required]),
+        designation: new FormControl(null),
+      }, {
+        validator: (formControl) => {
+          const passCtrl = formControl.controls.password;
+          const conPassCtrl = formControl.controls.confirmPassword;
+          const nameCtrl = formControl.controls.name;
+          const state = formControl.controls.state;
+          const urbanLocalBody = formControl.controls.urbanLocalBody;
+          const designation = formControl.controls.designation;
+          // const cityCtrl = formControl.controls.city;
+          // const institutionCtrl = formControl.controls.institution;
+          this.onPasswordChange(passCtrl);
+          if (_.trim(nameCtrl.value) === '') { nameCtrl.setErrors({ required: true }); }
+          if (_.trim(passCtrl.value) === '') { passCtrl.setErrors({ required: true }); }
+          if (_.trim(conPassCtrl.value) === '') { conPassCtrl.setErrors({ required: true }); }
+          // if (_.trim(state.value) === '') { state.setErrors({ required: true }); }
+          // if (_.trim(urbanLocalBody.value) === '') { urbanLocalBody.setErrors({ required: true }); }
+          // if (_.trim(designation.value) === '') { designation.setErrors({ required: true }); }
+         if (passCtrl.value !== conPassCtrl.value) {
+            conPassCtrl.setErrors({ validatePasswordConfirmation: true });
+          } else { conPassCtrl.setErrors(null); }
+          return null;
+        }
+      });
+      this.onContactTypeValueChanges();
+    this.enableSignUpSubmitButton();
+    
     }else{
       this.signUpForm = this.sbFormBuilder.group({
         name: new FormControl(null, [Validators.required]),
@@ -454,6 +507,7 @@ allInstitutions: any;
       { 
         this.onSubmitLearnathonSignUp();
       }
+
       else
       {
         if (this.isP1CaptchaEnabled === 'true') {
@@ -625,6 +679,7 @@ allInstitutions: any;
 
   onSubmitSignUpForm(captchaResponse?) {
     this.disableSubmitBtn = true;
+    console.log("ssssssss==== ", this.signUpForm)
     this.generateOTP(captchaResponse);
   }
 
