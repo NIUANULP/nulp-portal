@@ -114,6 +114,8 @@
       "CREATE_V1": "user/v1/create",
       "CREATE_V2": "user/v2/create",
       "SIGN_UP_V1": "user/v2/signup",
+      "SIGN_UP_V1_SBM": "user/v1/signup",
+
       "LOCATION_SEARCH": "data/v1/location/search",
       "TYPE": "user/v1/type/list",
       "VALIDATE_CERTIFICATE": "certreg/v1/certs/validate",
