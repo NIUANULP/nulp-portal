@@ -87,6 +87,8 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
     targetedCategorytheme:any;
     showTargetedCategory:boolean=false;
     selectedTab:any;
+    isSbmcourse = false;
+
     get slideConfig() {
         return cloneDeep(this.configService.appConfig.LibraryCourses.slideConfig);
     }
@@ -217,6 +219,7 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
         this.selectedTab=queryParams.selectedTab; 
         this.showTargetedCategory=false;   
         this.getFormConfigs();
+        this.isSbmcourse = this.selectedTab === 'sbmcourse';
         });
         this.initConfiguration();
 
@@ -448,7 +451,6 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
                     this.pageSections = [];
                     this.svgToDisplay = get(currentPageData, 'theme.imageName');
                     this.displayBanner = (_.get(currentPageData, 'contentType') === 'home') ? true : false;
-
                     this.redoLayout();
                     this.facetSections = [];
                     if (_.get(currentPageData, 'filter')) {
@@ -467,6 +469,9 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
                         this.segmentationTagService.getUpdatedCommands().then(() => {
                             this.showorHideBanners();
                         });
+                    } else if (_.get(currentPageData, 'contentType') === 'sbmcourse'){
+                        // @Hack for SBM Courses Menu 
+                        _reqFilters = this.contentSearchService.mapCategories({ filters });
                     } else {
                         _reqFilters = this.contentSearchService.mapCategories({ filters: { ...this.selectedFilters, ...filters } });
                     }
