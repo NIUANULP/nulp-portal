@@ -31,17 +31,17 @@ const client = new Client({
   // password: envHelper.learnathon_voting_table_password,
   // port: envHelper.learnathon_voting_table_port
 
-  user:'postgres',
-  host: '192.168.2.5',
-  database: 'learnathon',
-  password: '4f487e7141307c67ef7c',
-  port: 5432,
-
   // user:'postgres',
-  // host: '127.0.0.1',
-  // database: 'postgres',
-  // password: 'postgres',
-  // port: 4000,
+  // host: '192.168.2.5',
+  // database: 'learnathon',
+  // password: '4f487e7141307c67ef7c',
+  // port: 5432,
+
+  user:'postgres',
+  host: '127.0.0.1',
+  database: 'postgres',
+  password: 'postgres',
+  port: 4000,
 
 })
 client.connect(function(err) {
@@ -205,9 +205,6 @@ app.post("/learnCount", bodyParser.json({ limit: "10mb" }), (req, res) => {
     "utf8",
     function (err) {
       if (err) {
-        console.log(
-          "An error occured while writing Live learnathon dashboard JSON Object to File."
-        );
         return console.log(err);
       }
 
@@ -240,36 +237,65 @@ app.get("/counts", (req, res, next) => {
 });
 
 app.post("/learnVote", bodyParser.json({ limit: "10mb" }), (req, res) => {
+
     let date_time = new Date();
     let date =  dateFormat(date_time, 'yyyy-mm-dd');
-      let time =  date_time.getHours() + ":" +  date_time.getMinutes() + ":" + date_time.getSeconds();
+    let time =  date_time.getHours() + ":" +  date_time.getMinutes() + ":" + date_time.getSeconds();
     const { userId, contentId , vote,userName,UserMobile, userEmail,userCity, reasonOfVote, votedOn } = req.body.body[0]
     const body = [userId, contentId , vote,userName,UserMobile, userEmail,userCity, reasonOfVote, date, time]
 
-    client.query('INSERT INTO learnvote (user_id, content_id, vote, user_name,user_mobile, user_email, user_city, reason_of_vote, voting_date, voting_time) VALUES ($1, $2,$3,$4,$5,$6,$7,$8,$9, $10) RETURNING *', body, (error, results) => {
-    
-      if (error) {
-        console.log("errr-----------", error)
-        throw error
-      }
-      if(results){
-        console.log("errr-----------", error)
+    client.query("SELECT * FROM public.learnvote WHERE content_id = '"+contentId +"'AND "+"user_id = '"+ userId + "'").then(( results) =>{
+       if (results.rowCount != 0)  {
         res.send({
           ts: new Date().toISOString(),
           params: {
             resmsgid: uuid(),
             msgid: uuid(),
-            status: "successful",
+            status: "error",
             err: null,
-            errmsg: null,
+            errmsg: "Vote already present",
           },
           responseCode: "OK",
           result: {
-            data: { ...results },
+            data:  "You have already voted this content",
           },
         })
-      }
+       } else{
+        client.query('INSERT INTO learnvote (user_id, content_id, vote, user_name,user_mobile, user_email, user_city, reason_of_vote, voting_date, voting_time) VALUES ($1, $2,$3,$4,$5,$6,$7,$8,$9, $10) RETURNING *', body, (error, results) => {
+    
+          if (error) {
+            console.log("errr-----------", error)
+            throw error
+          }
+          if(results){
+            console.log("errr-----------", error)
+            res.send({
+              ts: new Date().toISOString(),
+              params: {
+                resmsgid: uuid(),
+                msgid: uuid(),
+                status: "successful",
+                err: null,
+                errmsg: null,
+              },
+              responseCode: "OK",
+              result: {
+                data: { ...results },
+              },
+            })
+          }
+        })
+       }
+    },err=>{
+      console.log("errr-----------", err);
     })
+
+
+
+    
+    // console.log("query-----------", 'INSERT INTO learnvote'+ body+ 'VALUES ($1, $2,$3,$4,$5,$6,$7,$8,$9, $10) RETURNING *');
+
+
   // var fileExists;
   // // stringify JSON Object
   // if (fs.existsSync("liveLearnVotes.json")) {
@@ -327,46 +353,6 @@ app.post("/learnVote", bodyParser.json({ limit: "10mb" }), (req, res) => {
   // }
 });
 
-// app.get("/voteCountDatabase", (req, res, next) => {
-//   var fileExists;
-//   var countData;
-//   const contentId = req.query.contentId
-//   const userId = req.query.userId
-
-// var query;
-// if(contentId && userId){
-//    query = "SELECT * FROM public.learnvote WHERE content_id = '"+ contentId +"'AND"+"user_id = '"+ userId + "'";
-
-// }else if(contentId)
-// {
-//   query = "SELECT * FROM public.learnvote WHERE content_id = '"+ contentId + "'";
-
-// }else{
-//   query = "SELECT * FROM public.learnvote ";
-// }
-
-// client.query(query).then(( results) =>{
- 
-//     res.send({
-//       ts: new Date().toISOString(),
-//       params: {
-//         resmsgid: uuid(),
-//         msgid: uuid(),
-//         status: "successful",
-//         err: null,
-//         errmsg: null,
-//       },
-//       responseCode: "OK",
-//       result: {
-//         data: { ...results.rows },
-//         count:results.rowCount,
-//       },
-//     });  
-// },err=>{
-//   console.log("errr-----------", err);
-// })
-
-// });
 app.get("/voteCount", (req, res, next) => {
   var fileExists;
   var countData;
@@ -386,7 +372,6 @@ if(contentId && userId){
 }
 
 client.query(query).then(( results) =>{
-  console.log("results voteCount-----------", results);
     res.send({
       ts: new Date().toISOString(),
       params: {
@@ -406,48 +391,6 @@ client.query(query).then(( results) =>{
   console.log("errr-----------", err);
 })
 
-  // if (fs.existsSync("liveLearnVotes.json")) {
-  //   fileExists = true;
-
-  //   if (fs.readFileSync("liveLearnVotes.json", "utf8").length != 0) {
-  //     countData = JSON.parse(fs.readFileSync("liveLearnVotes.json", "utf8"));
-  //   } else {
-  //     countData = [];
-  //   }
-
-  //   // res.send({
-  //   //   ts: new Date().toISOString(),
-  //   //   params: {
-  //   //     resmsgid: uuid(),
-  //   //     msgid: uuid(),
-  //   //     status: "successful",
-  //   //     err: null,
-  //   //     errmsg: null,
-  //   //   },
-  //   //   responseCode: "OK",
-  //   //   result: {
-  //   //     data: { ...countData },
-  //   //     count: countData.length,
-  //   //   },
-  //   // });
-  // } else {
-  //   fileExists = false;
-  //   res.send({
-  //     ts: new Date().toISOString(),
-  //     params: {
-  //       resmsgid: uuid(),
-  //       msgid: uuid(),
-  //       status: "successful",
-  //       err: null,
-  //       errmsg: null,
-  //     },
-  //     responseCode: "OK",
-  //     result: {
-  //       data: {},
-  //       msg: "no data found",
-  //     },
-  //   });
-  // }
 });
 
 const morganConfig = (tokens, req, res) => {
@@ -544,7 +487,6 @@ app.get("/enableDebugMode", (req, res, next) => {
   const timeInterval = req.query.timeInterval
     ? parseInt(req.query.timeInterval)
     : 1000 * 60 * 10;
-  // console.log("enable debug mode called", logLevel, timeInterval);
   enableDebugMode(timeInterval, logLevel);
   res.send({
     id: "enabledDebugMode",
