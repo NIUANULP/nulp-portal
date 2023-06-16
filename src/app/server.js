@@ -4,6 +4,7 @@ const envHelper = require("./helpers/environmentVariablesHelper.js");
 const path = require("path");
 const fs = require("fs");
 const packageObj = JSON.parse(fs.readFileSync("package.json", "utf8"));
+const fetch = require("node-fetch");
 
 enableLogger({
   logBasePath: path.join(__dirname, "logs"),
@@ -31,17 +32,17 @@ const client = new Client({
   // password: envHelper.learnathon_voting_table_password,
   // port: envHelper.learnathon_voting_table_port
 
-  user:'postgres',
-  host: '192.168.2.5',
-  database: 'learnathon',
-  password: '4f487e7141307c67ef7c',
-  port: 5432,
-
   // user:'postgres',
-  // host: '127.0.0.1',
-  // database: 'postgres',
-  // password: 'postgres',
-  // port: 4000,
+  // host: '192.168.2.5',
+  // database: 'learnathon',
+  // password: '4f487e7141307c67ef7c',
+  // port: 5432,
+
+  user:'postgres',
+  host: '127.0.0.1',
+  database: 'postgres',
+  password: 'postgres',
+  port: 4000,
 
 })
 client.connect(function(err) {
@@ -192,6 +193,84 @@ app.all("/logoff", endSession, (req, res) => {
   });
 });
 
+
+
+
+
+// ===============
+
+var secureToken ;
+var totalRegistration;
+var tokenDetails = {
+  "client_id": "lms",
+  "client_secret": "94196871-d583-407d-a835-d20122c71fbb",
+  "grant_type": "client_credentials"
+};
+
+var formBody = [];
+for (var property in tokenDetails) {
+var encodedKey = encodeURIComponent(property);
+var encodedValue = encodeURIComponent(tokenDetails[property]);
+formBody.push(encodedKey + "=" + encodedValue);
+}
+formBody = formBody.join("&");
+//  fetch('https://nulp.niua.org/auth/realms/sunbird/protocol/openid-connect/token', {
+// method: 'POST',
+// headers: {
+//   "Content-Type": "application/x-www-form-urlencoded"
+// },
+// body: formBody
+// }).then((response) => response.json())
+// .then((responseData) => {
+//   secureToken =responseData.access_token
+//   console.log("responseData-----------",secureToken); 
+// }).catch(err=>{console.log(err)})
+
+
+  app.get("/newRegistrations", ( req,res, next) => {
+    fetch('https://nulp.niua.org/api/user/v1/search', {
+  method: 'POST',
+  headers: {
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkTEJ3cG5MdE1SVWRCOTVBdWFCWjhMd0hSR2lTUTBpVCJ9.Q7-3SuUgnZXJuu-j2_kw9r8J82ckSxRR6zxylpgVG5o",
+    "x-authenticated-user-token": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI5bC1PTmFodUVWbFN3c1RKbFJlQjg3QmxxN21OQjFJSHd0M1pvcl9QRWpVIn0.eyJqdGkiOiJlYjFkZGJhYy04ZGMwLTQ5NjgtODU5OC01NTE5N2E3MDAwZTciLCJleHAiOjE2ODY5MDkxMDMsIm5iZiI6MCwiaWF0IjoxNjg2ODIyNzAzLCJpc3MiOiJodHRwczovL251bHAubml1YS5vcmcvYXV0aC9yZWFsbXMvc3VuYmlyZCIsImF1ZCI6WyJyZWFsbS1tYW5hZ2VtZW50IiwiYWNjb3VudCJdLCJzdWIiOiI3M2VkZjFiNi00Y2QyLTQ1N2MtYTEyMS0xZGRhN2E2MzgyNDgiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJsbXMiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiIzOWJjOTJhMC0wNzc4LTQ2NzUtYTdiZS00ZDA5NGQxNmNjNDUiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHBzOi8vbnVscC5uaXVhLm9yZyJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJhZG1pbiIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsicmVhbG0tbWFuYWdlbWVudCI6eyJyb2xlcyI6WyJtYW5hZ2UtdXNlcnMiXX0sImxtcyI6eyJyb2xlcyI6WyJ1bWFfcHJvdGVjdGlvbiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiIiLCJjbGllbnRJZCI6ImxtcyIsImNsaWVudEhvc3QiOiIxMTYuNzQuMjA5LjgzIiwicHJlZmVycmVkX3VzZXJuYW1lIjoic2VydmljZS1hY2NvdW50LWxtcyIsImNsaWVudEFkZHJlc3MiOiIxMTYuNzQuMjA5LjgzIiwiZW1haWwiOiJzZXJ2aWNlLWFjY291bnQtbG1zQHBsYWNlaG9sZGVyLm9yZyJ9.TI-DmqMoDhXM6BFY7vjv0Wek8fIoxiSDOt7kUM2xB_-B0QreMMFZdqAxyggUA06CPMLDARGPFnRP24DsA8XqIECH3OpMq31gsEHKLRybL3p1YVA9-VDxQCvYgO53A54Eb4DlkQwlpfvmr91PsNuysHFarF6_kVdI3tQlHNk3YoNQeGKbWC3E-HvlW26KD4yjLc_LoEVwzF6Vhl6TtTDhFzSlT7W2fQ7zWXAYIs1vzyFYSZ645QaksOTJiDVvshtve8XHVv9zUJ94-dCUVnytpvfiqrV7MH9x7nBHnj7xUeXzWU37cgYYfojCoKyqZcDBz_5bF2wpnyuOqDNvcimgbw",
+    "Content-Type": "application/json"
+  },
+  body:  JSON.stringify({
+    "request": {
+      "filters": {
+        "createdDate": {
+          ">=": "2023-03-13 00:00"
+        },
+        "status": "1"
+      },
+      "fields": [
+        "count",
+        "framework"
+      ]
+    }
+  })
+  }).then((response) => response.json())
+  .then((responseData) => {
+    totalRegistration = responseData.result.response.count
+    res.send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuid(),
+        msgid: uuid(),
+        status: "successful",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {
+        data: totalRegistration ,
+      },
+    });
+
+  }).catch(err=>{console.log(err)});
+  
+  });
+
 app.post("/learnCount", bodyParser.json({ limit: "10mb" }), (req, res) => {
   // file system module to perform file operations
   const fs = require("fs");
@@ -207,8 +286,6 @@ app.post("/learnCount", bodyParser.json({ limit: "10mb" }), (req, res) => {
       if (err) {
         return console.log(err);
       }
-
-      console.log("Live learnathon dashboard JSON file has been saved.");
     }
   );
 
@@ -244,113 +321,112 @@ app.post("/learnVote", bodyParser.json({ limit: "10mb" }), (req, res) => {
     const { userId, contentId , vote,userName,UserMobile, userEmail,userCity, reasonOfVote, votedOn } = req.body.body[0]
     const body = [userId, contentId , vote,userName,UserMobile, userEmail,userCity, reasonOfVote, date, time]
 
+
+    fetch('https://nulp.niua.org/api/user/v1/search', {
+  method: 'POST',
+  headers: {
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkTEJ3cG5MdE1SVWRCOTVBdWFCWjhMd0hSR2lTUTBpVCJ9.Q7-3SuUgnZXJuu-j2_kw9r8J82ckSxRR6zxylpgVG5o",
+    "x-authenticated-user-token": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI5bC1PTmFodUVWbFN3c1RKbFJlQjg3QmxxN21OQjFJSHd0M1pvcl9QRWpVIn0.eyJqdGkiOiJlYjFkZGJhYy04ZGMwLTQ5NjgtODU5OC01NTE5N2E3MDAwZTciLCJleHAiOjE2ODY5MDkxMDMsIm5iZiI6MCwiaWF0IjoxNjg2ODIyNzAzLCJpc3MiOiJodHRwczovL251bHAubml1YS5vcmcvYXV0aC9yZWFsbXMvc3VuYmlyZCIsImF1ZCI6WyJyZWFsbS1tYW5hZ2VtZW50IiwiYWNjb3VudCJdLCJzdWIiOiI3M2VkZjFiNi00Y2QyLTQ1N2MtYTEyMS0xZGRhN2E2MzgyNDgiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJsbXMiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiIzOWJjOTJhMC0wNzc4LTQ2NzUtYTdiZS00ZDA5NGQxNmNjNDUiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHBzOi8vbnVscC5uaXVhLm9yZyJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJhZG1pbiIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsicmVhbG0tbWFuYWdlbWVudCI6eyJyb2xlcyI6WyJtYW5hZ2UtdXNlcnMiXX0sImxtcyI6eyJyb2xlcyI6WyJ1bWFfcHJvdGVjdGlvbiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiIiLCJjbGllbnRJZCI6ImxtcyIsImNsaWVudEhvc3QiOiIxMTYuNzQuMjA5LjgzIiwicHJlZmVycmVkX3VzZXJuYW1lIjoic2VydmljZS1hY2NvdW50LWxtcyIsImNsaWVudEFkZHJlc3MiOiIxMTYuNzQuMjA5LjgzIiwiZW1haWwiOiJzZXJ2aWNlLWFjY291bnQtbG1zQHBsYWNlaG9sZGVyLm9yZyJ9.TI-DmqMoDhXM6BFY7vjv0Wek8fIoxiSDOt7kUM2xB_-B0QreMMFZdqAxyggUA06CPMLDARGPFnRP24DsA8XqIECH3OpMq31gsEHKLRybL3p1YVA9-VDxQCvYgO53A54Eb4DlkQwlpfvmr91PsNuysHFarF6_kVdI3tQlHNk3YoNQeGKbWC3E-HvlW26KD4yjLc_LoEVwzF6Vhl6TtTDhFzSlT7W2fQ7zWXAYIs1vzyFYSZ645QaksOTJiDVvshtve8XHVv9zUJ94-dCUVnytpvfiqrV7MH9x7nBHnj7xUeXzWU37cgYYfojCoKyqZcDBz_5bF2wpnyuOqDNvcimgbw",
+    "Content-Type": "application/json"
+  },
+  body:  JSON.stringify({
+    "request": {
+      "filters": {
+        "userId": userId, 
+        "status": "1"
+      },
+      "fields": [
+        "count",
+        "framework"
+      ]
+    }
+  })
+  }).then((response) => response.json())
+  .then((responseData) => {
+
+    if(responseData.result.response.count == 1){
     client.query("SELECT * FROM public.learnvote WHERE content_id = '"+contentId +"'AND "+"user_id = '"+ userId + "'").then(( results) =>{
-       if (results.rowCount != 0)  {
-        res.send({
-          ts: new Date().toISOString(),
-          params: {
-            resmsgid: uuid(),
-            msgid: uuid(),
-            status: "error",
-            err: null,
-            errmsg: "Vote already present",
-          },
-          responseCode: "OK",
-          result: {
-            data:  "You have already voted this content",
-          },
-        })
-       } else{
-        client.query('INSERT INTO learnvote (user_id, content_id, vote, user_name,user_mobile, user_email, user_city, reason_of_vote, voting_date, voting_time) VALUES ($1, $2,$3,$4,$5,$6,$7,$8,$9, $10) RETURNING *', body, (error, results) => {
+      if (results.rowCount != 0)  {
+       res.send({
+         ts: new Date().toISOString(),
+         params: {
+           resmsgid: uuid(),
+           msgid: uuid(),
+           status: "error",
+           err: null,
+           errmsg: "Vote already present",
+         },
+         responseCode: "OK",
+         result: {
+           data:  "You have already voted this content",
+         },
+       })
+      } else{
+       client.query('INSERT INTO learnvote (user_id, content_id, vote, user_name,user_mobile, user_email, user_city, reason_of_vote, voting_date, voting_time) VALUES ($1, $2,$3,$4,$5,$6,$7,$8,$9, $10) RETURNING *', body, (error, results) => {
+   
+         if (error) {
+           console.log("errr-----------", error)
+           throw error
+         }
+         if(results){
+           console.log("errr-----------", error)
+           res.send({
+             ts: new Date().toISOString(),
+             params: {
+               resmsgid: uuid(),
+               msgid: uuid(),
+               status: "successful",
+               err: null,
+               errmsg: null,
+             },
+             responseCode: "OK",
+             result: {
+               data: { ...results },
+             },
+           })
+         }
+       })
+      }
+   },err=>{
+     console.log("errr-----------", err);
+   })
+    }
+    else{
+      res.send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuid(),
+          msgid: uuid(),
+          status: "error",
+          err: null,
+          errmsg: "User not found",
+        },
+        responseCode: "OK",
+        result: {
+          data:  "User not found",
+        },
+      })
+    }
     
-          if (error) {
-            console.log("errr-----------", error)
-            throw error
-          }
-          if(results){
-            console.log("errr-----------", error)
-            res.send({
-              ts: new Date().toISOString(),
-              params: {
-                resmsgid: uuid(),
-                msgid: uuid(),
-                status: "successful",
-                err: null,
-                errmsg: null,
-              },
-              responseCode: "OK",
-              result: {
-                data: { ...results },
-              },
-            })
-          }
-        })
-       }
-    },err=>{
-      console.log("errr-----------", err);
+  }).catch(err=>{
+    res.send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuid(),
+        msgid: uuid(),
+        status: "error",
+        err: null,
+        errmsg: "User authentication failed",
+      },
+      responseCode: "OK",
+      result: {
+        data:  "User authentication failed",
+      },
     })
+  });
 
 
 
-    
-    // console.log("query-----------", 'INSERT INTO learnvote'+ body+ 'VALUES ($1, $2,$3,$4,$5,$6,$7,$8,$9, $10) RETURNING *');
-
-
-  // var fileExists;
-  // // stringify JSON Object
-  // if (fs.existsSync("liveLearnVotes.json")) {
-  //   fileExists = true;
-  //   var jsonvoteData = fs.readFileSync("liveLearnVotes.json", "utf8");
-  // } else {
-  //   fileExists = false;
-  // }
-  // if (jsonvoteData && fileExists) {
-  //   jsonvoteData = JSON.parse(jsonvoteData);
-  //   jsonvoteData.push(req.body.body[0]);
-  //   fs.writeFile(
-  //     "liveLearnVotes.json",
-  //     JSON.stringify(jsonvoteData),
-  //     "utf8",
-  //     function (err) {
-  //       if (err) {
-  //         console.log(
-  //           "An error occured while writing Live learnathon dashboard JSON Object to File."
-  //         );
-  //         return console.log(err);
-  //       } else {
-  //       }
-  //     },
-  //     res.send({
-  //       ts: new Date().toISOString(),
-  //       params: {
-  //         resmsgid: uuid(),
-  //         msgid: uuid(),
-  //         status: "successful",
-  //         err: null,
-  //         errmsg: null,
-  //       },
-  //       responseCode: "OK",
-  //       result: {
-  //         data: { ...jsonvoteData },
-  //       },
-  //     })
-  //   );
-  // } else {
-  //   fs.writeFile(
-  //     "liveLearnVotes.json",
-  //     JSON.stringify(req.body.body),
-  //     "utf8",
-  //     function (err) {
-  //       if (err) {
-  //         console.log(
-  //           "An error occured while writing Live learnathon dashboard JSON Object to File."
-  //         );
-  //         return console.log(err);
-  //       }
-  //     }
-     
-  //   );
-  // }
 });
 
 app.get("/voteCount", (req, res, next) => {
@@ -392,6 +468,11 @@ client.query(query).then(( results) =>{
 })
 
 });
+
+
+
+// ===============================
+
 
 const morganConfig = (tokens, req, res) => {
   let edata = {
@@ -659,6 +740,7 @@ app.use(
   bodyParser.json({ limit: "50mb" }),
   require("./helpers/resourceBundles")(express)
 ); // Resource bundles apis
+
 
 frameworkAPI
   .bootstrap(frameworkConfig, subApp)
