@@ -342,9 +342,12 @@ app.post("/learnVote", bodyParser.json({ limit: "10mb" }), (req, res) => {
   })
   }).then((response) => response.json())
   .then((responseData) => {
+    console.log("responseData----------------------",responseData)
     if(responseData.result.response.count == 1){
 
     client.query("SELECT * FROM public.learnvote WHERE content_id = '"+contentId +"'AND "+"user_id = '"+ userId + "'").then(( results) =>{
+
+      console.log("results----------------------",results)
 
       if (results.rowCount != 0)  {
        res.send({
@@ -363,7 +366,7 @@ app.post("/learnVote", bodyParser.json({ limit: "10mb" }), (req, res) => {
        })
       } else{
        client.query('INSERT INTO learnvote (user_id, content_id, vote, user_name,user_mobile, user_email, user_city, reason_of_vote, voting_date, voting_time) VALUES ($1, $2,$3,$4,$5,$6,$7,$8,$9, $10) RETURNING *', body, (error, results) => {
-   
+        console.log("resultsaaaaaaaa----------------------",results)
          if (error) {
            console.log("errr-----------", error)
            throw error
