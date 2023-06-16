@@ -214,17 +214,16 @@ var encodedValue = encodeURIComponent(tokenDetails[property]);
 formBody.push(encodedKey + "=" + encodedValue);
 }
 formBody = formBody.join("&");
-//  fetch('https://nulp.niua.org/auth/realms/sunbird/protocol/openid-connect/token', {
-// method: 'POST',
-// headers: {
-//   "Content-Type": "application/x-www-form-urlencoded"
-// },
-// body: formBody
-// }).then((response) => response.json())
-// .then((responseData) => {
-//   secureToken =responseData.access_token
-//   console.log("responseData-----------",secureToken); 
-// }).catch(err=>{console.log(err)})
+ fetch('https://nulp.niua.org/auth/realms/sunbird/protocol/openid-connect/token', {
+method: 'POST',
+headers: {
+  "Content-Type": "application/x-www-form-urlencoded"
+},
+body: formBody
+}).then((response) => response.json())
+.then((responseData) => {
+  secureToken =responseData.access_token
+}).catch(err=>{console.log(err)})
 
 
   app.get("/newRegistrations", ( req,res, next) => {
@@ -232,7 +231,7 @@ formBody = formBody.join("&");
   method: 'POST',
   headers: {
     "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkTEJ3cG5MdE1SVWRCOTVBdWFCWjhMd0hSR2lTUTBpVCJ9.Q7-3SuUgnZXJuu-j2_kw9r8J82ckSxRR6zxylpgVG5o",
-    "x-authenticated-user-token": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI5bC1PTmFodUVWbFN3c1RKbFJlQjg3QmxxN21OQjFJSHd0M1pvcl9QRWpVIn0.eyJqdGkiOiJlYjFkZGJhYy04ZGMwLTQ5NjgtODU5OC01NTE5N2E3MDAwZTciLCJleHAiOjE2ODY5MDkxMDMsIm5iZiI6MCwiaWF0IjoxNjg2ODIyNzAzLCJpc3MiOiJodHRwczovL251bHAubml1YS5vcmcvYXV0aC9yZWFsbXMvc3VuYmlyZCIsImF1ZCI6WyJyZWFsbS1tYW5hZ2VtZW50IiwiYWNjb3VudCJdLCJzdWIiOiI3M2VkZjFiNi00Y2QyLTQ1N2MtYTEyMS0xZGRhN2E2MzgyNDgiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJsbXMiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiIzOWJjOTJhMC0wNzc4LTQ2NzUtYTdiZS00ZDA5NGQxNmNjNDUiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHBzOi8vbnVscC5uaXVhLm9yZyJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJhZG1pbiIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsicmVhbG0tbWFuYWdlbWVudCI6eyJyb2xlcyI6WyJtYW5hZ2UtdXNlcnMiXX0sImxtcyI6eyJyb2xlcyI6WyJ1bWFfcHJvdGVjdGlvbiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiIiLCJjbGllbnRJZCI6ImxtcyIsImNsaWVudEhvc3QiOiIxMTYuNzQuMjA5LjgzIiwicHJlZmVycmVkX3VzZXJuYW1lIjoic2VydmljZS1hY2NvdW50LWxtcyIsImNsaWVudEFkZHJlc3MiOiIxMTYuNzQuMjA5LjgzIiwiZW1haWwiOiJzZXJ2aWNlLWFjY291bnQtbG1zQHBsYWNlaG9sZGVyLm9yZyJ9.TI-DmqMoDhXM6BFY7vjv0Wek8fIoxiSDOt7kUM2xB_-B0QreMMFZdqAxyggUA06CPMLDARGPFnRP24DsA8XqIECH3OpMq31gsEHKLRybL3p1YVA9-VDxQCvYgO53A54Eb4DlkQwlpfvmr91PsNuysHFarF6_kVdI3tQlHNk3YoNQeGKbWC3E-HvlW26KD4yjLc_LoEVwzF6Vhl6TtTDhFzSlT7W2fQ7zWXAYIs1vzyFYSZ645QaksOTJiDVvshtve8XHVv9zUJ94-dCUVnytpvfiqrV7MH9x7nBHnj7xUeXzWU37cgYYfojCoKyqZcDBz_5bF2wpnyuOqDNvcimgbw",
+    "x-authenticated-user-token": secureToken,
     "Content-Type": "application/json"
   },
   body:  JSON.stringify({
@@ -326,7 +325,7 @@ app.post("/learnVote", bodyParser.json({ limit: "10mb" }), (req, res) => {
   method: 'POST',
   headers: {
     "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkTEJ3cG5MdE1SVWRCOTVBdWFCWjhMd0hSR2lTUTBpVCJ9.Q7-3SuUgnZXJuu-j2_kw9r8J82ckSxRR6zxylpgVG5o",
-    "x-authenticated-user-token": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI5bC1PTmFodUVWbFN3c1RKbFJlQjg3QmxxN21OQjFJSHd0M1pvcl9QRWpVIn0.eyJqdGkiOiJlYjFkZGJhYy04ZGMwLTQ5NjgtODU5OC01NTE5N2E3MDAwZTciLCJleHAiOjE2ODY5MDkxMDMsIm5iZiI6MCwiaWF0IjoxNjg2ODIyNzAzLCJpc3MiOiJodHRwczovL251bHAubml1YS5vcmcvYXV0aC9yZWFsbXMvc3VuYmlyZCIsImF1ZCI6WyJyZWFsbS1tYW5hZ2VtZW50IiwiYWNjb3VudCJdLCJzdWIiOiI3M2VkZjFiNi00Y2QyLTQ1N2MtYTEyMS0xZGRhN2E2MzgyNDgiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJsbXMiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiIzOWJjOTJhMC0wNzc4LTQ2NzUtYTdiZS00ZDA5NGQxNmNjNDUiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHBzOi8vbnVscC5uaXVhLm9yZyJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJhZG1pbiIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsicmVhbG0tbWFuYWdlbWVudCI6eyJyb2xlcyI6WyJtYW5hZ2UtdXNlcnMiXX0sImxtcyI6eyJyb2xlcyI6WyJ1bWFfcHJvdGVjdGlvbiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiIiLCJjbGllbnRJZCI6ImxtcyIsImNsaWVudEhvc3QiOiIxMTYuNzQuMjA5LjgzIiwicHJlZmVycmVkX3VzZXJuYW1lIjoic2VydmljZS1hY2NvdW50LWxtcyIsImNsaWVudEFkZHJlc3MiOiIxMTYuNzQuMjA5LjgzIiwiZW1haWwiOiJzZXJ2aWNlLWFjY291bnQtbG1zQHBsYWNlaG9sZGVyLm9yZyJ9.TI-DmqMoDhXM6BFY7vjv0Wek8fIoxiSDOt7kUM2xB_-B0QreMMFZdqAxyggUA06CPMLDARGPFnRP24DsA8XqIECH3OpMq31gsEHKLRybL3p1YVA9-VDxQCvYgO53A54Eb4DlkQwlpfvmr91PsNuysHFarF6_kVdI3tQlHNk3YoNQeGKbWC3E-HvlW26KD4yjLc_LoEVwzF6Vhl6TtTDhFzSlT7W2fQ7zWXAYIs1vzyFYSZ645QaksOTJiDVvshtve8XHVv9zUJ94-dCUVnytpvfiqrV7MH9x7nBHnj7xUeXzWU37cgYYfojCoKyqZcDBz_5bF2wpnyuOqDNvcimgbw",
+    "x-authenticated-user-token": secureToken,
     "Content-Type": "application/json"
   },
   body:  JSON.stringify({
@@ -343,9 +342,10 @@ app.post("/learnVote", bodyParser.json({ limit: "10mb" }), (req, res) => {
   })
   }).then((response) => response.json())
   .then((responseData) => {
-
     if(responseData.result.response.count == 1){
+
     client.query("SELECT * FROM public.learnvote WHERE content_id = '"+contentId +"'AND "+"user_id = '"+ userId + "'").then(( results) =>{
+
       if (results.rowCount != 0)  {
        res.send({
          ts: new Date().toISOString(),
