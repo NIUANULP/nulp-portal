@@ -32,17 +32,17 @@ const client = new Client({
   // password: envHelper.learnathon_voting_table_password,
   // port: envHelper.learnathon_voting_table_port
 
-  // user:'postgres',
-  // host: '192.168.2.5',
-  // database: 'learnathon',
-  // password: '4f487e7141307c67ef7c',
-  // port: 5432,
-
   user:'postgres',
-  host: '127.0.0.1',
-  database: 'postgres',
-  password: 'postgres',
-  port: 4000,
+  host: '192.168.2.5',
+  database: 'learnathon',
+  password: '4f487e7141307c67ef7c',
+  port: 5432,
+
+  // user:'postgres',
+  // host: '127.0.0.1',
+  // database: 'postgres',
+  // password: 'postgres',
+  // port: 4000,
 
 })
 client.connect(function(err) {
