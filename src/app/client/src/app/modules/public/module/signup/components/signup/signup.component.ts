@@ -295,7 +295,7 @@ isSBM: boolean=false;
         tncAccepted: new FormControl(false, [Validators.requiredTrue]),
         state: new FormControl(null,[Validators.required]),
         urbanLocalBody: new FormControl(null,[Validators.required]),
-        designation: new FormControl(null),
+        designation: new FormControl(null,[Validators.required]),
       }, {
         validator: (formControl) => {
           const passCtrl = formControl.controls.password;
@@ -310,9 +310,9 @@ isSBM: boolean=false;
           if (_.trim(nameCtrl.value) === '') { nameCtrl.setErrors({ required: true }); }
           if (_.trim(passCtrl.value) === '') { passCtrl.setErrors({ required: true }); }
           if (_.trim(conPassCtrl.value) === '') { conPassCtrl.setErrors({ required: true }); }
-          // if (_.trim(state.value) === '') { state.setErrors({ required: true }); }
-          // if (_.trim(urbanLocalBody.value) === '') { urbanLocalBody.setErrors({ required: true }); }
-          // if (_.trim(designation.value) === '') { designation.setErrors({ required: true }); }
+          if (_.trim(state.value) === '') { state.setErrors({ required: true }); }
+          if (_.trim(urbanLocalBody.value) === '') { urbanLocalBody.setErrors({ required: true }); }
+          if (_.trim(designation.value) === '') { designation.setErrors({ required: true }); }
          if (passCtrl.value !== conPassCtrl.value) {
             conPassCtrl.setErrors({ validatePasswordConfirmation: true });
           } else { conPassCtrl.setErrors(null); }
