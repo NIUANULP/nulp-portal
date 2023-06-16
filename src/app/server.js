@@ -332,7 +332,7 @@ app.post("/learnVote", bodyParser.json({ limit: "10mb" }), (req, res) => {
   body:  JSON.stringify({
     "request": {
       "filters": {
-        "userId": userId, //d76e1f15-581f-49f3-b85b-d24d561699ec
+        "userId": userId, 
         "status": "1"
       },
       "fields": [
@@ -343,9 +343,8 @@ app.post("/learnVote", bodyParser.json({ limit: "10mb" }), (req, res) => {
   })
   }).then((response) => response.json())
   .then((responseData) => {
+
     if(responseData.result.response.count == 1){
-
-
     client.query("SELECT * FROM public.learnvote WHERE content_id = '"+contentId +"'AND "+"user_id = '"+ userId + "'").then(( results) =>{
       if (results.rowCount != 0)  {
        res.send({
@@ -392,6 +391,22 @@ app.post("/learnVote", bodyParser.json({ limit: "10mb" }), (req, res) => {
      console.log("errr-----------", err);
    })
     }
+    else{
+      res.send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuid(),
+          msgid: uuid(),
+          status: "error",
+          err: null,
+          errmsg: "User not found",
+        },
+        responseCode: "OK",
+        result: {
+          data:  "User not found",
+        },
+      })
+    }
     
   }).catch(err=>{
     res.send({
@@ -401,11 +416,11 @@ app.post("/learnVote", bodyParser.json({ limit: "10mb" }), (req, res) => {
         msgid: uuid(),
         status: "error",
         err: null,
-        errmsg: "User not found",
+        errmsg: "User authentication failed",
       },
       responseCode: "OK",
       result: {
-        data:  "User not found",
+        data:  "User authentication failed",
       },
     })
   });
