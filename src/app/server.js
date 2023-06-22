@@ -32,17 +32,17 @@ const client = new Client({
   // password: envHelper.learnathon_voting_table_password,
   // port: envHelper.learnathon_voting_table_port
 
-  user:'postgres',
-  host: '192.168.2.5',
-  database: 'learnathon',
-  password: '4f487e7141307c67ef7c',
-  port: 5432,
-
   // user:'postgres',
-  // host: '127.0.0.1',
-  // database: 'postgres',
-  // password: 'postgres',
-  // port: 4000,
+  // host: '192.168.2.5',
+  // database: 'learnathon',
+  // password: '4f487e7141307c67ef7c',
+  // port: 5432,
+
+  user:'postgres',
+  host: '127.0.0.1',
+  database: 'postgres',
+  password: 'postgres',
+  port: 4000,
 
 })
 client.connect(function(err) {
@@ -314,121 +314,135 @@ app.get("/counts", (req, res, next) => {
 
 app.post("/learnVote", bodyParser.json({ limit: "10mb" }), (req, res) => {
 
-    let date_time = new Date();
-    let date =  dateFormat(date_time, 'yyyy-mm-dd');
-    let time =  date_time.getHours() + ":" +  date_time.getMinutes() + ":" + date_time.getSeconds();
-    const { userId, contentId , vote,userName,UserMobile, userEmail,userCity, reasonOfVote, votedOn } = req.body.body[0]
-    const body = [userId, contentId , vote,userName,UserMobile, userEmail,userCity, reasonOfVote, date, time]
+  //   let date_time = new Date();
+  //   let date =  dateFormat(date_time, 'yyyy-mm-dd');
+  //   let time =  date_time.getHours() + ":" +  date_time.getMinutes() + ":" + date_time.getSeconds();
+  //   const { userId, contentId , vote,userName,UserMobile, userEmail,userCity, reasonOfVote, votedOn } = req.body.body[0]
+  //   const body = [userId, contentId , vote,userName,UserMobile, userEmail,userCity, reasonOfVote, date, time]
 
 
-    fetch('https://nulp.niua.org/api/user/v1/search', {
-  method: 'POST',
-  headers: {
-    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkTEJ3cG5MdE1SVWRCOTVBdWFCWjhMd0hSR2lTUTBpVCJ9.Q7-3SuUgnZXJuu-j2_kw9r8J82ckSxRR6zxylpgVG5o",
-    "x-authenticated-user-token": secureToken,
-    "Content-Type": "application/json"
-  },
-  body:  JSON.stringify({
-    "request": {
-      "filters": {
-        "userId": userId, 
-        "status": "1"
-      },
-      "fields": [
-        "count",
-        "framework"
-      ]
-    }
-  })
-  }).then((response) => response.json())
-  .then((responseData) => {
-    console.log("responseData----------------------",responseData)
-    if(responseData.result.response.count == 1){
+  //   fetch('https://nulp.niua.org/api/user/v1/search', {
+  // method: 'POST',
+  // headers: {
+  //   "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkTEJ3cG5MdE1SVWRCOTVBdWFCWjhMd0hSR2lTUTBpVCJ9.Q7-3SuUgnZXJuu-j2_kw9r8J82ckSxRR6zxylpgVG5o",
+  //   "x-authenticated-user-token": secureToken,
+  //   "Content-Type": "application/json"
+  // },
+  // body:  JSON.stringify({
+  //   "request": {
+  //     "filters": {
+  //       "userId": userId, 
+  //       "status": "1"
+  //     },
+  //     "fields": [
+  //       "count",
+  //       "framework"
+  //     ]
+  //   }
+  // })
+  // }).then((response) => response.json())
+  // .then((responseData) => {
+  //   console.log("responseData----------------------",responseData)
+  //   if(responseData.result.response.count == 1){
 
-    client.query("SELECT * FROM public.learnvote WHERE content_id = '"+contentId +"'AND "+"user_id = '"+ userId + "'").then(( results) =>{
+  //   client.query("SELECT * FROM public.learnvote WHERE content_id = '"+contentId +"'AND "+"user_id = '"+ userId + "'").then(( results) =>{
 
-      console.log("results----------------------",results)
+  //     console.log("results----------------------",results.rows.length)
 
-      if (results.rowCount != 0)  {
-       res.send({
-         ts: new Date().toISOString(),
-         params: {
-           resmsgid: uuid(),
-           msgid: uuid(),
-           status: "error",
-           err: null,
-           errmsg: "Vote already present",
-         },
-         responseCode: "OK",
-         result: {
-           data:  "You have already voted this content",
-         },
-       })
-      } else{
-       client.query('INSERT INTO learnvote (user_id, content_id, vote, user_name,user_mobile, user_email, user_city, reason_of_vote, voting_date, voting_time) VALUES ($1, $2,$3,$4,$5,$6,$7,$8,$9, $10) RETURNING *', body, (error, results) => {
-        console.log("resultsaaaaaaaa----------------------",results)
-         if (error) {
-           console.log("errr-----------", error)
-           throw error
-         }
-         if(results){
-           console.log("errr-----------", error)
-           res.send({
-             ts: new Date().toISOString(),
-             params: {
-               resmsgid: uuid(),
-               msgid: uuid(),
-               status: "successful",
-               err: null,
-               errmsg: null,
-             },
-             responseCode: "OK",
-             result: {
-               data: { ...results },
-             },
-           })
-         }
-       })
-      }
-   },err=>{
-     console.log("errr-----------", err);
-   })
-    }
-    else{
-      res.send({
-        ts: new Date().toISOString(),
-        params: {
-          resmsgid: uuid(),
-          msgid: uuid(),
-          status: "error",
-          err: null,
-          errmsg: "User not found",
-        },
-        responseCode: "OK",
-        result: {
-          data:  "User not found",
-        },
-      })
-    }
+  //     if (results.rows.length != 0)  {
+  //      res.send({
+  //        ts: new Date().toISOString(),
+  //        params: {
+  //          resmsgid: uuid(),
+  //          msgid: uuid(),
+  //          status: "error",
+  //          err: null,
+  //          errmsg: "Vote already present",
+  //        },
+  //        responseCode: "OK",
+  //        result: {
+  //          data:  "You have already voted this content",
+  //        },
+  //      })
+  //     } else{
+  //      client.query('INSERT INTO learnvote (user_id, content_id, vote, user_name,user_mobile, user_email, user_city, reason_of_vote, voting_date, voting_time) VALUES ($1, $2,$3,$4,$5,$6,$7,$8,$9, $10) RETURNING *', body, (error, results) => {
+  //       console.log("resultsaaaaaaaa----------------------",results)
+  //        if (error) {
+  //          console.log("errr-----------", error)
+  //          throw error
+  //        }
+  //        if(results){
+  //          console.log("errr-----------", error)
+  //          res.send({
+  //            ts: new Date().toISOString(),
+  //            params: {
+  //              resmsgid: uuid(),
+  //              msgid: uuid(),
+  //              status: "successful",
+  //              err: null,
+  //              errmsg: null,
+  //            },
+  //            responseCode: "OK",
+  //            result: {
+  //              data: { ...results },
+  //            },
+  //          })
+  //        }
+  //      })
+  //     }
+  //  },err=>{
+  //    console.log("errr-----------", err);
+  //  })
+  //   }
+  //   else{
+  //     res.send({
+  //       ts: new Date().toISOString(),
+  //       params: {
+  //         resmsgid: uuid(),
+  //         msgid: uuid(),
+  //         status: "error",
+  //         err: null,
+  //         errmsg: "User not found",
+  //       },
+  //       responseCode: "OK",
+  //       result: {
+  //         data:  "User not found",
+  //       },
+  //     })
+  //   }
     
-  }).catch(err=>{
-    res.send({
-      ts: new Date().toISOString(),
-      params: {
-        resmsgid: uuid(),
-        msgid: uuid(),
-        status: "error",
-        err: null,
-        errmsg: "User authentication failed",
-      },
-      responseCode: "OK",
-      result: {
-        data:  "User authentication failed",
-      },
-    })
-  });
+  // }).catch(err=>{
+  //   res.send({
+  //     ts: new Date().toISOString(),
+  //     params: {
+  //       resmsgid: uuid(),
+  //       msgid: uuid(),
+  //       status: "error",
+  //       err: null,
+  //       errmsg: "User authentication failed",
+  //     },
+  //     responseCode: "OK",
+  //     result: {
+  //       data:  "User authentication failed",
+  //     },
+  //   })
+  // });
 
-
+// =========================stopping voting
+res.send({
+  ts: new Date().toISOString(),
+  params: {
+    resmsgid: uuid(),
+    msgid: uuid(),
+    status: "error",
+    err: null,
+    errmsg: "Voting is closed",
+  },
+  responseCode: "OK",
+  result: {
+    data:  "Voting is closed",
+  },
+})
 
 });
 
@@ -437,6 +451,7 @@ app.get("/voteCount", (req, res, next) => {
   var countData;
   const contentId = req.query.contentId
   const userId = req.query.userId
+  console.log("req=====",req)
 
 var query;
 if(contentId && userId){
