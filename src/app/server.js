@@ -4,6 +4,7 @@ const envHelper = require("./helpers/environmentVariablesHelper.js");
 const path = require("path");
 const fs = require("fs");
 const packageObj = JSON.parse(fs.readFileSync("package.json", "utf8"));
+const fetch = require("node-fetch");
 
 enableLogger({
   logBasePath: path.join(__dirname, "logs"),
@@ -192,6 +193,83 @@ app.all("/logoff", endSession, (req, res) => {
   });
 });
 
+
+
+
+
+// ===============
+
+var secureToken ;
+var totalRegistration;
+var tokenDetails = {
+  "client_id": "lms",
+  "client_secret": "94196871-d583-407d-a835-d20122c71fbb",
+  "grant_type": "client_credentials"
+};
+
+var formBody = [];
+for (var property in tokenDetails) {
+var encodedKey = encodeURIComponent(property);
+var encodedValue = encodeURIComponent(tokenDetails[property]);
+formBody.push(encodedKey + "=" + encodedValue);
+}
+formBody = formBody.join("&");
+ fetch('https://nulp.niua.org/auth/realms/sunbird/protocol/openid-connect/token', {
+method: 'POST',
+headers: {
+  "Content-Type": "application/x-www-form-urlencoded"
+},
+body: formBody
+}).then((response) => response.json())
+.then((responseData) => {
+  secureToken =responseData.access_token
+}).catch(err=>{console.log(err)})
+
+
+  app.get("/newRegistrations", ( req,res, next) => {
+    fetch('https://nulp.niua.org/api/user/v1/search', {
+  method: 'POST',
+  headers: {
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkTEJ3cG5MdE1SVWRCOTVBdWFCWjhMd0hSR2lTUTBpVCJ9.Q7-3SuUgnZXJuu-j2_kw9r8J82ckSxRR6zxylpgVG5o",
+    "x-authenticated-user-token": secureToken,
+    "Content-Type": "application/json"
+  },
+  body:  JSON.stringify({
+    "request": {
+      "filters": {
+        "createdDate": {
+          ">=": "2023-03-13 00:00"
+        },
+        "status": "1"
+      },
+      "fields": [
+        "count",
+        "framework"
+      ]
+    }
+  })
+  }).then((response) => response.json())
+  .then((responseData) => {
+    totalRegistration = responseData.result.response.count
+    res.send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuid(),
+        msgid: uuid(),
+        status: "successful",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {
+        data: totalRegistration ,
+      },
+    });
+
+  }).catch(err=>{console.log(err)});
+  
+  });
+
 app.post("/learnCount", bodyParser.json({ limit: "10mb" }), (req, res) => {
   // file system module to perform file operations
   const fs = require("fs");
@@ -205,13 +283,8 @@ app.post("/learnCount", bodyParser.json({ limit: "10mb" }), (req, res) => {
     "utf8",
     function (err) {
       if (err) {
-        console.log(
-          "An error occured while writing Live learnathon dashboard JSON Object to File."
-        );
         return console.log(err);
       }
-
-      console.log("Live learnathon dashboard JSON file has been saved.");
     }
   );
 
@@ -240,138 +313,145 @@ app.get("/counts", (req, res, next) => {
 });
 
 app.post("/learnVote", bodyParser.json({ limit: "10mb" }), (req, res) => {
-    let date_time = new Date();
-    let date =  dateFormat(date_time, 'yyyy-mm-dd');
-      let time =  date_time.getHours() + ":" +  date_time.getMinutes() + ":" + date_time.getSeconds();
-    const { userId, contentId , vote,userName,UserMobile, userEmail,userCity, reasonOfVote, votedOn } = req.body.body[0]
-    const body = [userId, contentId , vote,userName,UserMobile, userEmail,userCity, reasonOfVote, date, time]
 
-    client.query('INSERT INTO learnvote (user_id, content_id, vote, user_name,user_mobile, user_email, user_city, reason_of_vote, voting_date, voting_time) VALUES ($1, $2,$3,$4,$5,$6,$7,$8,$9, $10) RETURNING *', body, (error, results) => {
-    
-      if (error) {
-        console.log("errr-----------", error)
-        throw error
-      }
-      if(results){
-        console.log("errr-----------", error)
-        res.send({
-          ts: new Date().toISOString(),
-          params: {
-            resmsgid: uuid(),
-            msgid: uuid(),
-            status: "successful",
-            err: null,
-            errmsg: null,
-          },
-          responseCode: "OK",
-          result: {
-            data: { ...results },
-          },
-        })
-      }
-    })
-  // var fileExists;
-  // // stringify JSON Object
-  // if (fs.existsSync("liveLearnVotes.json")) {
-  //   fileExists = true;
-  //   var jsonvoteData = fs.readFileSync("liveLearnVotes.json", "utf8");
-  // } else {
-  //   fileExists = false;
-  // }
-  // if (jsonvoteData && fileExists) {
-  //   jsonvoteData = JSON.parse(jsonvoteData);
-  //   jsonvoteData.push(req.body.body[0]);
-  //   fs.writeFile(
-  //     "liveLearnVotes.json",
-  //     JSON.stringify(jsonvoteData),
-  //     "utf8",
-  //     function (err) {
-  //       if (err) {
-  //         console.log(
-  //           "An error occured while writing Live learnathon dashboard JSON Object to File."
-  //         );
-  //         return console.log(err);
-  //       } else {
-  //       }
+  //   let date_time = new Date();
+  //   let date =  dateFormat(date_time, 'yyyy-mm-dd');
+  //   let time =  date_time.getHours() + ":" +  date_time.getMinutes() + ":" + date_time.getSeconds();
+  //   const { userId, contentId , vote,userName,UserMobile, userEmail,userCity, reasonOfVote, votedOn } = req.body.body[0]
+  //   const body = [userId, contentId , vote,userName,UserMobile, userEmail,userCity, reasonOfVote, date, time]
+
+
+  //   fetch('https://nulp.niua.org/api/user/v1/search', {
+  // method: 'POST',
+  // headers: {
+  //   "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkTEJ3cG5MdE1SVWRCOTVBdWFCWjhMd0hSR2lTUTBpVCJ9.Q7-3SuUgnZXJuu-j2_kw9r8J82ckSxRR6zxylpgVG5o",
+  //   "x-authenticated-user-token": secureToken,
+  //   "Content-Type": "application/json"
+  // },
+  // body:  JSON.stringify({
+  //   "request": {
+  //     "filters": {
+  //       "userId": userId, 
+  //       "status": "1"
   //     },
+  //     "fields": [
+  //       "count",
+  //       "framework"
+  //     ]
+  //   }
+  // })
+  // }).then((response) => response.json())
+  // .then((responseData) => {
+  //   console.log("responseData----------------------",responseData)
+  //   if(responseData.result.response.count == 1){
+
+  //   client.query("SELECT * FROM public.learnvote WHERE content_id = '"+contentId +"'AND "+"user_id = '"+ userId + "'").then(( results) =>{
+
+  //     console.log("results----------------------",results.rows.length)
+
+  //     if (results.rows.length != 0)  {
+  //      res.send({
+  //        ts: new Date().toISOString(),
+  //        params: {
+  //          resmsgid: uuid(),
+  //          msgid: uuid(),
+  //          status: "error",
+  //          err: null,
+  //          errmsg: "Vote already present",
+  //        },
+  //        responseCode: "OK",
+  //        result: {
+  //          data:  "You have already voted this content",
+  //        },
+  //      })
+  //     } else{
+  //      client.query('INSERT INTO learnvote (user_id, content_id, vote, user_name,user_mobile, user_email, user_city, reason_of_vote, voting_date, voting_time) VALUES ($1, $2,$3,$4,$5,$6,$7,$8,$9, $10) RETURNING *', body, (error, results) => {
+  //       console.log("resultsaaaaaaaa----------------------",results)
+  //        if (error) {
+  //          console.log("errr-----------", error)
+  //          throw error
+  //        }
+  //        if(results){
+  //          console.log("errr-----------", error)
+  //          res.send({
+  //            ts: new Date().toISOString(),
+  //            params: {
+  //              resmsgid: uuid(),
+  //              msgid: uuid(),
+  //              status: "successful",
+  //              err: null,
+  //              errmsg: null,
+  //            },
+  //            responseCode: "OK",
+  //            result: {
+  //              data: { ...results },
+  //            },
+  //          })
+  //        }
+  //      })
+  //     }
+  //  },err=>{
+  //    console.log("errr-----------", err);
+  //  })
+  //   }
+  //   else{
   //     res.send({
   //       ts: new Date().toISOString(),
   //       params: {
   //         resmsgid: uuid(),
   //         msgid: uuid(),
-  //         status: "successful",
+  //         status: "error",
   //         err: null,
-  //         errmsg: null,
+  //         errmsg: "User not found",
   //       },
   //       responseCode: "OK",
   //       result: {
-  //         data: { ...jsonvoteData },
+  //         data:  "User not found",
   //       },
   //     })
-  //   );
-  // } else {
-  //   fs.writeFile(
-  //     "liveLearnVotes.json",
-  //     JSON.stringify(req.body.body),
-  //     "utf8",
-  //     function (err) {
-  //       if (err) {
-  //         console.log(
-  //           "An error occured while writing Live learnathon dashboard JSON Object to File."
-  //         );
-  //         return console.log(err);
-  //       }
-  //     }
-     
-  //   );
-  // }
+  //   }
+    
+  // }).catch(err=>{
+  //   res.send({
+  //     ts: new Date().toISOString(),
+  //     params: {
+  //       resmsgid: uuid(),
+  //       msgid: uuid(),
+  //       status: "error",
+  //       err: null,
+  //       errmsg: "User authentication failed",
+  //     },
+  //     responseCode: "OK",
+  //     result: {
+  //       data:  "User authentication failed",
+  //     },
+  //   })
+  // });
+
+// =========================stopping voting
+res.send({
+  ts: new Date().toISOString(),
+  params: {
+    resmsgid: uuid(),
+    msgid: uuid(),
+    status: "error",
+    err: null,
+    errmsg: "Voting is closed",
+  },
+  responseCode: "OK",
+  result: {
+    data:  "Voting is closed",
+  },
+})
+
 });
 
-// app.get("/voteCountDatabase", (req, res, next) => {
-//   var fileExists;
-//   var countData;
-//   const contentId = req.query.contentId
-//   const userId = req.query.userId
-
-// var query;
-// if(contentId && userId){
-//    query = "SELECT * FROM public.learnvote WHERE content_id = '"+ contentId +"'AND"+"user_id = '"+ userId + "'";
-
-// }else if(contentId)
-// {
-//   query = "SELECT * FROM public.learnvote WHERE content_id = '"+ contentId + "'";
-
-// }else{
-//   query = "SELECT * FROM public.learnvote ";
-// }
-
-// client.query(query).then(( results) =>{
- 
-//     res.send({
-//       ts: new Date().toISOString(),
-//       params: {
-//         resmsgid: uuid(),
-//         msgid: uuid(),
-//         status: "successful",
-//         err: null,
-//         errmsg: null,
-//       },
-//       responseCode: "OK",
-//       result: {
-//         data: { ...results.rows },
-//         count:results.rowCount,
-//       },
-//     });  
-// },err=>{
-//   console.log("errr-----------", err);
-// })
-
-// });
 app.get("/voteCount", (req, res, next) => {
   var fileExists;
   var countData;
   const contentId = req.query.contentId
   const userId = req.query.userId
+  console.log("req=====",req)
 
 var query;
 if(contentId && userId){
@@ -386,7 +466,6 @@ if(contentId && userId){
 }
 
 client.query(query).then(( results) =>{
-  console.log("results voteCount-----------", results);
     res.send({
       ts: new Date().toISOString(),
       params: {
@@ -406,49 +485,60 @@ client.query(query).then(( results) =>{
   console.log("errr-----------", err);
 })
 
-  // if (fs.existsSync("liveLearnVotes.json")) {
-  //   fileExists = true;
-
-  //   if (fs.readFileSync("liveLearnVotes.json", "utf8").length != 0) {
-  //     countData = JSON.parse(fs.readFileSync("liveLearnVotes.json", "utf8"));
-  //   } else {
-  //     countData = [];
-  //   }
-
-  //   // res.send({
-  //   //   ts: new Date().toISOString(),
-  //   //   params: {
-  //   //     resmsgid: uuid(),
-  //   //     msgid: uuid(),
-  //   //     status: "successful",
-  //   //     err: null,
-  //   //     errmsg: null,
-  //   //   },
-  //   //   responseCode: "OK",
-  //   //   result: {
-  //   //     data: { ...countData },
-  //   //     count: countData.length,
-  //   //   },
-  //   // });
-  // } else {
-  //   fileExists = false;
-  //   res.send({
-  //     ts: new Date().toISOString(),
-  //     params: {
-  //       resmsgid: uuid(),
-  //       msgid: uuid(),
-  //       status: "successful",
-  //       err: null,
-  //       errmsg: null,
-  //     },
-  //     responseCode: "OK",
-  //     result: {
-  //       data: {},
-  //       msg: "no data found",
-  //     },
-  //   });
-  // }
 });
+
+
+app.post("/deleteVote", bodyParser.json({ limit: "10mb" }), (req, res) => {
+
+  const contentId = req.query.contentId
+  const userId = req.query.userId
+
+var query;
+if(contentId && userId){
+   query = "DELETE FROM public.learnvote WHERE content_id = '"+ contentId +"'AND "+"user_id = '"+ userId + "'";
+
+}else if(contentId)
+{
+  query = "DELETE FROM public.learnvote WHERE content_id = '"+ contentId + "'";
+
+}
+client.query(query).then(( results) =>{
+    res.send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuid(),
+        msgid: uuid(),
+        status: "successful",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {
+        data: { ...results.rows },
+        count:results.rowCount,
+      },
+    });  
+},err=>{
+  console.log("errr-----------", err);
+  res.send({
+    ts: new Date().toISOString(),
+    params: {
+      resmsgid: uuid(),
+      msgid: uuid(),
+      status: "error",
+      err: err,
+      errmsg: "SOMETHING WENT WRONG",
+    },
+    responseCode: "OK",
+    result: {
+      data:  "SOMETHING WENT WRONG",
+    },
+  })
+})
+
+});
+// ===============================
+
 
 const morganConfig = (tokens, req, res) => {
   let edata = {
@@ -544,7 +634,6 @@ app.get("/enableDebugMode", (req, res, next) => {
   const timeInterval = req.query.timeInterval
     ? parseInt(req.query.timeInterval)
     : 1000 * 60 * 10;
-  // console.log("enable debug mode called", logLevel, timeInterval);
   enableDebugMode(timeInterval, logLevel);
   res.send({
     id: "enabledDebugMode",
@@ -717,6 +806,7 @@ app.use(
   bodyParser.json({ limit: "50mb" }),
   require("./helpers/resourceBundles")(express)
 ); // Resource bundles apis
+
 
 frameworkAPI
   .bootstrap(frameworkConfig, subApp)

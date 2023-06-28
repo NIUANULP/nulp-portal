@@ -6,7 +6,7 @@
     [appTelemetryImpression]="telemetryImpression">
     <!-- Filter for web version -->
     <!-- `isFilterEnabled` reference from current page data -->
-    <div *ngIf="!isDesktopApp && isFilterEnabled" [ngClass]="FIRST_PANEL_LAYOUT">
+    <div *ngIf="!isDesktopApp && isFilterEnabled" [ngClass]="FIRST_PANEL_LAYOUT" [hidden]="isSbmcourse">
         <app-search-filter [facets$]="facets$" [layoutConfiguration]="layoutConfiguration" [isOpen]='true' *ngIf="initFilter"
         (filterChange)="getFilters($event)" [defaultTab]="defaultTab" [pageData]="getCurrentPageData()" [pageId]="isUserLoggedIn() ? 'resource-page' : 'explore-page'" [defaultFilters]="defaultFilters">
       </app-search-filter>
@@ -139,7 +139,7 @@
                     <div class="sb-toast-texts">
                       <div class="sb-toast-title">Learnathon Voting is live!</div>
                       <div class="sb-toast-message">
-                        "Voting is open now. Vote for the entries you like by 22nd June and identify the winning solutions!</div>
+                        Voting is closed</div>
                     </div>
                     <!-- <span class="sb-toast-close-icon"></span> -->
                   </div>

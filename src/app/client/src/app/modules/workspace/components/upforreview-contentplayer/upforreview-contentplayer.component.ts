@@ -492,6 +492,14 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
         );
     }
   }
+  checkCanVote(){
+    if(this.canVote){
+      this.showNormalModal = true
+    }else{
+      this.toasterService.error(this.resourceService.messages.emsg.votedContentAlready);
+      
+    }
+  }
 
   onNameChange(name) {
     this.name = name;

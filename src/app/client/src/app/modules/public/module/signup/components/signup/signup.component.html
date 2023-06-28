@@ -146,6 +146,21 @@
             </div>
 
 <!-- =========learnathon ends================ -->
+
+<!-- ========= sbm start================ -->
+<div *ngIf="isSBM" class="sb-field required">
+  <label>{{resourceService.frmelmnts?.lbl?.sbmsatate}}<span class="sb-color-red">*</span></label>
+  <input placeholder="{{resourceService.frmelmnts?.lbl?.sbmsatate}}" formControlName="state" id="state" class="form-control, sb-search-input">
+</div>
+<div *ngIf="isSBM" class="sb-field required">
+  <label>{{resourceService.frmelmnts?.lbl?.sbmurbanLocalBody}}<span class="sb-color-red">*</span></label>
+  <input placeholder="{{resourceService.frmelmnts?.lbl?.sbmurbanLocalBody}}" formControlName="urbanLocalBody" id="urbanLocalBody" class="form-control, sb-search-input">
+</div>
+<div *ngIf="isSBM" class="sb-field required">
+  <label>{{resourceService.frmelmnts?.lbl?.sbmdesignation}}<span class="sb-color-red">*</span></label>
+  <input placeholder="{{resourceService.frmelmnts?.lbl?.sbmdesignation}}" formControlName="designation" id="designation" class="form-control, sb-search-input">
+</div>
+<!-- ========= sbm ends================ -->
         <div class="sb-requirement-field mb-8 font-weight-bold">
           {{resourceService.frmelmnts.lbl.fieldsmarked}}<span class="sb-error">*</span>{{resourceService.frmelmnts.lbl.mandatory  }}
         </div>
