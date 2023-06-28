@@ -1,7 +1,7 @@
 <!-- <div class="ui container px-60"> -->
 <div class="sbt-page-content-area px-60">
   <!-- <div [ngClass]="layoutConfiguration ? 'sbt-page-content-area' : 'ui container'"> -->
-  <div class="ui grid" *ngIf="!noResult && tableData.length > 0">
+  <div class="ui grid" *ngIf="noResult && tableData.length > 0">
     <!-- <div class="twelve wide column">
       <span
         >Number of contents created:&nbsp;<b>{{ tableData.length }}</b></span
