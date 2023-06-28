@@ -488,7 +488,55 @@ client.query(query).then(( results) =>{
 });
 
 
+app.post("/deleteVote", bodyParser.json({ limit: "10mb" }), (req, res) => {
 
+  const contentId = req.query.contentId
+  const userId = req.query.userId
+
+var query;
+if(contentId && userId){
+   query = "DELETE FROM public.learnvote WHERE content_id = '"+ contentId +"'AND "+"user_id = '"+ userId + "'";
+
+}else if(contentId)
+{
+  query = "DELETE FROM public.learnvote WHERE content_id = '"+ contentId + "'";
+
+}
+client.query(query).then(( results) =>{
+    res.send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuid(),
+        msgid: uuid(),
+        status: "successful",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {
+        data: { ...results.rows },
+        count:results.rowCount,
+      },
+    });  
+},err=>{
+  console.log("errr-----------", err);
+  res.send({
+    ts: new Date().toISOString(),
+    params: {
+      resmsgid: uuid(),
+      msgid: uuid(),
+      status: "error",
+      err: err,
+      errmsg: "SOMETHING WENT WRONG",
+    },
+    responseCode: "OK",
+    result: {
+      data:  "SOMETHING WENT WRONG",
+    },
+  })
+})
+
+});
 // ===============================
 
 
