@@ -1,0 +1,942 @@
+<div [ngClass]="layoutConfiguration ? 'sbt-fluid-content-bg':''"> 
+    <div class="sb-g" [ngClass]="layoutConfiguration ? 'sb-g sbt-container sbt-page-content' : 'sb-g'">
+        <div class="sb-g-col-xs-12 sb-g-col-md-12 sb-g-col-lg-12 sb-g-col-xxxl-16">
+            <div [ngClass]="layoutConfiguration ? 'sbt-page-content-area' : 'ui container'">
+                <sui-tabset>
+                    <div class="ui top attached tabular menu mt-30">
+                        <a class="item" suiTabHeader="yourLearnings" *ngIf="userTab">User Management</a>
+                        <a class="item" suiTabHeader="contentcreation" *ngIf="organizationTab">Organization Management</a>
+                        <a class="item" suiTabHeader="uploadusers" *ngIf="usersUpload">Users Upload</a>
+                        <a class="item" suiTabHeader="UploadTemplate"  *ngIf="UploadTemplate">Template Upload</a>
+                    </div>
+                    <div class="ui bottom attached segment" *ngIf="organizationTab" suiTabContent="contentcreation">
+                        <div class="six wide column p-0 d-flex flex-jc-flex-end flex-ai-center">
+                        </div>
+
+                        <div class="ui container marginTop10">
+                            <div class="ui grid padded width-100">
+                            </div>
+                        </div>
+                        <div class="ui container marginTop10">
+
+                            <div class="ui grid">
+
+                                <div class="twelve wide column">
+                                    <span>Number of Organization Found:&nbsp;<b>{{ countOrgRecord}}</b></span>
+                                    <button *ngIf="systemVar=='present'"
+                                        class="ui bottom attached sb-btn sb-btn-primary sb-btn-normal sb-left-icon-btn buttonleft"
+                                        (click)="showRootOrg()">Add Root Organization </button>
+                                    &nbsp;
+                                    <button class="ui bottom attached sb-btn sb-btn-primary sb-btn-normal sb-left-icon-btn buttonleft"
+                                        style="margin-right: 10px;" (click)="showOrg()">Add Sub Organization </button>
+                                </div>
+
+                                <div class="twelve wide column">
+                                    <p-table #dtOrg [value]="showOrgData" (onFilter)="onFilterOrg($event)"
+                                        [columns]="cols" [paginator]="true" [rows]="10" [resizableColumns]="true">
+                                        <ng-template pTemplate="caption">
+                                            <tr class="d-flex d-jc-space-between">
+                                                <td>
+                                                    <div class="ui small left icon input align-left">
+                                                        <i class="search icon"></i>
+                                                        <input type="text" pInputText size="50" placeholder="Search"
+                                                            (input)="dtOrg.filterGlobal($event.target.value, 'contains')"
+                                                            style="width:auto">
+                                                    </div>
+                                                </td>
+
+                                                <td class="v-align-bottom">
+                                                    <div class="ui-helper-clearfix export-btns">
+                                                        <button type="button" style="float:right" icon="fa fa-file" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" pbutton=""
+                                                        iconPos="left" label="Export" (click)="dtOrg.exportCSV()"><span
+                                                        aria-hidden="true" class="ui-button-icon-left ui-clickable fa fa-file"></span><span
+                                                        class="ui-button-text ui-clickable">Export</span></button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+
+                                        <ng-template pTemplate="header" let-columns>
+                                            <tr>
+
+                                                <th *ngFor="let col of columns" pResizableColumn
+                                                    [style.width]="col.width" [pSortableColumn]="col.field"
+                                                    [pSortableColumnDisabled]="col.field">
+                                                    {{col.header}}
+                                                    <p-sortIcon [field]="col.field" ariaLabel="Activate to sort"
+                                                        ariaLabelDesc="Activate to sort in descending order"
+                                                        ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                                </th>
+
+
+
+                                                <th>Actions</th>
+                                            </tr>
+
+                                            <tr>
+                                                <th *ngFor="let col of columns" [ngSwitch]="col.field">
+
+                                                    <p-multiSelect *ngSwitchCase="'orgName'" [options]="orgListDataOrg"
+                                                        defaultLabel="All" appendTo="body"
+                                                        (onChange)="dtOrg.filter($event.value, col.field, 'in')">
+                                                    </p-multiSelect>
+
+
+                                                    <p-multiSelect *ngSwitchCase="'orgType'"
+                                                        [options]="orgTypeListOrgArryData" defaultLabel="All"
+                                                        appendTo="body"
+                                                        (onChange)="dtOrg.filter($event.value, col.field, 'in')">
+                                                    </p-multiSelect>
+
+                                                    <p-multiSelect *ngSwitchCase="'status'"
+                                                        [options]="statuslistArryDataOrg" defaultLabel="All"
+                                                        appendTo="body"
+                                                        (onChange)="dtOrg.filter($event.value, col.field, 'in')">
+                                                    </p-multiSelect>
+
+                                                    <p-multiSelect *ngSwitchCase="'channel'"
+                                                        [options]="channelListOrgArryData" defaultLabel="All"
+                                                        appendTo="body"
+                                                        (onChange)="dtOrg.filter($event.value, col.field, 'in')">
+                                                    </p-multiSelect>
+                                                </th>
+                                                <th></th>
+                                            </tr>
+                                        </ng-template>
+
+                                        <ng-template pTemplate="body" let-showOrgData let-columns="columns">
+                                            <tr>
+                                                <td *ngFor="let col of columns" class="ui-resizable-column">
+                                                    {{showOrgData[col.field]}}
+                                                </td>
+
+                                                <td>
+                                                    <button class="sb-btn sb-btn-normal sb-btn-primary"
+                                                        (click)="editOrg(showOrgData.id)">Edit Org</button>&nbsp;
+                                                    <button class="sb-btn sb-btn-normal sb-btn-primary"
+                                                        (click)="editStatusOrg(showOrgData.id)">Edit Status</button>
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                            </div>
+                            <!-- start here -->
+                            <sui-modal [mustScroll]="true" [isClosable]="false" [transitionDuration]="0"
+                                [size]="'normal'" class="sb-modal" appBodyScroll [ngSwitch]="batchStep"
+                                #createBatchModel (dismissed)="discardModalFlag = !discardModalFlag"
+                                *ngIf='addRootOrgrPopup'>
+
+                                <!--Header-->
+                                <i class="close icon" (click)="closepopupOrg()"></i>
+                                <div class="sb-modal-header">
+                                    Create Root Organization
+                                </div>
+                                <!--/Header-->
+
+                                <!--Content-->
+                                <div class="sb-modal-content o-y-visible"
+                                    [appTelemetryImpression]="telemetryImpression">
+                                    <form [formGroup]="createRootOrgForm" class="sb-form batchAddUserForm"
+                                        id="validateFoem">
+                                        <div class="sb-field-group"
+                                            [ngClass]="createRootOrgForm.controls['orgName'].invalid && createRootOrgForm.controls['orgName'].errors.required && !createRootOrgForm.controls['orgName'].pristine ? 'error': ''">
+                                            <label class="required">Organization Name</label>
+                                            <div class="sb-field">
+                                                <input type="text" name="orgName" formControlName="orgName"
+                                                    class="sb-form-control" autofocus>
+                                            </div>
+                                            <div class="mt-0 mb-8 ui pointing red basic label below"
+                                                *ngIf="createRootOrgForm.controls.orgName.invalid && createRootOrgForm.controls['orgName'].errors.required && !createRootOrgForm.controls['orgName'].pristine">
+                                                Enter organization
+                                            </div>
+                                            <div class="mt-0 mb-8 ui pointing red basic label below"
+                                                *ngIf="createRootOrgForm.get('orgName').hasError('pattern')">
+                                                Only alphanumeric is allowed
+                                            </div>
+                                        </div>
+
+                                        <div class="sb-field-group"
+                                            [ngClass]="createRootOrgForm.controls['description'].invalid && createRootOrgForm.controls['description'].errors.required && !createRootOrgForm.controls['description'].pristine ? 'error': ''">
+                                            <label class="required">Description</label>
+                                            <div class="sb-field">
+                                                <input type="text" name="description" formControlName="description"
+                                                    class="sb-form-control" autofocus>
+                                            </div>
+                                            <div class="mt-0 mb-8 ui pointing red basic label below"
+                                                *ngIf="createRootOrgForm.controls.description.invalid && createRootOrgForm.controls['description'].errors.required && !createRootOrgForm.controls['description'].pristine">
+                                                Enter description
+                                            </div>
+                                            <div class="mt-0 mb-8 ui pointing red basic label below"
+                                                *ngIf="createRootOrgForm.get('description').hasError('pattern')">
+                                                Only alphanumeric is allowed
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!--/Content-->
+
+                                <!--Actions-->
+                                <div class="sb-modal-actions">
+                                    <button class="sb-btn sb-btn-normal sb-btn-primary"
+                                        [ngClass]="{'sb-btn-disabled' : createRootOrgForm.invalid}"
+                                        (click)="createRootOrgFormSubmit()"
+                                        [disabled]="this.createRootOrgForm.invalid">Create</button>
+
+                                    <button class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8"
+                                        (click)="createRootOrgForm.reset()">Clear</button>
+                                </div>
+                                <!--/Actions-->
+                            </sui-modal>
+
+                            <sui-modal [mustScroll]="true" [isClosable]="false" [transitionDuration]="0"
+                                [size]="'normal'" class="sb-modal" appBodyScroll [ngSwitch]="batchStep"
+                                #createBatchModel (dismissed)="discardModalFlag = !discardModalFlag"
+                                *ngIf='addOrgrPopup'>
+                                <!--Header-->
+                                <i class="close icon" (click)="closepopupOrg()"></i>
+                                <div class="sb-modal-header">
+                                    Create Sub Organization
+                                </div>
+                                <!--/Header-->
+
+                                <!--Content-->
+                                <div class="sb-modal-content o-y-visible"
+                                    [appTelemetryImpression]="telemetryImpression">
+                                    <form [formGroup]="createOrgForm" class="sb-form batchAddUserForm"
+                                        id="validateFoem">
+
+                                        <div *ngIf="systemVar=='notpresent'" class="sb-field-group"
+                                            [ngClass]="createOrgForm.controls['rootOrgName'].invalid && createOrgForm.controls['rootOrgName'].errors.required && !createOrgForm.controls['rootOrgName'].pristine ? 'error': ''">
+                                            <label class="required">Root Organization:</label>
+                                            <div class="sb-field"
+                                                [ngClass]="createOrgForm.controls['rootOrgName'].invalid && createOrgForm.controls['rootOrgName'].errors.required && !createOrgForm.controls['rootOrgName'].pristine ? 'error': ''">
+
+                                                <select formControlName="rootOrgName" class="sb-form-control"
+                                                    [(ngModel)]="rootOrgIdOrg">
+                                                    <option [selected]="rootOrgIdOrg" [value]="rootOrgIdOrg">
+                                                        {{rootOrgIdOrgName}}</option>
+                                                </select>
+                                            </div>
+                                            <div class="mt-0 mb-8 ui pointing red basic label below"
+                                                *ngIf="createOrgForm.controls.rootOrgName.invalid && createOrgForm.controls['rootOrgName'].errors.required && !createOrgForm.controls['rootOrgName'].pristine">
+                                                Enter Root Organization
+                                            </div>
+                                        </div>
+
+
+                                        <div class="sb-field-group" *ngIf="systemVar=='present'">
+                                            <div class="sb-field"
+                                                [ngClass]="createOrgForm.controls['rootOrgName'].invalid && createOrgForm.controls['rootOrgName'].errors.required && !createOrgForm.controls['rootOrgName'].pristine ? 'error': ''">
+                                                <label class="required">Root Organization:</label>
+                                                <select formControlName="rootOrgName" class="sb-form-control"
+                                                    [(ngModel)]="selectedRootOrgOption">
+                                                    <option value="">Select Root Organization</option>
+                                                    <option *ngFor="let dataObj of mentorList"
+                                                        [value]="dataObj.orgName + '/' + dataObj.id+'/'+dataObj.isRootOrg+'/'+dataObj.channel">
+                                                        {{dataObj.orgName}}</option>
+
+                                                </select>
+                                            </div>
+                                            <div class="mt-0 mb-8 ui pointing red basic label below"
+                                                *ngIf="createOrgForm.controls.rootOrgName.invalid && createOrgForm.controls['rootOrgName'].errors.required && !createOrgForm.controls['rootOrgName'].pristine">
+                                                Enter Root Organization
+                                            </div>
+                                        </div>
+                                        <div class="sb-field-group"
+                                            [ngClass]="createOrgForm.controls['orgName'].invalid && createOrgForm.controls['orgName'].errors.required && !createOrgForm.controls['orgName'].pristine ? 'error': ''">
+                                            <label class="required">Sub Organization</label>
+                                            <div class="sb-field">
+                                                <input type="text" name="orgName" formControlName="orgName"
+                                                    class="sb-form-control" autofocus>
+                                            </div>
+                                            <div class="mt-0 mb-8 ui pointing red basic label below"
+                                                *ngIf="createOrgForm.controls.orgName.invalid && createOrgForm.controls['orgName'].errors.required && !createOrgForm.controls['orgName'].pristine">
+                                                Enter organization
+                                            </div>
+                                            <div class="mt-0 mb-8 ui pointing red basic label below"
+                                                *ngIf="createOrgForm.get('orgName').hasError('pattern')">
+                                                Only alphanumeric is allowed
+                                            </div>
+                                        </div>
+
+
+                                        <div class="sb-field-group"
+                                            [ngClass]="createOrgForm.controls['description'].invalid && createOrgForm.controls['description'].errors.required && !createOrgForm.controls['description'].pristine ? 'error': ''">
+                                            <label class="required">Description</label>
+                                            <div class="sb-field">
+                                                <input type="text" name="description" formControlName="description"
+                                                    class="sb-form-control" autofocus>
+                                            </div>
+                                            <div class="mt-0 mb-8 ui pointing red basic label below"
+                                                *ngIf="createOrgForm.controls.description.invalid && createOrgForm.controls['description'].errors.required && !createOrgForm.controls['description'].pristine">
+                                                Enter description
+                                            </div>
+                                            <div class="mt-0 mb-8 ui pointing red basic label below"
+                                                *ngIf="createOrgForm.get('description').hasError('pattern')">
+                                                Only alphanumeric is allowed
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!--/Content-->
+
+                                <!--Actions-->
+                                <div class="sb-modal-actions">
+                                    <button class="sb-btn sb-btn-normal sb-btn-primary"
+                                        [ngClass]="{'sb-btn-disabled' : createOrgForm.invalid}"
+                                        (click)="createOrgFormSubmit()"
+                                        [disabled]="this.createOrgForm.invalid">Create</button>
+
+                                    <button class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8"
+                                        (click)="createOrgForm.reset()">Clear</button>
+                                </div>
+                                <!--/Actions-->
+                            </sui-modal>
+
+                            <sui-modal [mustScroll]="true" [isClosable]="false" [transitionDuration]="0"
+                                [size]="'normal'" class="sb-modal" appBodyScroll [ngSwitch]="batchStep"
+                                #createBatchModel (dismissed)="discardModalFlag = !discardModalFlag"
+                                *ngIf='editOrgrPopup'>
+
+                                <!--Header-->
+                                <i class="close icon" (click)="closepopupOrg()"></i>
+                                <div class="sb-modal-header">
+                                    Edit Organization
+                                </div>
+                                <!--/Header-->
+
+                                <!--Content-->
+                                <div class="sb-modal-content o-y-visible">
+                                    <form [formGroup]="editOrgForm" class="sb-form batchAddUserForm" id="validateFoem">
+                                        <div class="sb-field-group"
+                                            [ngClass]="editOrgForm.controls['orgName'].invalid && editOrgForm.controls['orgName'].errors.required && !editOrgForm.controls['orgName'].pristine ? 'error': ''">
+                                            <label class="required">Organization</label>
+                                            <div class="sb-field">
+                                                <input type="text" name="orgName" formControlName="orgName"
+                                                    [(ngModel)]="getOrgName" class="sb-form-control" autofocus>
+                                            </div>
+                                            <div class="mt-0 mb-8 ui pointing red basic label below"
+                                                *ngIf="editOrgForm.controls.orgName.invalid && editOrgForm.controls['orgName'].errors.required && !editOrgForm.controls['orgName'].pristine">
+                                                Enter organization
+                                            </div>
+                                            <div class="mt-0 mb-8 ui pointing red basic label below"
+                                                *ngIf="editOrgForm.get('orgName').hasError('pattern')">
+                                                Only alphanumeric is allowed
+                                            </div>
+                                        </div>
+
+
+                                        <div class="sb-field-group"
+                                            [ngClass]="editOrgForm.controls['description'].invalid && editOrgForm.controls['description'].errors.required && !editOrgForm.controls['description'].pristine ? 'error': ''">
+                                            <label class="required">Description</label>
+                                            <div class="sb-field">
+                                                <input type="text" name="description" formControlName="description"
+                                                    [(ngModel)]="getdescription" class="sb-form-control" autofocus>
+                                            </div>
+                                            <div class="mt-0 mb-8 ui pointing red basic label below"
+                                                *ngIf="editOrgForm.controls.description.invalid && editOrgForm.controls['description'].errors.required && !editOrgForm.controls['description'].pristine">
+                                                Enter description
+                                            </div>
+                                            <div class="mt-0 mb-8 ui pointing red basic label below"
+                                                *ngIf="editOrgForm.get('description').hasError('pattern')">
+                                                Only alphanumeric is allowed
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!--/Content-->
+
+                                <!--Actions-->
+                                <div class="sb-modal-actions">
+                                    <button class="sb-btn sb-btn-normal sb-btn-primary"
+                                        [ngClass]="{'sb-btn-disabled' : editOrgForm.invalid}"
+                                        (click)="editOrgFormSubmit()"
+                                        [disabled]="this.editOrgForm.invalid">Submit</button>
+                                </div>
+                                <!--/Actions-->
+                            </sui-modal>
+
+                            <sui-modal [mustScroll]="true" [isClosable]="false" [transitionDuration]="0" [size]="'normal'" class="sb-modal"
+                                appBodyScroll [ngSwitch]="batchStep" #createBatchModel (dismissed)="discardModalFlag = !discardModalFlag"
+                                *ngIf='editOrgrStatusPopup'>
+
+                                <!--Header-->
+                                <i class="close icon" (click)="closepopupOrg()"></i>
+                                <div class="sb-modal-header">
+                                    Edit Status
+                                </div>
+                                <!--/Header-->
+
+                                <!--Content-->
+                                <div class="sb-modal-content o-y-visible">
+                                    <form [formGroup]="editStatusForm" class="sb-form batchAddUserForm" id="validateFoem">
+                                        <div class="sb-field-group">
+                                            <label class="required">Status</label>
+                                            <div class="sb-field">
+
+                                                <select class="form-control sb-form-control" #tb [(ngModel)]="orgStatusValOrg" formControlName="orgStatus">
+
+                                                    <option value="">--Select Status--</option>
+                                                    <option [value]="x.value" [id]="x.value" *ngFor="let x of orgStatus">{{x.status}}</option>
+                                                </select>
+                                            </div>
+
+                                        </div>
+                                    </form>
+                                </div>
+                                <!--/Content-->
+
+                                <!--Actions-->
+                                <div class="sb-modal-actions">
+                                    <button class="sb-btn sb-btn-normal sb-btn-primary"
+                                        [ngClass]="{'sb-btn-disabled' : editStatusForm.invalid}"
+                                        (click)="editOrgStatusFormSubmit()"
+                                        [disabled]="this.editStatusForm.invalid">Submit</button>
+                                </div>
+                                <!--/Actions-->
+                            </sui-modal>
+                            <!-- end here -->
+                        </div>
+                    </div>
+
+
+                    <div class="ui bottom attached segment" *ngIf="userTab" suiTabContent="yourLearnings">
+
+
+
+                        <div class="ui container">
+
+
+
+                            <div class="ui grid">
+                                <div class="twelve wide column">
+                                    <span>Number of User Found:&nbsp;<b>{{countUserRecord}}</b></span>
+                                    <button class="ui bottom attached sb-btn sb-btn-primary sb-btn-normal sb-left-icon-btn buttonleft" (click)="show()">
+                                        Add User </button>
+                                </div>
+
+
+                                <div class="twelve wide column">
+                                    <p-table #dt [value]="showUserData" (onFilter)="onFilter($event)" [columns]="colsUser"
+                                        [paginator]="true" [rows]="10" [resizableColumns]="true">
+                                        <ng-template pTemplate="caption">
+                                            <tr class="d-flex d-jc-space-between">
+                                                <td>
+                                                    <div class="ui small left icon input align-left">
+
+                                                        <i class="search icon"></i>
+                                                        <input type="text" pInputText size="50" placeholder="Search"
+                                                            (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+
+                                                    </div>
+                                                </td>
+
+                                                <td class="v-align-bottom">
+                                                    <div class="ui-helper-clearfix export-btns">
+                                                        <button type="button" style="float:right" icon="fa fa-file" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" pbutton=""
+                                                        iconPos="left" label="Export" (click)="dt.exportCSV()"><span
+                                                        aria-hidden="true" class="ui-button-icon-left ui-clickable fa fa-file"></span><span
+                                                        class="ui-button-text ui-clickable">Export</span></button>
+                                                    </div>
+                                                </td>
+
+                                            </tr>
+
+
+                                        </ng-template>
+
+                                        <ng-template pTemplate="header" let-columns>
+                                            <tr>
+                                                <th *ngFor="let col of columns" pResizableColumn [style.width]="col.width"
+                                                    [pSortableColumn]="col.field" [pSortableColumnDisabled]="col.field">
+                                                    {{col.header}}
+                                                    <p-sortIcon [field]="col.field" ariaLabel="Activate to sort"
+                                                        ariaLabelDesc="Activate to sort in descending order"
+                                                        ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                                </th>
+                                                <th>Action</th>
+
+                                            <tr>
+                                                <th *ngFor="let col of columns" [ngSwitch]="col.field">
+
+                                                    <p-multiSelect *ngSwitchCase="'orgName'" [options]="orgListData" defaultLabel="All"
+                                                        appendTo="body" (onChange)="dt.filter($event.value, col.field, 'in')">
+                                                    </p-multiSelect>
+
+
+                                                    <!-- <p-multiSelect *ngSwitchCase="'orgType'" [options]="orgTypeListUserArryData" defaultLabel="All"
+                                                                               appendTo="body" (onChange)="dt.filter($event.value, col.field, 'in')"></p-multiSelect> -->
+
+                                                    <p-multiSelect *ngSwitchCase="'status'" [options]="statuslistArryData"
+                                                        defaultLabel="All" appendTo="body"
+                                                        (onChange)="dt.filter($event.value, col.field, 'in')"></p-multiSelect>
+
+                                                </th>
+                                                <th></th>
+
+                                            </tr>
+
+                                            <tr>
+
+
+
+                                            </tr>
+
+
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-showUserData let-columns="columns" let-rowIndex="rowIndex">
+                                            <tr>
+                                                <td *ngFor="let col of columns" class="ui-resizable-column">
+                                                    {{showUserData[col.field]}}
+                                                </td>
+
+
+                                                <td>
+                                                    <button class="sb-btn sb-btn-normal sb-btn-primary"
+                                                        (click)="addRole(showUserData.userId)">Edit Roles</button>&nbsp;
+                                                    <button class="sb-btn sb-btn-normal sb-btn-primary"
+                                                        *ngIf="showUserData.userOrglengths==1" (click)="addOrg(showUserData.userId, showUserData.userName)">Add
+                                                        Org</button>
+                                                    <button class="sb-btn sb-btn-normal sb-btn-primary"
+                                                        *ngIf="showUserData.userOrglengths >1"
+                                                        (click)="removeOrg(showUserData.userId)">Remove Org</button>&nbsp;
+                                                    <!--<button class="sb-btn sb-btn-normal sb-btn-primary" (click)="editUser(showUserData.userId)">Edit User</button>&nbsp;-->
+                                                    <!-- <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="addOrg()">Edit User</button>&nbsp;                -->
+                                                    <button class="sb-btn sb-btn-normal sb-btn-primary" *ngIf="showUserData.uStatus==1"
+                                                        (click)="blockState(showUserData.userId,'1', rowIndex)">Block</button>
+                                                    <button class="sb-btn sb-btn-normal sb-btn-primary" *ngIf="showUserData.uStatus==0"
+                                                        (click)="blockState(showUserData.userId,'0', rowIndex)">UnBlock</button>
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ui bottom attached segment" *ngIf="usersUpload" suiTabContent="uploadusers">
+                        <app-user-upload></app-user-upload>
+                    </div>
+                    <div class="ui bottom attached segment" *ngIf="UploadTemplate" suiTabContent="UploadTemplate">
+                        <div class="six wide column p-0 d-flex flex-jc-flex-end flex-ai-center"></div>
+                        <app-certificate-template-upload></app-certificate-template-upload>
+                        <!-- <app-upload-template></app-upload-template> -->
+                    </div>
+                </sui-tabset>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<sui-modal [mustScroll]="true" [isClosable]="false" [transitionDuration]="0" [size]="'normal'" class="sb-modal"
+    appBodyScroll [ngSwitch]="batchStep" #createBatchModel (dismissed)="discardModalFlag = !discardModalFlag"
+    *ngIf='addUserPopup'>
+
+    <!--Header-->
+    <i class="close icon" (click)="closepopup()"></i>
+    <div class="sb-modal-header">
+        Create User
+    </div>
+    <!--/Header-->
+
+    <!--Content-->
+    <div class="sb-modal-content o-y-visible">
+        <form [formGroup]="createUserForm" class="sb-form batchAddUserForm" id="validateFoem">
+            <div class="sb-field-group"
+                [ngClass]="createUserForm.controls['firstname'].invalid && createUserForm.controls['firstname'].errors.required && !createUserForm.controls['firstname'].pristine ? 'error': ''">
+                <label class="required">First Name</label>
+                <div class="sb-field">
+                    <input type="text" name="firstname" formControlName="firstname" class="sb-form-control" autofocus>
+                </div>
+                <div class="mt-0 mb-8 ui pointing red basic label below"
+                    *ngIf="createUserForm.controls.firstname.invalid && createUserForm.controls['firstname'].errors.required  && !createUserForm.controls['firstname'].pristine">
+                    Enter first name
+                </div>
+                <div class="mt-0 mb-8 ui pointing red basic label below"
+                    *ngIf="createUserForm.get('firstname').hasError('pattern')">
+                    Only alphabet is allowed
+                </div>
+            </div>
+            <div class="sb-field-group">
+                <div class="sb-field">
+                    <label>Last Name</label>
+                    <input type="text" name="description" formControlName="lastname" class="sb-form-control">
+
+                </div>
+                <div class="mt-0 mb-8 ui pointing red basic label below"
+                    *ngIf="createUserForm.get('lastname').hasError('pattern')">
+                    Only alphabet is allowed
+                </div>
+            </div>
+
+
+
+            <div class="sb-field-group"
+                [ngClass]="createUserForm.controls['emailid'].invalid && createUserForm.controls['emailid'].errors.required && !createUserForm.controls['emailid'].pristine ? 'error': ''">
+                <label class="required">Email Id</label>
+                <div class="sb-field">
+                    <input type="text" name="emailid" formControlName="emailid" class="sb-form-control" autofocus>
+                </div>
+                <div class="mt-0 mb-8 ui pointing red basic label below"
+                    *ngIf="createUserForm.controls.emailid.invalid && createUserForm.controls['emailid'].errors.required && !createUserForm.controls['emailid'].pristine">
+                    Enter email id
+                </div>
+                <div class="mt-0 mb-8 ui pointing red basic label below"
+                    *ngIf="createUserForm.get('emailid').hasError('pattern')">
+                    Enter correct email id
+                </div>
+            </div>
+
+
+
+
+            <div class="sb-field-group"
+                [ngClass]="createUserForm.controls['phone'].invalid && createUserForm.controls['phone'].errors.required && !createUserForm.controls['phone'].pristine ? 'error': ''">
+                <label class="required">Phone No</label>
+                <div class="sb-field">
+                    <input type="tel" name="phone" formControlName="phone" maxlength="10" class="sb-form-control"
+                        autofocus>
+                </div>
+                <div class="mt-0 mb-8 ui pointing red basic label below"
+                    *ngIf="createUserForm.controls.phone.invalid && createUserForm.controls['phone'].errors.required && !createUserForm.controls['phone'].pristine">
+                    Enter phone no
+                </div>
+                <div class="mt-0 mb-8 ui pointing red basic label below"
+                    *ngIf="createUserForm.get('phone').hasError('pattern')">
+                    Enter correct phone no
+                </div>
+            </div>
+
+
+            <div class="sb-field-group" *ngIf="systemVar=='present'">
+                <div class="sb-field">
+                    <label>Do you want to create user in Root Organization?</label>
+                    <select formControlName="isrootSub" class="sb-form-control" [(ngModel)]="isrootOrganization"
+                        (change)="getSubRootOrganization($event)">
+                        <option value="yes">YES</option>
+                        <option value="no">NO</option>
+                    </select>
+                </div>
+            </div>
+
+
+
+            <div class="sb-field-group"
+                [ngClass]="createUserForm.controls['orgname'].invalid && createUserForm.controls['orgname'].errors.required && !createUserForm.controls['orgname'].pristine ? 'error': ''">
+                <label class="required">Organization</label>
+                <div class="sb-field">
+                    <select formControlName="orgname" class="sb-form-control" (change)="getRoleName($event.target.value)">
+                        <option [ngValue]="null">Select Organization</option>
+                        <option *ngFor="let dataObj of mentorList"
+                            [value]="dataObj.orgName + '/' + dataObj.id+'/'+dataObj.channel+'/'+dataObj.isRootOrg">
+                            {{dataObj.orgName}}</option>
+
+                    </select>
+                </div>
+                <div class="mt-0 mb-8 ui pointing red basic label below"
+                    *ngIf="createUserForm.controls.orgname.invalid && createUserForm.controls['orgname'].errors.required && !createUserForm.controls['orgname'].pristine">
+                    Enter organization
+                </div>
+            </div>
+
+
+            <div class="sb-field-group" *ngIf="subOrgofRoot">
+                <div class="sb-field">
+                    <label class="required">Sub Organization </label>
+
+                    <select formControlName="subRootorgname" class="sb-form-control">
+                        <option *ngFor="let dataObj of subMentorList" [value]="dataObj.identifier">{{dataObj.orgName}}
+                        </option>
+
+                    </select>
+                </div>
+            </div>
+
+            <div class="sb-field-group">
+                <div class="sb-field">
+                    <label>Role</label>
+                    <angular2-multiselect [data]="dropdownList" [(ngModel)]="selectedItems" [settings]="dropdownSettings"
+                        (onSelect)="onItemSelect($event)" (onDeSelect)="OnItemDeSelect($event)" (onSelectAll)="onSelectAll($event)"
+                        (onDeSelectAll)="onDeSelectAll($event)" formControlName="role"></angular2-multiselect>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!--/Content-->
+
+    <!--Actions-->
+    <div class="sb-modal-actions">
+        <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="createUserFormSubmit()" [ngClass]="{'sb-btn-disabled' : createUserForm.invalid}"
+            [disabled]="this.createUserForm.invalid">Submit</button>
+
+        <!-- <button class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8" (click)="createUserForm.reset()">Clear</button> -->
+    </div>
+    <!--/Actions-->
+</sui-modal>
+
+
+<sui-modal [mustScroll]="true" [isClosable]="false" [transitionDuration]="0" [size]="'normal'" class="sb-modal"
+    appBodyScroll [ngSwitch]="batchStep" #createBatchModel (dismissed)="discardModalFlag = !discardModalFlag"
+    *ngIf='sucesErrorPopup'>
+
+
+    <!--Header-->
+    <i class="close icon" (click)="closeSucesErrorPopup()"></i>
+    <div class="sb-modal-header">
+        Message
+    </div>
+    <!--/Header-->
+
+    <!--Content-->
+    <div class="sb-modal-content">
+        <b>{{popupMsg}}</b>
+    </div>
+    <!--/Content-->
+
+    <!--Actions-->
+    <div class="sb-modal-actions">
+        <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="closeSucesErrorPopup()">Close</button>
+    </div>
+    <!--/Actions-->
+</sui-modal>
+
+<sui-modal [mustScroll]="true" [isClosable]="false" [transitionDuration]="0" [size]="'normal'" class="sb-modal"
+    appBodyScroll [ngSwitch]="batchStep" #createBatchModel (dismissed)="discardModalFlag = !discardModalFlag"
+    *ngIf='checkOrgExistsPopup'>
+
+
+    <!--Header-->
+    <i class="close icon" (click)="closeOrgPopup()"></i>
+    <div class="sb-modal-header">
+        Message
+    </div>
+    <!--/Header-->
+
+    <!--Content-->
+    <div class="sb-modal-content">
+        <b>This organisation already exists </b>
+    </div>
+    <!--/Content-->
+
+    <!--Actions-->
+    <div class="sb-modal-actions">
+        <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="closeOrgPopup()">Close</button>
+    </div>
+    <!--/Actions-->
+</sui-modal>
+
+<sui-modal [mustScroll]="true" [isClosable]="false" [transitionDuration]="0" [size]="'normal'" class="sb-modal"
+    appBodyScroll [ngSwitch]="batchStep" #createBatchModel (dismissed)="discardModalFlag = !discardModalFlag"
+    *ngIf='subOrgSucesErrorPopup'>
+
+
+    <!--Header-->
+    <i class="close icon" (click)="closesubOrgSucesErrorPopup()"></i>
+    <div class="sb-modal-header">
+        Message
+    </div>
+    <!--/Header-->
+
+    <!--Content-->
+    <div class="sb-modal-content">
+        <b>{{popupMsg}}</b>
+    </div>
+    <!--/Content-->
+
+    <!--Actions-->
+    <div class="sb-modal-actions">
+        <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="closesubOrgSucesErrorPopup()">Close</button>
+    </div>
+    <!--/Actions-->
+</sui-modal>
+
+<sui-modal [mustScroll]="true" [isClosable]="false" [transitionDuration]="0" [size]="'normal'" class="sb-modal"
+    appBodyScroll [ngSwitch]="batchStep" #createBatchModel (dismissed)="discardModalFlag = !discardModalFlag"
+    *ngIf='addRolePopup'>
+    <!--Header-->
+    <i class="close icon" (click)="closepopup()"></i>
+    <div class="sb-modal-header">
+        Edit Roles
+    </div>
+    <!--/Header-->
+
+    <!--Content-->
+    <div class="sb-modal-content o-y-visible">
+        <form [formGroup]="addRoleForm" class="sb-form batchAddUserForm" id="validateFoem">
+
+
+            <input type="hidden" name="description" formControlName="editroleorgid" [(ngModel)]="addRoleorgId"
+                class="sb-form-control">
+            <input type="hidden" name="description" formControlName="gridUserId" [(ngModel)]="gridUserId"
+                class="sb-form-control">
+
+
+            <!-- <div class="sb-field-group">
+        <div class="sb-field">
+          Role: <span *ngFor="let item of roleEditData | keyvalue"><b>{{item.value}}</b></span>
+        </div>
+      </div> -->
+
+
+            <div class="sb-field-group">
+                <div class="sb-field">
+                    <label>Role </label>
+                    <angular2-multiselect [data]="dropdownList" [(ngModel)]="selectedItems"
+                        [settings]="dropdownSettings" (onSelect)="onItemSelect($event)"
+                        (onDeSelect)="OnItemDeSelect($event)" (onSelectAll)="onSelectAll($event)"
+                        (onDeSelectAll)="onDeSelectAll($event)" formControlName="addrole"></angular2-multiselect>
+                </div>
+            </div>
+
+
+        </form>
+    </div>
+    <!--/Content-->
+
+    <!--Actions-->
+    <div class="sb-modal-actions">
+        <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="addRoleFormSubmit()"
+            [disabled]="this.addRoleForm.invalid">Submit</button>
+        <!--
+    <button class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8" (click)="addRoleForm.reset()">Clear</button> -->
+    </div>
+    <!--/Actions-->
+</sui-modal>
+
+
+<sui-modal [mustScroll]="true" [isClosable]="false" [transitionDuration]="0" [size]="'normal'" class="sb-modal"
+    appBodyScroll [ngSwitch]="batchStep" #createBatchModel (dismissed)="discardModalFlag = !discardModalFlag"
+    *ngIf='addOrgPopup'>
+
+    <!--Header-->
+    <i class="close icon" (click)="closepopup()"></i>
+    <div class="sb-modal-header">
+        Add Organization
+    </div>
+    <!--/Header-->
+
+    <!--Content-->
+    <div class="sb-modal-content o-y-visible">
+        <form [formGroup]="addOrgForm" class="sb-form batchAddUserForm">
+
+            <input type="hidden" name="description" formControlName="gridOrgUserId" [(ngModel)]="gridOrgUserId"
+                class="sb-form-control">
+
+            <div class="sb-field-group">
+                <div class="sb-field">
+                    <label>Organization</label>
+
+                    <select formControlName="addOrgname" class="sb-form-control" [(ngModel)]="addorgSelectName"
+                        (change)="getRoleName($event.target.value)">
+                        <option *ngFor="let dataObj of getOrgMentorList"
+                            [value]="dataObj.orgName + '/' + dataObj.id+'/'+dataObj.isRootOrg">{{dataObj.orgName}}
+                        </option>
+
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="sb-field-group">
+                <div class="sb-field">
+                    <label>Role Name</label>
+                    <angular2-multiselect [data]="dropdownList" [(ngModel)]="selectedItems"
+                        [settings]="dropdownSettings" (onSelect)="onItemSelect($event)"
+                        (onDeSelect)="OnItemDeSelect($event)" (onSelectAll)="onSelectAll($event)"
+                        (onDeSelectAll)="onDeSelectAll($event)" formControlName="addOrgrole"></angular2-multiselect>
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <!--/Content-->
+
+    <!--Actions-->
+    <div class="sb-modal-actions">
+        <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="addOrgFormSubmit()"
+            [ngClass]="{'sb-btn-disabled' : addOrgForm.invalid}"
+            [disabled]="this.addOrgForm.invalid">Submit</button>
+
+        <!-- <button class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8" (click)="addOrgForm.reset()">Clear</button> -->
+    </div>
+    <!--/Actions-->
+</sui-modal>
+
+
+<sui-modal [mustScroll]="true" [isClosable]="false" [transitionDuration]="0" [size]="'normal'" class="sb-modal"
+    appBodyScroll [ngSwitch]="batchStep" #createBatchModel (dismissed)="discardModalFlag = !discardModalFlag"
+    *ngIf='confirmPopup'>
+
+    <!--Header-->
+    <i class="close icon" (click)="closepopup()"></i>
+    <div class="sb-modal-header">
+        Message
+    </div>
+    <!--/Header-->
+
+    <!--Content-->
+    <div class="sb-modal-content o-y-visible">
+        <b> {{confirmPopupMsg}}</b>
+    </div>
+
+    <form [formGroup]="confirmUserForm" class="sb-form batchAddUserForm" id="validateFoem">
+        <input type="hidden" name="description" formControlName="blockUserid" [(ngModel)]="blockUserid"
+            class="sb-form-control">
+        <input type="hidden" name="description" formControlName="blockid" [(ngModel)]="blockId" class="sb-form-control">
+
+    </form>
+    <!--/Content-->
+
+    <!--Actions-->
+    <div class="sb-modal-actions">
+        <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="blockConfirmState()">Yes</button>
+
+        <button class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8" (click)="closepopup()">No</button>
+    </div>
+    <!--/Actions-->
+</sui-modal>
+
+
+<sui-modal [mustScroll]="true" [isClosable]="false" [transitionDuration]="0" [size]="'normal'"
+    class="sb-modal sb-batch-modal" appBodyScroll *ngIf='genericPopup'
+    (dismissed)="redirect()" #createBatchModel>
+
+    <!--Header-->
+    <i class="close icon" (click)="closepopup()"></i>
+    <div class="sb-modal-header">
+        Message
+    </div>
+    <!--/Header-->
+
+    <!--Content-->
+    <div class="sb-modal-content o-y-visible">
+        <b> Are you sure you want to remove user from the Organization? </b>
+    </div>
+
+    <form [formGroup]="genericForm" class="sb-form batchAddUserForm" id="validateFoem">
+
+
+        <input type="hidden" name="description" formControlName="genericUserId" [(ngModel)]="removeOrgUserId"
+            class="sb-form-control">
+
+        <input type="hidden" name="description" formControlName="genericId" [(ngModel)]="removeOrgUserdataAll"
+            class="sb-form-control">
+
+
+    </form>
+    <!--/Content-->
+
+    <!--Actions-->
+    <div class="sb-modal-actions">
+        <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="removeOrgSubmit()">Yes</button>
+
+        <button class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8" (click)="closepopup()">No</button>
+    </div>
+    <!--/Actions-->
+</sui-modal>
+
+<router-outlet></router-outlet>
