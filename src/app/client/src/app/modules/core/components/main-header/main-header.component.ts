@@ -164,7 +164,9 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   userPreference: any;
   showReportMenu = false;
   showingDescription: string;
-  showSwitchTheme = false
+  showSwitchTheme = false;
+  urlPaths: string;
+  adminVarLink: string;
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
     public orgDetailsService: OrgDetailsService, public formService: FormService,
@@ -632,6 +634,14 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
           this.managedUserService.fetchManagedUserList();
           this.fetchManagedUsers();
           this.userProfile = user.userProfile;
+          if(this.userProfile.userRoles.includes("ORG_MANAGEMENT") || this.userProfile.userRoles.includes("ORG_MODERATOR") || this.userProfile.userRoles.includes("ORG_ADMIN") || this.userProfile.userRoles.includes("SYSTEM_ADMINISTRATION"))
+          {
+            this.adminVarLink ="present";
+          }
+          else
+          {
+            this.adminVarLink = "not present";
+          }
           this.getLanguage(this.userService.channel);
           this.isCustodianOrgUser();
         }
@@ -807,6 +817,18 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   clearFiltersCache () {
     if (this.cacheService.exists('searchFilters')) {
       this.cacheService.remove('searchFilters');
+    }
+  }
+
+  urlPathOfDashboard(urlPath: any) {
+    this.urlPaths = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
+    if (this.urlPaths == 'allDashboard') {
+      sessionStorage.setItem("urlPath", urlPath);
+      location.reload()
+    }
+    else {
+      sessionStorage.setItem("urlPath", urlPath);
+      this.router.navigate(["dashBoard/allDashboard"]);
     }
   }
 }
