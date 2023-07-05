@@ -46,29 +46,6 @@
           <!--Main Menu-->
           <app-main-menu [layoutConfiguration]="layoutConfiguration" class="d-flex computer only ml-auto" [showBackButton]="showBackButton">
           </app-main-menu>
-          <div suiDropdown *ngIf="userService?.loggedIn" class="ui dropdown right top pointing" id="dropdown-menu-list-header">
-            Dashboard
-             <div class="menu" suiDropdownMenu>
-
-                <a  class="item" (click)="urlPathOfDashboard('learningreport')" >
-                    Learning Report
-                 </a>
-                 <a *ngIf="adminVarLink=='present'"  (click)="urlPathOfDashboard('orgreport')" class="item" >
-                    Organization Report
-                 </a>
-
-                 <a *ngIf="adminVarLink=='present'" class="item" (click)="urlPathOfDashboard('userreport')" >
-                     User Report
-                  </a>
-
-                  <a *ngIf="adminVarLink=='present'" class="item" (click)="urlPathOfDashboard('contentreport')" >
-                     Content Report
-                  </a>
-                  <a  *ngIf="adminVarLink=='present'" class="item" (click)="urlPathOfDashboard('leadershipreport')" >
-                    Leadership Report
-                   </a>
-             </div>
-         </div>
           <!--/Main Menu-->
           <a class="profile-avtar p-0 mx-16">
             <app-in-app-notification *ngIf="userService?.loggedIn" [layoutConfiguration]="layoutConfiguration">
@@ -413,7 +390,7 @@
             {{resourceService.frmelmnts?.lnk?.profile}}
           </li>
 
-          <!-- <li class="list-item" role="link" *ngIf="userType=='administrator' || showReportMenu" tabindex="0" [routerLink]="['/solution/solution-listing']" (click)="toggleSideMenu(false);" >
+          <li class="list-item" role="link" *ngIf="userType=='administrator' || showReportMenu" tabindex="0" [routerLink]="['/solution/solution-listing']" (click)="toggleSideMenu(false);" >
             <i class="icon-svg icon-svg--sm icon-profileuser mr-8"><svg class="icon icon-svg--primary">
                 <use xlink:href="./assets/images/statistics.svg#Layer_1"></use>
               </svg></i>
@@ -427,68 +404,6 @@
                 <use xlink:href="./assets/images/sprite.svg#dashboard"></use>
               </svg></i>
             {{resourceService.frmelmnts?.lnk?.dashboard}}
-          </li> -->
-
-
-          <li class="list-item" tabindex="0" role="link" *ngIf='!isDesktopApp && permissionService.permissionAvailable'
-            appPermission [permission]='adminDashboard' (click)="toggleSideMenu(false)"
-            [routerLink]="'dashBoard/addusess'">
-            <i class="icon-svg icon-svg--sm icon-dashboard mr-8"><svg class="icon icon-svg--primary">
-                <use xlink:href="./assets/images/sprite.svg#dashboard"></use>
-              </svg></i>
-             Admin
-          </li>
-
-          <li class="list-item" *ngIf='!isDesktopApp && permissionService.permissionAvailable' appPermission
-          [permission]='programDashboardRole' (click)="toggleSideMenu(false)" routerLink="program">
-          <i class="icon-svg icon-svg--sm icon-dashboard mr-8"><svg class="icon icon-svg--primary">
-              <use xlink:href="./assets/images/sprite.svg#dashboard"></use>
-            </svg></i>
-            {{resourceService.frmelmnts?.lnk?.programDashboard}}
-        </li>
-        <li  *ngIf="userService?.loggedIn" class="list-item d-block item accordion-menu item--courses ng-star-inserted" id="dropdown-menu-list-header">
-
-            <sui-accordion class="styled fluid sb-accordion">
-              <sui-accordion-panel>
-                <div title class="sb-accordion-title sb-color-primary">
-                  <i class="icon chart area mr-8"></i>
-                   Dashboard
-                  <i class="chevron down icon ml-8"></i>
-                </div>
-                <div content class="sb-accordion-content sb-bg-color-white pt-0 pb-8 ui grid mx-0">
-
-
-                   <ul class="menu pt-10" >
-                    <li (click)="toggleSideMenu(false)">
-                      <a  class="item" (click)="urlPathOfDashboard('learningreport')" >
-                        Learning Report
-                       </a>
-                    </li>
-                  <li (click)="toggleSideMenu(false)">
-                   <a *ngIf="adminVarLink=='present'"  (click)="urlPathOfDashboard('orgreport')" class="item" >
-                     Organization Report
-                    </a>
-                  </li>
-                       <li (click)="toggleSideMenu(false)" >
-                         <a *ngIf="adminVarLink=='present'" class="item" (click)="urlPathOfDashboard('userreport')" >
-                           User Report
-                          </a>
-                       </li>
-                    <li (click)="toggleSideMenu(false)">
-                     <a *ngIf="adminVarLink=='present'" class="item" (click)="urlPathOfDashboard('contentreport')" >
-                       Content Report
-                      </a>
-                    </li>
-                    <li (click)="toggleSideMenu(false)">
-                     <a  *ngIf="adminVarLink=='present'" class="item" (click)="urlPathOfDashboard('leadershipreport')" >
-                       Leadership Report
-                      </a>
-                    </li>
-                     </ul>
-                </div>
-              </sui-accordion-panel>
-            </sui-accordion>
-
           </li>
         
           <li class="list-item" *ngIf='!isDesktopApp && permissionService.permissionAvailable' appPermission
@@ -499,7 +414,7 @@
             {{resourceService.frmelmnts?.lnk?.programDashboard}}
         </li>
 
-          <!-- <li class="list-item" tabindex="0" role="link" (click)="toggleSideMenu(false)"
+          <li class="list-item" tabindex="0" role="link" (click)="toggleSideMenu(false)"
             *ngIf='!isDesktopApp && permissionService.permissionAvailable' appPermission [permission]='orgSetupRole'
             routerLink="org/orgType">
             {{resourceService.frmelmnts?.lbl?.orgtypes}}
@@ -526,7 +441,7 @@
                 <use xlink:href="./assets/images/sprite.svg#Admin-icon"></use>
               </svg></i>
             {{resourceService.frmelmnts?.lbl?.communicationConsole}} 
-          </li> -->
+          </li>
 
           <li class="list-item" role="link" appOnlineOnly (click)="toggleSideMenu(false)"
             [class.active]="router.isActive(routerLinks?.groups)" tabindex="0"
