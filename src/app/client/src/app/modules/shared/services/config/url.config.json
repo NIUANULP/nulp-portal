@@ -213,17 +213,14 @@
     "ADMIN": {
       "USER_SEARCH": "user/v3/search",
       "ORG_SEARCH": "org/v2/search",
-      "ORG_SEARCH_OLD": "org/v1/search",
-      "ORG_CREATE":"org/v1/create",
       "ORG_EXT_SEARCH": "org/v1/ext/search",
       "BULK": {
-        "USERS_UPLOAD": "user/v1/upload",
+        "USERS_UPLOAD": "user/v2/upload",
         "ORGANIZATIONS_UPLOAD": "org/v1/upload",
         "STATUS": "data/v1/upload/status"
       },
       "DELETE_USER": "user/v1/block",
-      "UNDELETE_USER": "user/v1/unblock",
-      "UPDATE_USER_ORG_ROLES": "user/v1/role/assign"
+      "UPDATE_USER_ORG_ROLES": "user/v2/role/assign"
     },
     "BADGE": {
       "GET": "org/v1/badges/list",
@@ -375,17 +372,7 @@
       "GENERIC_REPORTS": "reports/mlreports/v1/fetch",
       "ALL_EVIDENCE":"observations/mlsurvey/v1/listAllEvidences"
     },
-    "UCI": "/uci",
-    "ORGANIZATION": {
-      "READ":"org/v1/read",
-      "MEMBERADD":"org/v1/member/add",
-      "UPDATE":"org/v1/update",
-      "STATUSUPDATE":"org/v1/status/update",
-      "UPDATEPATCH":"channel/v1/update",
-      "FORMCREATEORG":"data/v1/form/create",
-      "MEMBERREMOVE":"org/v1/member/remove",
-      "PREFERENCES_CREATE" : "org/v2/preferences/create"
-    }
+    "UCI": "/uci"
 
   }
 }
