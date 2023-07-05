@@ -1,0 +1,42 @@
+
+<div class="border14">
+<div class="ui container">
+  <!--<div class="report-button1"> <button type="button" class="sb-btn sb-btn-normal sb-btn-primary"
+   (click)="userReportLink();">User Onboarding Report</button>&nbsp;
+ 
+   <button type="button" class="sb-btn sb-btn-normal sb-btn-primary"
+   (click)="dateWiseLineChart();">Organization Onboarding Report </button>
+ </div>-->
+ 
+ 
+   <div class="ui stackable grid mt-30">
+      
+   <div class="column" [ngClass]="{'graph-border' : Linechart}" style="width:50%">
+     <canvas id="canvas"  #mychart (click)="showData($event)">{{ Linechart }}</canvas>
+   </div>
+   <div class="column"  [ngClass]="{'graph-border' : Linechart1}"style="width:50%">
+     <canvas id="canvas1"  #mychart >{{ Linechart1 }}</canvas>
+   </div>
+ 
+ </div>
+ </div>
+ 
+ 
+ 
+ 
+ <div class="ui container">
+ 
+   <div class="ui stackable grid mt-30">
+      
+   <div class="column" [ngClass]="{'graph-border' : Linechart3}"  style="width:50%">
+     <canvas id="canvas3"  #mychart (click)="showData3($event)">{{ Linechart3 }}</canvas>
+   </div>
+ 
+   <div class="column" [ngClass]="{'graph-border' : Linechart4}" style="width:50%" *ngIf="showSubOrgActInActGraph">
+     <canvas id="canvas4"  #mychart>{{ Linechart4 }}</canvas>
+   </div>
+  
+ 
+ </div>
+ </div>
+ </div>
