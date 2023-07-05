@@ -1,0 +1,68 @@
+<div class="ui container">
+    <div class="ui stackable grid">
+        <div class="twelve wide column workspacesegment">
+            <div class="ui bottom attached segment">
+                <div class="ui container">
+                    <div class="ui stackable grid mt-30">
+                        <div class="column" style="width:70%" [ngClass]="{'graph-border' : L1_Piechart}">
+                            <label>Select Organization</label> &nbsp;&nbsp;
+                            <p-dropdown [options]="cityList" [(ngModel)]="selectedCity"
+                                placeholder="Select Organization" optionLabel="orgName"
+                                [ngModelOptions]="{standalone: true}" (onChange)="getContentData()"></p-dropdown>
+                            &nbsp;&nbsp;
+                            <p-dropdown [options]="subOrgs" (onChange)="onChangeSubOrg()" [(ngModel)]="selectedSubOrg"
+                                placeholder="Select SubOrganization" optionLabel="orgName"
+                                [ngModelOptions]="{standalone: true}">
+                            </p-dropdown>
+                            <br />
+                            <br />
+                            <br />
+                            <canvas id="L1_Canvas_Course_Leadership" #mychart>{{ L1_Piechart }}</canvas>
+                        </div>
+                    </div>
+                </div><br><br>
+                <!---->
+                <div class="ui container" *ngIf='Table_Data_List.length > 0'>
+                    <p-table #dt [value]="Table_Data_List" [columns]="colsUser" [paginator]="true" [rows]="10"
+                        [resizableColumns]="true">
+                        <ng-template pTemplate="caption">
+                            <tr class="d-flex d-jc-space-between">
+                                <td class="v-align-middle">
+                                    <div class="ui small left icon input align-left">
+                                        <b>{{popupTitle}}</b>
+                                    </div>
+                                </td>
+
+                                <td class="v-align-middle">
+                                    <div class="ui-helper-clearfix export-btns">
+                                        <button type="button" style="float:right" icon="fa fa-file"
+                                            class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left"
+                                            pbutton="" iconPos="left" label="Export" (click)="dt.exportCSV()"><span
+                                                aria-hidden="true"
+                                                class="ui-button-icon-left ui-clickable fa fa-file"></span><span
+                                                class="ui-button-text ui-clickable">Export</span></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th *ngFor="let col of columns" pResizableColumn [style.width]="col.width">
+                                    {{col.header}}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-Table_Data_List let-columns="columns">
+                            <tr>
+                                <td *ngFor="let col of columns ;" class="ui-resizable-column">
+                                    {{Table_Data_List[col.field]}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

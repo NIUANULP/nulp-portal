@@ -1,0 +1,149 @@
+<div [ngClass]="layoutConfiguration ? 'sbt-fluid-content-bg':''"> 
+    <div class="sb-g" [ngClass]="layoutConfiguration ? 'sb-g sbt-container sbt-page-content' : 'sb-g'">
+        <div class="sb-g-col-xs-12 sb-g-col-md-12 sb-g-col-lg-12 sb-g-col-xxxl-16">
+            <div [ngClass]="layoutConfiguration ? 'sbt-page-content-area' : 'ui container'">
+
+                <sui-tabset>
+                    <div class="ui top attached tabular menu mt-30">
+                        <!-- ---code start  here------------ -->
+
+                        <a class="item" suiTabHeader="yourLearnings" *ngIf="urlPathValue=='learningreport'">Your Learnings</a>
+                    
+                            <a class="item" suiTabHeader="orgreport" appPermission [permission]='adminDashboard' *ngIf="urlPathValue=='orgreport'" [ngClass]="{'sb-tab': urlPathValue=='orgreport'}">Organization Onboarding Report</a>
+                            <a class="item" suiTabHeader="contentContributionReport" appPermission [permission]='adminDashboard' *ngIf="urlPathValue=='orgreport'"  [ngClass]="{'sb-tab': urlPathValue=='orgreport'}">Content Contribution Report</a>
+                            <a class="item" suiTabHeader="contentCategoryReport" appPermission [permission]='adminDashboard' *ngIf="urlPathValue=='orgreport'"  [ngClass]="{'sb-tab': urlPathValue=='orgreport'}">Content Category Report</a>
+                            <a class="item" suiTabHeader="courseContributionReport" appPermission [permission]='adminDashboard' *ngIf="urlPathValue=='orgreport'"  [ngClass]="{'sb-tab': urlPathValue=='orgreport'}">Course Contribution Report</a>
+                            <a class="item" suiTabHeader="courseCategoryReport" appPermission [permission]='adminDashboard' *ngIf="urlPathValue=='orgreport'"  [ngClass]="{'sb-tab': urlPathValue=='orgreport'}">Course Category Report</a>     
+                            <a class="item" appPermission [permission]='adminDashboard' suiTabHeader="userreport" *ngIf="urlPathValue=='userreport'">User Report</a>
+                            <a class="item" appPermission [permission]='adminDashboard' suiTabHeader="useronboardingreport" *ngIf="urlPathValue=='userreport'">User Onboarding Report</a>
+                        <a class="item" suiTabHeader="contentcreation"  appPermission [permission]='adminDashboard' *ngIf="urlPathValue=='contentreport'">Content
+                            Creation</a>
+                        <a class="item"  suiTabHeader="citywisecontentcreation" appPermission
+                            [permission]='adminDashboard' *ngIf="urlPathValue=='contentreport'">City Wise Content Creation</a>
+                        <a class="item"  suiTabHeader="departmentwisecontentcreation" appPermission
+                            [permission]='adminDashboard' *ngIf="urlPathValue=='contentreport'">Department Wise Content Creation</a>
+
+                        <a class="item"  suiTabHeader="contenttypewisecontentcreation" appPermission [permission]='adminDashboard' *ngIf="urlPathValue=='contentreport'">Content Type Wise Content Creation</a>
+
+<a class="item" suiTabHeader="leadershipReport" appPermission [permission]='adminDashboard'
+                        *ngIf="urlPathValue=='leadershipreport'" [ngClass]="{'sb-tab': urlPathValue=='leadershipreport'}">Content Leadership Report</a>
+
+                    <a class="item" suiTabHeader="courseleadershipReport" appPermission [permission]='adminDashboard'
+                        *ngIf="urlPathValue=='leadershipreport'"  [ngClass]="{'sb-tab': urlPathValue=='leadershipreport'}">Course Leadership Report</a>    
+                </div>
+                <div class="ui bottom attached segment" suiTabContent="yourLearnings">
+                    <div class="ui bottom attached segment">
+                        <div class="sb-g-col-xs-12 sb-g-col-md-12 sb-g-col-lg-12 sb-g-col-xxxl-16" *ngIf="showTrainingstats && enrolledCourseData.length > 0">
+                            <p-chart type="doughnut" [data]="donutChartData" height="250px"></p-chart>
+                        </div>
+                        <br>
+                        <div class="sb-g-col-xs-12 sb-g-col-md-12 sb-g-col-lg-12 sb-g-col-xxxl-16" *ngIf="showTrainingstats && enrolledCourseData.length > 0">
+                            <p-table #dt [value]="enrolledCourseData" [columns]="cols" [paginator]="true" [rows]="10"
+                                [resizableColumns]="true">
+                                <ng-template pTemplate="caption">
+                                    <div class="ui small left icon input" style="float: left">
+                                        <i class="search icon"></i>
+                                        <input type="text" pInputText placeholder="Search"
+                                            (input)="dt.filterGlobal($event.target.value, 'contains')">
+                                    </div>
+                                    <div class="ui-helper-clearfix">
+                                        <button type="button" pButton icon="fa fa-file" iconPos="left" label="Export"
+                                            (click)="dt.exportCSV()" style="float:right"></button>
+                                    </div>
+                                </ng-template>
+                                <ng-template pTemplate="header" let-columns>
+                                    <tr>
+                                        <th *ngFor="let col of columns" pResizableColumn>
+                                            {{col.header}}
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                                    <tr>
+                                        <td *ngFor="let col of columns;let i=index" class="ui-resizable-column"
+                                            [ngClass]="{'align-center':i>2}">
+                                            {{rowData[col.field]}}
+                                            <img *ngIf="col.header === 'Certificate' && rowData.statusName == 'Completed'"
+                                                src="{{'assets/images/certificate-badge.png' | cdnprefixurl}}"
+                                                style="height: 20px;cursor: pointer;"
+                                                (click)="downloadCert(rowData)">
+                                            <img *ngIf="col.header === 'Certificate' && rowData.statusName != 'Completed'"
+                                                src="{{'assets/images/certificate-badge-grey.png' | cdnprefixurl}}"
+                                                style="height: 20px;cursor: not-allowed;">
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                        <div class="ui grid" *ngIf="!showTrainingstats || enrolledCourseData.length == 0">
+                            <div class="one wide column"></div>
+                            <div class="ten wide column">
+                                <div class="ui two column centered grid no-result-container">
+                                    <div class="column">
+                                        <img src="{{'assets/images/erroricon.png' | cdnprefixurl}}">
+                                        <div class="no-result-text">{{resourceService?.messages?.stmsg?.m0131}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="one wide column"></div>
+                        </div>
+                    </div>
+                    </div>
+                    <!-- //---change code start  here------ -->
+                    
+                    <!-- <div class="ui bottom attached segment" suiTabContent="userreport">
+                        <app-reports></app-reports>
+                    </div> -->
+                    <!-- <div class="ui bottom attached segment" suiTabContent="useronboardingreport">
+                        <app-user-report></app-user-report>
+                    </div> -->
+
+                    <div class="ui bottom attached segment" suiTabContent="orgreport">
+                    <app-organization-report></app-organization-report>
+                    </div>
+                    <div class="ui bottom attached segment" suiTabContent="contentContributionReport">
+                    
+                        <app-content-report></app-content-report>
+                    </div>
+                    <div class="ui bottom attached segment" suiTabContent="userreport">
+                        <app-reports></app-reports>
+                    </div>
+                    <div class="ui bottom attached segment" suiTabContent="useronboardingreport">
+                        <app-user-report></app-user-report>
+                    </div>
+                    <div class="ui bottom attached segment" suiTabContent="contentCategoryReport">         
+                        <app-content-category-wise></app-content-category-wise>
+                    </div>
+                    <div class="ui bottom attached segment" suiTabContent="courseCategoryReport">
+                    
+                        <app-course-category-wise></app-course-category-wise>
+                    </div>
+                    <div class="ui bottom attached segment" suiTabContent="courseContributionReport">
+                    
+                        <app-course-report></app-course-report>
+                    </div>
+
+                    <div class="ui bottom attached segment" suiTabContent="leadershipReport">
+                        <app-content-leaderboard></app-content-leaderboard>
+                    </div>
+
+                    <div class="ui bottom attached segment" suiTabContent="courseleadershipReport">
+                        <app-course-content-leaderboard></app-course-content-leaderboard>
+                    </div>
+                    <div class="ui bottom attached segment" suiTabContent="contentcreation">
+                        <app-content-creation-statics></app-content-creation-statics>
+                    </div>
+                    <div class="ui bottom attached segment" suiTabContent="citywisecontentcreation">
+                        <app-city-wise-report></app-city-wise-report>
+                    </div>
+                    <div class="ui bottom attached segment" suiTabContent="departmentwisecontentcreation">
+                        <app-dept-city-wise-report></app-dept-city-wise-report>
+                    </div>
+                    <div class="ui bottom attached segment" suiTabContent="contenttypewisecontentcreation">
+                        <app-content-dept-wise-report></app-content-dept-wise-report>
+                    </div>
+                </sui-tabset>
+        </div>
+        </div>
+</div>
+</div>

@@ -7,12 +7,11 @@
             {{ resourceService?.frmelmnts?.lbl?.tcfrom}}
           </label>
           <div class="sb-field">
-            <mat-form-field appearance="fill" class="sb-mat__datepicker">
-              <mat-label>Select From</mat-label>
-              <input matInput [matDatepicker]="startPicker" formControlName="from" [min]="pickerMinDate" [max]="getPickerMaxDate()">
-              <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-              <mat-datepicker #startPicker></mat-datepicker>
-            </mat-form-field>
+            <div class="ui left icon input">
+              <i class="calendar icon"></i>
+              <input formControlName="from" [pickerMode]="'date'" suiDatepicker placeholder="Select From"
+                [pickerUseNativeOnMobile]="false" [pickerMinDate]="pickerMinDate" [pickerMaxDate]="getPickerMaxDate()">
+            </div>
           </div>
         </div>
 
@@ -21,12 +20,11 @@
             {{ resourceService?.frmelmnts?.lbl?.tcto}}
           </label>
           <div class="sb-field">
-            <mat-form-field appearance="fill" class="sb-mat__datepicker">
-              <mat-label>Select To</mat-label>
-              <input matInput [matDatepicker]="endPicker" formControlName="to" [min]="getPickerMinDate()" [max]="pickerMaxDate">
-              <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
-              <mat-datepicker #endPicker></mat-datepicker>
-            </mat-form-field>
+            <div class="ui left icon input">
+              <i class="calendar icon"></i>
+              <input formControlName="to" suiDatepicker [pickerMode]="'date'" [pickerMinDate]="getPickerMinDate()"
+                [pickerMaxDate]="pickerMaxDate" placeholder="Select To" [pickerUseNativeOnMobile]="false">
+            </div>
           </div>
         </div>
         <div class="sb-field-group ml-16">
