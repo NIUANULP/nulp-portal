@@ -7,23 +7,23 @@
     <div class="sb-field-group mb-16 text-left">
       <div class="sb-field">
         <label
-          class="sb-account-recoverpage-label required">{{resourceService?.frmelmnts?.lbl?.email}}/{{resourceService?.frmelmnts?.lbl?.phoneNumber}}</label>
+          class="sb-account-recoverpage-label required">{{resourceService?.frmelmnts?.lbl?.email}}</label>
         <input class="sb-form-control"
           [ngClass]="{'is-invalid': form.controls.identifier.touched && form.controls.identifier.errors }"
           formControlName="identifier" name="identifier"
-          placeholder="{{resourceService?.frmelmnts?.lbl?.enterEmailID}}/{{resourceService?.frmelmnts?.lbl?.phone}}">
+          placeholder="{{resourceService?.frmelmnts?.lbl?.enterEmailID}}">
         <span *ngIf="identiferStatus === 'MATCHED'" class="sb-field-verified"><i
             class="check circle icon"></i></span>
         <span class="sb-color-warning fxsmall mt-8"
           *ngIf="form.controls.identifier.touched && form.controls.identifier.errors && form.controls.identifier.errors.required">
-          {{resourceService?.frmelmnts?.lbl?.email}}/{{resourceService?.frmelmnts?.lbl?.phoneRequired}}
+          {{resourceService?.frmelmnts?.lbl?.emailRequired}}
         </span>
         <span class="sb-color-error fxsmall mt-8"
           *ngIf="form.controls.identifier.touched && form.controls.identifier.errors && form.controls.identifier.errors.pattern">
-          {{resourceService?.frmelmnts?.lbl?.validEmail}}/{{resourceService?.frmelmnts?.lbl?.phone}}
+          {{resourceService?.frmelmnts?.lbl?.validEmail}}
         </span>
         <span class="sb-color-error fxsmall mt-8" *ngIf="identiferStatus === 'NOT_MATCHED'">
-          {{resourceService?.frmelmnts?.lbl?.emailPhonenotRegistered | interpolate:'{instance}': resourceService.instance}}
+          {{resourceService?.frmelmnts?.lbl?.emailnotRegistered | interpolate:'{instance}': resourceService.instance}}
         </span>
         <span class="sb-color-error fxsmall mt-8" *ngIf="identiferStatus === 'VALIDATING_FAILED'">
           {{resourceService?.frmelmnts?.lbl?.captchaValidationFailed}}
