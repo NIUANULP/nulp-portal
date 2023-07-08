@@ -79,14 +79,14 @@ export class FaqComponent implements OnInit {
       this.defaultFooterConfig.helpCenterLink = `${baseUrl}${this.helpCenterLink}`;
       this.getDesktopFAQ(this.selectedLanguage);
     } else {
-      // this.faqService.getFaqJSON()
-      //   .pipe(takeUntil(this.unsubscribe$)).subscribe(data => {
-      //     this.faqBaseUrl = _.get(data, 'result.response.value');
-      //     this.getFaqJson();
-      //   }, (err) => {
-      //     this.showLoader = false;
-      //     this.toasterService.error(this.resourceService.messages.emsg.m0005);
-      //   });
+      this.faqService.getFaqJSON()
+        .pipe(takeUntil(this.unsubscribe$)).subscribe(data => {
+          this.faqBaseUrl = _.get(data, 'result.response.value');
+          this.getFaqJson();
+        }, (err) => {
+          this.showLoader = false;
+          this.toasterService.error(this.resourceService.messages.emsg.m0005);
+        });
     }
 
     this.utilService.languageChange.subscribe((langData) => {

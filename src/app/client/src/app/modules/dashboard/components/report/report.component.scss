@@ -44,7 +44,7 @@
 }
 
 .content-header {
-    background: var(--rc-FAFAFA);
+    // background: var(--rc-FAFAFA);
     min-height: calculateRem(14px);
       &__content{
           display:flex;
@@ -334,4 +334,15 @@
 }
 .report-main-block {
     padding: 0 1%;
+}
+
+::ng-deep{
+    .mat-checkbox-layout .mat-checkbox-label {
+        white-space: normal !important;
+    }
+    .mat-checkbox-inner-container {
+        top: 0.25rem !important;
+        margin: inherit !important ;
+        margin-right: 0.5rem !important;
+    }
 }

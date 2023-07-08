@@ -337,14 +337,12 @@ app-workspace {
 
 
 /* new theme */
-
-
 .sbt-container {
   width: 100%;
   margin: 0 auto;
 
   @include respond-above(sm) {
-    // padding: 0 5% 0 3%;
+    padding: 0 1%;
   }
 }
 
@@ -574,7 +572,7 @@ app-workspace {
   }
 
   .sb-card-grid {
-    margin-top: 24px;
+    // margin-top: 24px;
   }
 
   .content-header {
@@ -782,7 +780,7 @@ html.PlayerMediaQueryClass {
 
   &::before {
     content: "" !important;
-    background: url(assets/images/close.png) no-repeat !important;
+    background: url(../../assets/images/close.png) no-repeat !important;
     height: 1.375rem;
     width: 1.375rem;
   }
@@ -892,7 +890,6 @@ app-landing-page {
   font-size: calculateRem(12px);
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 0rem;
   display: flex;
   align-items: center;
@@ -917,7 +914,7 @@ app-landing-page {
 
   @include respond-below(sm) {
     .head-tail-right-side {
-      margin-top: 0.5rem;
+      // margin-top: 0.5rem;
       align-self: flex-end;
       width: 100%;
     }
@@ -936,7 +933,12 @@ app-landing-page {
       flex-direction: column;
       width: 100%;
     }
-
+    nav {
+      @include respond-below(xs) {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    }
     ul {
       list-style: none;
       display: flex;
@@ -969,7 +971,7 @@ app-landing-page {
       }
 
       &:last-child {
-        @include respond-below(sm) {
+        @include respond-below(xs) {
           margin-top: 0.5rem;
         }
       }
@@ -1192,10 +1194,6 @@ a.ui.labels .label:hover {
   padding: 0.5rem;
 }
 
-.sb-desktop-content-manager .sb-single-pannel-accordion-heading {
-  background-color: #5630DC;
-}
-
 .sb-slider-pills-container .sb-grade-pills-container .pill.active:hover {
   background-color: var(--cc-grade-pill-bg-hover) !important;
   color: var(--cc-grade-pill-text-hover) !important;
@@ -1240,6 +1238,10 @@ html[layout='joy'] {
       width: 100%;
       margin-bottom: calculateRem(8px);
     }
+  }
+
+  .sb--card__img.sb--card__image-pos {
+    z-index: unset;
   }
 }
 
@@ -1290,11 +1292,6 @@ html[data-theme='Darkmode'][layout='joy'] {}
   }
 }
 
-//desktop
-.sb-desktop-filter-section .status-container__title {
-  max-width: 100% !important;
-}
-
 @media screen and (min-width:1024px) and (max-width:1199px) {
   *[lang="ta"] {
     .sb-desktop-header-list-items {
@@ -1327,6 +1324,11 @@ html[data-theme='Darkmode'][layout='joy'] {}
       }
     }
   }
+}
+
+//desktop
+.sb-desktop-filter-section .status-container__title {
+  max-width: 100% !important;
 }
 
 @include respond-above(sm) {
@@ -1440,6 +1442,15 @@ sunbird-epub-player .sunbird-epub-container {
     height: auto !important;
   }
 }
+.PlayerMediaQueryClass sunbird-epub-player .sunbird-epub-container div:first-child.rendition{
+  height:auto;
+}
+.PlayerMediaQueryClass .contentViewerIframeShadow.player-fullscreen.content-full-video sunbird-epub-player .sb-player-splash-container{
+  height: calc(100% - 4rem) !important;
+}
+.PlayerMediaQueryClass .sb-epub-reading-status, .PlayerMediaQueryClass .sb-pdf-reading-status{
+  bottom: 4.75rem !important;
+}
 .contentViewerIframeShadow.player-fullscreen.content-full-video sunbird-epub-player .sb-player-splash-container{
   height: 100% !important;
 }
@@ -1460,194 +1471,59 @@ html[layout="joy"] .sb-modal-content .ui.center.aligned.segment {
 //   overflow:hidden !important;
 // }
 
-// Accessible changes
-html[data-theme='Default'], [layout='joy']{
-  app-signup {
-    .sb-checkbox.sb-checkbox-primary label:before {
-      border-color: #004E8A;
-    }
-  }
-}
-
-html[data-theme='Darkmode'] {
-  app-signup {
-    .sb-checkbox.sb-checkbox-primary label:before {
-      border-color: var(--primary-color);
-    }
-  }
-}
-
-@include respond-below(md) {
-  .cdk-overlay-pane {
-    min-width: auto !important;
-  }
-}
-
-html[layout='joy'] {
-  .sb-library-cards, .layout-library {
-    .header .title {
-      font-weight: 700 !important;
-      font-size: calculateRem(16px) !important;
-    }
-  }
-}
-
-// .cdk-overlay-container .cdk-global-overlay-wrapper {
-//   overflow: auto;
+// @include respond-below(md) {
 //   .cdk-overlay-pane {
-//     width: 100%;
-//     max-width: 100% !important;
-//   }
-//   .ui.dimmer {
-//     overflow: auto;
+//     min-width: auto !important;
 //   }
 // }
 
-// .cdk-global-overlay-wrapper {
-//   pointer-events: auto;
-//   display: block;
-//   position: relative;
-//   overflow: auto;
-//   text-align: center;
-// }
-
-// .cdk-global-overlay-wrapper::before {
-//   content: '';
-//   display: inline-block;
-//   height: 100%;
-//   white-space: nowrap;
-// }
-
-// .cdk-overlay-pane {
-//   display: inline-block;
-//   position: relative;
-//   text-align: left;
-//   white-space: normal;
-// }
-// .language-selector{
-//   color: #ffffff;
-//   label{
-//     margin-bottom: 0;
-//   }
-// }
-// .sb-search-box{
-//   width: 30%;
-//   border-radius: 2px !important;
-//   background: #fff;
-//   height: 31px;
-//   input{
-//     border-radius: 0 !important;
-//     background: #fff !important;
-//   }
-//   button{
-//   background: #edf4f9 !important;
-//   color: #024f9d !important;
-//   border-left-color: #024f9d !important;
-//   border-left: solid 0.5px !important;
-//   }
-// }
-// .sbt-fluid-content-bg{
-//   margin-top: 168px !important;
-// }
-//  /* slick */
-//  .slick-prev {
-//   left: 45px !important;
-// }
-// .slick-prev::before{
-//   line-height: 1.8 !important;
-//   color: #000 !important;
-// }
-// .slick-next {
-//   right: 55px !important;
-// }
-// .slick-next::before{
-//   line-height: 1.8 !important;
-//   color: #000 !important;
-// }
-// .slick-list{
-//     padding-bottom: 20px;
-// }
-
-.dt-page-container{
-  padding: 7rem;
+.dot-divider {
+  width: 0.25rem;
+  height: 0.25rem;
+  border-radius: 100%;
+  background-color: var(--gray-800);
+  display: inline-block;
+  margin: 0px 0.5rem;
 }
-.border14 .ui-calendar-w-btn,.workspacesegment .ui-calendar-w-btn{
-  display: flex;
+.startpage__instruction .startpage__instr-desc p.text-right {
+    padding-right: 8px !important;
 }
-.workspacesegment .ui-calendar-button{
-  height: inherit !important;
-}
-.border14 .ui-inputtext{
-  width: 175px;
-}
-  html[layout=joy] .ui-corner-all {
-    padding-left: 1rem;
-    border-radius: 20px;
-    font-size: .8125rem;
-    line-height: 1.3125rem;
-    padding: 0.25rem 0.5rem;
-    min-height: 2rem;
-}
-html[layout=joy] .ui-corner-right{
-  background: none !important;
-}
-html[layout=joy] p-multiselectitem .ui-chkbox-icon.pi-check {
-  overflow: hidden;
-  position: absolute !important;
-  font-size: 18px;
-  left: 11px;
-  top: 9px;
-  color: #024f9d;
-}
-html[layout=joy] p-multiselectitem .ui-state-default{
-  background: #fff !important;
-  min-height: inherit !important;
-}
-.d-flex{
-  display: flex;
+[dir="rtl"] {
+  .contentViewerIframeShadow{
+    transform: translate(50%,-50%) !important;
+  }
 }
 
-.d-jc-space-between{
-  justify-content: space-between;
+.sbaccordion__panel-header__title .sb-checkbox, .sbselectpopover .sb-checkbox {
+  padding: 0 0;
+  margin-top: 0;
+}
+html[layout=joy] sb-form .multi-select-container .list-border {
+  padding: 0px !important;
+  border: inherit !important;
 }
 
-html[layout=joy] app-all-dashboard  .no-result-container{
-  background: none !important;
-}
+/* error page */
+.error-page {
+  padding:0 5%;
+  @include respond-below(sm){
+    padding:0 1%;
+  }
+  .logo {
+    height: 5rem;
+    display: flex;
+    align-items: center;
+    img {
+      min-height: 65%;
+      height: 80%;
+    }
+  }
+  .error-img img {
+    max-width: 35.375rem;
+    width:100%;
+    @include respond-below(sm){
+      max-width: 25rem;
+    }
+  }
 
-app-all-dashboard .ui-table table{
-  table-layout: inherit !important;
-}
-
-app-addusers .ui-table table{
-  table-layout: inherit !important;
-}
-
-app-all-dashboard .ui-datepicker-trigger.ui-calendar-button{
-  padding: 0 !important;
-}
-app-all-dashboard  .ui-inputtext.ui-corner-all{
-  white-space: break-spaces;
-}
-keyboard-config .four.wide select{
-  padding: 8px !important;
-}
-html[layout=joy] .accordion-menu .sb-accordion-title{
-  font-weight: 500 !important;
-}
-html[layout=joy] .accordion-menu sui-accordion-panel .title{
-  background: none !important;
-  padding: 0 !important;
-}
-html[layout=joy] .accordion-menu .sb-accordion {
-  background: none !important;
-}
-html[layout=joy] .accordion-menu .ui.styled.accordion .content {
-   background: none !important;
-}
-html[layout=joy] .accordion-menu .sb-accordion-content.sb-bg-color-white {
-  background: none !important;
-}
-html[layout=joy] .accordion-menu  .ui.accordion .active.title .chevron.down.icon{
-  vertical-align: text-bottom;
 }

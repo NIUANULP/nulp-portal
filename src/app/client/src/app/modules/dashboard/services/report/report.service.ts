@@ -2,13 +2,13 @@ import { ProfileService } from '@sunbird/profile';
 import { CourseProgressService } from './../course-progress/course-progress.service';
 import { IListReportsFilter, IReportsApiResponse, IDataSource } from './../../interfaces';
 import { ConfigService, IUserData } from '@sunbird/shared';
-import { LearnerService, UserService, BaseReportService, PermissionService, SearchService, FrameworkService,PublicDataService } from '@sunbird/core';
+import { UserService, BaseReportService, PermissionService, SearchService, FrameworkService } from '@sunbird/core';
 import { Injectable } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { UsageService } from '../usage/usage.service';
 import { map, catchError, pluck, mergeMap, shareReplay } from 'rxjs/operators';
 import * as _ from 'lodash-es';
-import { Observable, of, forkJoin, throwError } from 'rxjs';
+import { Observable, of, forkJoin } from 'rxjs';
 import * as moment from 'moment';
 import { UUID } from 'angular2-uuid';
 
@@ -22,50 +22,27 @@ export class ReportService  {
 
   private cachedMapping = {};
 
-  /**
- * user id
- */
-  userid: string;
-  /**
- * To get details about user profile.
- */
-
- /**
-  * reference of lerner service.
- */
-  // public learnerService: LearnerService;
-   /**
-   * constructor
-   * @param {LearnerService} learner LearnerService reference
-   */
-
   constructor(private sanitizer: DomSanitizer, private usageService: UsageService, private userService: UserService,
     private configService: ConfigService, private baseReportService: BaseReportService, private permissionService: PermissionService,
     private courseProgressService: CourseProgressService, private searchService: SearchService,
-    private frameworkService: FrameworkService, private profileService: ProfileService,
-    public publicDataService: PublicDataService,public learnerService: LearnerService ) {
-
+    private frameworkService: FrameworkService, private profileService: ProfileService ) {
     try {
       this._superAdminSlug = (<HTMLInputElement>document.getElementById('superAdminSlug')).value;
     } catch (error) {
       this._superAdminSlug = 'sunbird';
     }
-
-    // this.learnerService = learner;
-    // this.userService = userService;
-    // this.userid = this.userService.userid;
   }
 
   public fetchDataSource(filePath: string, id?: string | number): Observable<any> {
     return this.usageService.getData(filePath).pipe(
       map(configData => {
         return {
-          loaded:true,
+          loaded: true,
           result: _.get(configData, 'result'),
           ...(id && { id })
         };
       })
-      ,catchError(error => of({ loaded:false }))
+      , catchError(error => of({ loaded: false }))
 
     );
   }
@@ -81,7 +58,7 @@ export class ReportService  {
     return forkJoin(...apiCalls).pipe(
       mergeMap(response => {
 
-        response = response.filter(function(item){ if(item ){ return item.loaded = true } });
+        response = response.filter(function(item) { if (item ) { return item.loaded = true; } });
         return this.getFileMetaData(dataSources).pipe(
           map(metadata => {
             return _.map(response, res => {
@@ -125,7 +102,7 @@ export class ReportService  {
   }
 
   /**
-   * @description retires a report and deactivates all jobs associated with this report.
+   * @description retires a report and deactivates all jobs associated with this report. 
    * @param {string} reportId
    * @returns
    * @memberof ReportService
@@ -213,12 +190,12 @@ export class ReportService  {
           reportData: chartObj.chartData
         };
       }
-      if(chartObj && chartObj.chartData && chartObj.chartData.length > 0){
+      if (chartObj && chartObj.chartData && chartObj.chartData.length > 0) {
         return chartObj;
       }
-    }).filter(function(chartData){
-       if(chartData ){
-          return (chartData['chartData'] != null || chartData['chartData'] != undefined) 
+    }).filter(function(chartData) {
+       if (chartData ) {
+          return (chartData['chartData'] != null || chartData['chartData'] != undefined);
         }
       });
   }
@@ -232,8 +209,8 @@ export class ReportService  {
       tableData.id = tableId;
       tableData.name = _.get(table, 'name') || 'Table';
       tableData.config = _.get(table, 'config') ||  false;
-      if(!tableData.config){
-        tableData.data = _.get(table, 'values') || _.get(dataset, _.get(table, 'valuesExpr'));   
+      if (!tableData.config) {
+        tableData.data = _.get(table, 'values') || _.get(dataset, _.get(table, 'valuesExpr'));
       } else {
         tableData.data = dataset.data;
       }
@@ -262,7 +239,7 @@ export class ReportService  {
     return this.getDataSourceById(data, tableId) || {};
   }
 
-  private getChartData = (data: { result: any, id: string }[], chart: any) => {
+  getChartData = (data: { result: any, id: string }[], chart: any) => {
     const chartDataSource = _.get(chart, 'dataSource');
 
     if (chartDataSource.ids.length === 1) {
@@ -300,7 +277,6 @@ export class ReportService  {
    * @memberof ReportService
    */
   public overlayMultipleDataSources<T, U extends keyof T>(dataSources: (T[])[], commonDimension: U) {
-    // return _.values(_.merge(..._.map(dataSources, dataSource => _.keyBy(dataSource, commonDimension))));
     return _.flatten(dataSources);
   }
 
@@ -428,7 +404,7 @@ export class ReportService  {
         masterData: () => {
           if (!this.cachedMapping.hasOwnProperty('$slug')) {
             const req = {
-              filters: { isRootOrg: true },
+              filters: { isRootOrg: true, status: 1 },
               fields: ['id', 'channel', 'slug', 'orgName'],
               pageNumber: 1,
               limit: 10000
@@ -482,7 +458,7 @@ export class ReportService  {
         masterData: () => {
           if (!this.cachedMapping.hasOwnProperty('$channel')) {
             const req = {
-              filters: { isRootOrg: true },
+              filters: { isRootOrg: true, status: 1 },
               fields: ['id', 'channel', 'slug', 'orgName'],
               pageNumber: 1,
               limit: 10000
@@ -557,7 +533,7 @@ export class ReportService  {
             return report;
           }),
           catchError(err => {
-            console.error(err);
+            // console.error(err);
             return of(report);
           }));
     });
@@ -580,56 +556,4 @@ export class ReportService  {
     }, []);
   }
 
-  getContentCreationStaticsReport(data) {
-    const options = {
-      url: this.configService.urlConFig.URLS.CONTENT.SEARCH,
-      data: data
-    };
-    return this.publicDataService.post(options);
-  }
-  getOrganizationName(data) {
-    const options = {
-      url: this.configService.urlConFig.URLS.ADMIN.ORG_SEARCH,
-      data: data,
-    };
-    return this.publicDataService.post(options);
-  }
-  getOrgList() {
-    const options = {
-      url: this.configService.urlConFig.URLS.CHANNEL.LIST,
-    };
-    return this.learnerService.post(options);
-  }
-  getDepartmentList(frameWork: string) {
-    const options = {
-      url: this.configService.urlConFig.URLS.FRAMEWORK.READ + '/' + frameWork,
-    };
-    return this.publicDataService.get(options);
-  }
-  getSubOrgList(data) {
-    const option = {
-      url: this.configService.urlConFig.URLS.ADMIN.ORG_SEARCH,
-      data: data
-    };
-    return this.publicDataService.post(option);
-  }
-  getEnrolledCourses() {
-    const option = {
-      url: this.configService.urlConFig.URLS.COURSE.GET_ENROLLED_COURSES + '/' + this.userService.userid,
-      param: { ...this.configService.appConfig.Course.contentApiQueryParams, ...this.configService.urlConFig.params.enrolledCourses }
-    };
-    return this.learnerService.get(option);
-  }
-  getUserList() {
-    const options = {
-      url: this.configService.urlConFig.URLS.ADMIN.USER_SEARCH,
-      data: {
-        request: {
-          filters: {},
-          limit: 5000,
-        }
-      }
-    };
-    return this.learnerService.post(options);
-  }
 }

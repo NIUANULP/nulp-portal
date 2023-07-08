@@ -17,7 +17,7 @@ type UseCase = 'SIGNEDIN_GUEST' | 'SIGNEDIN' | 'GUEST';
 
 export class SbFormLocationSelectionDelegate {
   private static readonly DEFAULT_PERSONA_LOCATION_CONFIG_FORM_REQUEST =
-    { formType: 'profileConfig', contentType: 'default', formAction: 'get' };
+    { formType: 'profileConfig_v2', contentType: 'default', formAction: 'get' };
   private static readonly SUPPORTED_PERSONA_LIST_FORM_REQUEST =
     { formType: 'config', formAction: 'get', contentType: 'userType', component: 'portal' };
 
@@ -52,7 +52,7 @@ export class SbFormLocationSelectionDelegate {
     );
   }
 
-  async init(deviceProfile?: IDeviceProfile) {
+  async init(deviceProfile?: IDeviceProfile, showModal = true) {
     if (deviceProfile) {
       this.deviceProfile = deviceProfile;
     }
@@ -77,12 +77,12 @@ export class SbFormLocationSelectionDelegate {
             loc.code :
             SbFormLocationSelectionDelegate.DEFAULT_PERSONA_LOCATION_CONFIG_FORM_REQUEST.contentType;
         })();
-      }
-      await this.loadForm(formInputParams, true);
+      } 
+      await this.loadForm(formInputParams, true, showModal);
     } catch (e) {
       // load default form
       console.error(e);
-      await this.loadForm(SbFormLocationSelectionDelegate.DEFAULT_PERSONA_LOCATION_CONFIG_FORM_REQUEST, true);
+      await this.loadForm(SbFormLocationSelectionDelegate.DEFAULT_PERSONA_LOCATION_CONFIG_FORM_REQUEST, true, showModal);
     }
   }
 
@@ -105,7 +105,7 @@ export class SbFormLocationSelectionDelegate {
     }
   }
 
-  async onDataLoadStatusChange($event) {
+  async onDataLoadStatusChange($event, showModal = true) {
     if ('LOADED' === $event) {
       this.isLocationFormLoading = false;
 
@@ -122,7 +122,7 @@ export class SbFormLocationSelectionDelegate {
           distinctUntilChanged(),
           delay(100),
           mergeMap(() => defer(() => {
-            return this.formGroup.get('children.persona.state').valueChanges.pipe(
+            return this.formGroup?.get('children.persona.state')?.valueChanges.pipe(
               distinctUntilChanged(),
               take(1)
             );
@@ -143,12 +143,12 @@ export class SbFormLocationSelectionDelegate {
               ...SbFormLocationSelectionDelegate.DEFAULT_PERSONA_LOCATION_CONFIG_FORM_REQUEST,
               contentType: (newStateValue as SbLocation).code,
             },
-            false
+            false, showModal
           ).catch((e) => {
             console.error(e);
             this.loadForm(
               SbFormLocationSelectionDelegate.DEFAULT_PERSONA_LOCATION_CONFIG_FORM_REQUEST,
-              false
+              false, showModal
             );
           });
         });
@@ -156,9 +156,7 @@ export class SbFormLocationSelectionDelegate {
     }
   }
 
-  async updateUserLocation(): Promise<{
-    changes: string, deviceProfile?: 'success' | 'fail', userProfile?: 'success' | 'fail'
-  }> {
+  async updateUserLocation(): Promise<{ changes: string, deviceProfile?: 'success' | 'fail', userProfile?: 'success' | 'fail' }> {
     const changes: string = Object.keys(this.changesMap).reduce<string[]>((acc, code) => {
       const isChanged = !_.isEqualWith(_.get(this.formGroup.value, code), this.changesMap[code], (a, b) => {
         if (a && b) {
@@ -200,13 +198,29 @@ export class SbFormLocationSelectionDelegate {
 
     if (this.shouldUserProfileLocationUpdate && this.userService.loggedIn) {
       const formValue = this.formGroup.value;
+      const profileUserTypes = [];
+      let userType;
+      const userTypeReq = {};
+      if (_.get(formValue, 'children.persona.subPersona.length')) {
+        if (typeof _.get(formValue, 'children.persona.subPersona') === 'string') {
+          userType = {
+            type: formValue.persona,
+            subType: _.get(formValue, 'children.persona.subPersona')
+          };
+          profileUserTypes.push(userType);
+        } else if (Array.isArray(_.get(formValue, 'children.persona.subPersona'))) {
+          formValue.children.persona.subPersona.forEach(element => {
+            profileUserTypes.push({type: formValue.persona, subType: element});
+          });
+          userType = profileUserTypes[0];
+        }
+      } else {
+        profileUserTypes.push({ type: formValue.persona });
+      }
       const payload: any = {
         userId: _.get(this.userService, 'userid'),
         profileLocation: locationDetails,
-        profileUserType: {
-          ...(_.get(formValue, 'persona') ? { type: _.get(formValue, 'persona') } : {} ),
-          ...(_.get(formValue, 'children.persona.subPersona') ? { subType: _.get(formValue, 'children.persona.subPersona') } : {} ),
-        },
+        profileUserTypes,
         ...(_.get(formValue, 'name') ? { firstName: _.get(formValue, 'name') } : {} )
       };
 
@@ -262,18 +276,32 @@ export class SbFormLocationSelectionDelegate {
     }
   }
 
-  private async loadForm(
-    formInputParams,
-    initial = false
-  ) {
-    const useCases: UseCase[] = this.userService.loggedIn ? ['SIGNEDIN_GUEST', 'SIGNEDIN'] : ['SIGNEDIN_GUEST', 'GUEST'];
+  private async loadForm(formInputParams, initial = false, showModal = true) {
+    let useCases: UseCase[];
+    // If user register workflow
+    if (!showModal) {
+      useCases = ['SIGNEDIN_GUEST', 'SIGNEDIN'];
+    } else {
+      useCases = this.userService.loggedIn ? ['SIGNEDIN_GUEST', 'SIGNEDIN'] : ['SIGNEDIN_GUEST', 'GUEST'];
+    }
     this.isLocationFormLoading = true;
-    const tempLocationFormConfig: FieldConfig<any>[] = await this.formService.getFormConfig(formInputParams)
-      .toPromise();
+    let tempLocationFormConfig: FieldConfig<any>[];
+    if (!showModal) {
+      tempLocationFormConfig = await this.formService.getFormConfig(formInputParams, localStorage.getItem('orgHashTagId'))
+        .toPromise();
+    } else {
+      tempLocationFormConfig = await this.formService.getFormConfig(formInputParams)
+        .toPromise();
+    }
     if (!this.userService.loggedIn) {
       this.guestUserDetails = await this.userService.getGuestUser().toPromise();
     }
 
+    if (!showModal) {
+      tempLocationFormConfig.splice(_.findIndex(tempLocationFormConfig, (e) => {
+        return e.code === 'name';
+      }), 1);
+    }
     for (const config of tempLocationFormConfig) {
       if (config.code === 'name') {
         if (this.userService.loggedIn) {
@@ -341,7 +369,23 @@ export class SbFormLocationSelectionDelegate {
             switch (personaLocationConfig.templateOptions['dataSrc']['marker']) {
               case 'SUBPERSONA_LIST': {
                 if (this.userService.loggedIn) {
-                  personaLocationConfig.default = (_.get(this.userService.userProfile.profileUserType, 'subType') || '') || null;
+                  if (personaLocationConfig.templateOptions.multiple) {
+                    const defaultSubpersona = [];
+                    if (this.userService.userProfile.profileUserTypes && this.userService.userProfile.profileUserTypes.length) {
+                      this.userService.userProfile.profileUserTypes.forEach(element => {
+                        if (element.subType) {
+                          defaultSubpersona.push(element.subType);
+                        }
+                      });
+                    } else {
+                      if (_.get(this.userService, 'userProfile.profileUserType.subType')) {
+                        defaultSubpersona.push(_.get(this.userService, 'userProfile.profileUserType.subType'));
+                      }
+                    }
+                    personaLocationConfig.default = defaultSubpersona;
+                  } else {
+                    personaLocationConfig.default = _.get(this.userService, 'userProfile.profileUserType.subType');
+                  }
                 }
                 break;
               }
