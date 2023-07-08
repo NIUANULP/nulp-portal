@@ -3,7 +3,7 @@ import { ConfigService, ResourceService, IUserData, IUserProfile, LayoutService,
 import { Component, OnInit, Input } from '@angular/core';
 import { UserService, PermissionService } from '../../services';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
-import {IInteractEventObject, IInteractEventEdata, TelemetryService} from '@sunbird/telemetry';
+import { IInteractEventEdata, TelemetryService} from '@sunbird/telemetry';
 import { CacheService } from 'ng2-cache-service';
 import { first, filter, tap } from 'rxjs/operators';
 import * as _ from 'lodash-es';
@@ -70,9 +70,6 @@ export class MainMenuComponent implements OnInit {
   routerLinks = {explore: `/${EXPLORE_GROUPS}`, groups: `/${MY_GROUPS}`};
   isDesktopApp = false;
   @Input() showBackButton;
-
-  urlPaths: string;
-  adminVarLink: string;
   /*
   * constructor
   */
@@ -106,7 +103,7 @@ export class MainMenuComponent implements OnInit {
   ngOnInit() {
     this.isDesktopApp = this.utilService.isDesktopApp;
     try {
-      this.helpLinkVisibility = (<HTMLInputElement>document.getElementById('helpLinkVisibility')).value;
+      this.helpLinkVisibility = document.getElementById('helpLinkVisibility')?(<HTMLInputElement>document.getElementById('helpLinkVisibility')).value:'false';
     } catch (error) {
       this.helpLinkVisibility = 'false';
     }
@@ -115,14 +112,6 @@ export class MainMenuComponent implements OnInit {
       tap((user: IUserData) => {
         if (user && !user.err) {
           this.userProfile = _.get(user, 'userProfile');
-          if(this.userProfile.userRoles.includes("ORG_MANAGEMENT") || this.userProfile.userRoles.includes("ORG_MODERATOR") || this.userProfile.userRoles.includes("ORG_ADMIN") || this.userProfile.userRoles.includes("SYSTEM_ADMINISTRATION"))
-          {
-            this.adminVarLink ="present";
-          }
-          else
-          {
-            this.adminVarLink = "not present";
-          }
         }
       }),
       first()
@@ -199,10 +188,6 @@ export class MainMenuComponent implements OnInit {
     this.cacheService.removeAll();
   }
 
-  showSideBar() {
-    jQuery('.ui.sidebar').sidebar('setting', 'transition', 'overlay').sidebar('toggle');
-  }
-
   navigateToWorkspace() {
     const authroles = this.permissionService.getWorkspaceAuthRoles();
     if (authroles) {
@@ -241,20 +226,5 @@ export class MainMenuComponent implements OnInit {
       }
     };
     this.telemetryService.interact(interactData);
-  }
-  urlPathOfDashboard(urlPath:any)
-  {
-    this.urlPaths=window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
-    if(this.urlPaths=='allDashboard')
-    {
-    sessionStorage.setItem("urlPath", urlPath);
-    location.reload()
-    }
-    else{
-    sessionStorage.setItem("urlPath", urlPath);
-
-    this.router.navigate(["dashBoard/allDashboard"]);
-    }
-    
   }
 }

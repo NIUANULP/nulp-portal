@@ -5,7 +5,7 @@ import { CacheService } from 'ng2-cache-service';
 import * as _ from 'lodash-es';
 import { UtilService } from '../util/util.service';
 import { Subject, asyncScheduler } from 'rxjs';
-import { throttleTime, mergeMap } from 'rxjs/operators';
+import { throttleTime } from 'rxjs/operators';
 
 interface UrlHistory {
   url: string;
@@ -36,7 +36,7 @@ export class NavigationHelperService {
    * Name used to store previous url in session
    */
   private cacheServiceName = 'previousUrl';
-  contentFullScreenEvent = new EventEmitter<any>();
+  public contentFullScreenEvent = new EventEmitter<any>();
   handleCMvisibility = new EventEmitter<any>();
   previousNavigationUrl;
 
@@ -192,12 +192,17 @@ export class NavigationHelperService {
   /* Used In Desktop for navigating to back page */
   goBack() {
     const previousUrl = this.getDesktopPreviousUrl();
+    const redirectToExplore = [
+      '/profile'
+    ];
     this.history.pop();
     if (_.includes(previousUrl.url, '/search') && previousUrl.queryParams) {
       this.utilService.updateSearchKeyword(previousUrl.queryParams.key);
     }
 
-    if (previousUrl.queryParams) {
+    if (_.includes(redirectToExplore, this.router.url)) {
+      this.router.navigate(['/explore']);
+    } else if (previousUrl.queryParams) {
       this.router.navigate([previousUrl.url], { queryParams: previousUrl.queryParams });
     } else {
       this.router.navigate([previousUrl.url]);

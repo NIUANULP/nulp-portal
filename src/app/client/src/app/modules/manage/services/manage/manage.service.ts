@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { ConfigService, RequestParam, ServerResponse, HttpOptions } from '@sunbird/shared';
+import { ConfigService, RequestParam, ServerResponse } from '@sunbird/shared';
 import { LearnerService } from '../../../core/services/learner/learner.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -67,6 +67,20 @@ export class ManageService {
           return result;
         })
       );
+  }
+  updateRoles(requestParam) {
+    const option = {
+      url: this.configService.urlConFig.URLS.ADMIN.UPDATE_USER_ORG_ROLES,
+      data: {
+          'request': {
+            'userId': requestParam.userId,
+            'organisationId': requestParam.orgId,
+            'roles': requestParam.roles
+          }
+        }
+    };
+
+    return this.learnerService.post(option);
   }
 
 }
