@@ -21,10 +21,6 @@
     "sinon": "4.5.0",
     "webpack-bundle-analyzer": "^3.7.0"
   },
-  "engines": {
-    "node": ">=14.19.0",
-    "npm": ">=6.14.16"
-  },
   "nodemonConfig": {
     "ignore": [
       "client"
