@@ -126,9 +126,5 @@
         "typescript": "^3.9.7"
     },
     "keywords": [],
-    "license": "MIT",
-    "engines": {
-        "node": ">=14.17.0",
-        "npm": ">=6.14.13"
-    }
+    "license": "MIT"
 }
