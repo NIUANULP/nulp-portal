@@ -1,5 +1,5 @@
 'use strict'
-const { enableLogger,logger, enableDebugMode  } = require('@project-sunbird/logger');
+// const { enableLogger,logger, enableDebugMode  } = require('@project-sunbird/logger');
 const envHelper = require('./helpers/environmentVariablesHelper.js');
 const path = require('path');
 const fs = require('fs');
