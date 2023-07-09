@@ -1,5 +1,5 @@
 'use strict'
-// const { enableLogger,logger, enableDebugMode  } = require('@project-sunbird/logger');
+const { enableLogger,logger, enableDebugMode  } = require('@project-sunbird/logger');
 const envHelper = require('./helpers/environmentVariablesHelper.js');
 const path = require('path');
 const fs = require('fs');
@@ -25,7 +25,7 @@ enableLogger({
 const express = require('express');
 const gracefulShutdown = require('http-graceful-shutdown');
 const proxy = require('express-http-proxy');
-const { enableLogger,logger, enableDebugMode  } = require('@project-sunbird/logger');
+// const { enableLogger,logger, enableDebugMode  } = require('@project-sunbird/logger');
 const session = require('express-session')
 const bodyParser = require('body-parser')
 const helmet = require('helmet')
