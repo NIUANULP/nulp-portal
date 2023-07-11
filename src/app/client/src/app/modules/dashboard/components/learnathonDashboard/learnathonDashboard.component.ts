@@ -18,7 +18,7 @@ import {
   INoResultMessage,
   ConfigService,
 } from "@sunbird/shared";
-import { HttpClient, HttpResponse,HttpParams } from "@angular/common/http";
+import { HttpClient, HttpResponse } from "@angular/common/http";
 
 // import { UUID } from 'angular2-uuid';
 import { ActivatedRoute, Router } from "@angular/router";
@@ -94,7 +94,17 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
     // this.layoutConfiguration = this.configService.appConfig.layoutConfiguration;
   }
   ngOnInit() {
-           
+    this.https
+      .get(this.configService.urlConFig.URLS.FILE_READ)
+      .subscribe((data) => {
+        this.getAllContent();
+        this.votelist = data["result"].data;
+      },(err) => {
+        console.log(err);
+        this.getAllContent();
+        // this.toasterService.error(this.resourceService.messages.emsg.m0007);
+      });
+      
     this.activatedRoute.queryParams.subscribe((params) => {
       this.queryParams = params;
       if (this.pageName != undefined && this.pageName != this.queryParams) {
@@ -109,7 +119,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
     }
     this.cols = [];
     this.initializeDateFields();
-    this.getAllContent();
+    
     // this.getOrgList();
     this.getOrgDetails();
   }
@@ -155,7 +165,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
 
         contentType: ["Course", "Resource", "Collection"],
       },
-      limit: 100,
+      limit: 50,
       offset: (1 - 1) * 10,
     };
 
@@ -207,20 +217,6 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
             this.tableData = [];
             let finalObj = [];
             tempObj.forEach((element) => {
-              let queryParams = new HttpParams();
-              queryParams = queryParams.append("contentId",element.identifier);
-              this.https
-              .get(this.configService.urlConFig.URLS.FILE_READ,{params:queryParams} )
-              .subscribe((data) => {
-              element["votes"] =  data["result"].count? data["result"].count:0;
-
-                this.votelist = data["result"].data;
-              },(err) => {
-                console.log(err);
-               
-                // this.toasterService.error(this.resourceService.messages.emsg.m0007);
-              });
-
               const options = {
                 url: this.configService.urlConFig.URLS.ADMIN.USER_SEARCH,
                 data: {
@@ -255,17 +251,17 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
                 label: element.UserName,
                 value: element.UserName,
               });
-              // var count = 0;
-              // let tempData = JSON.stringify(this.votelist);
-              // if (tempData) {
-              //   count = tempData.split(element.identifier).length - 1;
-              // element["votes"] = count;
+              var count = 0;
+              let tempData = JSON.stringify(this.votelist);
+              if (tempData) {
+                count = tempData.split(element.identifier).length - 1;
+              element["votes"] = count;
 
-              // } else {
-              //   count = 0;
-              // }
+              } else {
+                count = 0;
+              }
 
-              // element["votes"] = count;
+              element["votes"] = count;
               finalObj.push(element);
             });
             this.tableData = finalObj;
@@ -385,6 +381,14 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
         { field: "board", header: "Theme" },
         { field: "medium", header: "Sub-Theme" },
 
+        // { field: "name", header: "Name", width: "170px" },
+        // { field: "category", header: "Category", width: "170px" },
+        // { field: "subcategory", header: "Sub-Category", width: "170px" },
+        // { field: "city", header: "City", width: "170px" },
+        // { field: "institute", header: "Institute", width: "170px" },
+        // { field: "board", header: "Theme", width: "170px" },
+        // { field: "medium", header: "Sub-Theme", width: "170px" },
+        // { field: "votes", header: "Votes", width: "170px" },
       ];
     }
   }
@@ -397,6 +401,7 @@ export class learnathonDashboardComponent extends WorkSpace implements OnInit {
     this.unsubscribe.complete();
   }
   giveVote(content) {
+    console.log("upForReview - ", content);
     this.workSpaceService.navigateToContent(content, "upForReview");
   }
 }

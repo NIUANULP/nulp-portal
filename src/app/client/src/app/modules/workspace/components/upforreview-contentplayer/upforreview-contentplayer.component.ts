@@ -23,7 +23,7 @@ import {
 } from "rxjs";
 import { mergeMap } from "rxjs/operators";
 import { ServerResponse, RequestParam, HttpOptions } from "@sunbird/shared";
-import { HttpClient, HttpResponse,HttpParams } from "@angular/common/http";
+import { HttpClient, HttpResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { UUID } from "angular2-uuid";
 // import * as _ from 'lodash-es';
@@ -228,24 +228,20 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
       }
       this.closeUrl = this.navigationHelperService.getPreviousUrl();
     });
-
-    let queryParams = new HttpParams();
-              queryParams = queryParams.append("contentId",this.contentId);
-              queryParams = queryParams.append("userId",this.userId);
-              this.https
-              .get(this.config.urlConFig.URLS.FILE_READ,{params:queryParams} )
-              .subscribe((data) => {
-               if( data["result"].count != 'undefined' && data["result"].count == 0){
-                this.canVote= true;
-               }else{
-                this.canVote= false;
-               }
-               
-              },(err) => {
-                console.log(err);
-               
-                // this.toasterService.error(this.resourceService.messages.emsg.m0007);
-              });
+    this.https.get(this.config.urlConFig.URLS.FILE_READ).subscribe((data) => {
+      this.votelist = data["result"].data;
+      const arrayOfObj = Object.entries(this.votelist).map((e) => ({
+        [e[0]]: e[1],
+      }));
+      var i = 0
+      arrayOfObj.forEach((element) => {
+        if (element[i]["userId"] === this.userId && element[i]["contentId"] == this.contentId ) {
+          this.canVote = false; 
+          return;
+        }
+        i++;
+      });
+    });
   }
   ngOnDestroy() {
     this.unsubscribe$.next();
@@ -380,8 +376,8 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
 
   learnVote() {
     this.modalHeader = this.resourceService.frmelmnts.label.invaliddatamsg;
-    if (!this?.name?.trim()) {
 
+    if (!this?.name?.trim()) {
       //alert("Please Enter a name");
       this.formInvalidMessage =
         this.resourceService.frmelmnts.lbl.enterValidName;
@@ -441,6 +437,7 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
       var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
       var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
       this.now = date+' '+time;
+
       const httpOptions: HttpOptions = {       
         body: [
           {
@@ -452,8 +449,7 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
             userEmail: this.email,
             userCity: this.city,
             reasonOfVote: this.reason.replace(/['"]+/g, ''),
-            votedDate:date,
-            votedTime:time
+            votedOn:this.now 
           },
         ],
       };
@@ -468,36 +464,12 @@ export class UpforreviewContentplayerComponent implements OnInit, OnDestroy {
             this.toasterService.success(
               this.resourceService.messages.smsg.voteSuccess
             );
-            let queryParams = new HttpParams();
-              queryParams = queryParams.append("contentId",this.contentId);
-              queryParams = queryParams.append("userId",this.userId);
-              this.https
-              .get(this.config.urlConFig.URLS.FILE_READ,{params:queryParams} )
-              .subscribe((data) => {
-               if(data["result"].count == 0){
-                this.canVote= true;
-               }else{
-                this.canVote= false;
-               }
-               
-              },(err) => {
-                console.log(err);
-               
-                // this.toasterService.error(this.resourceService.messages.emsg.m0007);
-              });
+            this.votelist = data["result"].data;
           },
           (err) => {
             this.toasterService.error(this.resourceService.messages.emsg.m0005);
           }
         );
-    }
-  }
-  checkCanVote(){
-    if(this.canVote){
-      this.showNormalModal = true
-    }else{
-      this.toasterService.error(this.resourceService.messages.emsg.votedContentAlready);
-      
     }
   }
 
