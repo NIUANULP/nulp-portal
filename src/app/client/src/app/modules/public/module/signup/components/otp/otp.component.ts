@@ -49,7 +49,7 @@ export class OtpComponent implements OnInit {
   googleCaptchaSiteKey: string;
   isP2CaptchaEnabled: any;
   redirecterrorMessage=false;
-  isSBM : boolean =false;
+
   constructor(public resourceService: ResourceService, public signupService: SignupService,
     public activatedRoute: ActivatedRoute, public telemetryService: TelemetryService,
     public deviceDetectorService: DeviceDetectorService, public router: Router,
@@ -57,9 +57,6 @@ export class OtpComponent implements OnInit {
   }
 
   ngOnInit() {
-    if(window.location.href.includes("SBMRegistration")){
-      this.isSBM = true;
-    }
     this.emailAddress = this.signUpdata.value.email;
     this.phoneNumber = this.signUpdata.value.phone;
     this.mode = this.signUpdata.controls.contactType.value;
@@ -111,7 +108,6 @@ resendOtpEnablePostTimer() {
       (data: ServerResponse) => {
         this.infoMessage = '';
         this.errorMessage = '';
-        // console.log("data-----", _.get(data, 'reqData'))
         this.createUser(data);
       },
       (err) => {
@@ -174,23 +170,12 @@ resendOtpEnablePostTimer() {
     } else {
       createRequest.request['email'] = this.signUpdata.controls.email.value;
       createRequest.request['emailVerified'] = true;
-      if(this.isSBM == true){
-        createRequest.request['channel'] ='nulp-sbm',
-        createRequest.request['framework'] = {
-          "state":[this.signUpdata.controls.state.value],
-          "urbanLocalBody":[this.signUpdata.controls.urbanLocalBody.value],
-          "designation":[this.signUpdata.controls.designation.value],
-          "id": ['nulp-learn']
-    };
-      }
-      
       identifier = this.signUpdata.controls.email.value;
     }
     createRequest.request['reqData'] = _.get(data, 'reqData');
-
-
      if (this.signUpdata.controls.tncAccepted.value && this.signUpdata.controls.tncAccepted.status === 'VALID') {
-        this.signupService.createUserV3(createRequest,this.isSBM).subscribe((resp: ServerResponse) => {
+
+        this.signupService.createUserV3(createRequest).subscribe((resp: ServerResponse) => {
           this.telemetryLogEvents('sign-up', true);
           const tncAcceptRequestBody = {
             request: {

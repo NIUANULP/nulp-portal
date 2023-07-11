@@ -1,7 +1,7 @@
 <!-- <div class="ui container px-60"> -->
 <div class="sbt-page-content-area px-60">
   <!-- <div [ngClass]="layoutConfiguration ? 'sbt-page-content-area' : 'ui container'"> -->
-  <div class="ui grid" *ngIf="noResult && tableData.length > 0">
+  <div class="ui grid" *ngIf="!noResult && tableData.length > 0">
     <!-- <div class="twelve wide column">
       <span
         >Number of contents created:&nbsp;<b>{{ tableData.length }}</b></span
@@ -39,7 +39,7 @@
         [resizableColumns]="true"
       >
         <ng-template pTemplate="caption">
-          <tr class="d-flex d-jc-space-between min-160">
+          <tr class="d-flex d-jc-space-between">
             <td>
               <div class="ui small left icon input align-left">
                 <i class="search icon"></i>
@@ -50,7 +50,6 @@
                   placeholder="Search"
                   (input)="dtOrg.filterGlobal($event.target.value, 'contains')"
                   style="width: auto"
-                  class="inp-50"
                 />
               </div>
             </td>
@@ -84,7 +83,7 @@
         </ng-template>
         <ng-template pTemplate="header" let-columns>
           <tr>
-            <th *ngIf="this.pageName == 'upForVote'">Action</th>
+            <!-- <th *ngIf="this.pageName == 'upForVote'">Action</th> -->
             <th
               *ngFor="let col of columns"
               pResizableColumn
@@ -100,25 +99,17 @@
                 ariaLabelAsc="Activate to sort in ascending order"
               ></p-sortIcon>
             </th>
-            <!-- <th *ngIf="this.pageName == 'upForVote'">Action</th> -->
+            <th *ngIf="this.pageName == 'upForVote'">Action</th>
           </tr>
           <tr>
-            <th *ngIf="this.pageName == 'upForVote'">&nbsp;</th>
             <th
               *ngFor="let col of columns"
               [ngSwitch]="col.field"
             >
-              
+              <!-- <p *ngIf="this.pageName == 'upForVote'">&nbsp;</p> -->
               <!-- <p-multiSelect *ngSwitchCase="'UserName'" (onChange)="dtOrg.filter($event.value, col.field, 'in')" [options]="UserNameValues" defaultLabel="All"
                     appendTo="body"></p-multiSelect> -->
-                    <!-- <p-multiSelect
-                    *ngSwitchCase="'votes'"
-                    (onChange)="dtOrg.filter($event.value, col.field, 'in')"
-                    [options]=""
-                    defaultLabel="All"
-                    appendTo="body"
-                  ></p-multiSelect> -->
-                    <p-multiSelect
+              <p-multiSelect
                 *ngSwitchCase="'category'"
                 (onChange)="dtOrg.filter($event.value, col.field, 'in')"
                 [options]="CategoryValues"
@@ -133,20 +124,11 @@
                 appendTo="body"
               ></p-multiSelect>
             </th>
-            <!-- <th *ngIf="this.pageName == 'upForVote'"></th> -->
+            <th *ngIf="this.pageName == 'upForVote'"></th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-rowData let-columns="columns">
           <tr>
-            <td *ngIf="this.pageName == 'upForVote'">
-              <button
-                class="sb-btn sb-btn-normal sb-btn-primary"
-                (click)="giveVote(rowData)"
-              >
-                Check Content
-              </button>
-              <!-- &nbsp; -->
-            </td>
             <td *ngFor="let col of columns" class="ui-resizable-column">
               <!-- <button *ngIf="this.pageName == 'upForVote'"
               class="sb-btn sb-btn-normal sb-btn-primary"
@@ -157,7 +139,15 @@
               {{ rowData[col.field] }}
             </td>
 
-           
+            <td *ngIf="this.pageName == 'upForVote'">
+              <button
+                class="sb-btn sb-btn-normal sb-btn-primary"
+                (click)="giveVote(rowData)"
+              >
+                Vote Here
+              </button>
+              <!-- &nbsp; -->
+            </td>
           </tr>
         </ng-template>
       </p-table>
