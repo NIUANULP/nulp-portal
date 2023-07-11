@@ -215,7 +215,7 @@
       "ORG_SEARCH": "org/v2/search",
       "ORG_SEARCH_OLD": "org/v2/search",
       "ORG_CREATE":"org/v1/create",
-      "ORG_EXT_SEARCH": "org/v2/ext/search",
+      "ORG_EXT_SEARCH": "org/v2/search",
       "BULK": {
         "USERS_UPLOAD": "user/v1/upload",
         "ORGANIZATIONS_UPLOAD": "org/v1/upload",
