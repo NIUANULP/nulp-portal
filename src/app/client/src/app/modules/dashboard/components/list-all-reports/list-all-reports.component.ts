@@ -33,13 +33,13 @@ export class ListAllReportsComponent implements OnInit {
   layoutConfiguration: any;
 
 
-  @ViewChild('allReports') set inputTag(element: ElementRef | null) {
+  @ViewChild('all_reports') set inputTag(element: ElementRef | null) {
     if (!element) { return; }
     const [reports, ] = this.reports;
     this.prepareTable(element.nativeElement, reports);
   }
 
-  @ViewChild('allDatasets') set datasetTable(element: ElementRef | null) {
+  @ViewChild('all_datasets') set datasetTable(element: ElementRef | null) {
     if (!element) { return; }
     let [, datasets] = this.reports;
     if (this.reportService.isUserReportAdmin() && !this.reportService.isUserSuperAdmin()) {
@@ -73,9 +73,6 @@ export class ListAllReportsComponent implements OnInit {
     );
   }
 
-  goBack() {
-    this.navigationhelperService.goBack();
-  }
 
   private filterReportsBasedOnRoles = (reports: any[]) => {
     if (this.reportService.isUserSuperAdmin()) {

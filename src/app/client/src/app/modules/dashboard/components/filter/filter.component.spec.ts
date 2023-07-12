@@ -1,19 +1,31 @@
 
+import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { FilterComponent } from './filter.component';
+// import { FilterComponent } from '../';
 import { mockChartData } from './filter.component.spec.data';
-import { ChangeDetectorRef, NO_ERRORS_SCHEMA } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { SuiModule } from 'ng2-semantic-ui-v9';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
+import { TelemetryModule } from '@sunbird/telemetry';
+import { CoreModule } from '@sunbird/core';
+import { configureTestSuite } from '@sunbird/test-util';
 import { ActivatedRoute } from '@angular/router';
+import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {BrowserModule} from '@angular/platform-browser';
 
 import { of } from 'rxjs';
-import { ResourceService } from '../../../shared';
-import { fakeAsync, tick } from '@angular/core/testing';
-import * as moment from 'moment';
+import { ResourceService } from '@sunbird/shared';
+
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatInputModule} from '@angular/material/input';
+import {MatSelectModule} from '@angular/material/select';
+
 
 describe('FilterComponent', () => {
   let component: FilterComponent;
-
-  const mockResourceService: Partial<ResourceService> = {
+  let fixture: ComponentFixture<FilterComponent>;
+  const resourceServiceMockData = {
     messages: {
       imsg: {
         reportSummaryAdded: 'Summary Added Successfully',
@@ -42,49 +54,101 @@ describe('FilterComponent', () => {
     },
     languageSelected$: of({})
   };
-  const mockActivatedRoute: Partial<ActivatedRoute> = {
-    queryParams: of({})
-  };
-  const mockFormBuilder: Partial<FormBuilder> = {
-    group: jest.fn()
-  };
-  const mockChangeDetectionRef: Partial<ChangeDetectorRef> = {
-  };
-  beforeAll(() => {
-    component = new FilterComponent(
-      mockResourceService as ResourceService,
-      mockFormBuilder as FormBuilder,
-      mockActivatedRoute as ActivatedRoute,
-      mockChangeDetectionRef as ChangeDetectorRef
-    );
-  });
+  configureTestSuite();
+  const formBuilder: FormBuilder = new FormBuilder();
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [FilterComponent],
+      schemas: [NO_ERRORS_SCHEMA],
+      imports: [BrowserAnimationsModule,
+        MatInputModule,
+        MatSelectModule,
+        MatAutocompleteModule,
+        BrowserModule,
+        SuiModule, ReactiveFormsModule, TelemetryModule.forRoot(), CoreModule, NgxDaterangepickerMd.forRoot()],
+      // providers:[ResourceService]
+      providers: [{ provide: ResourceService, useValue: resourceServiceMockData },
+      {
+        provide: ActivatedRoute, useValue: {
+          snapshot: {
+            params: {
+              reportId: '123'
+            },
+            data: {
+              telemetry: { env: 'dashboard', pageid: 'org-admin-dashboard', type: 'view' }
+            }
+          }
+        }
+      }]
+    })
+      .compileComponents();
+  }));
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    fixture = TestBed.createComponent(FilterComponent);
+    component = fixture.componentInstance;
+    component.filters = mockChartData.filters;
+    component.chartData = [{ data:mockChartData.chartData,id:"chartId" }];
+    component.selectedFilter = {};
+    component.filterType = 'chart-filter';
+    component.chartLabels = [];
+    component.dateFilterReferenceName = '';
   });
 
   it('should create', () => {
-    component.filtersFormGroup = new FormBuilder().group({});
     expect(component).toBeTruthy();
   });
 
-  it('should build filters form from the configuration', () => {
-    jest.spyOn(component, 'buildFiltersForm').mockImplementation(() => { });
-    component.filters = mockChartData.filters;
+  it('should have filters and chartData as input', () => {
     component.ngOnInit();
-    expect(component.buildFiltersForm).toHaveBeenCalled();
-    expect(component.buildFiltersForm).toHaveBeenCalledTimes(1);
-    expect(component.filtersFormGroup.contains('state')).toBe(false);
+    expect(component.filters).toBe(mockChartData.filters);
+    expect(component.chartData).toEqual([{ data:mockChartData.chartData,id:"chartId" }]);
+  });
+
+
+  it('should build filters form from the configuration', () => {
+    const spy = spyOn(component, 'buildFiltersForm').and.callThrough();
+    component.ngOnInit();
+    expect(spy).toHaveBeenCalled();
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(component.filtersFormGroup.contains('state')).toBe(true);
     expect(component.filtersFormGroup.controls).toBeTruthy();
   });
 
+  it('should change selected filters value whenever any filter is changed', fakeAsync(() => {
+    const spy = spyOn(component, 'formGeneration').and.callThrough();
+    component.ngOnInit();
+    component.filtersFormGroup.get('state').setValue(['01285019302823526477']);
+    tick(1000);
+    expect(component.selectedFilters).toEqual({
+      'state': ['01285019302823526477']
+    });
+    expect(spy).toHaveBeenCalled();
+    expect(spy).toHaveBeenCalledWith(mockChartData.chartData);
+  }));
+
   it('should reset filter', fakeAsync(() => {
-    mockChangeDetectionRef.detectChanges = jest.fn();
     component.ngOnInit();
     tick(1000);
     component.resetFilter();
     tick(1000);
     expect(component.showFilters).toEqual(true);
+  }));
+
+  it('should call selected filter ', fakeAsync(() => {
+    component.ngOnInit();
+    tick(1000);
+    component.selectedFilter = [{
+      data: [{ state: '01285019302823526477', Plays: '10', Date: '2020-04-28' }]
+    }];
+    tick(1000);
+    expect(component.selectedFilters).toEqual({});
+  }));
+
+  it('should emit the filter data', fakeAsync(() => {
+    component.ngOnInit();
+    tick(1000);
+    component.filterData();
   }));
 
   it('should check checkFilterReferance', fakeAsync(() => {
@@ -98,96 +162,134 @@ describe('FilterComponent', () => {
   it('should set resetFilters', fakeAsync(() => {
     component.ngOnInit();
     tick(1000);
-    component.resetFilters = { data: [{ data: mockChartData.chartData, id: 'chartId' }], reset: true, filters: mockChartData.filters };
+    component.resetFilters = { data:[{ data:mockChartData.chartData,id:"chartId" }],reset:true,filters:mockChartData.filters };
     tick(1000);
     component.resetFilter();
     tick(1000);
     component.buildFiltersForm();
     tick(1000);
-    expect(component.chartData).toEqual([{ id: 'chartId', data: mockChartData.chartData }]);
+    expect(component.chartData).toEqual([{ data:mockChartData.chartData }]);
   }));
 
   it('should run buildFiltersForm', fakeAsync(() => {
     component.ngOnInit();
     tick(1000);
     component.filters = mockChartData.filters;
-    component.chartData = [{ data: mockChartData.chartData, id: 'chartId' }];
+    component.chartData = [{ data:mockChartData.chartData,id:"chartId" }];
     tick(1000);
     component.buildFiltersForm();
     tick(1000);
+    component.filtersFormGroup.get('state').setValue(['01285019302823526477']);
     tick(1000);
-    expect(component.selectedFilters).toEqual({});
+    expect(component.selectedFilters).toEqual({
+      'state': ['01285019302823526477']
+    });
   }));
 
   it('should get filter dat with selected filter', fakeAsync(() => {
     component.ngOnInit();
     tick(1000);
     component.filters = mockChartData.filters;
-    component.chartData = [{ data: mockChartData.chartData, id: 'chartId' }];
+    component.chartData = [{ data:mockChartData.chartData,id:"chartId" }];
     tick(1000);
     component.buildFiltersForm();
     tick(1000);
+    component.filtersFormGroup.get('state').setValue(['01285019302823526477']);
     tick(1000);
     component.filterData();
-    expect(component.selectedFilters).toEqual({});
+    expect(component.selectedFilters).toEqual({
+      'state': ['01285019302823526477']
+    });
 
+  }));
+
+
+  xit('should set the dateRange', fakeAsync(() => {
+    component.ngOnInit();
+    tick(1000);
+    component.getDateRange({
+      startDate: 'Tue Jan 08 2019 00:00:00 GMT+0530 (India Standard Time)',
+      endDate: 'Tue Jan 10 2019 00:00:00 GMT+0530 (India Standard Time)'
+    }, 'Grade');
+    tick(1000);
+    expect(component.filtersFormGroup.get('Grade').value).toEqual(['08-01-2019', '09-01-2019', '10-01-2019']);
   }));
 
   it('should update form', fakeAsync(() => {
-    component.filtersFormGroup = new FormBuilder().group({
-      state: ['1']
-    });
-    jest.spyOn(component, 'formUpdate').mockImplementation(() => {
-      return of({});
-    });
+
+    const spy = spyOn(component, 'formUpdate').and.callThrough();
     component.filters = mockChartData.filters;
-    component.chartData = [{ data: mockChartData.chartData, id: 'chartId' }];
+    component.chartData = [{ data:mockChartData.chartData,id:"chartId" }];
     component.ngOnInit();
     tick(1000);
     component.filtersFormGroup.get('state').setValue(['01285019302823526477']);
     tick(1000);
+    expect(spy).toHaveBeenCalled();
+    expect(spy).toHaveBeenCalledTimes(1);
     expect(component.filtersFormGroup.controls).toBeTruthy();
+    expect(component.previousFilters).toEqual({
+      'state': ['01285019302823526477']
+    });
     mockChartData.filters[1]['options'] = ['10'];
     expect(component.filters).toEqual(mockChartData.filters);
+
   }));
   it('should call autoCompleteChange', fakeAsync(() => {
+
     component.filters = mockChartData.filters;
-    component.chartData = [{ data: mockChartData.chartData, id: 'chartId' }];
+    component.chartData = [{ data:mockChartData.chartData,id:"chartId" }];
     component.ngOnInit();
     tick(1000);
-    component.autoCompleteChange(['01285019302823526477'], 'state');
+    component.autoCompleteChange(["01285019302823526477"],"state")
     tick(1000);
     expect(component.filtersFormGroup.controls).toBeTruthy();
+
+    expect(component.selectedFilters).toEqual({
+      'state': ['01285019302823526477']
+    });
+
   }));
 
   it('should call getSelectedData', fakeAsync(() => {
+
     component.filters = mockChartData.filters;
-    component.chartData = [{ data: mockChartData.chartData, id: 'chartId' }];
+    component.chartData = [{ data:mockChartData.chartData,id:"chartId" }];
     component.ngOnInit();
     tick(1000);
     component.filtersFormGroup.get('state').setValue(['01285019302823526477']);
     tick(1000);
-    const res = component.getSelectedData('state');
+
+    const res= component.getSelectedData("state");
     tick(1000);
     expect(component.filtersFormGroup.controls).toBeTruthy();
-    expect(res).toEqual([]);
-    const res2 = component.getSelectedData('state2');
+
+    expect(res).toEqual(['01285019302823526477']);
+
+    const res2= component.getSelectedData("state2");
     tick(1000);
     expect(component.filtersFormGroup.controls).toBeTruthy();
+
     expect(res2).toEqual([]);
+
   }));
 
   it('should call getSelectedData', fakeAsync(() => {
-    component.filterQuery = 'ab';
-    component.chartData = [{ data: mockChartData.chartData, id: 'chartId' }];
+
+    component.filterQuery = "ab";
+    component.chartData = [{ data:mockChartData.chartData,id:"chartId" }];
     component.ngOnInit();
     tick(1000);
-    const res = component.getFilters(['cd', 'ef']);
+    
+    const res= component.getFilters(["cd","ef"]);
     tick(1000);
     expect(res).toEqual([]);
-    const res2 = component.getFilters(['ab', 'ef']);
+
+    const res2= component.getFilters(["ab","ef"]);
     tick(1000);
-    expect(res2).toEqual(['ab']);
+    expect(res2).toEqual(["ab"]);
+
+    
   }));
+
 
 });
