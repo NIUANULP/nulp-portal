@@ -1,0 +1,29 @@
+.graph-border canvas{
+    border: 1px solid #cecece !important;
+  
+  }
+
+  .border14{
+    border: 1px solid #cecece;
+    padding: 0px 7px 7px;
+  }
+
+  // .export-btns{
+  //   margin: 0 0 0 657px
+  // }
+
+  .v-align-middle{
+    vertical-align: middle;
+  }
+
+  .ui-table table{
+    table-layout: auto !important;
+  }
+  .column.graph-border{
+    width: 100% !important;
+  }
+  @media(max-width:1120px) {
+    .column.graph-border{
+      width:100% !important;
+    }
+  }

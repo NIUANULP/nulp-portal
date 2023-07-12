@@ -1,0 +1,93 @@
+<div class="ui container">
+  <div class="ui stackable grid mt-30">
+      <div class="twelve wide column workspacesegment">
+
+
+              <div class="ui bottom attached segment">
+
+                  <div class="ui container">
+                    <div class="ui stackable grid mt-30">
+
+                    <div class="column"  style="width:50%"  [ngClass]="{'graph-border' : G1_Piechart}">
+                      <canvas id="G1_Canvas1"  #mychart (click)="G1_Chart_showData($event)">{{ G1_Piechart }}</canvas>
+                    </div>
+                    <div class="column" style="width:50%" [ngClass]="{'graph-border' : G3_Piechart}">
+                      <canvas id="G3_Canvas1"  #mychart (click)="G3_Chart_showData($event)">{{ G3_Piechart }} </canvas>
+                    </div>
+
+                  </div>
+
+                  </div>
+
+                  <div class="ui container">
+                    <div class="ui stackable grid mt-30">
+
+                    <div class="column"  style="width:50%" [ngClass]="{'graph-border' : G2_Piechart}">
+                      <canvas id="G2_Canvas1"  #mychart (click)="G2_Chart_showData($event)">{{ G2_Piechart }} </canvas>
+                      </div>
+                      
+                    <div class="column" style="width:50%" [ngClass]="{'graph-border' : G4_Piechart}">
+                      <canvas id="G4_Canvas1"  #mychart (click)="G4_Chart_showData($event)">{{ G4_Piechart }} </canvas>
+                    </div>
+
+                  </div>
+                  </div>
+                  <br/>
+                  <br/>
+                  <div class="ui container"  *ngIf = 'Table_Data_List.length > 0'>
+                    <p-table #dt [value]="Table_Data_List" [columns]="colsUser" [paginator]="true" [rows]="10" [resizableColumns]="true">
+                      <ng-template pTemplate="caption">
+                        <tr>
+                        <td>
+                        <div  class="ui small left icon input align-left">
+                         <b>{{popupTitle}}</b>
+                        </div>
+                        </td>
+                        <td class="v-align-bottom">
+                          <div class="ui-helper-clearfix export-btns">
+                            <button type="button" style="float:right" icon="fa fa-file"
+                              class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" pbutton="" iconPos="left"
+                              label="Export" (click)="dt.exportCSV()"><span aria-hidden="true"
+                                class="ui-button-icon-left ui-clickable fa fa-file"></span><span
+                                class="ui-button-text ui-clickable">Export</span></button>
+                          </div>
+                        </td>
+                        </tr>
+                      </ng-template>
+
+                      <ng-template pTemplate="header" let-columns>
+                        <tr>
+                          <th *ngFor="let col of columns" pResizableColumn [style.width]="col.width" [pSortableColumn]="col.field"
+                            [pSortableColumnDisabled]="col.field">
+                            {{col.header}}
+                            <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order"
+                              ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                          </th>
+                        </tr>
+                      </ng-template>
+
+
+
+                      <ng-template pTemplate="body" let-Table_Data_List let-columns="columns" >
+                        <tr>
+                          <td *ngFor="let col of columns ;" class="ui-resizable-column">
+                              {{Table_Data_List[col.field]}}
+                          </td>
+                      </tr>
+                      </ng-template>
+                    </p-table>
+
+                  </div>
+
+                   </div>
+
+        </div>
+      </div>
+  </div>
+
+
+
+
+
+
+

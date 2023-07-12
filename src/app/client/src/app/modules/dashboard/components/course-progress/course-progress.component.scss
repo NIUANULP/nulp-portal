@@ -72,13 +72,7 @@ a {
 } 
 
 .progress-content {
-  // margin-top: calculateRem(36px);
-
-  background-color: var(--state-medium-container-bg);
-
-  .sb-course-progress-status .sb-course-progress-status-label {
-    background: var(--sbt-body-bg);
-  }
+  margin-top: calculateRem(36px);
 
   @include respond-below(sm) {
     margin-top: 0px;
