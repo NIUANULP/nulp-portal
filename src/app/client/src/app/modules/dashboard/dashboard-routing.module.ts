@@ -1,11 +1,16 @@
-import { NgModule } from '@angular/core';
+import { NgModule, Component } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import {
   OrganisationComponent, CourseConsumptionComponent, CourseProgressComponent, UsageReportsComponent,
   ReportComponent, ListAllReportsComponent, CourseDashboardComponent, ReIssueCertificateComponent,
-  DashboardSidebarComponent
+  DashboardSidebarComponent,AllReportsComponent, ReportsComponent,OrganizationReportComponent,ContentReportComponent, CourseCategoryWiseComponent,ContentCategoryWiseComponent
 } from './components/';
 import { AuthGuard } from '../core/guard/auth-gard.service';
+import { AddusersComponent } from './components/addusers/addusers.component';
+import {
+  StatusComponent
+} from '@sunbird/org-management';
+
 const telemetryEnv = 'course-dashboard';
 const routes: Routes = [
   {
@@ -22,9 +27,6 @@ const routes: Routes = [
           telemetry: {
             env: telemetryEnv, pageid: 'course-stats', uri: '/dashboard/course-stats',
             type: 'view', object: { ver: '1.0', type: 'course' }
-          },
-          menuBar: {
-            visible: false
           }
         }
       },
@@ -35,9 +37,6 @@ const routes: Routes = [
           telemetry: {
             env: telemetryEnv, pageid: 'batches', uri: '/dashboard/batches',
             type: 'view', object: { ver: '1.0', type: 'course' }
-          },
-          menuBar: {
-            visible: false
           }
         }
       },
@@ -48,11 +47,23 @@ const routes: Routes = [
           telemetry: {
             env: telemetryEnv, pageid: 'certificates', uri: '/dashboard/certificates',
             type: 'view', object: { ver: '1.0', type: 'course' }
-          },
-          menuBar: {
-            visible: false
           }
         }
+      },
+    ]
+  },
+  {
+    path: 'addusess', component: AddusersComponent,
+    children:[
+      {
+        path: 'bulkUpload/checkStatus', component: StatusComponent,
+        data: {
+          redirectUrl: '/dashBoard/addusess',
+          telemetry: {
+            env: telemetryEnv, type: 'view', mode: 'create',
+            subtype: 'paginate', object: { type: telemetryEnv, ver: '1.0' }
+          }
+        },
       },
     ]
   },
@@ -77,9 +88,6 @@ const routes: Routes = [
     data: {
       roles: 'dashboardRole',
       telemetry: { env: 'dashboard', pageid: 'org-admin-dashboard', type: 'view' },
-      menuBar: {
-        visible: false
-      },
       breadcrumbs: [{ label: 'Home', url: '/home' },
       { label: 'Profile', url: '/profile' }, { label: 'Organization Admin Dashboard', url: '' }]
     }
@@ -88,9 +96,6 @@ const routes: Routes = [
     path: 'organization/creation/:id/:timePeriod', component: OrganisationComponent,
     data: {
       telemetry: { env: 'profile', pageid: 'org-admin-dashboard', type: 'view' },
-      menuBar: {
-        visible: false
-      },
       breadcrumbs: [{ label: 'Home', url: '/home' },
       { label: 'Profile', url: '/profile' }, { label: 'Organization Admin Dashboard', url: '' }]
     }
@@ -98,10 +103,7 @@ const routes: Routes = [
   {
     path: 'reports', component: ListAllReportsComponent, data: {
       roles: 'reportViewerRole',
-      telemetry: { env: 'reports', pageid: 'reports-list', type: 'view' },
-      menuBar: {
-        visible: false
-      }
+      telemetry: { env: 'reports', pageid: 'reports-list', type: 'view' }
     }
   },
   {
@@ -121,7 +123,35 @@ const routes: Routes = [
       breadcrumbs: [{ label: 'Home', url: '/home' },
       { label: 'Profile', url: '/profile' }, { label: 'Report Page', url: '' }]
     }
-  }
+  },
+  {
+    path: 'allDashboard', component: AllReportsComponent,
+    data: {
+      roles: 'allDashboard',
+      telemetry: { env: 'allDashboard', pageid: 'allDashboard', type: 'view' },
+      breadcrumbs: [{ label: 'Home', url: '/home' }, { label: 'All Dashboard', url: '' }]
+    }
+  },
+  {
+    path: 'userreports', component: ReportsComponent
+  
+  },
+  {
+    path: 'organization-report', component: OrganizationReportComponent
+  
+  },
+  {
+    path: 'content-report', component: ContentReportComponent
+  
+  },
+  {
+    path: 'category-report', component: ContentCategoryWiseComponent
+  
+  },
+  {
+    path: 'course-report', component: CourseCategoryWiseComponent
+  
+  },
 ];
 
 @NgModule({
@@ -129,3 +159,4 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class DashboardRoutingModule { }
+

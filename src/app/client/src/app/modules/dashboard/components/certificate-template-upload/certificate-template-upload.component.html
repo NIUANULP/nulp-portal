@@ -1,0 +1,149 @@
+<div class="ui container">
+    <div class="ui grid">
+        <div class="twelve wide column">
+            <button (click)="addTemplatePopup = true" class="ui bottom attached sb-btn sb-btn-primary sb-btn-normal sb-left-icon-btn buttonleft11"> Add Template</button>
+        </div>
+        <div class="twelve wide column">
+            <div *ngIf="certTemplateList" class="masonry-grid dynamic-section-card ">
+                <div *ngFor="let template of certTemplateList">
+                    <div class="masonry-item cert-temp ng-star-inserted">
+                        <div class="sb-card">
+                            <div class="sb-card-body text-center">
+                                <div class="sb-card-metas">
+                                    <div class="cert-img">
+                                        <a target="blank" href="{{template?.artifactUrl}}">
+                                            <img width="200px" src="{{template?.artifactUrl}}">
+                                        </a>
+                                    </div>
+                                </div>
+                                <h4 class="sb-card-title">{{template?.name}}</h4>
+                                <!-- <div class="sb-card-org ellipsis cert-del">
+                                    <button class="sb-btn sb-btn-normal sb-btn-primary cert-butn">Delete Template</button>
+                                </div> -->
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<sui-modal
+    [mustScroll]="true"
+    [isClosable]="false"
+    [transitionDuration]="0"
+    [size]="'normal'"
+    class="sb-modal"
+    appBodyScroll
+    [ngSwitch]="batchStep" #createBatchModel
+    (dismissed)="discardModalFlag = !discardModalFlag"
+    *ngIf='addTemplatePopup'>
+
+    <!--Header-->
+    <i class="close icon" (click)="closeSucesErrorPopup()"></i>
+    <div class="sb-modal-header">
+        Add Template
+    </div>
+    <!--/Header-->
+
+    <!--Content-->
+    <div class="sb-modal-content o-y-visible">
+        <div *ngIf="showLoader; else showForm">
+            <app-loader></app-loader>
+        </div>
+        <ng-template #showForm>
+            <app-fileupload></app-fileupload>
+            <!-- <app-upload-template></app-upload-template> -->
+        </ng-template>
+    </div>
+    <!--/Content-->
+
+    <!--Actions-->
+    <div class="sb-modal-actions">
+        <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="closeSucesErrorPopup()">Close</button>
+    </div>
+    <!--/Actions-->
+</sui-modal>
+
+<sui-modal
+    [mustScroll]="true"
+    [isClosable]="false"
+    [transitionDuration]="0"
+    [size]="'normal'"
+    class="sb-modal"
+    appBodyScroll
+    [ngSwitch]="batchStep"
+    #createBatchModel
+    (dismissed)="discardModalFlag = !discardModalFlag"
+    *ngIf='templateGuidePopup'>
+
+    <!--Header-->
+    <i class="close icon" (click)="templateGuidePopup = false"></i>
+    <div class="sb-modal-header">
+        Instructions
+    </div>
+    <!--/Header-->
+
+    <!--Content-->
+    <div class="sb-modal-content o-y-visible" style="line-height: 1.6">
+        <b>Guidelines before uploading any template:</b><br><br>
+        1. The dimension of the template should be 3300x2246 pixels.<br> 2. It is suggested to assign a
+        unique name for the uploaded certificate template.<br> 3. The template should be in jpg or jpeg
+        format.<br> 4. The certificate that will be issued to a user will have 3 placeholders/variables as
+        shown below:<br><br><img height="285px" width="481px" src="assets/images/DEFAULT_TEMPLATE.jpg"><br><br> 5. The
+        location of
+        &lt;Name of the User&gt;, &lt;Course Name&gt; and &lt;Completion Date&gt; will be fixed on the final certificate,
+        only
+        those will be replaced with actual values.<br> 6. You have the flexibility to change the background
+        colour, logo and text keeping in mind that the placeholder's(&lt;Name of the User&gt;, &lt;Course Name&gt; and
+        &lt;Completion Date&gt;) location, which is fixed.<br> 7. Considering the top left corner as (0,0)
+        coordinate and bottom right corner as (3300, 2246), the &lt;Name of the User&gt; will be centered on coordinate
+        (1650,
+        1220), &lt;Course Name&gt; on (1650, 1630) and &lt;Completion Date&gt; on (1650, 1990) approximately.<br> 8. You can
+        find the sample template <a class="sb-btn-link sb-btn-link-primary " target="blank" href="https://nuisprod.blob.core.windows.net/certificate/DEFAULT_TEMPLATE.jpg">here</a>.
+    </div>
+    <!--/Content-->
+
+    <!--Actions-->
+    <div class="sb-modal-actions">
+        <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="templateGuidePopup = false">Close</button>
+    </div>
+    <!--/Actions-->
+
+</sui-modal>
+
+<sui-modal
+    [mustScroll]="true"
+    [isClosable]="false"
+    [transitionDuration]="0"
+    [size]="'normal'"
+    class="sb-modal"
+    appBodyScroll
+    [ngSwitch]="batchStep"
+    #createBatchModel
+    (dismissed)="discardModalFlag = !discardModalFlag"
+    *ngIf='removeTemplatePopup'>
+
+    <!--Header-->
+    <i class="close icon" (click)="removeTemplatePopup = false"></i>
+    <div class="sb-modal-header">
+        Instructions
+    </div>
+    <!--/Header-->
+
+    <!--Content-->
+    <div class="sb-modal-content o-y-visible">
+        Are you sure you want to remove Template!
+    </div>
+    <!--/Content-->
+
+    <!--Actions-->
+    <div class="sb-modal-actions">
+        <button class="sb-btn sb-btn-normal sb-btn-primary">Yes</button>
+        <button (click)="removeTemplatePopup = false" class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8">No</button>
+    </div>
+    <!--/Actions-->
+
+</sui-modal>
+
