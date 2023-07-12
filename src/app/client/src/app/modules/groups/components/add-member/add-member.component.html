@@ -58,6 +58,37 @@
           </button>
         </div>
       </div>
+
+    <br/>
+    <h4>OR</h4>
+    <br/>
+
+    <div class="sb-bg-color-white p-24">
+      <div class="sb-field instance-id-verify">
+        <div class="d-flex flex-jc-space-between flex-ai-center">
+          <div class="w-100">
+            <div class="d-flex flex-jc-space-between flex-dc">
+            <div class="sb-field-group mb-8">
+              <label>Add members to Group</label>
+              <div class="createbatchdropdown ui fluid multiple search selection dropdown" id="users"
+                ng-class="batch.isUserSearch === 1 ? 'loading' : undefined">
+                <input id="userSelList" aria-label="user list">
+                <i class="dropdown icon"></i>
+                <div class="default text">Select users</div>
+                <div class="menu">
+                  <div class="item" [attr.data-value]="user.id" *ngFor="let user of notAddedUserList">
+                    <img class="ui mini avatar image"
+                      src="{{user.avatar || 'assets/images/user_logo.png' | cdnprefixurl}}" alt="avatar image">
+                    {{user.name}}{{user.otherDetail}}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+          <button type="button" class="sb-btn sb-btn-normal sb-btn-nolayer sb-btn-primary" tabindex="0" (click)="addMemberToGroupByDropdown();">{{resourceService?.frmelmnts?.lbl?.AddtoGroup}}</button>
+        </div>
+      </div>
     </div>
 
     <div class="sb-g-col-xs-12 sb-g-col-md-3 sb-g-col-lg-3 sb-g-col-xxxl-4 sb-members-column">
