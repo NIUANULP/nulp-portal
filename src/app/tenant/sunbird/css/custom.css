@@ -1168,7 +1168,7 @@ h1, h2, h3, h4, h5,
 }
 .footer a{
     color: #fff !important;
-    text-decoration: none;
+    /* text-decoration: none; */
   }
   .sb-bg-white{
     background: #ffffff;
