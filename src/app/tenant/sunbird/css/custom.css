@@ -1490,6 +1490,9 @@ section img{
 .mt-28{
     margin-top: 28px;
 }
+.total-numbers{
+    padding: 0px 70px !important;
+}
 /* new header design start here  */
 .header-bg{
     background-image: url("../images/SliderImage.png");
@@ -2430,4 +2433,8 @@ section img{
     background: #FFC142;
     font-size: 20px;
     text-align: center;
+}
+
+.total-numbers{
+    padding: 0px 70px !important;
 }
