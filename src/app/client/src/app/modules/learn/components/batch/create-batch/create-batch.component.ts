@@ -482,6 +482,15 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
     this.telemetryService.interact(telemetryData);
   }
 
+  handleBatchTypeInputChange() {
+    $('#participants').dropdown('restore defaults')
+  }
+
+  clearList() {
+    $('#mentors').dropdown('restore defaults')
+    $('#participants').dropdown('restore defaults')
+  }
+
   getPickerMinDateForEndDate() {
     const startDate = this.createBatchForm.controls.startDate.value as Date;
     const oneDayMs = 24 * 60 * 60 * 1000;

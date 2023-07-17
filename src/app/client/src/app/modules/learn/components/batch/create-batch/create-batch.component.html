@@ -82,8 +82,12 @@
                 </div>
                 <div class="sb-radio-btn-checkbox sb-radio-btn-primary py-8">
                   <input id="create-open" type="radio" value='open' name="enrollmentType"
-                    formControlName="enrollmentType">
+                    formControlName="enrollmentType" (change)="handleBatchTypeInputChange()">
                   <label for="create-open">{{resourceService?.frmelmnts?.lbl?.open}}</label>
+                </div>
+                <div class="sb-radio-btn-checkbox sb-radio-btn-primary py-8">
+                  <input id="invite-only" type="radio" value='invite-only' name="enrollmentType" formControlName="enrollmentType" (change)="handleBatchTypeInputChange()">
+                  <label for="invite-only">{{resourceService?.frmelmnts?.lbl?.inviteOnly}}</label>
                 </div>
               </div>
             </div>
@@ -154,7 +158,7 @@
             </div>
           </div>
 
-          <div class="sb-field-group " *ngIf="createBatchForm.value.enrollmentType !== 'open'">
+          <div class="sb-field-group " [hidden]="createBatchForm.value.enrollmentType === 'open'">
             <label>{{resourceService?.frmelmnts?.lbl?.bacthmembers}}</label>
             <div class="createbatchdropdown ui fluid multiple search selection dropdown" id="participants"
               ng-class="batch.isUserSearch === 1 ? 'loading' : undefined">
@@ -192,7 +196,7 @@
 
         <button appTelemetryInteract [telemetryInteractObject]="telemetryInteractObject" tabindex="0"
           [telemetryInteractEdata]="clearButtonInteractEdata" [telemetryInteractCdata]="telemetryCdata"
-          class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8" (click)="createBatchForm.reset()">
+          class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8" (click)="createBatchForm.reset(); clearList();">
           {{resourceService?.frmelmnts?.btn?.clear}}
         </button>
 
