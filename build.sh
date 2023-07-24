@@ -47,7 +47,7 @@ build_client_cdn(){
 # function to run client build
 build_client(){
     echo "Building client in background"
-    nvm use NODE_VERSION
+    nvm use $NODE_VERSION
     cd client
     echo "starting client yarn install"
     yarn install --no-progress --production=true
@@ -70,7 +70,7 @@ build_server(){
     echo "copying requied files to app_dist"
     cp -R libs helpers proxy resourcebundles package.json framework.config.js sunbird-plugins routes constants controllers server.js ./../../Dockerfile app_dist
     cd app_dist
-    nvm use NODE_VERSION
+    nvm use $NODE_VERSION
     echo "starting server yarn install"
     yarn install --no-progress --production=true
     echo "completed server yarn install"
