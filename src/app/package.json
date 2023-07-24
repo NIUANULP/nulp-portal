@@ -54,6 +54,10 @@
       "helpers/resourceBundles/*.js"
     ]
   },
+  "engines": {
+    "node": ">=14.19.0",
+    "npm": ">=6.14.16"
+  },
   "dependencies": {
     "@project-sunbird/discussion-service": "0.0.6",
     "@project-sunbird/ext-framework-server": "0.1.28",
