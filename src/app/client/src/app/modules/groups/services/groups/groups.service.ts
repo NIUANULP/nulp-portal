@@ -1,4 +1,5 @@
-import { delay } from 'rxjs/operators';
+import { delay, map } from 'rxjs/operators';
+import { of as observableOf, Observable } from 'rxjs';
 import { combineLatest } from 'rxjs';
 import { Router } from '@angular/router';
 import { EventEmitter, Injectable } from '@angular/core';
@@ -8,8 +9,8 @@ CsGroupSearchCriteria, CsGroupUpdateActivitiesRequest, CsGroupUpdateMembersReque
   CsGroupUpdateGroupGuidelinesRequest,
   CsGroupSupportedActivitiesFormField
 } from '@project-sunbird/client-services/services/group/interface';
-import { UserService, LearnerService, TncService } from '@sunbird/core';
-import { NavigationHelperService, ResourceService, ConfigService } from '@sunbird/shared';
+import { UserService, LearnerService, TncService, SearchParam } from '@sunbird/core';
+import { NavigationHelperService, ResourceService, ConfigService, ServerResponse } from '@sunbird/shared';
 import { IImpressionEventInput, TelemetryService, IInteractEventInput } from '@sunbird/telemetry';
 import * as _ from 'lodash-es';
 import { IGroupCard, IGroupMember, IGroupUpdate, IMember, MY_GROUPS } from '../../interfaces';
@@ -123,6 +124,10 @@ export class GroupsService {
   }
 
   addMemberById(groupId: string, members: IMember) {
+    return this.groupCservice.addMembers(groupId, members);
+  }
+
+  addMembersById(groupId: string, members) {
     return this.groupCservice.addMembers(groupId, members);
   }
 
@@ -371,5 +376,24 @@ getActivity(groupId, activity, mergeGroup, leafNodesCount?) {
 
   getDashletData(courseHeirarchyData, aggData) {
     return this.groupCservice.activityService.getDataForDashlets(courseHeirarchyData, aggData);
+  }
+
+  getUserList(requestParam: SearchParam = {}): Observable<ServerResponse> {
+
+    const option = {
+      url: this.configService.urlConFig.URLS.ADMIN.USER_SEARCH,
+      data: {
+        request: {
+          filters: requestParam.filters || {},
+          query: requestParam.query || ''
+        }
+      }
+    };
+
+    option.data.request.filters['rootOrgId'] = this.userService.rootOrgId;
+
+    return this.learnerService.post(option).pipe(map((data) => {
+      return data;
+    }));
   }
 }

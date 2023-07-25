@@ -9,7 +9,7 @@
 <div class="ui container" [appTelemetryImpression]="telemetryImpression">
   <div class="sb-g mt-24">
     <div class="sb-g-col-xs-12 sb-g-col-md-9 sb-g-col-lg-9 sb-g-col-xxxl-12">
-      <div class="sb-bg-color-white p-24">
+      <!-- <div class="sb-bg-color-white p-24">
         <div class="title mb-16 text-left font-weight-bold">
           {{resourceService?.frmelmnts?.lbl?.addNewMember}}
         </div>
@@ -32,10 +32,10 @@
             <re-captcha class="recaptcha" *ngIf="isCaptchEnabled" #captchaRef="reCaptcha" (resolved)="$event && captchaResolved($event)" siteKey="{{googleCaptchaSiteKey}}" size="invisible"></re-captcha>
             <button type="button" class="sb-btn sb-btn-normal sb-btn-nolayer" tabindex="0" [ngClass]="{'sb-btn-primary': memberId?.trim(), 'sb-btn-disabled': !memberId?.trim()}" [disabled]="!memberId?.trim()" (click)="onVerifyMember();setInteractData('verify-member', {searchQuery: memberId}, '', {type: VERIFY_USER})">{{resourceService?.frmelmnts?.btn?.verify}}</button>
           </div>
-        </div>
+        </div> -->
 
         <!-- Add to group button content -->
-        <div class="text-left fnormal mt-16 mb-8" *ngIf="isVerifiedUser">{{resourceService?.frmelmnts?.lbl?.memberVerificationMsg  | interpolate:'{instance}': instance}}</div>
+        <!-- <div class="text-left fnormal mt-16 mb-8" *ngIf="isVerifiedUser">{{resourceService?.frmelmnts?.lbl?.memberVerificationMsg  | interpolate:'{instance}': instance}}</div>
         <div class="flex-ai-jc-center add-member-content p-24" *ngIf="showLoader">
           <div class="flex-ai-jc-center"><img class="mr-8" src="./assets/images/loader.gif" width="32" /><span>{{resourceService?.frmelmnts?.lbl?.verifying}}</span></div>
         </div>
@@ -49,6 +49,38 @@
           [ngClass]="{'sb-btn-disabled': disableBtn}">
             <img src="./assets/images/ic_person_add.svg" width="16px" class="mr-4"> {{resourceService?.frmelmnts?.lbl?.AddtoGroup}}
           </button>
+        </div>
+      </div> -->
+    
+      <!-- <br/>
+      <h4>OR</h4>
+      <br/> -->
+
+      <div class="sb-bg-color-white p-24">
+        <div class="sb-field instance-id-verify">
+          <div class="d-flex flex-jc-space-between flex-ai-center">
+            <div class="w-100">
+              <div class="d-flex flex-jc-space-between flex-dc">
+              <div class="sb-field-group mb-8">
+                <label>Add members to Group</label>
+                <div class="createbatchdropdown ui fluid multiple search selection dropdown" id="users"
+                  ng-class="batch.isUserSearch === 1 ? 'loading' : undefined">
+                  <input id="userSelList" aria-label="user list">
+                  <i class="dropdown icon"></i>
+                  <div class="default text">Select users</div>
+                  <div class="menu">
+                    <div class="item" [attr.data-value]="user.id" *ngFor="let user of notAddedUserList">
+                      <img class="ui mini avatar image"
+                        src="{{user.avatar || 'assets/images/user_logo.png' | cdnprefixurl}}" alt="avatar image">
+                      {{user.name}}{{user.otherDetail}}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            </div>
+            <button type="button" class="sb-btn sb-btn-normal sb-btn-nolayer sb-btn-primary" tabindex="0" (click)="addMemberToGroupByDropdown();">{{resourceService?.frmelmnts?.lbl?.AddtoGroup}}</button>
+          </div>
         </div>
       </div>
     </div>
