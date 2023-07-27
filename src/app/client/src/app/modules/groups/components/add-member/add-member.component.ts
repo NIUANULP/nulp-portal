@@ -43,6 +43,9 @@ export class AddMemberComponent implements OnInit, OnDestroy {
   private userService: UserService;
   userList = [];
   notAddedUserList = [];
+  public selectedUsers: any = [];
+  private userSearchTime: any;
+  public unsubscribe = new Subject<void>();
 
   constructor(public resourceService: ResourceService, private groupsService: GroupsService,
     private toasterService: ToasterService,
@@ -195,13 +198,44 @@ export class AddMemberComponent implements OnInit, OnDestroy {
         onAdd: () => {
         }
       });
-      // $('#participants input.search').on('keyup', (e) => {
-      //   this.getUserListWithQuery($('#participants input.search').val(), 'participant');
-      // });
-      // $('#mentors input.search').on('keyup', (e) => {
-      //   this.getUserListWithQuery($('#mentors input.search').val(), 'mentor');
-      // });
+      $('#users input.search').on('keyup', (e) => {
+        this.getUserListWithQuery($('#users input.search').val());
+      });
     });
+  }
+
+  private getUserListWithQuery(query) {
+    if (this.userSearchTime) {
+      clearTimeout(this.userSearchTime);
+    }
+    this.userSearchTime = setTimeout(() => {
+      this.getUserList(query);
+    }, 1000);
+  }
+
+  /**
+  *  api call to get user list
+  */
+  private getUserList(query: string = '') {
+    this.selectedUsers = $('#users').dropdown('get value') ? $('#users').dropdown('get value').split(',') : [];
+    
+    const requestBody = {
+      filters: {'status': '1'},
+      query: query
+    };
+    this.groupsService.getUserList(requestBody).pipe(takeUntil(this.unsubscribe))
+      .subscribe((res) => {
+        const list = this.getUsers(res);
+        this.userList = list.userList;
+        this.getNotAddedUsers();
+      },
+        (err) => {
+          if (err.error && err.error.params.errmsg) {
+            this.toasterService.error(err.error.params.errmsg);
+          } else {
+            this.toasterService.error(this.resourceService.messages.fmsg.m0056);
+          }
+        });
   }
 
   private getUsers(res) {
