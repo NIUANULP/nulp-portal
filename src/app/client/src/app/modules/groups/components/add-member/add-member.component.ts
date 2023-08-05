@@ -247,7 +247,7 @@ export class AddMemberComponent implements OnInit, OnDestroy {
             id: userData.identifier,
             name: userData.firstName + (userData.lastName ? ' ' + userData.lastName : ''),
             avatar: userData.avatar,
-            otherDetail: this.getUserOtherDetail(userData)
+            otherDetail: userData.rootOrgName
           };
           userList.push(user);
         }
