@@ -52,6 +52,7 @@ import {
   DeptCityWiseReportComponent,
   ContentDeptWiseReportComponent,
   learnathonDashboardComponent,
+  CourseProgressReportComponent
 } from "./components";
 import { NgxDaterangepickerMd } from "ngx-daterangepicker-material";
 import {
@@ -171,11 +172,13 @@ export const csCourseServiceFactory = (
     DeptCityWiseReportComponent,
     ContentDeptWiseReportComponent,
     learnathonDashboardComponent,
+    CourseProgressReportComponent
   ],
   exports: [
     CourseProgressComponent,
     DataTableComponent,
     learnathonDashboardComponent,
+    CourseProgressReportComponent
   ],
   providers: [
     RendererService,

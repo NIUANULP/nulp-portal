@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import {
   OrganisationComponent, CourseConsumptionComponent, CourseProgressComponent, UsageReportsComponent,
   ReportComponent, ListAllReportsComponent, CourseDashboardComponent, ReIssueCertificateComponent,
-  DashboardSidebarComponent,AllReportsComponent, ReportsComponent,OrganizationReportComponent,ContentReportComponent, CourseCategoryWiseComponent,ContentCategoryWiseComponent,learnathonDashboardComponent
+  DashboardSidebarComponent,AllReportsComponent, ReportsComponent,OrganizationReportComponent,ContentReportComponent, CourseCategoryWiseComponent,ContentCategoryWiseComponent,learnathonDashboardComponent,CourseReportComponent, CourseProgressReportComponent
 } from './components/';
 import { AuthGuard } from '../core/guard/auth-gard.service';
 import { AddusersComponent } from './components/addusers/addusers.component';
@@ -46,6 +46,16 @@ const routes: Routes = [
           roles: 'createBatchRole',
           telemetry: {
             env: telemetryEnv, pageid: 'certificates', uri: '/dashboard/certificates',
+            type: 'view', object: { ver: '1.0', type: 'course' }
+          }
+        }
+      },
+      {
+        path: 'course-progress-report', component: CourseProgressReportComponent, canActivate: [AuthGuard],
+        data: {
+          roles: 'createBatchRole',
+          telemetry: {
+            env: telemetryEnv, pageid: 'certificates', uri: '/dashboard/course-progress',
             type: 'view', object: { ver: '1.0', type: 'course' }
           }
         }

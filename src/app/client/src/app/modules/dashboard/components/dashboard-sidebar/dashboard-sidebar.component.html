@@ -4,6 +4,7 @@
       <!-- <a [routerLink]="['course-stats']" routerLinkActive="active" appTelemetryInteract  [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractEdata]="courseStatsEdata" >{{resourceService?.frmelmnts?.lbl?.dashBoardTitle}}</a> -->
       <a [routerLink]="['batches']" routerLinkActive="active" appTelemetryInteract [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractEdata]="courseBatchesEdata">{{resourceService?.frmelmnts?.lbl?.batches}}</a>
       <a [routerLink]="['certificates']" [class.active]="router.url.includes('/dashboard/certificates')" appTelemetryInteract [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractEdata]="courseCertificatesEdata" >{{resourceService?.frmelmnts?.lbl?.certificates}}</a>
+      <a [routerLink]="['course-progress-report']" [class.active]="router.url.includes('/dashboard/course-progress')" appTelemetryInteract [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractEdata]="courseCertificatesEdata" >Course Progress Report</a>
     </div>
   </div>
   <div class="eight wide column">

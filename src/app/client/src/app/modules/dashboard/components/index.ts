@@ -33,5 +33,6 @@ export * from './course-report/course-report.component';
 export * from './course-category-wise/course-category-wise.component';
 export * from './content-creation-statics/content-creation-statics.component';
 export * from './learnathonDashboard/learnathonDashboard.component';
+export * from './course-progress-report/course-progress-report.component';
 
     
