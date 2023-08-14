@@ -495,14 +495,15 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
         userIds: participantId
       }
     };
-    this.courseBatchService.removeUsersFromBatch(batchId, userRequest);
+    // for loop here or from main service
+    return this.courseBatchService.removeUsersFromBatch(participantId[0],batchId, this.courseId);
   }
 
   private addParticipantToBatch(batchId, participants) {
     const userRequest = {
       userIds: _.compact(participants)
     };
-    return this.courseBatchService.addUsersToBatch(userRequest, batchId);
+    return this.courseBatchService.addUsersToBatch(userRequest.userIds[0], batchId,this.courseId);
   }
 
   public updateBatch() {

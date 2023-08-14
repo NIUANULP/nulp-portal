@@ -208,8 +208,7 @@
               <img class="ui right spaced avatar image"
                 src="{{user.avatar || 'assets/images/user_logo.png' | cdnprefixurl}}" alt="avatar-image">
               {{user.name}}{{user.otherDetail}}
-              <!-- TODO: Will be enabled in future
-      <i class="delete icon" *ngIf="batchDetails.status === 0" (click)="removeParticipant(user)"></i>-->
+              <i class="delete icon" *ngIf="batchDetails.status === 0" (click)="removeParticipant(user)"></i>
             </a>
           </div>
         </form>
@@ -219,12 +218,12 @@
       <!--Actions-->
       <div class="sb-mat__modal__actions">
 
-        <button class="sb-btn sb-btn-normal sb-btn-outline-primary" tabindex="0" (click)="resetForm()"
+        <!-- <button class="sb-btn sb-btn-normal sb-btn-outline-primary" tabindex="0" (click)="resetForm()"
           [ngClass]="{'sb-btn-disabled': showFormInViewMode}" tabindex="0" appTelemetryInteract
           [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractEdata]="clearButtonInteractEdata"
           [telemetryInteractCdata]="telemetryCdata">
           {{resourceService?.frmelmnts?.btn?.clear}}
-        </button>
+        </button> -->
 
         <button class="sb-btn sb-btn-normal sb-btn-primary ml-8"
           [ngClass]="{'sb-btn-disabled': disableSubmitBtn || showFormInViewMode}" appTelemetryInteract
