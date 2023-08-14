@@ -23,6 +23,10 @@
   "nodemonConfig": {
     "ext": "png,jpeg,js,ts,html,json,css,scss"
   },
+  "engines": {
+    "node": ">=14.19.0",
+    "npm": ">=6.14.16"
+  },
   "private": true,
   "dependencies": {
     "@angular-devkit/build-angular": "0.1002.4",
