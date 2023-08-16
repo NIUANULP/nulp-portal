@@ -139,20 +139,30 @@ export class CourseBatchService {
     };
     return this.learnerService.patch(option);
   }
-  addUsersToBatch(request, batchId) {
+  addUsersToBatch(userId, batchId, courseId) {
     const option = {
-      url: this.configService.urlConFig.URLS.BATCH.ADD_USERS + '/' + batchId,
+      url: this.configService.urlConFig.URLS.BATCH.ADD_USERS,
       data: {
-        request: request
+        request: {
+          courseId: courseId,
+          batchId: batchId,
+          userId: userId
+        }
       }
     };
     return this.learnerService.post(option);
   }
 
-  removeUsersFromBatch(batchId, request) {
+  removeUsersFromBatch(userId, batchId, courseId) {
     const option = {
-      url: this.configService.urlConFig.URLS.BATCH.REMOVE_USERS + '/' + batchId,
-      data: request
+      url: this.configService.urlConFig.URLS.BATCH.REMOVE_USERS,
+      data: {
+        request: {
+          courseId: courseId,
+          batchId: batchId,
+          userId: userId
+        }
+      }
     };
     return this.learnerService.post(option);
   }

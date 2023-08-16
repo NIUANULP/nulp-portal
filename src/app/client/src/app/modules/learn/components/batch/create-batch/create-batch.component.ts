@@ -276,7 +276,8 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
     const userRequest = {
       userIds: _.compact(participants)
     };
-    this.courseBatchService.addUsersToBatch(userRequest, batchId).pipe(takeUntil(this.unsubscribe))
+    // console.log(userRequest.userIds[0]);
+    this.courseBatchService.addUsersToBatch(userRequest.userIds[0], batchId, this.courseId).pipe(takeUntil(this.unsubscribe))
       .subscribe((res) => {
         this.toasterService.success(this.resourceService.messages.smsg.m0033);
         this.reload();
