@@ -245,6 +245,16 @@ export class CourseConsumptionHeaderComponent implements OnInit, AfterViewInit, 
     this.router.navigate(['learn/course', this.courseId]);
   }
 
+  showCourseProgressReports() {
+    this.router.navigate(['learn/course', this.courseId, 'courseProgressReports']);
+  }
+
+  // To close the reports
+  closeCourseProgressReports() {
+    this.router.navigate(['learn/course', this.courseId]);
+  }
+
+
   resumeCourse(showExtUrlMsg?: boolean) {
     const IsStoredLocally = localStorage.getItem('isCertificateNameUpdated_' + this.profileInfo.id) || 'false' ;
     const certificateDescription = this.courseBatchService.getcertificateDescription(this.enrolledBatchInfo);

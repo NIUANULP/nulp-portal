@@ -27,7 +27,8 @@ export class CertificateTemplateUploadComponent implements OnInit {
   removeTemplatePopup: boolean = false;
   fileUploadForm: FormGroup
   showLoader = false
-  certTemplateList: Array<{}> = [];
+  // certTemplateList: Array<{}> = [];
+  certTemplateList: any = [];
   // previewTemplate: any;
   // showPreviewModal;
   queryParams: any;
@@ -135,7 +136,7 @@ export class CertificateTemplateUploadComponent implements OnInit {
 
     this.uploadCertificateService.getCertificates(request).subscribe((certTemplateData:any)=>{
       const templatList = _.get(certTemplateData, 'result.content');
-
+      console.log("templatList", templatList);
       this.certTemplateList = templatList;
 
     });

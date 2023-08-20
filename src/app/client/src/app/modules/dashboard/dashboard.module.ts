@@ -19,7 +19,8 @@ import {
   OrganisationComponent, CourseConsumptionComponent, CourseProgressComponent, UsageReportsComponent,
   DataTableComponent, DataChartComponent, ReportComponent, ReportSummaryComponent, ListAllReportsComponent,
   AddSummaryModalComponent, CourseDashboardComponent, ReIssueCertificateComponent, DashboardSidebarComponent, DatasetComponent, MapComponent, FilterComponent,AllReportsComponent, ReportsComponent,OrganizationReportComponent, UserReportComponent,ContentReportComponent, ContentLeaderboardComponent,ContentCategoryWiseComponent, CourseReportComponent,CourseCategoryWiseComponent,
-  ContentCreationStaticsComponent,CityWiseReportComponent, DeptCityWiseReportComponent, ContentDeptWiseReportComponent
+  ContentCreationStaticsComponent,CityWiseReportComponent, DeptCityWiseReportComponent, ContentDeptWiseReportComponent,
+  CourseProgressReportComponent
 } from './components';
 import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
 // import { ChartsModule } from 'ng2-charts';
@@ -97,8 +98,8 @@ export const csCourseServiceFactory = (csLibInitializerService: CsLibInitializer
     CourseDashboardComponent, ReIssueCertificateComponent, DashboardSidebarComponent, DatasetComponent, MapComponent, FilterComponent,
     SbTableComponent, AddusersComponent, AllReportsComponent, UserReportComponent, ContentLeaderboardComponent,UserUploadComponent,
     CourseContentLeaderboardComponent, FileuploadComponent, CertificateTemplateUploadComponent, ReportsComponent,OrganizationReportComponent,ContentReportComponent, ContentCategoryWiseComponent,
-    CourseReportComponent,CourseCategoryWiseComponent, ContentCreationStaticsComponent,CityWiseReportComponent, DeptCityWiseReportComponent, ContentDeptWiseReportComponent],
-  exports: [CourseProgressComponent, DataTableComponent],
+    CourseReportComponent,CourseCategoryWiseComponent, ContentCreationStaticsComponent,CityWiseReportComponent, DeptCityWiseReportComponent, ContentDeptWiseReportComponent, CourseProgressReportComponent],
+  exports: [CourseProgressComponent, DataTableComponent, CourseProgressReportComponent],
   providers: [
     RendererService,
     UserSearchService,
