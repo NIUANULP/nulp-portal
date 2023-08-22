@@ -15,7 +15,7 @@ export class DashboardSidebarComponent implements OnInit {
   courseStatsEdata: IInteractEventEdata;
   courseBatchesEdata: IInteractEventEdata;
   courseCertificatesEdata: IInteractEventEdata;
-  courseProgressReportEdata: IInteractEventEdata;
+  courseProgressExhaustEdata: IInteractEventEdata;
   telemetryInteractObject: IInteractEventObject;
   courseHierarchy: {};
 
@@ -45,8 +45,8 @@ export class DashboardSidebarComponent implements OnInit {
         type: 'click',
         pageid: _.get(this.activatedRoute.snapshot, 'data.telemetry.pageid'),
       };
-      this.courseProgressReportEdata = {
-        id: 'course-progress-report',
+      this.courseProgressExhaustEdata = {
+        id: 'course-progress-exhaust',
         type: 'click',
         pageid: _.get(this.activatedRoute.snapshot, 'data.telemetry.pageid'),
       };      

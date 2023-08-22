@@ -192,8 +192,7 @@
       "ORG_CONSUMPTION": "dashboard/v1/consumption/org",
       "COURSE_PROGRESS": "dashboard/v1/progress/course",
       "COURSE_CONSUMPTION": "dashboard/v1/consumption/course",
-      "COURSE_PROGRESS_V2": "dashboard/v2/progress/course",
-      "COURSE_PROGRESS_REPORT": "v1/course/progress/reports"
+      "COURSE_PROGRESS_V2": "dashboard/v2/progress/course"
     },
     "DEVICE": {
       "REGISTER": "register/",
@@ -209,7 +208,8 @@
       "GET_DETAILS": "course/v1/batch/read",
       "GET_PARTICIPANT_LIST": "course/v1/batch/participants/list",
       "GET_BATCHS": "course/v1/batch/list",
-      "REMOVE_USERS": "course/v1/batch/user/remove"
+      "REMOVE_USERS": "course/v1/batch/user/remove",
+      "COURSE_PROGRESS_EXHAUST": "course/v1/progress/reports"
     },
     "ADMIN": {
       "USER_SEARCH": "user/v3/search",

@@ -82,16 +82,24 @@ export class CourseProgressService  {
   /**
    * To method calls the get dashboard API
    */
-  getCourseProgressReportData(requestParam) {
-    const option = {
-      url: 'v1/course/progress/reports/' + requestParam.courseId + '/' + requestParam.batchId + '/1'
-      // param: {
-      //   courseid: requestParam.courseId,
-      //   batchid: requestParam.batchId,
-      //   limit: requestParam.limit,
-      //   // offset: requestParam.offset,
-      // }
+  getCourseProgressExhaustData(requestParam) {
+/*    const option = {
+      url: 'course/v1/progress/reports/' + requestParam.courseId + '/' + requestParam.batchId,
+      param: {
+        limit: requestParam.limit,
+        offset: requestParam.offset,
+      }
     };
+*/
+    const option = {
+      url: this.config.urlConFig.URLS.BATCH.COURSE_PROGRESS_EXHAUST + '/'  + requestParam.courseId + '/' + requestParam.batchId,
+      param: {
+        limit: requestParam.limit,
+        offset: requestParam.offset,
+      }
+    };
+
+    debugger;
     // if ( _.get(requestParam, 'sortBy')) {
     //   option.param['sortBy'] = requestParam.sortBy;
     //   option.param['sortOrder'] = requestParam.sortOrder;
@@ -106,7 +114,7 @@ export class CourseProgressService  {
     // .set('batchid', requestParam.batchId)
     // .set('limit', requestParam.limit);
 
-    return this.publicDataService.get(option);
+    return this.learnerService.get(option);
   }
 
   /**

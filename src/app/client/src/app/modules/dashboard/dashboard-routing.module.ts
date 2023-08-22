@@ -10,7 +10,7 @@ import { AddusersComponent } from './components/addusers/addusers.component';
 import {
   StatusComponent
 } from '@sunbird/org-management';
-import { CourseProgressReportComponent } from './components/course-progress-report/course-progress-report.component';
+import { CourseProgressExhaustComponent } from './components/course-progress-exhaust/course-progress-exhaust.component';
 
 const telemetryEnv = 'course-dashboard';
 const routes: Routes = [
@@ -42,11 +42,11 @@ const routes: Routes = [
         }
       },
       {
-        path: 'courseProgressReport', component: CourseProgressReportComponent, canActivate: [AuthGuard],
+        path: 'courseProgressExhaust', component: CourseProgressExhaustComponent, canActivate: [AuthGuard],
         data: {
           roles: 'createBatchRole',
           telemetry: {
-            env: telemetryEnv, pageid: 'courseProgressReport', uri: '/dashboard/courseProgressReport',
+            env: telemetryEnv, pageid: 'courseProgressExhaust', uri: '/dashboard/courseProgressExhaust',
             type: 'view', object: { ver: '1.0', type: 'course' }
           }
         }
