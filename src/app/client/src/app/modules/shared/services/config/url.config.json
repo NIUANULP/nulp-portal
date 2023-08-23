@@ -208,8 +208,9 @@
       "GET_DETAILS": "course/v1/batch/read",
       "GET_PARTICIPANT_LIST": "course/v1/batch/participants/list",
       "GET_BATCHS": "course/v1/batch/list",
-      "REMOVE_USERS": "course/v1/batch/user/remove"
-    },
+      "REMOVE_USERS": "course/v1/batch/user/remove",
+      "COURSE_PROGRESS_EXHAUST": "course/v1/progress/reports"
+    }, 
     "ADMIN": {
       "USER_SEARCH": "user/v3/search",
       "ORG_SEARCH": "org/v2/search",
@@ -217,7 +218,7 @@
       "ORG_CREATE":"org/v1/create",
       "ORG_EXT_SEARCH": "org/v2/search",
       "BULK": {
-        "USERS_UPLOAD": "user/v1/upload",
+        "USERS_UPLOAD": "user/v2/upload",
         "ORGANIZATIONS_UPLOAD": "org/v1/upload",
         "STATUS": "data/v1/upload/status"
       },
