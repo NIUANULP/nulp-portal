@@ -191,6 +191,12 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
   showError = false;
 
   /**
+   * To show / hide error
+  */
+  showCourseData = false;
+
+
+  /**
 	 * telemetryImpression object for course progress page
 	*/
   telemetryImpression: IImpressionEventInput;
@@ -265,15 +271,16 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
         this.showLoader = false;
         const isBatchExist = _.find(this.batchlist, (batch) => batch.id === this.queryParams.batchIdentifier);
         if (this.batchlist.length === 0) {
+          this.showCourseData = false;
           this.showNoBatch = true;
         } else if (isBatchExist) {
+          this.showCourseData = false;
           this.selectedOption = this.queryParams.batchIdentifier;
           this.currentBatch = isBatchExist;
-
-          this.populateCourseDashboardData(isBatchExist);
-          
+          this.populateCourseDashboardData(isBatchExist);          
           this.populateCourseProgressExhaustData(isBatchExist);
         } else if (this.batchlist.length === 1 && isBatchExist === undefined) {
+          this.showCourseData = false;
           this.queryParams.batchIdentifier = this.batchlist[0].id;
           this.selectedOption = this.batchlist[0].id;
           this.currentBatch = this.batchlist[0];
@@ -283,8 +290,10 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
           this.populateCourseProgressExhaustData(this.currentBatch);
         } else if (this.batchlist.length > 1 && isBatchExist === undefined) {
           this.generateDataForDF(this.currentBatch);
+          this.showCourseData = true;
           // this.setBatchId(this.currentBatch);
           // this.populateCourseDashboardData(this.batchlist[0]);
+          this.currentBatch = undefined;
           this.populateCourseProgressExhaustData(this.currentBatch);
         } else {
           this.showWarningDiv = true;
@@ -299,18 +308,24 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
 
 
   populateCourseProgressExhaustData(batch: any) {
-
-    let option = {
-      courseId : this.courseId,
-      batchId: batch.batchId,
-      limit: this.pageLimit,
-      offset: (this.pageNumber - 1) * (this.pageLimit),
-    }
+    // debugger;
+    let option: any;
 
     // If there are multiple batches and none of the batch is selected.
-    // if (!batch) {
-    //   option.batchId === undefined;
-    // }
+    if ( this.showCourseData) {
+      option = {
+        courseId : this.courseId,
+        limit: this.pageLimit,
+        offset: (this.pageNumber - 1) * (this.pageLimit),
+      }
+    } else {
+      option = {
+        courseId : this.courseId,
+        batchId: batch.batchId,
+        limit: this.pageLimit,
+        offset: (this.pageNumber - 1) * (this.pageLimit),
+      }
+    }
 
     // if (this.order) {
     //   option.sortBy = this.order;

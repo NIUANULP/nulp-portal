@@ -83,14 +83,8 @@ export class CourseProgressService  {
    * To method calls the get dashboard API
    */
   getCourseProgressExhaustData(requestParam) {
-/*    const option = {
-      url: 'course/v1/progress/reports/' + requestParam.courseId + '/' + requestParam.batchId,
-      param: {
-        limit: requestParam.limit,
-        offset: requestParam.offset,
-      }
-    };
-*/
+
+/* working    
     const option = {
       url: this.config.urlConFig.URLS.BATCH.COURSE_PROGRESS_EXHAUST + '/'  + requestParam.courseId + '/' + requestParam.batchId,
       param: {
@@ -98,8 +92,28 @@ export class CourseProgressService  {
         offset: requestParam.offset,
       }
     };
+*/
+  // debugger;
+  let option: any;
+  if (requestParam.batchId !== undefined) {  
+    option = {
+      url: this.config.urlConFig.URLS.BATCH.COURSE_PROGRESS_EXHAUST + '/'  + requestParam.courseId + '/' + requestParam.batchId,
+      param: {
+        limit: requestParam.limit,
+        offset: requestParam.offset,
+      }
+    };
+  }
+  else {
+    option = {
+      url: this.config.urlConFig.URLS.BATCH.COURSE_PROGRESS_EXHAUST + '/'  + requestParam.courseId,
+      param: {
+        limit: requestParam.limit,
+        offset: requestParam.offset,
+      }
+    };
+  }
 
-    debugger;
     // if ( _.get(requestParam, 'sortBy')) {
     //   option.param['sortBy'] = requestParam.sortBy;
     //   option.param['sortOrder'] = requestParam.sortOrder;

@@ -72,7 +72,7 @@ a {
 } 
 
 .progress-content {
-  margin-top: calculateRem(36px);
+  // margin-top: 0px; //calculateRem(36px);
 
   @include respond-below(sm) {
     margin-top: 0px;

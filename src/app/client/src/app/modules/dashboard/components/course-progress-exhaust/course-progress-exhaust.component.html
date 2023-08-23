@@ -124,14 +124,14 @@
     <table class="ui upForReviewTable table">
       <thead>
         <tr>
-          <th class="two wide UpReviewTableHeader">User Name</th>
-          <th class="two wide UpReviewTableHeader">Email</th>
-          <th class="two wide UpReviewTableHeader">Phone No</th>
-          <th class="two wide UpReviewTableHeader">Enroll Date</th>
-          <th class="two wide UpReviewTableHeader">Completed On</th>
-          <th class="two wide UpReviewTableHeader">Progress</th>
-          <th class="two wide UpReviewTableHeader">Completed %</th>
-          <th class="two wide UpReviewTableHeader">Issued Certificate</th>
+          <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustUserName}}</th>
+          <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustEmail}}</th>
+          <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustPhoneNo}}</th>
+          <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustEnrollDate}}</th>
+          <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustCompletedOn}}</th>
+          <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustProgress}}</th>
+          <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustCompletedPercentage}}</th>
+          <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustIssuedCertificate}}</th>
         </tr>
       </thead>
       <tbody *ngIf="courseProgressExhaustData">
@@ -139,11 +139,11 @@
           <td class="content">{{courseProgressExhaust?.userName}}</td>
           <td class="content">{{courseProgressExhaust?.userEmail}}</td>
           <td class="content">{{courseProgressExhaust?.Phone}}</td>
-          <td class="content">{{courseProgressExhaust?.enrolled_date | date:'d/m/yyyy'}}</td>
-          <td class="content">{{courseProgressExhaust?.completedon}}</td>
+          <td class="content">{{courseProgressExhaust?.enrolled_date | date:'dd/MM/yyyy'}}</td>
+          <td class="content">{{courseProgressExhaust?.completedon  | dateFormat :'DD/MM/YYYY'}} </td>
           <td class="content">{{courseProgressExhaust?.progress}}</td>
           <td class="content">{{courseProgressExhaust?.completionpercentage}}</td>
-          <td class="content">{{courseProgressExhaust?.issued_certificates}}</td>
+          <td class="content">{{courseProgressExhaust?.issued_certificates?.name}}</td>
         </tr>
       </tbody>
     </table>
