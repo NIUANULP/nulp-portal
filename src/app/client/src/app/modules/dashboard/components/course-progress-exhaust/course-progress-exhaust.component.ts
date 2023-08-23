@@ -344,12 +344,13 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
             apiResponse.result.count = 0;
           }
           this.showLoader = false;
-          this.courseProgressExhaustData = apiResponse.result;
+          this.courseProgressExhaustData = apiResponse.result.content;
+          this.totalCount = apiResponse.result.total_items;
           
-          // API call will be made to get the data
-          this.courseProgressExhaustData = courseProgressData.result.content;
+          // // API call will be made to get the data
+          // this.courseProgressExhaustData = courseProgressData.result.content;
 
-          this.totalCount = courseProgressData.result.total_items
+          // this.totalCount = courseProgressData.result.total_items
           this.pager = this.paginationService.getPager(this.totalCount, this.pageNumber, 5);
           this.showLoader = false;
           this.noResult = false;
@@ -369,14 +370,15 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
           this.showLoader = false;
         }
       );
+      console.log("Error block skipped >>>>>>>>>>>>>");
+      // The error block was also not encountered, so put this block  
+      // // API call will be made to get the data
+      // this.courseProgressExhaustData = courseProgressData.result.content;
 
-      // API call will be made to get the data
-      this.courseProgressExhaustData = courseProgressData.result.content;
-
-      this.totalCount = courseProgressData.result.total_items
-      this.pager = this.paginationService.getPager(this.totalCount, this.pageNumber, 5);
-      this.showLoader = false;
-      this.noResult = false;      
+      // this.totalCount = courseProgressData.result.total_items
+      // this.pager = this.paginationService.getPager(this.totalCount, this.pageNumber, 5);
+      // this.showLoader = false;
+      // this.noResult = false;      
     }
 
   /**
@@ -521,6 +523,7 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
   */
   ngOnInit() {
 
+/*    
     // API call will be made to get the data
     this.courseProgressExhaustData = courseProgressData.result.content;
 
@@ -529,6 +532,7 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
     this.showLoader = false;
     this.noResult = false;
     //---- The above code is for testing purpose only
+*/
     this.userDataSubscription = this.user.userData$.pipe(first()).subscribe(userdata => {
       if (userdata && !userdata.err) {
         this.userId = userdata.userProfile.userId;
