@@ -235,7 +235,7 @@ export class CourseConsumptionHeaderComponent implements OnInit, AfterViewInit, 
       });
     });
   }
-
+ 
   showDashboard() {
     this.router.navigate(['learn/course', this.courseId, 'dashboard', 'batches']);
   }
@@ -244,6 +244,15 @@ export class CourseConsumptionHeaderComponent implements OnInit, AfterViewInit, 
   closeDashboard() {
     this.router.navigate(['learn/course', this.courseId]);
   }
+/*
+  showCourseProgressReports() {
+    this.router.navigate(['learn/course', this.courseId, 'courseProgressReports']);
+  }
+
+  closeCourseProgressReports() {
+    this.router.navigate(['learn/course', this.courseId]);
+  }
+*/
 
   resumeCourse(showExtUrlMsg?: boolean) {
     const IsStoredLocally = localStorage.getItem('isCertificateNameUpdated_' + this.profileInfo.id) || 'false' ;

@@ -149,6 +149,28 @@
             {{resourceService?.frmelmnts?.btn?.closedb}}
           </button>
         </div>
+
+        <!-- <div class="ml-auto text-right py-8"
+        *ngIf="!enrolledCourse && viewDashboard && !router.url.includes('/dashboard')">
+        <button appTelemetryInteract [telemetryInteractObject]="courseInteractObject"
+          [telemetryInteractEdata]="{id:'viewCourseDashboard' , type: 'click' , pageid:'course-consumption'}"
+          class="sb-btn sb-btn-secondary sb-btn-normal" tabindex="0" (click)="showCourseProgressReports()">
+           {{resourceService?.frmelmnts?.btn?.viewCourseStatsDashboard}} 
+          View Course Progress Reports
+        </button>
+      </div>
+
+      <div class="ml-auto text-right py-8"
+        *ngIf="!isDesktopApp && permissionService?.permissionAvailable && !enrolledCourse && viewDashboard && router.url.includes('/dashboard')"
+        appPermission [permission]="dashboardPermission">
+        <button appTelemetryInteract [telemetryInteractObject]="courseInteractObject"
+          [telemetryInteractEdata]="{id:'close-course-dashboard' , type: 'click' , pageid:'course-consumption'}"
+          class="sb-btn sb-btn-normal sb-btn-outline-primary" tabindex="0" (click)="closeCourseProgressReports()">
+           {{resourceService?.frmelmnts?.btn?.closedb}} 
+          Close Course Progress Reports
+        </button>
+      </div> --> 
+
       </div>
       <!--Activity Dashboard-->
       <div *ngIf="isGroupAdmin" class="sb-activity-dashboard-btn-content py-8">
