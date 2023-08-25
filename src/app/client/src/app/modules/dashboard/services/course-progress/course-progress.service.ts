@@ -132,6 +132,17 @@ export class CourseProgressService  {
   }
 
   /**
+   * To method calls the get the course data
+   */
+  getCourseData(requestParam) {
+    // debugger;
+    const option = {
+      url: this.config.urlConFig.URLS.COURSE.HIERARCHY + '/'  + requestParam
+    };
+    return this.learnerService.get(option);
+  }
+
+  /**
    * This method calls the download API
    */
   downloadDashboardData(requestParam) {

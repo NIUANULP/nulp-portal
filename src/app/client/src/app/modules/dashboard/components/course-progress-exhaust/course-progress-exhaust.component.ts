@@ -19,6 +19,7 @@ import { OnDemandReportService } from '../../../shared/services/on-demand-report
 import { IBatchListData, ICourseProgressData, IForumContext } from '../../interfaces';
 import { CourseProgressService, UsageService } from '../../services';
 import { courseProgressData } from "./data";
+import { Course } from '@project-sunbird/client-services/models';
 
 @Component({
   selector: 'app-course-progress-exhaust',
@@ -181,6 +182,11 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
   courseProgressExhaustData: any;
 
   /**
+	 * This variable holds the course name
+	 */
+  courseName: string;
+
+  /**
    * To show / hide no result message when no result found
    */
   noResult = false;
@@ -252,6 +258,7 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
   */
   populateBatchData(): void {
     // this.showLoader = true;
+    // debugger;
     const searchParamsCreator = {
       courseId: this.courseId,
       status: ['0', '1', '2'],
@@ -271,7 +278,9 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
         this.showLoader = false;
         const isBatchExist = _.find(this.batchlist, (batch) => batch.id === this.queryParams.batchIdentifier);
         if (this.batchlist.length === 0) {
-          this.showCourseData = false;
+          this.showCourseData = false;          
+          this.showLoader = false;
+
           this.showNoBatch = true;
         } else if (isBatchExist) {
           this.showCourseData = false;
@@ -368,11 +377,18 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
         err => {
           this.toasterService.error(err.error.params.errmsg);
           this.showLoader = false;
+    
+          // API call will be made to get the data
+          // this.courseProgressExhaustData = courseProgressData.result.content;
+
+          // this.totalCount = courseProgressData.result.total_items
+          // this.pager = this.paginationService.getPager(this.totalCount, this.pageNumber, 5);
+          // this.showLoader = false;
+          // this.noResult = false;
+          //---- The above code is for testing purpose only          
         }
       );
-      console.log("Error block skipped >>>>>>>>>>>>>");
-      // The error block was also not encountered, so put this block  
-      // // API call will be made to get the data
+      // API call will be made to get the data
       // this.courseProgressExhaustData = courseProgressData.result.content;
 
       // this.totalCount = courseProgressData.result.total_items
@@ -387,6 +403,7 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
 	* @param {string} batchId batch identifier
   */
   setBatchId(batch?: any): void {
+    // debugger;
     this.fetchForumIdReq = null;
     this.showWarningDiv = false;
     this.queryParams.batchIdentifier = batch.id;
@@ -396,7 +413,9 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
     // this.currentBatch.lastUpdatedOn = dayjs(this.currentBatch.lastUpdatedOn).format('DD-MMM-YYYY hh:mm a');
     this.batchId = batch.id;
     this.setCounts(this.currentBatch);
-    this.populateCourseDashboardData(batch);
+    // this.populateCourseDashboardData(batch);
+    this.showCourseData = false;
+    this.populateCourseProgressExhaustData(batch);
   }
 
 
@@ -517,22 +536,27 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
   }
 
   /**
+  * To method subscribes the course data using course id.
+  */
+  populateCourseData(courseId: string) {
+    this.courseProgressService.getCourseData(courseId).subscribe(
+      (apiResponse: ServerResponse)  => {
+        this.courseName = apiResponse.result.content.name;
+      },
+      (err) => {  
+        this.toasterService.error(err.error.params.errmsg);
+        this.showLoader = false;
+      }
+    )
+  }
+
+  /**
   * To method subscribes the user data to get the user id.
   * It also subscribes the activated route params to get the
   * course id and timeperiod
   */
   ngOnInit() {
 
-/*    
-    // API call will be made to get the data
-    this.courseProgressExhaustData = courseProgressData.result.content;
-
-    this.totalCount = courseProgressData.result.total_items
-    this.pager = this.paginationService.getPager(this.totalCount, this.pageNumber, 5);
-    this.showLoader = false;
-    this.noResult = false;
-    //---- The above code is for testing purpose only
-*/
     this.userDataSubscription = this.user.userData$.pipe(first()).subscribe(userdata => {
       if (userdata && !userdata.err) {
         this.userId = userdata.userProfile.userId;
@@ -550,6 +574,7 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
             this.batchId = bothParams.params.batchId;
             this.queryParams = { ...bothParams.queryParams };
             this.interactObject = { id: this.courseId, type: 'Course', ver: '1.0' };
+            this.populateCourseData(this.courseId);
             this.populateBatchData();
           });
       }

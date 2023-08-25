@@ -19,6 +19,7 @@
 
 <!-- Updated code as per new design for semantic datatable-->
 <div class="sb-bg-color-white p-16 progress-content">
+  
   <div>
     <div id="dashoardFiltersHolder" *ngIf="batchlist && batchlist.length > 0">
       <div class="d-flex  progress-report-content">
@@ -41,6 +42,12 @@
         <app-access-discussion *ngIf="fetchForumIdReq" [fetchForumIdReq]="fetchForumIdReq"
           (routerData)="assignForumData($event)"> </app-access-discussion>
       </div>
+
+      <div class="d-flex">
+        <label class="fnormal mt-24 font-weight-normal pl-4 text-left">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustCourseName}} : {{courseName}}
+        </label>          
+      </div>
+    
       <!-- NOTE: Using currentBatch data instead of dashboardData, as API got deprecated -->
       <div class="d-flex flex-dc current-batch-list">
         <p *ngIf="currentBatch?.lastUpdatedOn" class="d-flex flex-ai-flex-end mr-24 fsmall mt-8 mb-0 update-text">
@@ -120,13 +127,17 @@
     {{courseProgressExhaustData | json}}
   </div> -->
 
-  <div>
+  <div class="ui grid" style="margin-top:24px; width:100%;overflow-y:auto;white-space:nowrap;">
     <table class="ui upForReviewTable table">
       <thead>
         <tr>
           <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustUserName}}</th>
           <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustEmail}}</th>
           <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustPhoneNo}}</th>
+
+          <th *ngIf="showCourseData" class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustBatchId}}</th>
+          <th *ngIf="showCourseData" class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustBatchName}}</th>
+
           <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustEnrollDate}}</th>
           <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustCompletedOn}}</th>
           <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustProgress}}</th>
@@ -139,6 +150,10 @@
           <td class="content">{{courseProgressExhaust?.userName}}</td>
           <td class="content">{{courseProgressExhaust?.userEmail}}</td>
           <td class="content">{{courseProgressExhaust?.Phone}}</td>
+
+          <td *ngIf="showCourseData" class="content">{{courseProgressExhaust?.batchid}}</td>
+          <td *ngIf="showCourseData" class="content">{{courseProgressExhaust?.batchid}}</td>
+
           <td class="content">{{courseProgressExhaust?.enrolled_date | date:'dd/MM/yyyy'}}</td>
           <td class="content">{{courseProgressExhaust?.completedon  | dateFormat :'DD/MM/YYYY'}} </td>
           <td class="content">{{courseProgressExhaust?.progress}}</td>
