@@ -380,22 +380,22 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
           this.showLoader = false;
     
           // API call will be made to get the data
-          this.courseProgressExhaustData = courseProgressData.result.content;
+          // this.courseProgressExhaustData = courseProgressData.result.content;
 
-          this.totalCount = courseProgressData.result.total_items
-          this.pager = this.paginationService.getPager(this.totalCount, this.pageNumber, 5);
-          this.showLoader = false;
-          this.noResult = false;
+          // this.totalCount = courseProgressData.result.total_items
+          // this.pager = this.paginationService.getPager(this.totalCount, this.pageNumber, 5);
+          // this.showLoader = false;
+          // this.noResult = false;
           //---- The above code is for testing purpose only          
         }
       );
       // API call will be made to get the data
-      this.courseProgressExhaustData = courseProgressData.result.content;
+      // this.courseProgressExhaustData = courseProgressData.result.content;
 
-      this.totalCount = courseProgressData.result.total_items
-      this.pager = this.paginationService.getPager(this.totalCount, this.pageNumber, 5);
-      this.showLoader = false;
-      this.noResult = false;      
+      // this.totalCount = courseProgressData.result.total_items
+      // this.pager = this.paginationService.getPager(this.totalCount, this.pageNumber, 5);
+      // this.showLoader = false;
+      // this.noResult = false;      
     }
 
   /**
