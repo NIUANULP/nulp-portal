@@ -343,7 +343,6 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
     // if (this.searchText) {
     //   option.username = this.searchText;
     // }
-
     this.courseProgressService.getCourseProgressExhaustData(option).pipe(
       takeUntil(this.unsubscribe))
       .subscribe(
