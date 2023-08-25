@@ -78,9 +78,19 @@ export class CourseProgressService  {
     return this.learnerService.get(option);
   }
 
+  /**
+   * To method calls the get the course data
+   */
+  getCourseData(requestParam) {
+    // debugger;
+    const option = {
+      url: this.config.urlConFig.URLS.COURSE.HIERARCHY + '/'  + requestParam
+    };
+    return this.learnerService.get(option);
+  }
 
   /**
-   * To method calls the get dashboard API
+   * To method calls the get course progress exhaust data
    */
   getCourseProgressExhaustData(requestParam) {
 
