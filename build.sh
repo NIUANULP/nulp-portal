@@ -71,7 +71,7 @@ build_server(){
     echo "copying requied files to app_dist"
     cp -R libs helpers proxy resourcebundles package.json framework.config.js sunbird-plugins routes constants controllers server.js ./../../Dockerfile app_dist
     cd app_dist
-    nvm use 16.0.0
+    nvm use $NODE_server
     echo "starting server yarn install"
     yarn install --no-progress --production=true
     echo "completed server yarn install"
