@@ -336,6 +336,10 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
       }
     }
 
+    if (this.searchText) {
+      option.query = this.searchText;
+    }
+
     // if (this.order) {
     //   option.sortBy = this.order;
     //   option.sortOrder = this.reverse ? 'desc' : 'asc';
@@ -354,6 +358,14 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
           }
           this.showLoader = false;
           this.courseProgressExhaustData = apiResponse.result.content;
+          this.courseProgressExhaustData.map((courseProgressData) => {
+            courseProgressData.issued_certificate = 'No';
+            if (courseProgressData?.issued_certificates?.name) {
+              courseProgressData.issued_certificate = 'Yes';
+            }
+            return courseProgressData;
+          });
+
           this.totalCount = apiResponse.result.total_items;
           
           // // API call will be made to get the data
@@ -390,7 +402,13 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
       );
       // API call will be made to get the data
       // this.courseProgressExhaustData = courseProgressData.result.content;
-
+      // this.courseProgressExhaustData.map((courseProgressData) => {
+      //   courseProgressData.issued_certificate = 'No';
+      //   if (courseProgressData?.issued_certificates?.name) {
+      //     courseProgressData.issued_certificate = 'Yes';
+      //   }
+      //   return courseProgressData;
+      // });
       // this.totalCount = courseProgressData.result.total_items
       // this.pager = this.paginationService.getPager(this.totalCount, this.pageNumber, 5);
       // this.showLoader = false;
@@ -514,15 +532,19 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
     // }
 
   keyup(event) {
+    // debugger;
     this.modelChanged.next(_.trim(event));
   }
+  
   searchBatch() {
     this.modelChanged.pipe(debounceTime(1000),
       distinctUntilChanged(),
       switchMap(search => of(search))
     ).
-      subscribe(query => {
-        this.populateCourseDashboardData();
+      subscribe(searchText => {
+        // debugger;
+        this.searchText = searchText;
+        this.populateCourseProgressExhaustData(this.currentBatch);
       });
   }
 
@@ -619,4 +641,8 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
       };
     }
   }
+
+  // keyup(query) {
+
+  // }
 } 

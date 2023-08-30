@@ -126,6 +126,21 @@
   <!-- <div>
     {{courseProgressExhaustData | json}}
   </div> -->
+ 
+  <div class="ui grid padded">
+    <div class="seven wide column pt-0 pl-0">
+      <div class="ui fluid icon input left action" id="search-input-container">
+        <div class="searchfilterinput ui search">
+          <div class="searchicon ui icon input ">
+            <input class="upForReviewSearchBox" type="text" name="filter_search" [(ngModel)]="searchText"
+              (keyup)="keyup(searchText)" placeholder="{{resourceService?.frmelmnts?.prmpt?.courseProgressExhaustSearch}}" title="Search"
+              autocomplete="off" spellcheck="false" dir="auto" />
+            <i class="circular search link icon"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="ui grid" style="margin-top:24px; width:100%;overflow-y:auto;white-space:nowrap;">
     <table class="ui upForReviewTable table">
@@ -137,6 +152,8 @@
 
           <th *ngIf="showCourseData" class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustBatchId}}</th>
           <th *ngIf="showCourseData" class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustBatchName}}</th>
+          <th *ngIf="showCourseData" class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustBatchStartDate}}</th>
+          <th *ngIf="showCourseData" class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustBatchEndDate}}</th>
 
           <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustEnrollDate}}</th>
           <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustCompletedOn}}</th>
@@ -148,17 +165,19 @@
       <tbody *ngIf="courseProgressExhaustData">
         <tr class="UpForReviewListHover cursor-pointer" *ngFor="let courseProgressExhaust of courseProgressExhaustData">
           <td class="content">{{courseProgressExhaust?.userName}}</td>
-          <td class="content">{{courseProgressExhaust?.userEmail}}</td>
-          <td class="content">{{courseProgressExhaust?.Phone}}</td>
+          <td class="content">{{courseProgressExhaust?.maskedemail}}</td>
+          <td class="content">{{courseProgressExhaust?.maskedphone}}</td>
 
           <td *ngIf="showCourseData" class="content">{{courseProgressExhaust?.batchid}}</td>
-          <td *ngIf="showCourseData" class="content">{{courseProgressExhaust?.batchid}}</td>
+          <td *ngIf="showCourseData" class="content">{{courseProgressExhaust?.batch_name?.batch_name}}</td>
+          <td *ngIf="showCourseData" class="content">{{courseProgressExhaust?.batch_name?.batch_name}}</td>
+          <td *ngIf="showCourseData" class="content">{{courseProgressExhaust?.batch_name?.batch_name}}</td>
 
           <td class="content">{{courseProgressExhaust?.enrolled_date | date:'dd/MM/yyyy'}}</td>
           <td class="content">{{courseProgressExhaust?.completedon  | dateFormat :'DD/MM/YYYY'}} </td>
           <td class="content">{{courseProgressExhaust?.progress}}</td>
           <td class="content">{{courseProgressExhaust?.completionpercentage}}</td>
-          <td class="content">{{courseProgressExhaust?.issued_certificates?.name}}</td>
+          <td class="content">{{ courseProgressExhaust?.issued_certificate}}</td>
         </tr>
       </tbody>
     </table>

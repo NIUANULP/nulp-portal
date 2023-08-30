@@ -5,6 +5,7 @@ import { AuthGuard } from '@sunbird/core';
 import { UnEnrollBatchComponent } from './components/batch/unenroll-batch/unenroll-batch.component';
 import { AssessmentPlayerComponent } from './components/course-consumption/assessment-player/assessment-player.component';
 import { PendingchangesGuard } from '@sunbird/public';
+import { CourseProgressReportsComponent } from './components/course-consumption/course-progress-reports/course-progress-reports.component';
 
 const telemetryEnv = 'Course';
 const objectType = 'Course';
@@ -36,8 +37,13 @@ const routes: Routes = [
         },
         children: [{
           path: '', loadChildren: () => import('./batch.module').then(m => m.BatchModule)
-        }]
+        },
+      ]
       },
+      {
+        path: ':courseId/courseProgressReports', component: CourseProgressReportsComponent
+      },   
+
       {
         path: ':courseId/dashboard', loadChildren: () => import('./../dashboard/dashboard.module').then(m => m.DashboardModule), canActivate: [AuthGuard],
         data: {
