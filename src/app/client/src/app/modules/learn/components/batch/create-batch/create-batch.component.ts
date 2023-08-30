@@ -331,8 +331,13 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
         fullTextSearch: true,
         forceSelection: false,
         onAdd: () => {
+        },
+        onChange: function (val) {
+          if(val && $('#participants').dropdown('get value')){
+            $('#participants').dropdown('restore defaults')
+          }
         }
-      });
+    });
       $('#participants input.search').on('keyup', (e) => {
         this.getUserListWithQuery($('#participants input.search').val(), 'participant');
       });
@@ -499,5 +504,13 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
       return new Date(startDate.getTime() + oneDayMs);
     }
     return new Date(this.pickerMinDate.getTime() + oneDayMs);
+  }
+
+  getSelectedMembers() {
+    if(this.createBatchForm.value.enrollmentType !== 'open'){
+      return $('#mentors').dropdown('get value') ? $('#mentors').dropdown('get value').split(',') : [];
+    } else {
+      return [];
+    }
   }
 }
