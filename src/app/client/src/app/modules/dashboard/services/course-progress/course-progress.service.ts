@@ -113,7 +113,9 @@ export class CourseProgressService  {
       }
     };
   }
- 
+  if ( _.get(requestParam, 'query')) {
+    option.param['query'] = requestParam.query;
+  }
     // if ( _.get(requestParam, 'sortBy')) {
     //   option.param['sortBy'] = requestParam.sortBy;
     //   option.param['sortOrder'] = requestParam.sortOrder;

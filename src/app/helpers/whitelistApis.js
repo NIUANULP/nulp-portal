@@ -428,6 +428,15 @@ const API_LIST = {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [ROLE.COURSE_MENTOR, ROLE.CONTENT_CREATOR]
     },
+    '/learner/course/v1/progress/reports/:courseId/:batchId': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.CONTENT_CREATOR,
+        ROLE.COURSE_CREATOR,
+        ROLE.BOOK_CREATOR,
+        ROLE.ORG_ADMIN,
+      ]
+    },
 
     //User related APIs
     '/learner/user/v1/create': {
