@@ -330,11 +330,9 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
       $('#mentors').dropdown({
         fullTextSearch: true,
         forceSelection: false,
-        onAdd: () => {
-        },
-        onChange: function (val) {
-          if(val && $('#participants').dropdown('get value')){
-            $('#participants').dropdown('restore defaults')
+        onAdd: function (val) {
+          if (val && $('#participants').dropdown('get value')) {
+            $('#participants').dropdown("remove selected"), [val];
           }
         }
     });
