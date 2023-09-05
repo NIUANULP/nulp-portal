@@ -19,7 +19,8 @@ import {
   OrganisationComponent, CourseConsumptionComponent, CourseProgressComponent, UsageReportsComponent,
   DataTableComponent, DataChartComponent, ReportComponent, ReportSummaryComponent, ListAllReportsComponent,
   AddSummaryModalComponent, CourseDashboardComponent, ReIssueCertificateComponent, DashboardSidebarComponent, DatasetComponent, MapComponent, FilterComponent,AllReportsComponent, ReportsComponent,OrganizationReportComponent, UserReportComponent,ContentReportComponent, ContentLeaderboardComponent,ContentCategoryWiseComponent, CourseReportComponent,CourseCategoryWiseComponent,
-  ContentCreationStaticsComponent,CityWiseReportComponent, DeptCityWiseReportComponent, ContentDeptWiseReportComponent
+  ContentCreationStaticsComponent,CityWiseReportComponent, DeptCityWiseReportComponent, ContentDeptWiseReportComponent,
+  CourseProgressExhaustComponent
 } from './components';
 import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
 // import { ChartsModule } from 'ng2-charts';
@@ -53,6 +54,7 @@ import { OrgManagementModule } from '@sunbird/org-management';
 import { CertificateDirectivesModule } from 'sb-svg2pdf';
 import { CsModule } from '@project-sunbird/client-services';
 import { CsLibInitializerService } from 'CsLibInitializer';
+import { CourseProgressExhaustModule } from './course-progress-exhaust.module';
 
 export const csCourseServiceFactory = (csLibInitializerService: CsLibInitializerService) => {
   if (!CsModule.instance.isInitialised) {
@@ -90,7 +92,8 @@ export const csCourseServiceFactory = (csLibInitializerService: CsLibInitializer
     CoreModule,
     ChartModule,
     CertificateDirectivesModule,
-    OrgManagementModule
+    OrgManagementModule,
+    CourseProgressExhaustModule
   ],
   declarations: [CourseConsumptionComponent, OrganisationComponent, CourseProgressComponent, UsageReportsComponent,
     DataTableComponent, DataChartComponent, ListAllReportsComponent, ReportSummaryComponent, ReportComponent, AddSummaryModalComponent,
@@ -111,4 +114,4 @@ export const csCourseServiceFactory = (csLibInitializerService: CsLibInitializer
   ],
   
 })
-export class DashboardModule { }
+export class DashboardModule { } 

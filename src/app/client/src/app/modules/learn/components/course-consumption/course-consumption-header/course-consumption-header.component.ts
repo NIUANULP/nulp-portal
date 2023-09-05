@@ -1,5 +1,5 @@
-import { combineLatest as observableCombineLatest, Subject } from 'rxjs';
-import { takeUntil} from 'rxjs/operators';
+import { combineLatest as observableCombineLatest, Subject, Subscription } from 'rxjs';
+import { first, takeUntil} from 'rxjs/operators';
 import { Component, OnInit, Input, AfterViewInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CourseConsumptionService, CourseProgressService } from './../../../services';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -20,6 +20,7 @@ import { FormService } from '../../../../core/services/form/form.service';
 import { IForumContext } from '../../../interfaces';
 import { ContentManagerService } from '../../../../public/module/offline/services';
 import { DiscussionTelemetryService } from './../../../../shared/services/discussion-telemetry/discussion-telemetry.service';
+import {Validators, FormControl, FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'app-course-consumption-header',
@@ -99,6 +100,12 @@ export class CourseConsumptionHeaderComponent implements OnInit, AfterViewInit, 
   enrollmentEndDate: string;
   todayDate = dayjs(new Date()).format('YYYY-MM-DD');
   showError = false;
+  reportTypes = [];
+  userDataSubscription: Subscription;
+  userId: string;
+  userRoles;
+  public reportForm: FormGroup;
+  public selectedReport;
 
   constructor(private activatedRoute: ActivatedRoute, public courseConsumptionService: CourseConsumptionService,
     public resourceService: ResourceService, private router: Router, public permissionService: PermissionService,
@@ -110,7 +117,12 @@ export class CourseConsumptionHeaderComponent implements OnInit, AfterViewInit, 
     public generaliseLabelService: GeneraliseLabelService, public connectionService: ConnectionService,
     public courseBatchService: CourseBatchService, private utilService: UtilService, public contentManagerService: ContentManagerService,
     private formService: FormService, private offlineCardService: OfflineCardService,
-    public discussionService: DiscussionService, public discussionTelemetryService: DiscussionTelemetryService) { }
+    public discussionService: DiscussionService, public discussionTelemetryService: DiscussionTelemetryService) {
+
+      this.reportForm = new FormGroup({
+        reportType: new FormControl('', [Validators.required]),
+      });      
+     }
 
   showJoinModal(event) {
     this.courseConsumptionService.showJoinCourseModal.emit(event);
@@ -171,6 +183,10 @@ export class CourseConsumptionHeaderComponent implements OnInit, AfterViewInit, 
       this.viewDashboard = this.viewDashboard && visibility;
     });
     this.generateDataForDF();
+    if (_.isEmpty(this.reportTypes)) {
+      // debugger;
+      this.getReportTypes();
+    }
   }
   ngAfterViewInit() {
     this.courseProgressService.courseProgressData.pipe(
@@ -235,7 +251,7 @@ export class CourseConsumptionHeaderComponent implements OnInit, AfterViewInit, 
       });
     });
   }
-
+ 
   showDashboard() {
     this.router.navigate(['learn/course', this.courseId, 'dashboard', 'batches']);
   }
@@ -244,6 +260,15 @@ export class CourseConsumptionHeaderComponent implements OnInit, AfterViewInit, 
   closeDashboard() {
     this.router.navigate(['learn/course', this.courseId]);
   }
+/*
+  showCourseProgressReports() {
+    this.router.navigate(['learn/course', this.courseId, 'courseProgressReports']);
+  }
+
+  closeCourseProgressReports() {
+    this.router.navigate(['learn/course', this.courseId]);
+  }
+*/
 
   resumeCourse(showExtUrlMsg?: boolean) {
     const IsStoredLocally = localStorage.getItem('isCertificateNameUpdated_' + this.profileInfo.id) || 'false' ;
@@ -544,4 +569,45 @@ export class CourseConsumptionHeaderComponent implements OnInit, AfterViewInit, 
         this.toasterService.error(this.resourceService.messages.fmsg.m0004);
       });
   }
+
+
+  getReportTypes() {
+    const isCourseCreator = _.includes(this.userRoles, 'CONTENT_CREATOR');
+    const formReadInputParams = {
+      formType: 'batch',
+      formAction: 'list',
+      contentType: 'report_types'
+    };
+    this.formService.getFormConfig(formReadInputParams).subscribe((formResponsedata) => {
+      if (formResponsedata) {
+        const options = formResponsedata;
+        if (isCourseCreator) {
+          this.reportTypes = options;
+        } else {
+          this.reportTypes = _.filter(options, (report) => report.title !== 'User profile exhaust');
+        }
+      }
+    }, error => {
+      this.toasterService.error(_.get(this.resourceService, 'messages.fmsg.m0004'));
+    });
+  }  
+
+  getUserRoles() {
+    this.userService.userData$.pipe(first()).subscribe(userdata => {
+      if (userdata && !userdata.err) {
+        this.userId = userdata.userProfile.userId;
+        this.userRoles = _.get(userdata, 'userProfile.userRoles');
+      }
+    }, error => {
+      this.toasterService.error(_.get(this.resourceService, 'messages.fmsg.m0004'));
+    });
+  }
+  
+  reportChanged(ev) {
+    // debugger;
+    this.selectedReport = _.get(ev, 'value');
+    // this.router.navigate(['learn/course', this.courseId, 'dashboard', 'courseProgressExhaust']);
+    this.router.navigate(['learn/course', this.courseId, 'courseProgressReports']);
+  }
+  
 }
