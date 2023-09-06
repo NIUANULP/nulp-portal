@@ -10,11 +10,12 @@ import { AddusersComponent } from './components/addusers/addusers.component';
 import {
   StatusComponent
 } from '@sunbird/org-management';
+import { CourseProgressExhaustComponent } from './components/course-progress-exhaust/course-progress-exhaust.component';
 
 const telemetryEnv = 'course-dashboard';
 const routes: Routes = [
   {
-    path: '', component: DashboardSidebarComponent, canActivate: [AuthGuard],
+  path: '', component: DashboardSidebarComponent, canActivate: [AuthGuard],
     data: {
       roles: 'createBatchRole',
       telemetry: { env: 'Course', pageid: 'course-dashboard', type: 'view', object: { ver: '1.0', type: 'course' } }
@@ -36,6 +37,16 @@ const routes: Routes = [
           roles: 'createBatchRole',
           telemetry: {
             env: telemetryEnv, pageid: 'batches', uri: '/dashboard/batches',
+            type: 'view', object: { ver: '1.0', type: 'course' }
+          }
+        }
+      },
+      {
+        path: 'courseProgressExhaust', component: CourseProgressExhaustComponent, canActivate: [AuthGuard],
+        data: {
+          roles: 'createBatchRole',
+          telemetry: {
+            env: telemetryEnv, pageid: 'courseProgressExhaust', uri: '/dashboard/courseProgressExhaust',
             type: 'view', object: { ver: '1.0', type: 'course' }
           }
         }
@@ -158,5 +169,5 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class DashboardRoutingModule { }
+export class DashboardRoutingModule { } 
 

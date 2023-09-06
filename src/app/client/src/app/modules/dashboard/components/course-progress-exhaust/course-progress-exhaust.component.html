@@ -1,0 +1,239 @@
+<!-- <app-test-shared></app-test-shared> -->
+
+<!--
+<sui-modal class="sb-modal sb-success" (dismissed)="modal.deny(); showDownloadModal = false;" #modal
+  *ngIf="showDownloadModal">
+  Download report popup
+  <div class="header">
+    <div class="ui grid">
+      <div class="eleven wide column">
+        <span class="ui header">{{resourceService?.frmelmnts?.instn?.t0060}}</span>
+      </div>
+    </div>
+  </div>
+  /Header
+  Content
+  <div class="sb-modal-content">
+    <p class="meta">{{resourceService?.messages?.stmsg?.m0132}}</p>
+  </div>
+  /Content
+</sui-modal> -->
+
+<!-- Updated code as per new design for semantic datatable-->
+<div class="sb-bg-color-white p-16 progress-content">
+  
+  <div>
+    <div id="dashoardFiltersHolder" *ngIf="batchlist && batchlist.length > 0">
+      <div class="d-flex  progress-report-content">
+        <div class="d-flex w-300 flex-dc">
+          <label
+            class="fnormal font-weight-normal pl-4 text-left">{{resourceService?.frmelmnts?.lbl?.selectBatch}}</label>
+          <label class="w-100">
+            <sui-select class="selection course-dashboard-select" placeholder="Select batch to see dashboard"
+              [(ngModel)]="selectedOption" [options]="batchlist" labelField="name" valueField="id" #select>
+              <sui-select-option *ngFor="let course of select.filteredOptions" [value]="course"
+                (click)="setBatchId(course);" tabindex="0" appTelemetryInteract
+                [telemetryInteractObject]="interactObject"
+                [telemetryInteractEdata]="{id:'batchSelection',type:'click',pageid:'course-progress-dashboard'}"
+                [telemetryInteractCdata]="[{ 'type': 'batch', 'id': course.id}]">
+              </sui-select-option>
+            </sui-select>
+          </label>
+        </div>
+        <!-- below needs to be done score card -->
+        <app-access-discussion *ngIf="fetchForumIdReq" [fetchForumIdReq]="fetchForumIdReq"
+          (routerData)="assignForumData($event)"> </app-access-discussion>
+      </div>
+
+      <div class="d-flex">
+        <label class="fnormal mt-24 font-weight-normal pl-4 text-left">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustCourseName}} : {{courseName}}
+        </label>          
+      </div>
+    
+      <!-- NOTE: Using currentBatch data instead of dashboardData, as API got deprecated -->
+      <div class="d-flex flex-dc current-batch-list">
+        <p *ngIf="currentBatch?.lastUpdatedOn" class="d-flex flex-ai-flex-end mr-24 fsmall mt-8 mb-0 update-text">
+          {{resourceService?.frmelmnts?.lbl?.batchReportUpdateNote | interpolate:'{date}': (currentBatch?.lastUpdatedOn
+          | sbDataTable : 'dateTime')}}</p>
+
+        <div class="d-flex flex-dc my-16 sb-course-progress-status" *ngIf="currentBatch">
+          <div class="sb-course-progress-status-label">
+            <span class="course-start-dt course-participants-label">
+              <span *ngIf="currentBatch.startDate">
+                {{resourceService?.frmelmnts?.lbl?.batchstartdate}}
+              </span>
+            </span>
+
+            <span class="course-end-dt course-participants-label">
+              <span>{{resourceService?.frmelmnts?.lbl?.batchenddate}}
+              </span>
+            </span>
+
+            <span *ngIf="currentBatch.participantCount !== null"
+              class="d-flex flex-dc course-participants course-participants-label">
+              <span>{{resourceService?.frmelmnts?.lbl?.totalEnrolments}}</span>
+            </span>
+          </div>
+
+          <div class="sb-bg-color-white sb-course-progress-status-result">
+            <span class="course-start-dt course-participants-label">
+              <span class="font-weight-bold"> {{currentBatch.startDate | dateFormat :'DD/MM/YYYY' }}</span>
+            </span>
+
+            <span class="course-end-dt course-participants-label">
+              <span *ngIf="currentBatch.endDate" class="font-weight-bold">{{currentBatch.endDate | dateFormat
+                :'DD/MM/YYYY'}}</span>
+              <span *ngIf="!currentBatch.endDate">-</span>
+            </span>
+
+            <span *ngIf="currentBatch.participantCount !== null" class="course-participants course-participants-label">
+              <span class="font-weight-bold">{{currentBatch.participantCount}}</span>
+            </span>
+          </div>
+
+        </div>
+      </div>
+      <!-- Select Batch image content start-->
+      <div class="d-flex flex-jc-center" *ngIf="batchlist && batchlist.length > 1 && showWarningDiv && !showLoader">
+        <div class="d-flex flex-dc flex-ai-center pb-24">
+          <div><img src="assets/images/batch.png" width="329px" height="229px" alt="batch"></div>
+          <p class="img-text">Select batch to view details</p>
+        </div>
+      </div>
+      <!-- Select Batch image content end-->
+    </div>
+    <div class="sb-toaster sb-toast-info sb-mw-100 sb-toast-sm-padding"
+      *ngIf="currentBatch &&  currentBatch.count>10000">
+      <div class="sb-toast-body">
+        <div class="sb-toast-texts">
+          <div class="sb-toast-message">{{resourceService?.frmelmnts?.instn?.t0085}}</div>
+        </div>
+      </div>
+    </div>
+    <div class="tweleve wide column" *ngIf="showLoader">
+      <app-loader></app-loader>
+    </div>
+    <div class="ui grid" *ngIf="showNoBatch">
+      <div class="twelve wide column">
+        <div class="ui info message">
+          <div class="header">{{resourceService?.frmelmnts?.instn?.t0061}}</div>
+          <ul class="list">
+            <li>{{resourceService?.frmelmnts?.instn?.t0062}}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div>
+    {{courseProgressExhaustData | json}}
+  </div> -->
+ 
+  <div class="ui grid padded">
+    <div class="seven wide column pt-0 pl-0">
+      <div class="ui fluid icon input left action" id="search-input-container">
+        <div class="searchfilterinput ui search">
+          <div class="searchicon ui icon input ">
+            <input class="upForReviewSearchBox" type="text" name="filter_search" [(ngModel)]="searchText"
+              (keyup)="keyup(searchText)" placeholder="{{resourceService?.frmelmnts?.prmpt?.courseProgressExhaustSearch}}" title="Search"
+              autocomplete="off" spellcheck="false" dir="auto" />
+            <i class="circular search link icon"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="seven wide column pt-0 pl-0">
+      <div class="ui-helper-clearfix export-btns">
+        <button type="button" style="float:right" icon="fa fa-file"
+          class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" pbutton="" iconPos="left"
+          label="Export" (click)="exportCsvService.downloadFile(courseProgressExhaustData, columns, fileName)"><span aria-hidden="true"
+            class="ui-button-icon-left ui-clickable fa fa-file"></span><span
+            class="ui-button-text ui-clickable">Export</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ui grid" style="margin-top:24px; width:100%;overflow-y:auto;white-space:nowrap;">
+    <table class="ui upForReviewTable table">
+      <thead>
+        <tr>
+          <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustUserName}}</th>
+          <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustEmail}}</th>
+          <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustPhoneNo}}</th>
+
+          <th *ngIf="showCourseData" class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustBatchId}}</th>
+          <th *ngIf="showCourseData" class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustBatchName}}</th>
+          <th *ngIf="showCourseData" class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustBatchStartDate}}</th>
+          <th *ngIf="showCourseData" class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustBatchEndDate}}</th>
+
+          <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustEnrollDate}}</th>
+          <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustCompletedOn}}</th>
+          <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustProgress}}</th>
+          <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustCompletedPercentage}}</th>
+          <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustIssuedCertificate}}</th>
+        </tr>
+      </thead>
+      <tbody *ngIf="courseProgressExhaustData">
+        <tr class="UpForReviewListHover cursor-pointer" *ngFor="let courseProgressExhaust of courseProgressExhaustData">
+          <td class="content">{{courseProgressExhaust?.userName}}</td>
+          <td class="content">{{courseProgressExhaust?.maskedemail}}</td>
+          <td class="content">{{courseProgressExhaust?.maskedphone}}</td>
+
+          <td *ngIf="showCourseData" class="content">{{courseProgressExhaust?.batchid}}</td>
+          <td *ngIf="showCourseData" class="content">{{courseProgressExhaust?.batch_name?.batch_name}}</td>
+          <td *ngIf="showCourseData" class="content">{{courseProgressExhaust?.batch_name?.batch_name}}</td>
+          <td *ngIf="showCourseData" class="content">{{courseProgressExhaust?.batch_name?.batch_name}}</td>
+
+          <td class="content">{{courseProgressExhaust?.enrolled_date | date:'dd/MM/yyyy'}}</td>
+          <td class="content">{{courseProgressExhaust?.completedon  | dateFormat :'DD/MM/YYYY'}} </td>
+          <td class="content">{{courseProgressExhaust?.progress}}</td>
+          <td class="content">{{courseProgressExhaust?.completionpercentage}}</td>
+          <td class="content">{{ courseProgressExhaust?.issued_certificate}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="ui grid">
+    <div class="two wide column"></div>
+    <div class="ten wide column">
+      <!-- <div class="pb-10" *ngIf="courseProgressExhaustData && totalCount > config.appConfig.DASHBOARD.PAGE_LIMIT && !showLoader && !showError && !noResult"> -->
+        <div class="pb-10" *ngIf="courseProgressExhaustData && totalCount > 1 && !showLoader && !showError && !noResult">
+          <div class="ui pagination menu mt-10 right-floated p-0 " *ngIf="pager.pages.length ">
+          <a [ngClass]="{disabled:pager.currentPage===1 }" class="item " tabindex="0" (click)="navigateToPage(1) ">First</a>
+          <a [ngClass]="{disabled:pager.currentPage===1 }" class="item " tabindex="0" (click)="navigateToPage(pager.currentPage - 1)">Previous</a>
+          <a *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage===page}" tabindex="0" (click)="navigateToPage(page)" class="item">{{page}}</a>
+          <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" tabindex="0" (click)="navigateToPage(pager.currentPage + 1)" class="item">Next</a>
+          <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" tabindex="0" (click)="navigateToPage(pager.totalPages)" class="item ">Last</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+<!--
+  <mat-tab-group *ngIf="currentBatch" (selectedTabChange)="selectedTabChange($event)">
+     <mat-tab [label]="{index: 1}">
+      <ng-template mat-tab-label>
+        <span></span>
+      </ng-template>
+      <div class="ui stackable grid">
+        <div class="nine wide column py-0">
+          <p class="fsmall mt-8 mb-0 summary-text">{{resourceService?.frmelmnts?.lbl?.summaryReportNote}}
+            <span class="font-weight-bold">{{resourceService?.frmelmnts?.lbl?.summaryReportUpdateNote}}</span>
+          </p>
+        </div>
+      </div>
+      <sb-datatable [name]="fileName" [batch]="currentBatch" [message]="message" [data]="stateWiseReportData"
+        [columns]="columns" [downloadCSV]="isDownloadReport"></sb-datatable>
+    </mat-tab> 
+    <mat-tab [label]="{index: 2}">
+      <ng-template mat-tab-label>
+        <span>{{resourceService?.frmelmnts?.lbl?.detailedWiseReport}}</span>
+      </ng-template>
+      <app-on-demand-reports [reportTypes]="reportTypes" [userId]="userId" [batch]="currentBatch"
+        [tag]="courseId + '_'+batchId"></app-on-demand-reports>
+    </mat-tab>
+  </mat-tab-group>
+-->
+</div>

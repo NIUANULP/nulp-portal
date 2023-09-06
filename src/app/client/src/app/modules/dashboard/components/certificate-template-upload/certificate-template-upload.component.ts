@@ -13,7 +13,7 @@ export interface IConfigLabels {
   name: string;
   show: boolean;
 }
-
+ 
 // import { CoursesService } from 'src/app/modules/core';
 @Component({
   selector: 'app-certificate-template-upload',
@@ -27,7 +27,7 @@ export class CertificateTemplateUploadComponent implements OnInit {
   removeTemplatePopup: boolean = false;
   fileUploadForm: FormGroup
   showLoader = false
-  certTemplateList: Array<{}> = [];
+  certTemplateList: any;
   // previewTemplate: any;
   // showPreviewModal;
   queryParams: any;
