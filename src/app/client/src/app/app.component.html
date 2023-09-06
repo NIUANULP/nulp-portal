@@ -72,13 +72,13 @@
       </div>
     </div>
     <div *ngIf="loadPopUps">
-      <!-- <app-modal-wrapper #frameWorkPopUp *ngIf="showFrameWorkPopUp"
+      <app-modal-wrapper #frameWorkPopUp *ngIf="showFrameWorkPopUp"
         [config]="{disableClose: true, panelClass: ['overflow-visible', 'material-modal'], autoFocus: false}">
         <ng-template sbModalContent let-data>
           <app-popup [dialogProps]="data" [buttonLabel]="resourceService?.frmelmnts?.btn?.submit"
             [isGuestUser]="isGuestUser" (submit)="updateFrameWork($event)"></app-popup>
         </ng-template>
-      </app-modal-wrapper> -->
+      </app-modal-wrapper>
       <app-validate-teacher-identifier-popup *ngIf="showUserVerificationPopup && labels" [labels]="labels"
         [userFeedData]="userFeed"> </app-validate-teacher-identifier-popup>
       <app-user-onboarding (close)="onLocationSubmit()"
@@ -91,12 +91,12 @@
       <app-global-consent-pii [type]="globalConsent" [isglobalConsent]="isglobalConsent" (close)="closeConsentPopUp()"
         [consentConfig]="consentConfig"></app-global-consent-pii>
     </div>
-    <app-modal-wrapper [config]="{disableClose: true, size: 'small', panelClass: 'material-modal'}"
+    <!-- <app-modal-wrapper [config]="{disableClose: true, size: 'small', panelClass: 'material-modal'}"
       *ngIf="isCustodianOrgUser && usersProfile && !usersProfile?.managedBy && !usersProfile?.dob && (usersProfile?.userLocations?.length>0 || showYearOfBirthPopup)">
       <ng-template sbModalContent let-data>
         <app-year-of-birth [dialogProps]="data"></app-year-of-birth>
       </ng-template>
-    </app-modal-wrapper>
+    </app-modal-wrapper> -->
 
     <app-header *ngIf="!hideHeaderNFooter" [layoutConfiguration]="layoutConfiguration" [routerEvents]="routeData$"
       [ngClass]="{'header-block': isFullScreenView}"></app-header>
