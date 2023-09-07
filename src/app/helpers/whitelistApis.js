@@ -435,6 +435,7 @@ const API_LIST = {
         ROLE.COURSE_CREATOR,
         ROLE.BOOK_CREATOR,
         ROLE.ORG_ADMIN,
+        ROLE.ADMIN,
       ]
     },
 

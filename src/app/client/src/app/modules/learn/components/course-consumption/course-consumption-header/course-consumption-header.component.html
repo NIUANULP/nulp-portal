@@ -150,14 +150,15 @@
           </button>
         </div>
 
-        <div class="ml-auto text-right py-8" *ngIf="!enrolledCourse && viewDashboard && !router.url.includes('/dashboard')">
+        <div class="ml-auto text-right py-8" *ngIf="!enrolledCourse && viewCourseProgressReports && !router.url.includes('/dashboard')">
           <!-- <button appTelemetryInteract [telemetryInteractObject]="courseInteractObject"
                   [telemetryInteractEdata]="{id:'viewCourseDashboard' , type: 'click' , pageid:'course-consumption'}"
                   class="sb-btn sb-btn-secondary sb-btn-normal" tabindex="0" (click)="showDashboard()">
                   {{resourceService?.frmelmnts?.btn?.viewCourseStatsDashboard}}
                 </button> -->
           <div [formGroup]="reportForm" class="d-flex flex-ai-center">
-            <!-- <div class="sb-field w-25"> -->
+            <!-- <div class="sb-field w-25">
+            </div> -->
             <mat-form-field appearance="fill" class="sb-mat__dropdown w-100 mb-16">
               <mat-label>Choose your report</mat-label>
               <mat-select formControlName="reportType" role="listbox" aria-label="Choose your report" class="selection"
@@ -166,7 +167,6 @@
                   attr.aria-label="{{option.title}}">{{option.title}}</mat-option>
               </mat-select>
             </mat-form-field>
-            <!-- </div> -->
           </div>
         </div>
       

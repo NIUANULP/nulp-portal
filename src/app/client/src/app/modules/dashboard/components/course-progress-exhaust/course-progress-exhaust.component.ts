@@ -17,7 +17,9 @@ import * as _ from 'lodash-es';
 import { debounceTime, distinctUntilChanged, first, switchMap, takeUntil } from 'rxjs/operators';
 import { OnDemandReportService } from '../../../shared/services/on-demand-report/on-demand-report.service';
 import { IBatchListData, ICourseProgressData, IForumContext } from '../../interfaces';
-import { CourseProgressService, UsageService } from '../../services';
+import { UsageService } from '../../services';
+import { CourseProgressService } from '../../services';
+
 import { courseProgressData } from "./data";
 import { Course } from '@project-sunbird/client-services/models';
 import { ExportCsvService } from './../../services/course-progress/export-csv.service';
@@ -299,7 +301,7 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
           this.selectedOption = this.batchlist[0].id;
           this.currentBatch = this.batchlist[0];
           this.generateDataForDF(this.currentBatch);
-          this.setBatchId(this.currentBatch);
+          // this.setBatchId(this.currentBatch);
           this.populateCourseDashboardData(this.batchlist[0]);
           this.populateCourseProgressExhaustData(this.currentBatch);
         } else if (this.batchlist.length > 1 && isBatchExist === undefined) {
@@ -322,7 +324,7 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
 
 
   populateCourseProgressExhaustData(batch: any) {
-    // debugger;
+//    debugger;
     let option: any;
 
     // If there are multiple batches and none of the batch is selected.
@@ -362,11 +364,12 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
             apiResponse.result.count = 0;
           }
           this.showLoader = false;
-          this.courseProgressExhaustData = apiResponse.result.content;
-          this.courseProgressExhaustData.map((courseProgressData) => {
-            courseProgressData.issued_certificate = 'No';
+          let apiContent = apiResponse.result.content;
+          this.courseProgressExhaustData = apiContent.map((courseProgressData) => {
+            debugger;
+            courseProgressData.issued_certificates.issued_certificate = 'No';
             if (courseProgressData?.issued_certificates?.name) {
-              courseProgressData.issued_certificate = 'Yes';
+              courseProgressData.issued_certificates.issued_certificate = 'Yes';
             }
             return courseProgressData;
           });
@@ -406,14 +409,22 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
         }
       );
       // API call will be made to get the data
+
+
+      let apiContent = courseProgressData.result.content;
       this.courseProgressExhaustData = courseProgressData.result.content;
-      this.courseProgressExhaustData.map((courseProgressData) => {
-        courseProgressData.issued_certificate = 'No';
-        if (courseProgressData?.issued_certificates?.name) {
-          courseProgressData.issued_certificate = 'Yes';
-        }
-        return courseProgressData;
-      });
+      // this.courseProgressExhaustData = apiContent.map((courseProgressData) => {
+      //   debugger;
+      //   // courseProgressData.issued_certificates.issued_certificate = 'No';
+      //   if (courseProgressData?.issued_certificates?.name) {
+      //     courseProgressData.issued_certificates.name = 'Yes';
+      //   } else {
+      //     courseProgressData.issued_certificates.name = 'No';
+      //   }
+
+      //   return courseProgressData;
+      // });
+            
       this.totalCount = courseProgressData.result.total_items
       this.pager = this.paginationService.getPager(this.totalCount, this.pageNumber, 5);
       this.showLoader = false;
@@ -572,7 +583,7 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
   * course id and timeperiod
   */
   ngOnInit() {
-
+    debugger;
     this.userDataSubscription = this.user.userData$.pipe(first()).subscribe(userdata => {
       if (userdata && !userdata.err) {
         this.userId = userdata.userProfile.userId;
@@ -637,6 +648,7 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
   }
 
   exportToCsv(batch: any) {
+    debugger;
     let option: any;
     this.columns = this.getColumns();
     // If there are multiple batches and none of the batch is selected.
@@ -654,7 +666,7 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
         limit: this.pageLimit,
         offset: (this.pageNumber - 1) * (this.pageLimit),
       }
-      this.fileName = this.fileName + '_' + this.batchId;
+      this.fileName = this.fileName + '_' + batch.batchId;
     }
 
     if (this.searchText) {
@@ -662,7 +674,7 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
       this.fileName = this.fileName + '_'  + this.searchText;
     }
 
-    this.fileName = this.fileName + '_' + new Date('DD-MM-YYYY');
+    this.fileName = this.fileName + '_' + new Date();
 
     // if (this.order) {
     //   option.sortBy = this.order;
@@ -683,9 +695,9 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
           this.showLoader = false;
           this.courseProgressExhaustData = apiResponse.result.content;
           this.courseProgressExhaustData.map((courseProgressData) => {
-            courseProgressData.issued_certificate = 'No';
+            courseProgressData.issued_certificates.issued_certificate = 'No';
             if (courseProgressData?.issued_certificates?.name) {
-              courseProgressData.issued_certificate = 'Yes';
+              courseProgressData.issued_certificates.issued_certificate = 'Yes';
             }
             return courseProgressData;
           });
@@ -726,14 +738,17 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
       );
 
     // API call will be made to get the data
+    // let apiContent = courseProgressData.result.content;
     this.courseProgressExhaustData = courseProgressData.result.content;
-    this.courseProgressExhaustData.map((courseProgressData) => {
-      courseProgressData.issued_certificate = 'No';
-      if (courseProgressData?.issued_certificates?.name) {
-        courseProgressData.issued_certificate = 'Yes';
-      }
-      return courseProgressData;
-    });
+      // apiContent.map((courseProgressData) => {
+      //   if (courseProgressData?.issued_certificates?.name) {
+      //     courseProgressData.issued_certificates.issued_certificate = 'Yes';
+      //   }
+      //   else {
+      //     courseProgressData.issued_certificates.issued_certificate = 'No';
+      //   }
+      //   return courseProgressData;
+      // });
     this.totalCount = courseProgressData.result.total_items
     this.pager = this.paginationService.getPager(this.totalCount, this.pageNumber, 5);
     this.showLoader = false;
@@ -742,12 +757,26 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
   }
 
   getColumns() {
-    this.columns = [];
-    this.columns.push(this.resourceService?.frmelmnts?.lbl?.courseProgressExhaustUserName);
+    this.columns = [
+      'userName', 
+      'maskedemail', 
+      'maskedphone', 
+      'coursename', 
+      'batchname',
+      'batch_start_date',
+      'batch_end_date',
+      'enrolled_date',
+      'completedon',
+      'progress',
+      'completionpercentage',
+      'issued_certificates'  
+    ];
+
+/*    this.columns.push(this.resourceService?.frmelmnts?.lbl?.courseProgressExhaustUserName);
     this.columns.push(this.resourceService?.frmelmnts?.lbl?.courseProgressExhaustEmail);
     this.columns.push(this.resourceService?.frmelmnts?.lbl?.courseProgressExhaustPhoneNo);
     if (this.showCourseData) {
-      this.columns.push(this.resourceService?.frmelmnts?.lbl?.courseProgressExhaustBatchId);
+      this.columns.push(this.resourceService?.frmelmnts?.lbl?.courseProgressExhaustCourseName);
       this.columns.push(this.resourceService?.frmelmnts?.lbl?.courseProgressExhaustBatchName);
       this.columns.push(this.resourceService?.frmelmnts?.lbl?.courseProgressExhaustBatchStartDate);
       this.columns.push(this.resourceService?.frmelmnts?.lbl?.courseProgressExhaustBatchEndDate);
@@ -757,6 +786,7 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
     this.columns.push(this.resourceService?.frmelmnts?.lbl?.courseProgressExhaustProgress);
     this.columns.push(this.resourceService?.frmelmnts?.lbl?.courseProgressExhaustCompletedPercentage);
     this.columns.push(this.resourceService?.frmelmnts?.lbl?.courseProgressExhaustIssuedCertificate);
+*/    
     return this.columns;
   }
 } 

@@ -6,6 +6,7 @@ import { SuiModule } from "ng2-semantic-ui-v9";
 import { TelemetryModule } from '@sunbird/telemetry';
 import { DiscussionModule } from '../discussion/discussion.module';
 import { SharedModule } from '@sunbird/shared';
+import { CourseProgressService } from "./services";
 
 @NgModule({
   imports: [    CommonModule, 
@@ -18,7 +19,7 @@ import { SharedModule } from '@sunbird/shared';
  ],
   declarations: [CourseProgressExhaustComponent],
   exports: [CourseProgressExhaustComponent],
-  providers: [],
+  providers: [CourseProgressService],
   
 })
 export class CourseProgressExhaustModule { } 

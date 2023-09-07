@@ -106,6 +106,7 @@ export class CourseConsumptionHeaderComponent implements OnInit, AfterViewInit, 
   userRoles;
   public reportForm: FormGroup;
   public selectedReport;
+  viewCourseProgressReports = false;
 
   constructor(private activatedRoute: ActivatedRoute, public courseConsumptionService: CourseConsumptionService,
     public resourceService: ResourceService, private router: Router, public permissionService: PermissionService,
@@ -146,7 +147,7 @@ export class CourseConsumptionHeaderComponent implements OnInit, AfterViewInit, 
     }
     this.isTrackable = this.courseConsumptionService.isTrackableCollection(this.courseHierarchy);
     this.viewDashboard = this.courseConsumptionService.canViewDashboard(this.courseHierarchy);
-
+    this.viewCourseProgressReports = this.courseConsumptionService.canViewCourseProgressReports(this.courseHierarchy);
     this.profileInfo = this.userService.userProfile;
 
     observableCombineLatest(this.activatedRoute.firstChild.params, this.activatedRoute.firstChild.queryParams,
@@ -607,7 +608,7 @@ export class CourseConsumptionHeaderComponent implements OnInit, AfterViewInit, 
     // debugger;
     this.selectedReport = _.get(ev, 'value');
     // this.router.navigate(['learn/course', this.courseId, 'dashboard', 'courseProgressExhaust']);
-    this.router.navigate(['learn/course', this.courseId, 'courseProgressReports']);
+    this.router.navigate(['learn/course', this.courseId, 'courseProgressExhaust']);
   }
   
 }
