@@ -8,7 +8,7 @@ import { CourseConsumptionService, CourseBatchService } from './../../../service
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject, TelemetryService } from '@sunbird/telemetry';
 import * as _ from 'lodash-es';
 import dayjs from 'dayjs';
-import { Subject, combineLatest } from 'rxjs';
+import { Subject, combineLatest, forkJoin } from 'rxjs';
 import { LazzyLoadScriptService } from 'LazzyLoadScriptService';
 import { ConfigService } from '@sunbird/shared';
 import { CsModule } from '@project-sunbird/client-services';
@@ -277,8 +277,10 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
       userIds: _.compact(participants)
     };
     // console.log(userRequest.userIds[0]);
-    this.courseBatchService.addUsersToBatch(userRequest.userIds[0], batchId, this.courseId).pipe(takeUntil(this.unsubscribe))
-      .subscribe((res) => {
+    forkJoin( 
+      userRequest.userIds.map(id =>
+        this.courseBatchService.addUsersToBatch(id, batchId,this.courseId).pipe(takeUntil(this.unsubscribe))
+      )).subscribe((res) => {
         this.toasterService.success(this.resourceService.messages.smsg.m0033);
         this.reload();
         this.checkIssueCertificate(batchId);
@@ -333,6 +335,7 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
         onAdd: function (val) {
           if (val && $('#participants').dropdown('get value')) {
             $('#participants').dropdown("remove selected"), [val];
+            $('#mentors').dropdown('refresh');
           }
         }
     });
