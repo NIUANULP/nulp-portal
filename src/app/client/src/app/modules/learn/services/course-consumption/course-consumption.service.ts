@@ -169,7 +169,7 @@ getAllOpenBatches(contents) {
   }
 
   canViewCourseProgressReports(courseHierarchy) {
-    return (this.permissionService.checkRolesPermissions(['CONTENT_CREATOR', 'ORG_ADMIN', 'SYSTEM_ADMINISTRATION']));
+    return (this.permissionService.checkRolesPermissions(['ORG_ADMIN', 'SYSTEM_ADMINISTRATION']));
   } 
 
   canAddCertificates(courseHierarchy) {

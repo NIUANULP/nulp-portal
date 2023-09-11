@@ -366,7 +366,6 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
           this.showLoader = false;
           let apiContent = apiResponse.result.content;
           this.courseProgressExhaustData = apiContent.map((courseProgressData) => {
-            debugger;
             courseProgressData.issued_certificates.issued_certificate = 'No';
             if (courseProgressData?.issued_certificates?.name) {
               courseProgressData.issued_certificates.issued_certificate = 'Yes';
@@ -583,7 +582,6 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
   * course id and timeperiod
   */
   ngOnInit() {
-    debugger;
     this.userDataSubscription = this.user.userData$.pipe(first()).subscribe(userdata => {
       if (userdata && !userdata.err) {
         this.userId = userdata.userProfile.userId;
@@ -648,7 +646,6 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
   }
 
   exportToCsv(batch: any) {
-    debugger;
     let option: any;
     this.columns = this.getColumns();
     // If there are multiple batches and none of the batch is selected.
