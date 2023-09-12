@@ -21,9 +21,7 @@ import { UsageService } from '../../services';
 import { CourseProgressService } from '../../services';
 
 import { courseProgressData } from "./data";
-import { Course } from '@project-sunbird/client-services/models';
 import { ExportCsvService } from './../../services/course-progress/export-csv.service';
-
 
 @Component({
   selector: 'app-course-progress-exhaust',
@@ -114,7 +112,7 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
   route: Router; 
 
   /**
-      * Contains page limit of inbox list
+   * Contains page limit of inbox list
    */
   pageLimit: 10;
 
@@ -204,7 +202,6 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
    * To show / hide error
   */
   showCourseData = false;
-
   
   /**
 	 * telemetryImpression object for course progress page
@@ -215,10 +212,6 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
   isDownloadReport = false;
   stateWiseReportData = [];
   public message = 'There is no data available';
-  // columns = [
-  //   { name: 'State', isSortable: true, prop: 'state', placeholder: 'Filter state' },
-  //   { name: 'District', isSortable: true, prop: 'district', placeholder: 'Filter district' },
-  //   { name: 'No. of Enrolment', isSortable: false, prop: 'noOfEnrollments', placeholder: 'Filter enrollment' }];
   
   columns: string[] = [];
   fileName = 'course-progress-exhaust-data';
@@ -264,8 +257,7 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
   * Then it helps to set flag dependeing on number of batches.
   */
   populateBatchData(): void {
-    // this.showLoader = true;
-    // debugger;
+    this.showLoader = true;
     const searchParamsCreator = {
       courseId: this.courseId,
       status: ['0', '1', '2'],
@@ -293,7 +285,6 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
           this.showCourseData = false;
           this.selectedOption = this.queryParams.batchIdentifier;
           this.currentBatch = isBatchExist;
-          this.populateCourseDashboardData(isBatchExist);          
           this.populateCourseProgressExhaustData(isBatchExist);
         } else if (this.batchlist.length === 1 && isBatchExist === undefined) {
           this.showCourseData = false;
@@ -301,14 +292,11 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
           this.selectedOption = this.batchlist[0].id;
           this.currentBatch = this.batchlist[0];
           this.generateDataForDF(this.currentBatch);
-          // this.setBatchId(this.currentBatch);
           this.populateCourseDashboardData(this.batchlist[0]);
           this.populateCourseProgressExhaustData(this.currentBatch);
         } else if (this.batchlist.length > 1 && isBatchExist === undefined) {
           this.generateDataForDF(this.currentBatch);
           this.showCourseData = true;
-          // this.setBatchId(this.currentBatch);
-          // this.populateCourseDashboardData(this.batchlist[0]);
           this.currentBatch = undefined;
           this.populateCourseProgressExhaustData(this.currentBatch);
         } else {
@@ -324,7 +312,6 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
 
 
   populateCourseProgressExhaustData(batch: any) {
-//    debugger;
     let option: any;
 
     // If there are multiple batches and none of the batch is selected.
@@ -347,13 +334,6 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
       option.query = this.searchText;
     }
 
-    // if (this.order) {
-    //   option.sortBy = this.order;
-    //   option.sortOrder = this.reverse ? 'desc' : 'asc';
-    // }
-    // if (this.searchText) {
-    //   option.username = this.searchText;
-    // }
     this.courseProgressService.getCourseProgressExhaustData(option).pipe(
       takeUntil(this.unsubscribe))
       .subscribe(
@@ -364,34 +344,15 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
             apiResponse.result.count = 0;
           }
           this.showLoader = false;
-          let apiContent = apiResponse.result.content;
-          this.courseProgressExhaustData = apiContent.map((courseProgressData) => {
-            courseProgressData.issued_certificates.issued_certificate = 'No';
-            if (courseProgressData?.issued_certificates?.name) {
-              courseProgressData.issued_certificates.issued_certificate = 'Yes';
-            }
-            return courseProgressData;
-          });
-
+          this.courseProgressExhaustData = apiResponse.result.content;
           this.totalCount = apiResponse.result.total_items;
           
           // // API call will be made to get the data
-          // this.courseProgressExhaustData = courseProgressData.result.content;
 
           // this.totalCount = courseProgressData.result.total_items
           this.pager = this.paginationService.getPager(this.totalCount, this.pageNumber, 5);
           this.showLoader = false;
           this.noResult = false;
-
-          // this.showDownloadLink = apiResponse.result.showDownloadLink ? apiResponse.result.showDownloadLink : false;
-          // this.dashboarData.count = _.get(batch, 'participantCount') || _.get(apiResponse, 'result.data.length');
-          // this.totalCount = _.get(batch, 'participantCount') || _.get(apiResponse, 'result.data.length');
-          // if (this.totalCount >= 10000) {
-          //   this.pager = this.paginationService.getPager(10000, this.pageNumber, this.config.appConfig.DASHBOARD.PAGE_LIMIT);
-          // } else {
-          //   this.pager = this.paginationService.getPager(
-          //     apiResponse.result.count, this.pageNumber, this.config.appConfig.DASHBOARD.PAGE_LIMIT);
-          // }
         },
         err => {
           this.toasterService.error(err.error.params.errmsg);
@@ -413,7 +374,6 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
       let apiContent = courseProgressData.result.content;
       this.courseProgressExhaustData = courseProgressData.result.content;
       // this.courseProgressExhaustData = apiContent.map((courseProgressData) => {
-      //   debugger;
       //   // courseProgressData.issued_certificates.issued_certificate = 'No';
       //   if (courseProgressData?.issued_certificates?.name) {
       //     courseProgressData.issued_certificates.name = 'Yes';
@@ -436,7 +396,6 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
 	* @param {string} batchId batch identifier
   */
   setBatchId(batch?: any): void {
-    // debugger;
     this.fetchForumIdReq = null;
     this.showWarningDiv = false;
     this.queryParams.batchIdentifier = batch.id;
@@ -536,7 +495,6 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
   }   
 
   keyup(event) {
-    // debugger;
     this.modelChanged.next(_.trim(event));
   }
   
@@ -546,7 +504,6 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
       switchMap(search => of(search))
     ).
       subscribe(searchText => {
-        // debugger;
         this.searchText = searchText;
         this.populateCourseProgressExhaustData(this.currentBatch);
       });
@@ -590,14 +547,21 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
           this.activatedRoute.params, this.activatedRoute.queryParams,
           (parentParams: any, params: any, queryParams: any) => {
             return {
-              params: parentParams || params,
+              parentParams: parentParams,
+              params: params,
               queryParams: queryParams
             };
           })
-          .subscribe(bothParams => {
-            this.courseId = bothParams.params.courseId;
-            this.batchId = bothParams.params.batchId;
-            this.queryParams = { ...bothParams.queryParams };
+          .subscribe(allParams => {
+            if ( allParams?.parentParams?.courseId) {
+              this.courseId = allParams?.parentParams?.courseId;
+              this.batchId = allParams?.parentParams?.batchId;
+              this.queryParams = { ...allParams?.parentParams?.queryParams };  
+            } else if (allParams?.params?.courseId) {
+              this.courseId = allParams?.params?.courseId;
+              this.batchId = allParams?.params?.batchId;
+              this.queryParams = { ...allParams.params.queryParams };  
+            }
             this.interactObject = { id: this.courseId, type: 'Course', ver: '1.0' };
             this.populateCourseData(this.courseId);
             this.populateBatchData();

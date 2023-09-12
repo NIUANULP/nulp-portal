@@ -87,8 +87,9 @@ export class CourseProgressService  {
     let option: any;
     if (requestParam.batchId !== undefined) {
       option = {
-        url: this.config.urlConFig.URLS.BATCH.COURSE_PROGRESS_EXHAUST + '/' + requestParam.courseId + '/' + requestParam.batchId,
+        url: this.config.urlConFig.URLS.BATCH.COURSE_PROGRESS_EXHAUST + '/' + requestParam.courseId,
         param: {
+          batchid: requestParam.batchId,
           limit: requestParam.limit,
           offset: requestParam.offset,
         }
