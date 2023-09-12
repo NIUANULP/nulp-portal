@@ -43,6 +43,7 @@ const routes: Routes = [
       },
       {
         path: ':courseId/courseProgressExhaust', component: CourseProgressExhaustComponent,
+        // path: ':courseId/courseProgressExhaust', component: CourseProgressReportsComponent,
       },   
 
       {
