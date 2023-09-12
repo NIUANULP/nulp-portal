@@ -1,26 +1,4 @@
-<!-- <app-test-shared></app-test-shared> -->
-
-<!--
-<sui-modal class="sb-modal sb-success" (dismissed)="modal.deny(); showDownloadModal = false;" #modal
-  *ngIf="showDownloadModal">
-  Download report popup
-  <div class="header">
-    <div class="ui grid">
-      <div class="eleven wide column">
-        <span class="ui header">{{resourceService?.frmelmnts?.instn?.t0060}}</span>
-      </div>
-    </div>
-  </div>
-  /Header
-  Content
-  <div class="sb-modal-content">
-    <p class="meta">{{resourceService?.messages?.stmsg?.m0132}}</p>
-  </div>
-  /Content
-</sui-modal> -->
-
 <!-- Updated code as per new design for semantic datatable-->
-<!-- <div class="sb-bg-color-white p-16 progress-content"> -->
   <div class="sb-bg-color-white p-16">
   
   <div>
@@ -128,10 +106,6 @@
     </div>
   </div>
 
-  <!-- <div>
-    {{courseProgressExhaustData | json}}
-  </div> -->
- 
   <div class="ui grid mt-16">
     <div class="six wide column pt-0 pl-0">
       <div class="ui fluid icon input left action" id="search-input-container">
@@ -201,8 +175,7 @@
   <div class="ui grid">
     <div class="two wide column"></div>
     <div class="ten wide column">
-      <!-- <div class="pb-10" *ngIf="courseProgressExhaustData && totalCount > config.appConfig.DASHBOARD.PAGE_LIMIT && !showLoader && !showError && !noResult"> -->
-        <div class="pb-10" *ngIf="courseProgressExhaustData && totalCount > 1 && !showLoader && !showError && !noResult">
+      <div class="pb-10" *ngIf="courseProgressExhaustData && totalCount > config.appConfig.DASHBOARD.PAGE_LIMIT && !showLoader && !showError && !noResult">
           <div class="ui pagination menu mt-10 right-floated p-0 " *ngIf="pager.pages.length ">
           <a [ngClass]="{disabled:pager.currentPage===1 }" class="item " tabindex="0" (click)="navigateToPage(1) ">First</a>
           <a [ngClass]="{disabled:pager.currentPage===1 }" class="item " tabindex="0" (click)="navigateToPage(pager.currentPage - 1)">Previous</a>
@@ -214,30 +187,4 @@
     </div>
   </div>
 
-  
-<!--
-  <mat-tab-group *ngIf="currentBatch" (selectedTabChange)="selectedTabChange($event)">
-     <mat-tab [label]="{index: 1}">
-      <ng-template mat-tab-label>
-        <span></span>
-      </ng-template>
-      <div class="ui stackable grid">
-        <div class="nine wide column py-0">
-          <p class="fsmall mt-8 mb-0 summary-text">{{resourceService?.frmelmnts?.lbl?.summaryReportNote}}
-            <span class="font-weight-bold">{{resourceService?.frmelmnts?.lbl?.summaryReportUpdateNote}}</span>
-          </p>
-        </div>
-      </div>
-      <sb-datatable [name]="fileName" [batch]="currentBatch" [message]="message" [data]="stateWiseReportData"
-        [columns]="columns" [downloadCSV]="isDownloadReport"></sb-datatable>
-    </mat-tab> 
-    <mat-tab [label]="{index: 2}">
-      <ng-template mat-tab-label>
-        <span>{{resourceService?.frmelmnts?.lbl?.detailedWiseReport}}</span>
-      </ng-template>
-      <app-on-demand-reports [reportTypes]="reportTypes" [userId]="userId" [batch]="currentBatch"
-        [tag]="courseId + '_'+batchId"></app-on-demand-reports>
-    </mat-tab>
-  </mat-tab-group>
--->
 </div>

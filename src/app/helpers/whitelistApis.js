@@ -1918,7 +1918,7 @@ const API_LIST = {
     '/learner/certreg/v2/certs/download/:id',
     '/learner/rc/certificate/v1/download/:id',
     '/learner/rc/certificate/v1/key/:id',
-    '/learner/course/v1/progress/reports/:courseId/:batchId',
+    '/learner/course/v1/progress/reports/:courseId',
     '/content/asset/v1/upload/:id',
     '/action/asset/v1/upload/:id',
     '/action/asset/v1/read/:id',
