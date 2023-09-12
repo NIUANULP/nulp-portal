@@ -234,6 +234,7 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
     mentors = $('#mentors').dropdown('get value') ? $('#mentors').dropdown('get value').split(',') : [];
     if (this.createBatchForm.value.enrollmentType !== 'open') {
       participants = $('#participants').dropdown('get value') ? $('#participants').dropdown('get value').split(',') : [];
+      participants = participants.filter(participantId => !mentors.some(mentorId => mentorId == participantId));
     }
     const startDate = dayjs(this.createBatchForm.value.startDate).format('YYYY-MM-DD');
     const endDate = this.createBatchForm.value.endDate && dayjs(this.createBatchForm.value.endDate).format('YYYY-MM-DD');
@@ -332,12 +333,6 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
       $('#mentors').dropdown({
         fullTextSearch: true,
         forceSelection: false,
-        onAdd: function (val) {
-          if (val && $('#participants').dropdown('get value')) {
-            $('#participants').dropdown("remove selected"), [val];
-            $('#mentors').dropdown('refresh');
-          }
-        }
     });
       $('#participants input.search').on('keyup', (e) => {
         this.getUserListWithQuery($('#participants input.search').val(), 'participant');
