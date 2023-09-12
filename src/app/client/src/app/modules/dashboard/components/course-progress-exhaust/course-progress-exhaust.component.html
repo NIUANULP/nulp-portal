@@ -20,7 +20,8 @@
 </sui-modal> -->
 
 <!-- Updated code as per new design for semantic datatable-->
-<div class="sb-bg-color-white p-16 progress-content">
+<!-- <div class="sb-bg-color-white p-16 progress-content"> -->
+  <div class="sb-bg-color-white p-16">
   
   <div>
     <div id="dashoardFiltersHolder" *ngIf="batchlist && batchlist.length > 0">
@@ -46,7 +47,9 @@
       </div>
 
       <div class="d-flex">
-        <label class="fnormal mt-24 font-weight-normal pl-4 text-left">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustCourseName}} : {{courseName}}
+        <label class="fnormal mt-24 font-weight-normal pl-4 text-left">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustCourseName}} :
+        </label>          
+        <label class="fnormal mt-24 font-weight-bold pl-4 text-left">{{courseName}}
         </label>          
       </div>
     
@@ -129,31 +132,31 @@
     {{courseProgressExhaustData | json}}
   </div> -->
  
-  <div class="ui grid padded">
-    <div class="seven wide column pt-0 pl-0">
+  <div class="ui grid mt-16">
+    <div class="six wide column pt-0 pl-0">
       <div class="ui fluid icon input left action" id="search-input-container">
         <div class="searchfilterinput ui search">
-          <div class="searchicon ui icon input ">
+          <div class="searchicon ui icon input pl-16">
             <input class="upForReviewSearchBox" type="text" name="filter_search" [(ngModel)]="searchText"
-              (keyup)="keyup(searchText)" placeholder="{{resourceService?.frmelmnts?.prmpt?.courseProgressExhaustSearch}}" title="Search"
-              autocomplete="off" spellcheck="false" dir="auto" />
+              (keyup)="keyup(searchText)" placeholder="{{resourceService?.frmelmnts?.prmpt?.courseProgressExhaustSearch}}"
+              title="Search" autocomplete="off" spellcheck="false" dir="auto" />
             <i class="circular search link icon"></i>
           </div>
         </div>
       </div>
     </div>
-    <div class="seven wide column pt-0 pl-0">
+    <div class="six wide column pt-0 pl-0">
       <div class="ui-helper-clearfix export-btns">
         <button type="button" style="float:right" icon="fa fa-file"
           class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" pbutton="" iconPos="left"
-          label="Export" (click)="exportCsvService.downloadFile(courseProgressExhaustData, columns, fileName)"><span aria-hidden="true"
+          label="Export" (click)="exportToCsv(currentBatch)"><span aria-hidden="true"
             class="ui-button-icon-left ui-clickable fa fa-file"></span><span
             class="ui-button-text ui-clickable">Export</span></button>
       </div>
     </div>
   </div>
 
-  <div class="ui grid" style="margin-top:24px; width:100%;overflow-y:auto;white-space:nowrap;">
+  <div class="ui grid scrollable">
     <table class="ui upForReviewTable table">
       <thead>
         <tr>
@@ -188,7 +191,8 @@
           <td class="content">{{courseProgressExhaust?.completedon  | dateFormat :'DD/MM/YYYY'}} </td>
           <td class="content">{{courseProgressExhaust?.progress}}</td>
           <td class="content">{{courseProgressExhaust?.completionpercentage}}</td>
-          <td class="content">{{ courseProgressExhaust?.issued_certificate}}</td>
+          <td  *ngIf="courseProgressExhaust?.issued_certificates?.name" class="content">Yes</td>
+          <td  *ngIf="!courseProgressExhaust?.issued_certificates?.name" class="content">No</td>
         </tr>
       </tbody>
     </table>

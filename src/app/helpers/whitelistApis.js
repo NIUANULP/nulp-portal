@@ -430,12 +430,7 @@ const API_LIST = {
     },
     '/learner/course/v1/progress/reports/:courseId/:batchId': {
       checksNeeded: ['ROLE_CHECK'],
-      ROLE_CHECK: [
-        ROLE.CONTENT_CREATOR,
-        ROLE.COURSE_CREATOR,
-        ROLE.BOOK_CREATOR,
-        ROLE.ORG_ADMIN,
-      ]
+        ROLE_CHECK: [ROLE.PUBLIC]
     },
 
     //User related APIs
@@ -1923,6 +1918,7 @@ const API_LIST = {
     '/learner/certreg/v2/certs/download/:id',
     '/learner/rc/certificate/v1/download/:id',
     '/learner/rc/certificate/v1/key/:id',
+    '/learner/course/v1/progress/reports/:courseId/:batchId',
     '/content/asset/v1/upload/:id',
     '/action/asset/v1/upload/:id',
     '/action/asset/v1/read/:id',

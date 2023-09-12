@@ -168,6 +168,10 @@ getAllOpenBatches(contents) {
     return (this.canCreateBatch(courseHierarchy) || this.permissionService.checkRolesPermissions(['COURSE_MENTOR']));
   }
 
+  canViewCourseProgressReports(courseHierarchy) {
+    return (this.permissionService.checkRolesPermissions(['ORG_ADMIN', 'SYSTEM_ADMINISTRATION']));
+  } 
+
   canAddCertificates(courseHierarchy) {
     return  this.canCreateBatch(courseHierarchy) && this.isTrackableCollection(courseHierarchy) && _.lowerCase(_.get(courseHierarchy, 'credentials.enabled')) === 'yes';
   }

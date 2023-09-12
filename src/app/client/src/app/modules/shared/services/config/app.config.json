@@ -1185,7 +1185,7 @@
     ]
   },
   "DASHBOARD": {
-    "PAGE_LIMIT": 200
+    "PAGE_LIMIT": 20
   },
   "CONTENT_CONST": {
     "CREATE_LESSON": "application/vnd.ekstep.ecml-archive"
