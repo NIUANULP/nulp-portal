@@ -432,7 +432,6 @@ const API_LIST = {
       checksNeeded: ['ROLE_CHECK'],
         ROLE_CHECK: [ROLE.PUBLIC]
     },
-
     //User related APIs
     '/learner/user/v1/create': {
       checksNeeded: ['ROLE_CHECK'],
