@@ -490,20 +490,11 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   private removeParticipantFromBatch(batchId, participantId) {
-    const userRequest = {
-      'request': {
-        userIds: participantId
-      }
-    };
-    // for loop here or from main service
-    return this.courseBatchService.removeUsersFromBatch(participantId[0],batchId, this.courseId);
+    return this.courseBatchService.removeUsersFromBatch(participantId,batchId, this.courseId);
   }
 
-  private addParticipantToBatch(batchId, participants) {
-    const userRequest = {
-      userIds: _.compact(participants)
-    };
-    return this.courseBatchService.addUsersToBatch(userRequest.userIds[0], batchId,this.courseId);
+  private addParticipantToBatch(batchId, participantId) {
+    return this.courseBatchService.addUsersToBatch(participantId, batchId,this.courseId);
   }
 
   public updateBatch() {
@@ -515,6 +506,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     if (this.batchUpdateForm.value.enrollmentType !== 'open') {
       participants = $('#participant').dropdown('get value') ? $('#participant').dropdown('get value').split(',') : [];
     }
+    participants = participants.filter(participantId => !mentors.some(mentorId => mentorId == participantId));
     if ((this.selectedMentors).length > 0) {
       _.forEach(this.selectedMentors, (obj) => {
         selectedMentors.push(obj.id);
@@ -545,10 +537,17 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     const requests = [];
     requests.push(this.courseBatchService.updateBatch(requestBody));
     if (this.removedUsers && this.removedUsers.length > 0) {
-      requests.push(this.removeParticipantFromBatch(this.batchId, this.removedUsers));
+      _.forEach(this.removedUsers, (id) => {
+        requests.push(this.removeParticipantFromBatch(this.batchId, id));
+      });
     }
     if (participants && participants.length > 0) {
-      requests.push(this.addParticipantToBatch(this.batchId, participants));
+      const userRequest = {
+        userIds: _.compact(participants)
+      };
+      _.forEach(userRequest.userIds, (participantId) => {
+        requests.push(this.addParticipantToBatch(this.batchId, participantId));
+      });
     }
 
     forkJoin(requests).subscribe(results => {
@@ -753,5 +752,12 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
       }
     };
     this.telemetryService.interact(telemetryData);
+  }
+  getSelectedMembers() {
+    if(this.batchUpdateForm.value.enrollmentType !== 'open'){
+      return $('#mentors').dropdown('get value') ? $('#mentors').dropdown('get value').split(',') : [];
+    } else {
+      return [];
+    }
   }
 }
