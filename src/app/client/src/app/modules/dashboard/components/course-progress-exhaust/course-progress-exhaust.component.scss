@@ -119,3 +119,14 @@ a {
   justify-content: flex-end;
   color:var(--gray-200);
 }
+
+:host ::ng-deep {
+  .ui.grid.scrollable {
+    margin-top: 24px;
+    width: 100%;
+    overflow-y: auto;
+    white-space: nowrap;
+    margin-left: -1rem;
+    margin-right: 0rem;
+  }
+}

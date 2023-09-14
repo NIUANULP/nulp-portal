@@ -41,7 +41,16 @@ export class ExportCsvService {
             let line = (i + 1) + '';
             for (let index in headerList) {
                 let head = headerList[index];
-                line += ',' + array[i][head];
+                // debugger;
+                if (head === 'issued_certificates') {
+                    if (array[i][head]?.name) {
+                        line += ',' + 'Yes';
+                    } else {
+                        line += ',' + 'No';
+                    }
+                } else {
+                    line += ',' + array[i][head];
+                }
             }
             str += line + '\r\n';
         }
