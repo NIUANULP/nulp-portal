@@ -430,7 +430,11 @@ const API_LIST = {
     },
     '/learner/course/v1/progress/reports/:courseId': {
       checksNeeded: ['ROLE_CHECK'],
-        ROLE_CHECK: [ROLE.PUBLIC]
+        ROLE_CHECK: [ ROLE.CONTENT_CREATOR,
+          ROLE.COURSE_CREATOR,
+          ROLE.BOOK_CREATOR,
+          ROLE.ORG_ADMIN,
+          ROLE.SYSTEM_ADMINISTRATION]
     },
     //User related APIs
     '/learner/user/v1/create': {
@@ -1918,6 +1922,7 @@ const API_LIST = {
     '/learner/rc/certificate/v1/download/:id',
     '/learner/rc/certificate/v1/key/:id',
     '/learner/course/v1/progress/reports/:courseId',
+    '/learner/user/v2/upload',
     '/content/asset/v1/upload/:id',
     '/action/asset/v1/upload/:id',
     '/action/asset/v1/read/:id',
