@@ -2040,7 +2040,9 @@ const API_LIST = {
     '/uci/admin/v1/conversationLogic/update/:id',
     '/uci/admin/v1/conversationLogic/delete/:id',
     '/uci/admin/v1/forms/upload',
-    '/kendra/user-extension/mlcore/v1/solutions/:id'
+    '/kendra/user-extension/mlcore/v1/solutions/:id',
+    '/learner/course/v1/batch/user/add',
+    '/learner/course/v1/batch/user/remove'
   ]
 };
 module.exports = API_LIST;
