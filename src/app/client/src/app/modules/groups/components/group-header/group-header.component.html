@@ -19,6 +19,14 @@
             </svg>
           </i>
         </button> -->
+
+        <button class="sb-btn sb-btn-normal sb-btn-link-primary min-w-auto p-0 px-8" *ngIf="forumIds.length === 0" type="button"
+          (click)="enableDiscussionForum()">{{resourceService?.frmelmnts?.lbl?.enableDiscussionForum}}
+        </button>
+        <button class="sb-btn sb-btn-normal sb-btn-link-primary min-w-auto p-0 px-8"  *ngIf="forumIds.length > 0" type="button"
+        (click)="toggleModal(true, 'disableDiscussionForum')">{{resourceService?.frmelmnts?.lbl?.disableDiscussionForum}}
+      </button>
+
         <div class="kabab-menu" id="group-actions" tabindex="0" (click)="dropdownMenu();addTelemetry('kebab-menu')">
         </div>
         <div class="kabab-menu-dropdown-content" [hidden]="dropdownContent">

@@ -67,6 +67,7 @@ export class GroupHeaderComponent implements OnInit, OnDestroy {
     this.fetchForumIds(this.groupData.id);
     this.creator = _.capitalize(_.get(_.find(this.groupData['members'], {userId: this.groupData['createdBy']}), 'name'));
     this.groupService.showMenu.subscribe(data => {
+      console.log("this.groupService---",data)
       this.dropdownContent = data !== 'group';
     });
     this.groupService.showActivateModal.subscribe((data: {name: string, eventName: string}) => {
@@ -263,11 +264,11 @@ export class GroupHeaderComponent implements OnInit, OnDestroy {
         'cid': this.forumIds
       };
       this.discussionService.removeForum(requestBody).subscribe(resp => {
-        this.showLoader = false;
+       
         this.toasterService.success('Disabled discussion forum successfully');
         this.fetchForumIds(this.groupData.id);
       }, error => {
-        this.showLoader = false;
+       
         this.toasterService.error(this.resourceService.messages.emsg.m0005);
       });
 
@@ -275,13 +276,13 @@ export class GroupHeaderComponent implements OnInit, OnDestroy {
 
     enableDiscussionForum() {
       this.addTelemetry('confirm-enable-forum', {status: _.get(this.groupData, 'status')});
-      this.showLoader = true;
+      
       this.discussionService.createForum(this.createForumRequest).subscribe(resp => {
-        this.showLoader = false;
+        
         this.toasterService.success('Enabled discussion forum successfully');
         this.fetchForumIds(this.groupData.id);
       }, error => {
-        this.showLoader = false;
+        
         this.toasterService.error(this.resourceService.messages.emsg.m0005);
       });
     }

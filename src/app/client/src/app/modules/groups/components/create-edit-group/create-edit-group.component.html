@@ -35,7 +35,7 @@
               <small class="mt-4 pull-right sb-color-grey fxsmall">{{150 - groupForm?.value?.description?.length}}
                 {{resourceService?.frmelmnts?.lbl?.characterleft}}</small>
             </div>
-            <div class="sb-field mt-24 mb-8" *ngIf="!groupId">
+            <!-- <div class="sb-field mt-24 mb-8" *ngIf="!groupId">
               <label class="d-flex flex-ai-center">
                 <input type="checkbox" role="checkbox" class="mr-8 cursor-pointer" formControlName="groupToc"
                   [ngClass]="{'is-invalid' : isFieldValid('groupToc')}">
@@ -48,7 +48,11 @@
                 *ngIf="isFieldValid('groupToc')">{{resourceService?.frmelmnts?.lbl?.groupToc |
                 interpolate:'{instance}':
                 instance}}</small>
-            </div>
+                <small class="line-height-normal d-block message sb-color-error font-weight-bold mt-8 pl-20"
+                >{{resourceService?.frmelmnts?.lbl?.groupToc |
+                interpolate:'{instance}':
+                instance}}</small>
+            </div> -->
           </form>
         </div>
       </mat-dialog-content>
