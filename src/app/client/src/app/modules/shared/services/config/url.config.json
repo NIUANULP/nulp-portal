@@ -204,11 +204,11 @@
     "BATCH": {
       "CREATE": "course/v1/batch/create",
       "UPDATE": "course/v1/batch/update",
-      "ADD_USERS": "course/v1/batch/user/add",
+      "ADD_USERS": "course/v1/admin/enroll",
       "GET_DETAILS": "course/v1/batch/read",
       "GET_PARTICIPANT_LIST": "course/v1/batch/participants/list",
       "GET_BATCHS": "course/v1/batch/list",
-      "REMOVE_USERS": "course/v1/batch/user/remove",
+      "REMOVE_USERS": "course/v1/admin/unenroll",
       "COURSE_PROGRESS_EXHAUST": "course/v1/progress/reports"
     }, 
     "ADMIN": {
