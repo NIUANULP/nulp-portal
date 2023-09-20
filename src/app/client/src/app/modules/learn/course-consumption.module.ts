@@ -27,7 +27,6 @@ import { NotificationModule } from '../notification/notification.module';
 import { DiscussionModule } from '../discussion/discussion.module';
 import { PendingchangesGuard } from '@sunbird/public';
 import { GroupsModule } from '../groups';
-import { CourseProgressReportsComponent } from './components/course-consumption/course-progress-reports/course-progress-reports.component';
 import { CourseProgressExhaustModule } from '../dashboard/course-progress-exhaust.module';
 
 export const csUserServiceFactory = (csLibInitializerService: CsLibInitializerService) => {
@@ -77,6 +76,6 @@ export const csNotificationServiceFactory = (csLibInitializerService: CsLibIniti
   declarations: [CoursePlayerComponent, CourseConsumptionHeaderComponent, AssessmentPlayerComponent,
     CourseConsumptionPageComponent, BatchDetailsComponent, CurriculumCardComponent, UnEnrollBatchComponent,
     AssessmentPlayerComponent, CourseCompletionComponent, CourseDetailsComponent, CertificateNameUpdatePopupComponent,
-    CourseProgressReportsComponent]
+    ]
 })
 export class CourseConsumptionModule { }

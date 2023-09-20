@@ -218,7 +218,7 @@
       "ORG_CREATE":"org/v1/create",
       "ORG_EXT_SEARCH": "org/v2/search",
       "BULK": {
-        "USERS_UPLOAD": "user/v2/upload",
+        "USERS_UPLOAD": "user/v1/upload",
         "ORGANIZATIONS_UPLOAD": "org/v1/upload",
         "STATUS": "data/v1/upload/status"
       },
