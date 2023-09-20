@@ -2042,7 +2042,8 @@ const API_LIST = {
     '/uci/admin/v1/forms/upload',
     '/kendra/user-extension/mlcore/v1/solutions/:id',
     '/learner/course/v1/batch/user/add',
-    '/learner/course/v1/batch/user/remove'
+    '/learner/course/v1/batch/user/remove',
+    '/learner/org/v1/create'
   ]
 };
 module.exports = API_LIST;
