@@ -710,6 +710,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     if (this.createForumRequest && this.callCreateDiscussion) {
       this.discussionService.createForum(this.createForumRequest).subscribe(resp => {
         this.handleInputChange('enable-DF-yes');
+        location.reload();
         this.toasterService.success(_.get(this.resourceService, 'messages.smsg.m0065'));
       }, error => {
         this.toasterService.error(this.resourceService.messages.emsg.m0005);
@@ -726,6 +727,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
       };
       this.discussionService.removeForum(requestBody).subscribe(resp => {
         this.handleInputChange('enable-DF-no');
+        location.reload();
         this.toasterService.success(_.get(this.resourceService, 'messages.smsg.m0066'));
       }, error => {
         this.toasterService.error(this.resourceService.messages.emsg.m0005);

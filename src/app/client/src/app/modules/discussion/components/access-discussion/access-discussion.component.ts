@@ -93,6 +93,7 @@ export class AccessDiscussionComponent implements OnInit {
         userId: _.get(response, 'result.userId.uid'),
         forumIds: this.forumIds
       };
+      console.log("routerData===",routerData)
       this.routerData.emit(routerData);
     }, (error) => {
       this.showLoader = false;
