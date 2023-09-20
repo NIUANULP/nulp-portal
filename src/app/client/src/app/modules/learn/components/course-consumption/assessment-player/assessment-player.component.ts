@@ -383,6 +383,8 @@ export class AssessmentPlayerComponent implements OnInit, OnDestroy, ComponentCa
    return this.previousContent ? this.previousContent : this.activeContent;
   }
   public contentProgressEvent(event) {
+    console.log("playercomp.contentProgressEvent.event===",event)
+    
     /* istanbul ignore else */
     if (!this.batchId || _.get(this.enrolledBatchInfo, 'status') !== 1) {
       return;
@@ -423,10 +425,14 @@ export class AssessmentPlayerComponent implements OnInit, OnDestroy, ComponentCa
     if (request.status === 2 && !this.isUnitCompleted) {
       this.logAuditEvent();
     }
+    console.log("playercomp.contentProgressEvent.request===",request)
+
 
     this.courseConsumptionService.updateContentsState(request)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(updatedRes => {
+    console.log("playercomp.contentProgressEvent.updatedRes===",updatedRes)
+
         if (!this.isRouterExtrasAvailable) {
           this.contentStatus = _.cloneDeep(updatedRes.content);
         } else {
