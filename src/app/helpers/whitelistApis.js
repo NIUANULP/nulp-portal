@@ -2041,13 +2041,11 @@ const API_LIST = {
     '/uci/admin/v1/conversationLogic/delete/:id',
     '/uci/admin/v1/forms/upload',
     '/kendra/user-extension/mlcore/v1/solutions/:id',
-
-    // https://github.com/Xitija/sunbird-devops/commit/2275d72b10a3ce1261491a9f746a8ec88ed10324
-    // newly added endpoints for add and remove API
-    // ('/learner/course/v1/batch/user/add',
-    // '/learner/course/v1/batch/user/unenroll')
+    // '/learner/course/v1/batch/user/add', // https://github.com/Xitija/sunbird-devops/commit/2275d72b10a3ce1261491a9f746a8ec88ed10324 newly added endpoints for add and remove API
+    // '/learner/course/v1/batch/user/unenroll'
     '/learner/course/v1/admin/enroll',
-    '/learner/course/v1/admin/unenroll'
+    '/learner/course/v1/admin/unenroll',
+    '/learner/org/v1/create'
   ]
 };
 module.exports = API_LIST;
