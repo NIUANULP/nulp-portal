@@ -541,7 +541,7 @@ const API_LIST = {
     },
     '/learner/user/v2/upload': {
       checksNeeded: ['ROLE_CHECK'],
-      ROLE_CHECK: [ROLE.ADMIN]
+      ROLE_CHECK: [ROLE.ADMIN, ROLE.ORG_ADMIN]
     },
     '/learner/user/v4/create': {
       checksNeeded: ['ROLE_CHECK'],
