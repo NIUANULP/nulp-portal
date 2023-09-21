@@ -22,6 +22,7 @@ import { CourseProgressService } from '../../services';
 
 import { courseProgressData } from "./data";
 import { ExportCsvService } from './../../services/course-progress/export-csv.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-course-progress-exhaust',
@@ -333,26 +334,26 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
       option.query = this.searchText;
     }
 
-    this.courseProgressService.getCourseProgressExhaustData(option).pipe(
-      takeUntil(this.unsubscribe))
-      .subscribe(
-        (apiResponse: ServerResponse) => {
-          if (!apiResponse.result.count && _.get(apiResponse, 'result.data.length')) {
-            apiResponse.result.count = _.get(apiResponse, 'result.data.length');
-          } else {
-            apiResponse.result.count = 0;
-          }
-          this.courseProgressExhaustData = apiResponse.result.content;
-          this.totalCount = apiResponse.result.total_items;
-          this.pager = this.paginationService.getPager(this.totalCount, this.pageNumber, this.pageLimit);
-          this.showLoader = false;
-          this.noResult = false;
-        },
-        err => {
-          this.toasterService.error(err.error.params.errmsg);
-          this.showLoader = false;
+    this.courseProgressService.getCourseProgressExhaustData(option).subscribe(
+      (apiResponse) => {
+        this.courseProgressExhaustData = apiResponse.result.content;
+        this.totalCount = apiResponse.result.total_items;
+        this.pager = this.paginationService.getPager(this.totalCount, this.pageNumber, this.pageLimit);
+        this.showLoader = false;
+        if (this.totalCount === 0) {
+          this.noResult = true;
         }
-      );
+        this.noResult = false;
+      },
+      (err) => {
+        this.toasterService.error(err.error.params.errmsg);
+        this.showLoader = false;
+
+        // this.courseProgressExhaustData = courseProgressData;
+        // this.totalCount = courseProgressData.result.content.length;
+
+      }
+    );
   }
 
   /**
@@ -527,32 +528,20 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
       option.query = this.searchText;
       this.fileName = this.fileName + '_' + this.searchText;
     }
-    let currentDate = new Date();
-    let date = currentDate.getDay();
-    let month = currentDate.getMonth();
-    let fullYear = currentDate.getFullYear();
 
-    this.fileName = this.fileName + '_' + date + '-' + month + '-' + fullYear;
+    let currentDate = moment(new Date(), 'DD-MM-YYYY');
+    this.fileName = this.fileName + '_' + currentDate;
 
-    this.courseProgressService.getExportData(option).pipe(
-      takeUntil(this.unsubscribe))
-      .subscribe(
-        (apiResponse: ServerResponse) => {
-          if (!apiResponse.result.count && _.get(apiResponse, 'result.data.length')) {
-            apiResponse.result.count = _.get(apiResponse, 'result.data.length');
-          } else {
-            apiResponse.result.count = 0;
-          }
-          this.courseProgressExhaustData = apiResponse.result.content;
-          this.totalCount = apiResponse.result.total_items;
-          this.noResult = false;
-
-          this.exportCsvService.downloadFile(this.courseProgressExhaustData, this.columns, this.fileName);
-        },
-        err => {
-          this.toasterService.error(err.error.params.errmsg);
-        }
-      );
+    this.courseProgressService.getExportData(option).subscribe(
+      (apiResponse) => {
+        this.courseProgressExhaustData = apiResponse.result.content;
+        this.totalCount = apiResponse.result.total_items;
+        this.exportCsvService.downloadFile(this.courseProgressExhaustData, this.columns, this.fileName);
+      },
+      err => {
+        this.toasterService.error(err.error.params.errmsg);
+      }
+    );
   }
 
   getColumns() {
