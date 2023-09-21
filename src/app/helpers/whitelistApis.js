@@ -2049,7 +2049,8 @@ const API_LIST = {
     // '/learner/course/v1/batch/user/unenroll'
     '/learner/course/v1/admin/enroll',
     '/learner/course/v1/admin/unenroll',
-    '/learner/org/v1/create'
+    '/learner/org/v1/create',
+    '/learner/user/v1/upload'
   ]
 };
 module.exports = API_LIST;

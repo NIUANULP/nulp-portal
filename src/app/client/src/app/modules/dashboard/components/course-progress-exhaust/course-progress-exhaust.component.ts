@@ -114,7 +114,7 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
   /**
    * Contains page limit of inbox list
    */
-  pageLimit: 10;
+  pageLimit: 0;
 
   /**
     * Current page number of inbox list
@@ -255,6 +255,7 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
   /**
   * To method helps to get all batches related to the course.
   * Then it helps to set flag dependeing on number of batches.
+  * And populates the course progress exhaust data
   */
   populateBatchData(): void {
     this.showLoader = true;
@@ -279,7 +280,6 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
         if (this.batchlist.length === 0) {
           this.showCourseData = false;          
           this.showLoader = false;
-
           this.showNoBatch = true;
         } else if (isBatchExist) {
           this.showCourseData = false;
@@ -292,7 +292,6 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
           this.selectedOption = this.batchlist[0].id;
           this.currentBatch = this.batchlist[0];
           this.generateDataForDF(this.currentBatch);
-          this.populateCourseDashboardData(this.batchlist[0]);
           this.populateCourseProgressExhaustData(this.currentBatch);
         } else if (this.batchlist.length > 1 && isBatchExist === undefined) {
           this.generateDataForDF(this.currentBatch);
@@ -302,7 +301,7 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
         } else {
           this.showWarningDiv = true;
         }
-        this.paramSubcription.unsubscribe();
+          this.paramSubcription.unsubscribe();
       }, (err) => {
         this.toasterService.error(this.resourceService.messages.emsg.m0005);
         this.showLoader = false;
@@ -315,15 +314,15 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
     let option: any;
 
     // If there are multiple batches and none of the batch is selected.
-    if ( this.showCourseData) {
+    if (this.showCourseData) {
       option = {
-        courseId : this.courseId,
+        courseId: this.courseId,
         limit: this.pageLimit,
         offset: (this.pageNumber - 1) * (this.pageLimit),
       }
     } else {
       option = {
-        courseId : this.courseId,
+        courseId: this.courseId,
         batchId: batch.batchId,
         limit: this.pageLimit,
         offset: (this.pageNumber - 1) * (this.pageLimit),
@@ -343,52 +342,18 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
           } else {
             apiResponse.result.count = 0;
           }
-          this.showLoader = false;
           this.courseProgressExhaustData = apiResponse.result.content;
           this.totalCount = apiResponse.result.total_items;
-          
-          // // API call will be made to get the data
-
-          // this.totalCount = courseProgressData.result.total_items
-          this.pager = this.paginationService.getPager(this.totalCount, this.pageNumber, 5);
+          this.pager = this.paginationService.getPager(this.totalCount, this.pageNumber, this.pageLimit);
           this.showLoader = false;
           this.noResult = false;
         },
         err => {
           this.toasterService.error(err.error.params.errmsg);
           this.showLoader = false;
-    
-          // API call will be made to get the data
-          // this.courseProgressExhaustData = courseProgressData.result.content;
-
-          // this.totalCount = courseProgressData.result.total_items
-          // this.pager = this.paginationService.getPager(this.totalCount, this.pageNumber, 5);
-          // this.showLoader = false;
-          // this.noResult = false;
-          //---- The above code is for testing purpose only          
         }
       );
-      // API call will be made to get the data
-
-
-      let apiContent = courseProgressData.result.content;
-      this.courseProgressExhaustData = courseProgressData.result.content;
-      // this.courseProgressExhaustData = apiContent.map((courseProgressData) => {
-      //   // courseProgressData.issued_certificates.issued_certificate = 'No';
-      //   if (courseProgressData?.issued_certificates?.name) {
-      //     courseProgressData.issued_certificates.name = 'Yes';
-      //   } else {
-      //     courseProgressData.issued_certificates.name = 'No';
-      //   }
-
-      //   return courseProgressData;
-      // });
-            
-      this.totalCount = courseProgressData.result.total_items
-      this.pager = this.paginationService.getPager(this.totalCount, this.pageNumber, 5);
-      this.showLoader = false;
-      this.noResult = false;      
-    }
+  }
 
   /**
   * To method helps to set batch id and calls the populateCourseDashboardData
@@ -399,7 +364,6 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
     this.fetchForumIdReq = null;
     this.showWarningDiv = false;
     this.queryParams.batchIdentifier = batch.id;
-    this.queryParams.pageNumber = this.pageNumber;
     this.searchText = '';
     this.currentBatch = batch;
     // this.currentBatch.lastUpdatedOn = dayjs(this.currentBatch.lastUpdatedOn).format('DD-MMM-YYYY hh:mm a');
@@ -414,76 +378,6 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
     this.route.navigate(['/learn/course', this.courseId]);
   }
 
-  setInteractEventDataForTabs(id) {
-    const telemetryObj = {
-      context: {
-        env: 'reports',
-        cdata: [
-          {id: _.get(this.currentBatch , 'courseId'), type: 'Course'},
-          {id: _.get(this.currentBatch , 'batchId'), type: 'Batch'}
-        ]
-      },
-      edata: {
-        id: id,
-        type: 'click',
-        pageid: id
-      }
-    };
-    this.telemetryService.interact(telemetryObj);
-  }
-  /**
-  * To method fetches the dashboard data with specific batch id and timeperiod
-  */
- // TODO: This function will be removed. API got deprecated.
-  populateCourseDashboardData(batch?: any): void {
-    return ;
-/*    if (!batch && this.currentBatch) {
-      batch = this.currentBatch;
-    }
-    this.showWarningDiv = false;
-    this.navigate();
-    this.showLoader = true;
-    const option: any = {
-      batchIdentifier: this.queryParams.batchIdentifier,
-      limit: this.pageLimit,
-      offset: (this.pageNumber - 1) * (this.pageLimit),
-    };
-    if (this.order) {
-      option.sortBy = this.order;
-      option.sortOrder = this.reverse ? 'desc' : 'asc';
-    }
-    if (this.searchText) {
-      option.username = this.searchText;
-    }
-    this.courseProgressService.getDashboardData(option).pipe(
-      takeUntil(this.unsubscribe))
-      .subscribe(
-        (apiResponse: ServerResponse) => {
-          if (!apiResponse.result.count && _.get(apiResponse, 'result.data.length')) {
-            apiResponse.result.count = _.get(apiResponse, 'result.data.length');
-          } else {
-            apiResponse.result.count = 0;
-          }
-          this.showLoader = false;
-          this.dashboarData = apiResponse.result;
-          this.showDownloadLink = apiResponse.result.showDownloadLink ? apiResponse.result.showDownloadLink : false;
-          this.dashboarData.count = _.get(batch, 'participantCount') || _.get(apiResponse, 'result.data.length');
-          this.totalCount = _.get(batch, 'participantCount') || _.get(apiResponse, 'result.data.length');
-          if (this.totalCount >= 10000) {
-            this.pager = this.paginationService.getPager(10000, this.pageNumber, this.config.appConfig.DASHBOARD.PAGE_LIMIT);
-          } else {
-            this.pager = this.paginationService.getPager(
-              apiResponse.result.count, this.pageNumber, this.config.appConfig.DASHBOARD.PAGE_LIMIT);
-          }
-        },
-        err => {
-          this.toasterService.error(err.error.params.errmsg);
-          this.showLoader = false;
-        }
-      ); */
-  }
-
-  
   navigateToPage(page: number): undefined | void {
     if (page < 1 || page > this.pager.totalPages) {
       return;
@@ -553,6 +447,8 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
             };
           })
           .subscribe(allParams => {
+            this.courseId = undefined;
+            this.batchId = undefined;
             if ( allParams?.parentParams?.courseId) {
               this.courseId = allParams?.parentParams?.courseId;
               this.batchId = allParams?.parentParams?.batchId;
@@ -612,38 +508,32 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
   exportToCsv(batch: any) {
     let option: any;
     this.columns = this.getColumns();
+
     // If there are multiple batches and none of the batch is selected.
     if (this.showCourseData) {
       option = {
         courseId: this.courseId,
-        limit: this.pageLimit,
-        offset: (this.pageNumber - 1) * (this.pageLimit),
       }
       this.fileName = this.courseId;
     } else {
       option = {
         courseId: this.courseId,
         batchId: batch.batchId,
-        limit: this.pageLimit,
-        offset: (this.pageNumber - 1) * (this.pageLimit),
       }
-      this.fileName = this.fileName + '_' + batch.batchId;
+      this.fileName = this.courseId + '_' + batch.batchId;
     }
 
     if (this.searchText) {
       option.query = this.searchText;
-      this.fileName = this.fileName + '_'  + this.searchText;
+      this.fileName = this.fileName + '_' + this.searchText;
     }
+    let currentDate = new Date();
+    let date = currentDate.getDay();
+    let month = currentDate.getMonth();
+    let fullYear = currentDate.getFullYear();
 
-    this.fileName = this.fileName + '_' + new Date();
+    this.fileName = this.fileName + '_' + date + '-' + month + '-' + fullYear;
 
-    // if (this.order) {
-    //   option.sortBy = this.order;
-    //   option.sortOrder = this.reverse ? 'desc' : 'asc';
-    // }
-    // if (this.searchText) {
-    //   option.username = this.searchText;
-    // }
     this.courseProgressService.getExportData(option).pipe(
       takeUntil(this.unsubscribe))
       .subscribe(
@@ -653,68 +543,16 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
           } else {
             apiResponse.result.count = 0;
           }
-          this.showLoader = false;
           this.courseProgressExhaustData = apiResponse.result.content;
-          this.courseProgressExhaustData.map((courseProgressData) => {
-            courseProgressData.issued_certificates.issued_certificate = 'No';
-            if (courseProgressData?.issued_certificates?.name) {
-              courseProgressData.issued_certificates.issued_certificate = 'Yes';
-            }
-            return courseProgressData;
-          });
-
           this.totalCount = apiResponse.result.total_items;
-
-          // // API call will be made to get the data
-          // this.courseProgressExhaustData = courseProgressData.result.content;
-
-          // this.totalCount = courseProgressData.result.total_items
-          this.pager = this.paginationService.getPager(this.totalCount, this.pageNumber, 5);
-          this.showLoader = false;
           this.noResult = false;
 
-          // this.showDownloadLink = apiResponse.result.showDownloadLink ? apiResponse.result.showDownloadLink : false;
-          // this.dashboarData.count = _.get(batch, 'participantCount') || _.get(apiResponse, 'result.data.length');
-          // this.totalCount = _.get(batch, 'participantCount') || _.get(apiResponse, 'result.data.length');
-          // if (this.totalCount >= 10000) {
-          //   this.pager = this.paginationService.getPager(10000, this.pageNumber, this.config.appConfig.DASHBOARD.PAGE_LIMIT);
-          // } else {
-          //   this.pager = this.paginationService.getPager(
-          //     apiResponse.result.count, this.pageNumber, this.config.appConfig.DASHBOARD.PAGE_LIMIT);
-          // }
+          this.exportCsvService.downloadFile(this.courseProgressExhaustData, this.columns, this.fileName);
         },
         err => {
           this.toasterService.error(err.error.params.errmsg);
-          this.showLoader = false;
-
-          // API call will be made to get the data
-          // this.courseProgressExhaustData = courseProgressData.result.content;
-
-          // this.totalCount = courseProgressData.result.total_items
-          // this.pager = this.paginationService.getPager(this.totalCount, this.pageNumber, 5);
-          // this.showLoader = false;
-          // this.noResult = false;
-          //---- The above code is for testing purpose only          
         }
       );
-
-    // API call will be made to get the data
-    // let apiContent = courseProgressData.result.content;
-    this.courseProgressExhaustData = courseProgressData.result.content;
-      // apiContent.map((courseProgressData) => {
-      //   if (courseProgressData?.issued_certificates?.name) {
-      //     courseProgressData.issued_certificates.issued_certificate = 'Yes';
-      //   }
-      //   else {
-      //     courseProgressData.issued_certificates.issued_certificate = 'No';
-      //   }
-      //   return courseProgressData;
-      // });
-    this.totalCount = courseProgressData.result.total_items
-    this.pager = this.paginationService.getPager(this.totalCount, this.pageNumber, 5);
-    this.showLoader = false;
-    this.noResult = false;
-    this.exportCsvService.downloadFile(this.courseProgressExhaustData, this.columns, this.fileName);
   }
 
   getColumns() {
@@ -732,22 +570,6 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
       'completionpercentage',
       'issued_certificates'  
     ];
-
-/*    this.columns.push(this.resourceService?.frmelmnts?.lbl?.courseProgressExhaustUserName);
-    this.columns.push(this.resourceService?.frmelmnts?.lbl?.courseProgressExhaustEmail);
-    this.columns.push(this.resourceService?.frmelmnts?.lbl?.courseProgressExhaustPhoneNo);
-    if (this.showCourseData) {
-      this.columns.push(this.resourceService?.frmelmnts?.lbl?.courseProgressExhaustCourseName);
-      this.columns.push(this.resourceService?.frmelmnts?.lbl?.courseProgressExhaustBatchName);
-      this.columns.push(this.resourceService?.frmelmnts?.lbl?.courseProgressExhaustBatchStartDate);
-      this.columns.push(this.resourceService?.frmelmnts?.lbl?.courseProgressExhaustBatchEndDate);
-    }
-    this.columns.push(this.resourceService?.frmelmnts?.lbl?.courseProgressExhaustEnrollDate);
-    this.columns.push(this.resourceService?.frmelmnts?.lbl?.courseProgressExhaustCompletedOn);
-    this.columns.push(this.resourceService?.frmelmnts?.lbl?.courseProgressExhaustProgress);
-    this.columns.push(this.resourceService?.frmelmnts?.lbl?.courseProgressExhaustCompletedPercentage);
-    this.columns.push(this.resourceService?.frmelmnts?.lbl?.courseProgressExhaustIssuedCertificate);
-*/    
     return this.columns;
   }
 } 

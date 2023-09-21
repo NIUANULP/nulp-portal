@@ -107,10 +107,6 @@ export class CourseProgressService  {
     if (_.get(requestParam, 'query')) {
       option.param['query'] = requestParam.query;
     }
-    // if ( _.get(requestParam, 'sortBy')) {
-    //   option.param['sortBy'] = requestParam.sortBy;
-    //   option.param['sortOrder'] = requestParam.sortOrder;
-    // }
 
     return this.learnerService.get(option);
   }
@@ -124,21 +120,22 @@ export class CourseProgressService  {
     let option: any;
     if (requestParam.batchId !== undefined) {
       option = {
-        url: this.config.urlConFig.URLS.BATCH.COURSE_PROGRESS_EXHAUST + '/' + requestParam.courseId + '/' + requestParam.batchId + '/exportAsCsv'
+        url: this.config.urlConFig.URLS.BATCH.COURSE_PROGRESS_EXHAUST + '/' + requestParam.courseId,
+        param: {
+          batchid: requestParam.batchId,
+        }
       };
     }
     else {
       option = {
-        url: this.config.urlConFig.URLS.BATCH.COURSE_PROGRESS_EXHAUST + '/' + requestParam.courseId + '/exportAsCsv'
+        url: this.config.urlConFig.URLS.BATCH.COURSE_PROGRESS_EXHAUST + '/' + requestParam.courseId,
       };
     }
+
     if (_.get(requestParam, 'query')) {
       option.param['query'] = requestParam.query;
     }
-    // if ( _.get(requestParam, 'sortBy')) {
-    //   option.param['sortBy'] = requestParam.sortBy;
-    //   option.param['sortOrder'] = requestParam.sortOrder;
-    // }
+
     return this.learnerService.get(option);
   }
 
@@ -146,7 +143,6 @@ export class CourseProgressService  {
    * To method calls the get the course data
    */
   getCourseData(requestParam) {
-    // debugger;
     const option = {
       url: this.config.urlConFig.URLS.COURSE.HIERARCHY + '/'  + requestParam
     };

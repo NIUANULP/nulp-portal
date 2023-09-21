@@ -5,7 +5,6 @@ import { AuthGuard } from '@sunbird/core';
 import { UnEnrollBatchComponent } from './components/batch/unenroll-batch/unenroll-batch.component';
 import { AssessmentPlayerComponent } from './components/course-consumption/assessment-player/assessment-player.component';
 import { PendingchangesGuard } from '@sunbird/public';
-import { CourseProgressReportsComponent } from './components/course-consumption/course-progress-reports/course-progress-reports.component';
 import { CourseProgressExhaustComponent } from '../dashboard';
 
 const telemetryEnv = 'Course';
@@ -43,7 +42,6 @@ const routes: Routes = [
       },
       {
         path: ':courseId/courseProgressExhaust', component: CourseProgressExhaustComponent,
-        // path: ':courseId/courseProgressExhaust', component: CourseProgressReportsComponent,
       },   
 
       {
