@@ -628,6 +628,10 @@ const API_LIST = {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [ROLE.ADMIN, ROLE.ORG_ADMIN]
     },
+    '/learner/org/v1/status/update': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [ROLE.ADMIN, ROLE.ORG_ADMIN]
+    },
 
     //Dashboard related APIs
     '/learner/dashboard/v1/creation/org': {
@@ -2050,6 +2054,7 @@ const API_LIST = {
     '/learner/course/v1/admin/enroll',
     '/learner/course/v1/admin/unenroll',
     '/learner/org/v1/create',
+    'learner/org/v1/status/update',
     '/learner/user/v1/upload'
   ]
 };
