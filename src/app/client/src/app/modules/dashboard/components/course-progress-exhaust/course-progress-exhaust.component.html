@@ -151,7 +151,7 @@
         </tr>
       </thead>
       <tbody *ngIf="courseProgressExhaustData">
-        <tr class="UpForReviewListHover cursor-pointer" *ngFor="let courseProgressExhaust of courseProgressExhaustData">
+        <tr class="UpForReviewListHover cursor-pointer" *ngFor="let courseProgressExhaust of courseProgressExhaustData.result.content">
           <td class="content">{{courseProgressExhaust?.userName}}</td>
           <td class="content">{{courseProgressExhaust?.maskedemail}}</td>
           <td class="content">{{courseProgressExhaust?.maskedphone}}</td>
