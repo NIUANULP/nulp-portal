@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 export class CertConfigModel {
     private dropDownFields = {
         COMPLETION_CERTIFICATE: 'Completion certificate',
-        MY_STATE_TEACHER : 'My Org User',
+        MY_STATE_TEACHER : 'My state teacher',
         ALL: 'All'
     };
     constructor() {

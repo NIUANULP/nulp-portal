@@ -23,12 +23,19 @@ import { CommonFormElementsModule } from 'common-form-elements-web-v9';
 import { LocationModule } from '../../plugins/location';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { DashletModule } from  '@project-sunbird/sb-dashlet-v9';
+import { FrameworkCatLabelTranslatePipe } from './pipe/framework-label-translate/framework-label-translate.pipe';
 
 export const csUserServiceFactory = (csLibInitializerService: CsLibInitializerService) => {
   if (!CsModule.instance.isInitialised) {
     csLibInitializerService.initializeCs();
   }
   return CsModule.instance.userService;
+};
+export const csNotificationServiceFactory = (csLibInitializerService: CsLibInitializerService) => {
+  if (!CsModule.instance.isInitialised) {
+    csLibInitializerService.initializeCs();
+  }
+  return CsModule.instance.notificationService;
 };
 @NgModule({
   imports: [
@@ -48,14 +55,15 @@ export const csUserServiceFactory = (csLibInitializerService: CsLibInitializerSe
     LocationModule,
     DashletModule.forRoot()
   ],
-  providers:  [{ provide: 'CS_USER_SERVICE', useFactory: csUserServiceFactory, deps: [CsLibInitializerService] }],
+  providers:  [{ provide: 'CS_USER_SERVICE', useFactory: csUserServiceFactory, deps: [CsLibInitializerService] },
+  { provide: 'CS_NOTIFICATION_SERVICE', useFactory: csNotificationServiceFactory, deps: [CsLibInitializerService] }],
   declarations: [ProfileFrameworkPopupComponent, TermsAndConditionsPopupComponent,
     OtpPopupComponent, BatchInfoComponent, SsoMergeConfirmationComponent, ValidateTeacherIdentifierPopupComponent,
     UserLocationComponent,
     UserOnboardingComponent,
     OnboardingUserSelectionComponent,
     ConfirmationPopupComponent, CertPreviewPopupComponent, ContentPlayerComponent, GlobalConsentPiiComponent,
-     CollectionPlayerComponent, YearOfBirthComponent, DashboardComponent
+     CollectionPlayerComponent, YearOfBirthComponent, DashboardComponent,FrameworkCatLabelTranslatePipe
   ],
   exports: [ProfileFrameworkPopupComponent, TermsAndConditionsPopupComponent,
     OtpPopupComponent, BatchInfoComponent, SsoMergeConfirmationComponent, ValidateTeacherIdentifierPopupComponent,

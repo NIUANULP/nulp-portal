@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
-import { FormService, UserService } from './../../services';
+import { FormService, UserService } from '@sunbird/core';
 import * as _ from 'lodash-es';
-import { LayoutService, ResourceService, UtilService, IUserData, NavigationHelperService, InterpolatePipe} from '@sunbird/shared';
+import { LayoutService, ResourceService, UtilService, IUserData, NavigationHelperService} from '@sunbird/shared';
 import { Router, ActivatedRoute } from '@angular/router';
 import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -34,14 +34,7 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
     public layoutService: LayoutService,
     private utilService: UtilService,
     public navigationhelperService: NavigationHelperService,
-  ) {
-    this.subscription = this.utilService.currentRole.subscribe(async (result) => {
-      if (result) {
-        this.userType = result;
-        this.makeFormChange();
-      }
-    });
-  }
+  ) {}
 
 
   ngOnInit() {
@@ -150,8 +143,7 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
     if (this.userType != 'administrator') {
       this.contentTypes[index].isEnabled = false;
     } else {
-      // @TODO - Hack this value - Orignal value is True (In NULP this menu is not required)
-      this.contentTypes[index].isEnabled = false;
+      this.contentTypes[index].isEnabled = true;
     }
   }
 
