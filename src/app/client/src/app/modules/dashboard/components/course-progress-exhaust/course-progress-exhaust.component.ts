@@ -302,11 +302,12 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
         } else {
           this.showWarningDiv = true;
         }
-          this.paramSubcription.unsubscribe();
+        // this.paramSubcription.unsubscribe();
       }, (err) => {
         this.toasterService.error(this.resourceService.messages.emsg.m0005);
         this.showLoader = false;
         this.showNoBatch = true;
+        this.paramSubcription.unsubscribe();
       });
   }
 
@@ -336,22 +337,21 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
 
     this.courseProgressService.getCourseProgressExhaustData(option).subscribe(
       (apiResponse) => {
-        this.courseProgressExhaustData = apiResponse.result.content;
-        this.totalCount = apiResponse.result.total_items;
+        this.courseProgressExhaustData = apiResponse?.result?.content;
+        this.totalCount = apiResponse?.result?.total_items;
         this.pager = this.paginationService.getPager(this.totalCount, this.pageNumber, this.pageLimit);
         this.showLoader = false;
         if (this.totalCount === 0) {
           this.noResult = true;
         }
         this.noResult = false;
+        this.paramSubcription.unsubscribe();
+
       },
       (err) => {
         this.toasterService.error(err.error.params.errmsg);
         this.showLoader = false;
-
-        // this.courseProgressExhaustData = courseProgressData;
-        // this.totalCount = courseProgressData.result.content.length;
-
+        this.paramSubcription.unsubscribe();
       }
     );
   }
@@ -534,12 +534,14 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
 
     this.courseProgressService.getExportData(option).subscribe(
       (apiResponse) => {
-        this.courseProgressExhaustData = apiResponse.result.content;
-        this.totalCount = apiResponse.result.total_items;
+        this.courseProgressExhaustData = apiResponse?.result?.content;
+        this.totalCount = apiResponse?.result?.total_items;
         this.exportCsvService.downloadFile(this.courseProgressExhaustData, this.columns, this.fileName);
+        this.paramSubcription.unsubscribe();
       },
       err => {
         this.toasterService.error(err.error.params.errmsg);
+        this.paramSubcription.unsubscribe();
       }
     );
   }

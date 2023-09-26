@@ -134,32 +134,32 @@
     <table class="ui upForReviewTable table">
       <thead>
         <tr>
-          <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustUserName}}</th>
-          <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustEmail}}</th>
-          <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustPhoneNo}}</th>
+          <th class="UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustUserName}}</th>
+          <th class="UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustEmail}}</th>
+          <th class="UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustPhoneNo}}</th>
 
-          <th *ngIf="showCourseData" class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustBatchId}}</th>
-          <th *ngIf="showCourseData" class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustBatchName}}</th>
-          <th *ngIf="showCourseData" class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustBatchStartDate}}</th>
-          <th *ngIf="showCourseData" class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustBatchEndDate}}</th>
+          <th *ngIf="showCourseData" class="UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustBatchId}}</th>
+          <th *ngIf="showCourseData" class="UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustBatchName}}</th>
+          <th *ngIf="showCourseData" class="UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustBatchStartDate}}</th>
+          <th *ngIf="showCourseData" class="UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustBatchEndDate}}</th>
 
-          <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustEnrollDate}}</th>
-          <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustCompletedOn}}</th>
-          <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustProgress}}</th>
-          <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustCompletedPercentage}}</th>
-          <th class="two wide UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustIssuedCertificate}}</th>
+          <th class="UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustEnrollDate}}</th>
+          <th class="UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustCompletedOn}}</th>
+          <th class="UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustProgress}}</th>
+          <th class="UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustCompletedPercentage}}</th>
+          <th class="UpReviewTableHeader">{{resourceService?.frmelmnts?.lbl?.courseProgressExhaustIssuedCertificate}}</th>
         </tr>
       </thead>
       <tbody *ngIf="courseProgressExhaustData">
-        <tr class="UpForReviewListHover cursor-pointer" *ngFor="let courseProgressExhaust of courseProgressExhaustData.result.content">
+        <tr class="UpForReviewListHover cursor-pointer" *ngFor="let courseProgressExhaust of courseProgressExhaustData">
           <td class="content">{{courseProgressExhaust?.userName}}</td>
           <td class="content">{{courseProgressExhaust?.maskedemail}}</td>
           <td class="content">{{courseProgressExhaust?.maskedphone}}</td>
 
           <td *ngIf="showCourseData" class="content">{{courseProgressExhaust?.batchid}}</td>
-          <td *ngIf="showCourseData" class="content">{{courseProgressExhaust?.batch_name?.batch_name}}</td>
-          <td *ngIf="showCourseData" class="content">{{courseProgressExhaust?.batch_name?.batch_name}}</td>
-          <td *ngIf="showCourseData" class="content">{{courseProgressExhaust?.batch_name?.batch_name}}</td>
+          <td *ngIf="showCourseData" class="content">{{courseProgressExhaust?.batch_name}}</td>
+          <td *ngIf="showCourseData" class="content">{{courseProgressExhaust?.batch_start_date}}</td>
+          <td *ngIf="showCourseData" class="content">{{courseProgressExhaust?.batch_end_date}}</td>
 
           <td class="content">{{courseProgressExhaust?.enrolled_date | date:'dd/MM/yyyy'}}</td>
           <td class="content">{{courseProgressExhaust?.completedon  | dateFormat :'DD/MM/YYYY'}} </td>
