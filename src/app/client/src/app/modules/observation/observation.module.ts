@@ -19,7 +19,8 @@ import {
 } from './components';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { LocationModule } from '../../plugins/location/location.module';
-import {PlayerHelperModule} from '../player-helper';
+import { ObservationUtilService } from './service';
+import {PlayerHelperModule} from '../player-helper'
 
 @NgModule({
   declarations: [ObservationListingComponent, ObservationDetailsComponent, AddEntityComponent, SubmissionsComponent,
@@ -57,7 +58,7 @@ import {PlayerHelperModule} from '../player-helper';
     InfiniteScrollModule,
     PlayerHelperModule
   ],
-  providers: [MlGuard]
+  providers: [MlGuard, ObservationUtilService]
 
 })
 export class ObservationModule { }

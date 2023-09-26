@@ -1,33 +1,19 @@
-import { of, throwError } from "rxjs";
-import { ConfigService } from '../../../shared/services/config/config.service';
-import { HttpClient } from "@angular/common/http";
+import { TestBed, inject } from '@angular/core/testing';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { ConfigService } from '@sunbird/shared';
 import { LearnerService } from './learner.service';
+import { configureTestSuite } from '@sunbird/test-util';
 
 describe('LearnerService', () => {
-  let learnerService: LearnerService;
-  const mockConfigService: Partial<ConfigService> = {
-    urlConFig: {
-      URLS: {
-        LEARNER_PREFIX: '/learner/'
-      }
-    }
-  };
-  const mockHttpClient: Partial<HttpClient> = {
-  };
-  beforeAll(() => {
-    learnerService = new LearnerService(
-      mockConfigService as ConfigService,
-      mockHttpClient as HttpClient
-    );
-  });
-
+  configureTestSuite();
   beforeEach(() => {
-    jest.clearAllMocks();
-    jest.resetAllMocks();
+    TestBed.configureTestingModule({
+      imports: [HttpClientModule],
+      providers: [LearnerService, ConfigService, HttpClient]
+    });
   });
 
-  it('should create a instance of LearnerService', () => {
-    expect(learnerService).toBeTruthy();
-    expect(learnerService.baseUrl).toBe('/learner/');
-  });
+  it('should be created', inject([LearnerService], (service: LearnerService) => {
+    expect(service).toBeTruthy();
+  }));
 });

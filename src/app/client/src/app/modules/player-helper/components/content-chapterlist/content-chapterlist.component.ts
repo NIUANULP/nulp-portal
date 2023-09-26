@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, OnChanges, Input, EventEmitter, Output } from '@angular/core';
+import * as _ from 'lodash-es';
 
 
 @Component({

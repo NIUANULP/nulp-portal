@@ -9,7 +9,6 @@
         line-height: normal;
         font-weight: 600;
     }
-
     .sb-multi-rows:nth-child(odd){
         background: var(--white);
         border-top: calculateRem(1px) solid var(--rc-dddddd);
@@ -97,12 +96,3 @@
         background: var(--sbt-compt-bg);
     }
   }
-
-  // datatable //
-  ::ng-deep {
-      table.dataTable tbody td,
-      table.dataTable tbody th {
-        padding: calculateRem(8px) calculateRem(18px);
-      }
-    }
-  

@@ -8,7 +8,6 @@ import { PopupControlService } from '../../../../service/popup-control.service';
 import { IDeviceProfile } from '../../../../modules/shared-feature/interfaces/deviceProfile';
 import { SbFormLocationSelectionDelegate } from '../delegate/sb-form-location-selection.delegate';
 import { MatDialog } from '@angular/material/dialog';
-import * as _ from 'lodash-es';
 
 @Component({
   selector: 'app-location-selection',
@@ -17,15 +16,13 @@ import * as _ from 'lodash-es';
 })
 export class LocationSelectionComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() isClosable = true;
-  @Input() showModal = true;
   @Input() deviceProfile: IDeviceProfile;
-  @Output() close = new EventEmitter<any>();
-  @Output() registerSubmit = new EventEmitter<any>();
-  @ViewChild('onboardingModal', { static: true }) onboardingModal;
+  @Output() close = new EventEmitter<void>();
+
   telemetryImpression: IImpressionEventInput;
+
   sbFormLocationSelectionDelegate: SbFormLocationSelectionDelegate;
-  isSubmitted = false;
-  public locationSelectionModalId = 'location-selection';
+  public locationSelectionModalId = "location-selection";
 
   constructor(
     public resourceService: ResourceService,
@@ -53,7 +50,7 @@ export class LocationSelectionComponent implements OnInit, OnDestroy, AfterViewI
 
   ngOnInit() {
     this.popupControlService.changePopupStatus(false);
-    this.sbFormLocationSelectionDelegate.init(this.deviceProfile, this.showModal)
+    this.sbFormLocationSelectionDelegate.init(this.deviceProfile)
       .catch(() => {
         this.closeModal();
         this.toasterService.error(this.resourceService.messages.fmsg.m0049);
@@ -87,38 +84,32 @@ export class LocationSelectionComponent implements OnInit, OnDestroy, AfterViewI
     const dialogRef = this.matDialog.getDialogById(this.locationSelectionModalId);
     dialogRef && dialogRef.close();
     this.popupControlService.changePopupStatus(true);
-    this.close.emit({isSubmitted: this.isSubmitted});
+    this.close.emit();
   }
 
   async updateUserLocation() {
-    if (this.showModal) {
-      try {
-        const result: any = await this.sbFormLocationSelectionDelegate.updateUserLocation();
-  
-        /* istanbul ignore else */
-        if (result.userProfile) {
-          this.telemetryLogEvents('User Profile', result.userProfile === 'success');
-          this.utilService.updateRoleChange(result.type);
-        }
-  
-        /* istanbul ignore else */
-        if (result.deviceProfile) {
-          if (!result.type) {
-            this.utilService.updateRoleChange(localStorage.getItem('userType'));
-          }
-          this.telemetryLogEvents('Device Profile', result.userProfile === 'success');
-        }
-  
-        this.generateSubmitInteractEvent(result.changes);
-      } catch (e) {
-        this.toasterService.error(this.resourceService.messages.fmsg.m0049);
-      } finally {
-        this.isSubmitted = true;
-        this.closeModal();
+    try {
+      const result: any = await this.sbFormLocationSelectionDelegate.updateUserLocation();
+
+      /* istanbul ignore else */
+      if (result.userProfile) {
+        this.telemetryLogEvents('User Profile', result.userProfile === 'success');
+        this.utilService.updateRoleChange(result.type);
       }
-    } else {
-      const result: any = await this.sbFormLocationSelectionDelegate.formGroup;
-      this.registerSubmit.emit(_.get(result, 'value'));
+
+      /* istanbul ignore else */
+      if (result.deviceProfile) {
+        if (!result.type) {
+          this.utilService.updateRoleChange(localStorage.getItem('userType'));
+        }
+        this.telemetryLogEvents('Device Profile', result.userProfile === 'success');
+      }
+
+      this.generateSubmitInteractEvent(result.changes);
+    } catch (e) {
+      this.toasterService.error(this.resourceService.messages.fmsg.m0049);
+    } finally {
+      this.closeModal();
     }
   }
 

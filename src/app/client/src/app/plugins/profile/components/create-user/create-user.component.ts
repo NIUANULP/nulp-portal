@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import {InterpolatePipe, ResourceService, ToasterService, ServerResponse, UtilService, NavigationHelperService, LayoutService } from '@sunbird/shared';
+import {InterpolatePipe, ResourceService, ToasterService, ServerResponse, UtilService, NavigationHelperService } from '@sunbird/shared';
 import { ProfileService } from './../../services';
 import { FormBuilder, Validators, FormGroup, FormControl } from '@angular/forms';
 import * as _ from 'lodash-es';
-import { takeUntil } from 'rxjs/operators';
-import { IInteractEventEdata, IImpressionEventInput } from '@sunbird/telemetry';
+import { IInteractEventObject, IInteractEventEdata, IImpressionEventInput } from '@sunbird/telemetry';
 import {
   OrgDetailsService,
   ChannelService,
@@ -16,7 +15,6 @@ import {
 } from '@sunbird/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs/operators';
-import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-create-user',
@@ -34,8 +32,6 @@ export class CreateUserComponent implements OnInit {
   telemetryImpression: IImpressionEventInput;
   submitInteractEdata: IInteractEventEdata;
   submitCancelInteractEdata: IInteractEventEdata;
-  layoutConfiguration: any;
-  public unsubscribe = new Subject<void>();
   pageId = 'create-managed-user';
 
   constructor(public resourceService: ResourceService, public toasterService: ToasterService,
@@ -43,7 +39,7 @@ export class CreateUserComponent implements OnInit {
     public userService: UserService, public orgDetailsService: OrgDetailsService, public channelService: ChannelService,
     public frameworkService: FrameworkService, public utilService: UtilService, public formService: FormService,
     private activatedRoute: ActivatedRoute, public navigationhelperService: NavigationHelperService,
-    public tncService: TncService, private managedUserService: ManagedUserService, public layoutService: LayoutService) {
+    public tncService: TncService, private managedUserService: ManagedUserService) {
     this.sbFormBuilder = formBuilder;
   }
 
@@ -52,19 +48,6 @@ export class CreateUserComponent implements OnInit {
     this.setTelemetryData();
     this.instance = _.upperCase(this.resourceService.instance || 'SUNBIRD');
     this.getFormDetails();
-
-    this.layoutConfiguration = this.layoutService.initlayoutConfig();
-    this.layoutService.switchableLayout().
-      pipe(takeUntil(this.unsubscribe)).subscribe(layoutConfig => {
-        if (layoutConfig != null) {
-          this.layoutConfiguration = layoutConfig.layout;
-        }
-      });
-
-  }
-
-  goBack() {
-    this.navigationhelperService.goBack();
   }
 
   setTelemetryData() {

@@ -71,7 +71,7 @@ export class OnDemandReportsComponent implements OnInit {
   }
 
   reportChanged(ev) {
-    this.selectedReport = _.get(ev, 'value');
+    this.selectedReport = ev;
   }
 
   generateTelemetry(fieldType, batchId, courseId) {

@@ -3,6 +3,9 @@ import {
   ResourceService,
   ConfigService,
   ToasterService,
+  INoResultMessage,
+  ICard,
+  ILoaderMessage,
   UtilService,
   BrowserCacheTtlService,
   NavigationHelperService,
@@ -16,16 +19,17 @@ import {
   PlayerService,
   CoursesService,
   UserService,
+  ISort,
   OrgDetailsService,
   SchemaService,
-  KendraService,
-  ObservationUtilService
+  KendraService
 } from '@sunbird/core';
-import { Subject } from 'rxjs';
+import { combineLatest, Subject, of } from 'rxjs';
 import {
   Component,
   OnInit,
   OnDestroy,
+  EventEmitter,
   ChangeDetectorRef,
   AfterViewInit,
 } from '@angular/core';
@@ -38,9 +42,16 @@ import {
 } from '@sunbird/telemetry';
 import {
   takeUntil,
+  map,
+  delay,
+  first,
+  debounceTime,
+  tap,
+  mergeMap,
 } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import { ContentManagerService } from '../../../public/module/offline/services/content-manager/content-manager.service';
+import { ObservationUtilService } from '../../service';
 import {Location} from '@angular/common';
 
 @Component({
@@ -78,7 +89,6 @@ export class ObservationListingComponent
   queryParam: any = {};
   showEditUserDetailsPopup: any = true;
   payload: any;
-  public limit  = 50;
   constructor(
     public searchService: SearchService,
     public router: Router,
@@ -185,7 +195,7 @@ export class ObservationListingComponent
     await this.getDataParam();
     const paramOption = {
       url: this.config.urlConFig.URLS.OBSERVATION.OBSERVATION_LISTING,
-      param: { page: page, limit: this.limit, search: this.searchData },
+      param: { page: page, limit: 20, search: this.searchData },
       data: this.payload
     };
 
@@ -196,7 +206,7 @@ export class ObservationListingComponent
         this.paginationDetails = this.paginationService.getPager(
           data.result.count,
           this.paginationDetails.currentPage,
-          this.limit
+          this.configService.appConfig.SEARCH.PAGE_LIMIT
         );
         this.setFormat(data.result.data);
       },
@@ -239,10 +249,10 @@ export class ObservationListingComponent
         _id: value._id,
         subject: subject
       };
-      if (value.creator && value.creator.length) {
-        const creator: any = [];
+      if(value.creator && value.creator.length){
+        const creator:any=[];
         creator.push(value.creator);
-        obj['gradeLevel'] = creator;
+        obj['gradeLevel']=creator
       }
       result.push(obj);
       this.contentList = result;

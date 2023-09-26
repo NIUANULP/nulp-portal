@@ -1,11 +1,12 @@
 import { ConfigService, ResourceService, LayoutService, PaginationService, IPagination,
   ILoaderMessage, INoResultMessage } from '@sunbird/shared';
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import * as _ from 'lodash-es';
+import { ActivatedRoute, Router } from '@angular/router';
 import 'datatables.net';
-import { ObservationService, UserService, TncService, ObservationUtilService } from '@sunbird/core';
+import { ObservationUtilService } from '../../../observation/service';
+import { ObservationService, UserService, TncService } from '@sunbird/core';
 import { first } from 'rxjs/operators';
-import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-solution-listing',
@@ -46,8 +47,7 @@ export class SolutionListingComponent implements OnInit {
     private router: Router,
     public paginationService: PaginationService,
     public configService: ConfigService,
-    public tncService: TncService,
-    public location:Location
+    public tncService: TncService
   ) {
     this.config = config;
     this.paginationDetails = this.paginationService.getPager(0, 1, this.pageSize);
@@ -60,7 +60,7 @@ export class SolutionListingComponent implements OnInit {
     this.dtOptions = {
       autoWidth: true,
       searching: false,
-      pageLength: this.pageSize,
+      pageLength:this.pageSize,
       info: false,
       dom: '<"pull-right">rt'
     };
@@ -82,10 +82,6 @@ export class SolutionListingComponent implements OnInit {
       },
       (error) => {}
     );
-  }
-
-  goBack() {
-    this.location.back();
   }
 
   getSolutions() {
@@ -116,11 +112,12 @@ export class SolutionListingComponent implements OnInit {
         );
         this.showLoadMore =
           this.solutionList.length < data.result.count ? true : false;
-          if (this.solutionList.length > 0) {
-            this.showLoader = false;
-          } else {
-            this.showLoader = false;
-            this.noResult = true;
+          if(this.solutionList.length>0){
+            this.showLoader=false;
+          }
+          else{
+            this.showLoader=false;
+            this.noResult=true;
           }
       },
       (error) => {
@@ -174,8 +171,8 @@ export class SolutionListingComponent implements OnInit {
 
   changeLimit(e) {
     this.pageSize = e.target.value;
-    this.pageNo = 1;
-    this.dtOptions.pageLength = this.pageSize;
+    this.pageNo=1;
+    this.dtOptions.pageLength=this.pageSize;
     this.getSolutions();
   }
 

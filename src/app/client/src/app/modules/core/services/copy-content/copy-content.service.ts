@@ -1,4 +1,4 @@
-import { map, mergeMap, switchMap } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 import { ConfigService, ServerResponse, ContentData } from '@sunbird/shared';
 import { Injectable } from '@angular/core';
 import * as _ from 'lodash-es';
@@ -6,7 +6,6 @@ import { Router } from '@angular/router';
 import { UserService } from '../../services/user/user.service';
 import { ContentService } from './../content/content.service';
 import { FrameworkService } from './../framework/framework.service';
-import { of } from 'rxjs';
 
 /**
  * Service to copy content
@@ -46,7 +45,7 @@ export class CopyContentService {
    * @param {ContentService} contentService ContentService reference
    */
   constructor(config: ConfigService, router: Router, userService: UserService, contentService: ContentService,
-    frameworkService: FrameworkService) {
+    frameworkService: FrameworkService ) {
     this.config = config;
     this.router = router;
     this.userService = userService;
@@ -61,20 +60,17 @@ export class CopyContentService {
   copyContent(contentData: ContentData) {
     return this.userService.userOrgDetails$.pipe(mergeMap(data => { // fetch user org details before copying content
       this.frameworkService.initialize();
-      return this.formatData(contentData).pipe(
-        switchMap((param: any) => {
-          const option = {
-            url: this.config.urlConFig.URLS.CONTENT.COPY + '/' + contentData.identifier,
-            data: param
-          };
-          return this.contentService.post(option).pipe(map((response: ServerResponse) => {
-            _.forEach(response.result.node_id, (value) => {
-              this.redirectToEditor(param.request.content, value);
-            });
-            return response;
-          }));
-        })
-      );
+      const param = this.formatData(contentData);
+      const option = {
+        url: this.config.urlConFig.URLS.CONTENT.COPY + '/' + contentData.identifier,
+        data: param
+      };
+      return this.contentService.post(option).pipe(map((response: ServerResponse) => {
+        _.forEach(response.result.node_id, (value) => {
+          this.redirectToEditor(param.request.content, value);
+        });
+        return response;
+      }));
     }));
   }
   /**
@@ -84,7 +80,7 @@ export class CopyContentService {
    */
   copyAsCourse(collectionData: ContentData) {
     const userData = this.userService.userProfile;
-    const selectedData = collectionData['children'].filter((item) => {
+    const selectedData =  collectionData['children'].filter((item) => {
       return item['selected'] === true;
     });
     const requestData = {
@@ -147,17 +143,14 @@ export class CopyContentService {
     };
     if (_.lowerCase(contentData.contentType) === 'course') {
       req.request.content.framework = contentData.framework;
-      return of(req);
     } else {
-      return this.frameworkService.frameworkData$.pipe(
-        switchMap((frameworkData: any) => {
-          if (!frameworkData.err) {
-            req.request.content.framework = _.get(frameworkData, 'frameworkdata.defaultFramework.code');
-          }
-          return of(req);
-        })
-      );
+      this.frameworkService.frameworkData$.subscribe((frameworkData: any) => {
+        if (!frameworkData.err) {
+          req.request.content.framework = frameworkData.frameworkdata['defaultFramework'].code;
+        }
+      });
     }
+    return req;
   }
 
   /**
@@ -170,7 +163,7 @@ export class CopyContentService {
     if (contentData.mimeType === 'application/vnd.ekstep.content-collection') {
       url = `/workspace/content/edit/collection/${copiedIdentifier}/${contentData.contentType}/draft/${contentData.framework}/Draft`;
       if ((_.toLower(contentData.contentType) !== 'lessonplan')) {
-        url = `workspace/edit/${contentData.contentType}/${copiedIdentifier}/draft/Draft`;
+            url = `workspace/edit/${contentData.contentType}/${copiedIdentifier}/draft/Draft`;
       }
     } else if (contentData.mimeType === 'application/vnd.ekstep.ecml-archive') {
       url = `/workspace/content/edit/content/${copiedIdentifier}/draft/${contentData.framework}/Draft`;

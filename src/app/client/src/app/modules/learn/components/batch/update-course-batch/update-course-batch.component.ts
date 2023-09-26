@@ -4,7 +4,7 @@ import { Component, OnInit, ViewChild, OnDestroy, AfterViewInit } from '@angular
 import { ActivatedRoute, Router } from '@angular/router';
 import {combineLatest, Subject, forkJoin} from 'rxjs';
 import { takeUntil, mergeMap } from 'rxjs/operators';
-import { RouterNavigationService, ResourceService, ToasterService, NavigationHelperService } from '@sunbird/shared';
+import { RouterNavigationService, ResourceService, ToasterService, ServerResponse, NavigationHelperService } from '@sunbird/shared';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { UserService } from '@sunbird/core';
 import { CourseConsumptionService, CourseBatchService } from './../../../services';
@@ -212,7 +212,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
           });
         }
         this.initializeUpdateForm();
-        this.getEnabledForumId();
+        // this.getEnabledForumId();
         this.fetchParticipantDetails();
       }, (err) => {
         if (err.error && err.error.params.errmsg) {
@@ -431,14 +431,12 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
         onAdd: () => {
         }
       });
-      if (!$('#mentors input.search').val()) {
-        $('#mentors').dropdown({
-          fullTextSearch: true,
-          forceSelection: false,
-          onAdd: () => {
-          }
-        });
-      }
+      $('#mentors').dropdown({
+        fullTextSearch: true,
+        forceSelection: false,
+        onAdd: () => {
+        }
+      });
       $('#mentors input.search').attr('aria-label', 'select batch mentor'); // fix accessibility on screen reader
       $('#participant input.search').on('keyup', (e) => {
         this.getUserListWithQuery($('#participant input.search').val(), 'participant');
@@ -495,15 +493,14 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
         userIds: participantId
       }
     };
-    // for loop here or from main service
-    return this.courseBatchService.removeUsersFromBatch(participantId[0],batchId, this.courseId);
+    this.courseBatchService.removeUsersFromBatch(batchId, userRequest);
   }
 
   private addParticipantToBatch(batchId, participants) {
     const userRequest = {
       userIds: _.compact(participants)
     };
-    return this.courseBatchService.addUsersToBatch(userRequest.userIds[0], batchId,this.courseId);
+    return this.courseBatchService.addUsersToBatch(userRequest, batchId);
   }
 
   public updateBatch() {
@@ -552,7 +549,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     }
 
     forkJoin(requests).subscribe(results => {
-      // this.disableSubmitBtn = false;
+      this.disableSubmitBtn = false;
       this.toasterService.success(this.resourceService.messages.smsg.m0034);
       this.reload();
       this.checkIssueCertificate(this.batchId, this.batchDetails);
@@ -711,7 +708,6 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     if (this.createForumRequest && this.callCreateDiscussion) {
       this.discussionService.createForum(this.createForumRequest).subscribe(resp => {
         this.handleInputChange('enable-DF-yes');
-        location.reload();
         this.toasterService.success(_.get(this.resourceService, 'messages.smsg.m0065'));
       }, error => {
         this.toasterService.error(this.resourceService.messages.emsg.m0005);
@@ -728,7 +724,6 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
       };
       this.discussionService.removeForum(requestBody).subscribe(resp => {
         this.handleInputChange('enable-DF-no');
-        location.reload();
         this.toasterService.success(_.get(this.resourceService, 'messages.smsg.m0066'));
       }, error => {
         this.toasterService.error(this.resourceService.messages.emsg.m0005);

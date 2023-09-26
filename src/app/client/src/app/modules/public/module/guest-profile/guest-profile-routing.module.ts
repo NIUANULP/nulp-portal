@@ -6,9 +6,6 @@ import { GuestProfileComponent } from './components/guest-profile/guest-profile.
 const routes: Routes = [
   {
     path: '', component: GuestProfileComponent, data: {
-      menuBar: {
-        visible: false
-    },
       telemetry: {
         env: 'profile', pageid: 'guest-profile', type: 'view', subtype: 'paginate'
       }

@@ -5,8 +5,8 @@ import {
   ConfigService, ToasterService, ResourceService, ServerResponse, Framework, FrameworkData,
   BrowserCacheTtlService
 } from '@sunbird/shared';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { skipWhile, mergeMap, map } from 'rxjs/operators';
+import { Observable, BehaviorSubject, of } from 'rxjs';
+import { skipWhile, mergeMap, tap, map } from 'rxjs/operators';
 import { PublicDataService } from './../public-data/public-data.service';
 import * as _ from 'lodash-es';
 import { FormService } from '../form/form.service';
@@ -15,9 +15,9 @@ const frameWorkPrefix = 'framework_';
   providedIn: 'root'
 })
 export class FrameworkService {
-  _frameworkData: FrameworkData = {};
+  private _frameworkData: FrameworkData = {};
   private _channelData: any = {};
-  _frameworkData$ = new BehaviorSubject<Framework>(undefined);
+  private _frameworkData$ = new BehaviorSubject<Framework>(undefined);
   private _channelData$ = new BehaviorSubject<any>(undefined);
   private _defaultCourseFrameworkName = '';
   public readonly frameworkData$: Observable<Framework> = this._frameworkData$
@@ -120,7 +120,7 @@ export class FrameworkService {
 
   const formRequest = {
     formType: 'config',
-    contentType: 'segmentation_v2',
+    contentType: 'segmentation',
     formAction: 'get'
   };
   return (await this.formService.getFormConfig(formRequest).toPromise() as any);

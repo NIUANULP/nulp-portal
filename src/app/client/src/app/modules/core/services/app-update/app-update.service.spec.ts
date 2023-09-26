@@ -1,100 +1,55 @@
-import { HttpClient } from "@angular/common/http";
-import { doesNotReject } from "assert";
-import dayjs from "dayjs";
-import { of, throwError } from "rxjs";
-import { DataService } from "..";
-import { ConfigService } from '../../../shared/services/config/config.service';
-import { AppUpdateService } from "./app-update.service";
+import { HttpClient } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+import { ConfigService } from '@sunbird/shared';
+import { of as observableOf, throwError } from 'rxjs';
+import { AppUpdateService } from './app-update.service';
+import { serverRes } from './app-update.service.spec.data';
 
 describe('AppUpdateService', () => {
-    let appUpdateService: AppUpdateService;
-    const mockConfigService: Partial<ConfigService> = {
-        urlConFig: {
-            URLS: {
-                PUBLIC_PREFIX: {},
-                OFFLINE: {
-                    APP_UPDATE: true,
-                    APP_INFO: true
-                }
-            }
-        }
-    };
-    const mockHttpClient: Partial<HttpClient> = {
-    };
-    const mockDataService: Partial<DataService> = {};
+  beforeEach(() => TestBed.configureTestingModule({
+    imports: [HttpClientTestingModule],
+    providers: [ConfigService, HttpClient]
+  }));
 
-    beforeAll(() => {
-        appUpdateService = new AppUpdateService(
-            mockConfigService as ConfigService,
-            mockHttpClient as HttpClient,
-        );
+  it('should be created', () => {
+    const service: AppUpdateService = TestBed.get(AppUpdateService);
+    expect(service).toBeTruthy();
+  });
+
+  it('app-update should send the response', () => {
+    const service: AppUpdateService = TestBed.get(AppUpdateService);
+    spyOn(service, 'get').and.returnValue(observableOf(serverRes.app_update));
+    service.checkForAppUpdate().subscribe(response => {
+      expect(response).toBe(serverRes.app_update);
     });
+    expect(service.get).toHaveBeenCalled();
+  });
 
-    beforeEach(() => {
-        jest.clearAllMocks();
-        jest.resetAllMocks();
+  it('app-update should throw error', () => {
+    const service: AppUpdateService = TestBed.get(AppUpdateService);
+    spyOn(service, 'get').and.returnValue(throwError(serverRes.error));
+    service.checkForAppUpdate().subscribe(data => { }, err => {
+      expect(err).toBe(serverRes.error);
     });
+    expect(service.get).toHaveBeenCalled();
+  });
 
-    it('should create a instance of appUpdateService', () => {
-        expect(appUpdateService).toBeTruthy();
+  it('should get app info failure case', () => {
+    const service: AppUpdateService = TestBed.get(AppUpdateService);
+    spyOn(service, 'get').and.returnValue(throwError(serverRes.appInfoFailureCase));
+    service.getAppInfo().subscribe(data => { }, err => {
+      expect(err).toEqual(serverRes.appInfoFailureCase);
     });
+    expect(service.get).toHaveBeenCalledWith({ url: 'app/v1/info' });
+  });
 
-    describe('checkForAppUpdate', () => {
-        it('should return updated info for APP', (done) => {
-            jest.spyOn(appUpdateService, 'get').mockReturnValue(of({
-                id: 'id',
-                params: {
-                    resmsgid: '',
-                    status: 'staus'
-                },
-                responseCode: 'OK',
-                result: {},
-                ts: '',
-                ver: ''
-            }));
-            // act
-            appUpdateService.checkForAppUpdate().subscribe(() => {
-                done();
-            });
-        });
-
-        it('should not return updated info for APP', () => {
-            // arrange
-            jest.spyOn(appUpdateService, 'get').mockImplementation(() => {
-                return throwError({error: {}});
-            });
-            // act
-            appUpdateService.checkForAppUpdate().subscribe(() => {
-            });
-        });
+  it('should get app info data', () => {
+    const service: AppUpdateService = TestBed.get(AppUpdateService);
+    spyOn(service, 'get').and.returnValue(observableOf(serverRes.appInfoSuccess));
+    service.getAppInfo().subscribe(data => {
+      expect(data).toEqual(serverRes.appInfoSuccess);
     });
-    describe('getAppInfo', () => {
-      it('should return APP info ', (done) => {
-          jest.spyOn(appUpdateService, 'get').mockReturnValue(of({
-              id: 'id',
-              params: {
-                  resmsgid: '',
-                  status: 'staus'
-              },
-              responseCode: 'OK',
-              result: {},
-              ts: '',
-              ver: ''
-          }));
-          // act
-          appUpdateService.getAppInfo().subscribe(() => {
-              done();
-          });
-      });
-
-      it('should not return APP Info', () => {
-          // arrange
-          jest.spyOn(appUpdateService, 'get').mockImplementation(() => {
-              return throwError({error: {}});
-          });
-          // act
-          appUpdateService.getAppInfo().subscribe(() => {
-          });
-      });
+    expect(service.get).toHaveBeenCalledWith({ url: 'app/v1/info' });
   });
 });

@@ -39,10 +39,6 @@ export class ExploreGroupComponent implements OnInit {
     this.showWelcomePopup = visibility;
   }
 
-  goBack() {
-    this.navigationhelperService.goBack();
-  }
-
   ngOnInit() {
     this.isDesktopApp = this.utilService.isDesktopApp;
     this.showWelcomePopup = !localStorage.getItem('anonymous_ftu_groups');

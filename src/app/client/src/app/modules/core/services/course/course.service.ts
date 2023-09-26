@@ -33,7 +33,7 @@ export class CoursesService {
   /**
    * BehaviorSubject Containing enrolled courses.
    */
-  _enrolledCourseData$ = new BehaviorSubject<IEnrolledCourses>(undefined);
+  private _enrolledCourseData$ = new BehaviorSubject<IEnrolledCourses>(undefined);
   /**
    * Read only observable Containing enrolled courses.
    */

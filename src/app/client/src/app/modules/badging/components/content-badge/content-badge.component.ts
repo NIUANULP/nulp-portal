@@ -1,7 +1,9 @@
 
 import {takeUntil} from 'rxjs/operators';
-import {  Subject } from 'rxjs';
+import { Subscription ,  Subject } from 'rxjs';
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { ResourceService, IUserData, IUserProfile, ToasterService } from '@sunbird/shared';
+import { UserService, BadgesService } from '@sunbird/core';
 import { ContentBadgeService } from './../../services';
 @Component({
   selector: 'app-content-badge',

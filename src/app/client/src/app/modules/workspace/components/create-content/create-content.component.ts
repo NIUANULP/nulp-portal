@@ -1,9 +1,10 @@
-import { ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ResourceService, ConfigService, NavigationHelperService } from '@sunbird/shared';
 import { FrameworkService, PermissionService, UserService } from '@sunbird/core';
-import { IImpressionEventInput } from '@sunbird/telemetry';
+import { IInteractEventInput, IImpressionEventInput } from '@sunbird/telemetry';
 import { WorkSpaceService } from './../../services';
+import * as _ from 'lodash-es';
 @Component({
   selector: 'app-create-content',
   templateUrl: './create-content.component.html'

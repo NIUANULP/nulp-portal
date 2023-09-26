@@ -14,5 +14,4 @@ export interface IContentDownloadList {
   failed: boolean;
   downloadId: string;
   step: "DOWNLOAD" | "EXTRACT" | "INDEX" | "COMPLETE" | "DELETE";
-  parentRoot: string;
 }

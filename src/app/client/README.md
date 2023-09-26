@@ -1,12 +1,3 @@
-[![Circle CI - master branch](https://circleci.com/gh/Sunbird-Ed/SunbirdEd-portal/tree/master.svg?style=svg)](https://circleci.com/gh/Sunbird-Ed/SunbirdEd-portal/tree/master.svg?style=svg)
-[![Circle CI Badge](https://circleci.com/gh/Sunbird-Ed/SunbirdEd-portal.svg?style=shield)]((https://circleci.com/gh/Sunbird-Ed/SunbirdEd-portal.svg?style=shield))
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Sunbird-Ed_SunbirdEd-portal&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Sunbird-Ed_SunbirdEd-portal)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Sunbird-Ed_SunbirdEd-portal&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Sunbird-Ed_SunbirdEd-portal)
-[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=Sunbird-Ed_SunbirdEd-portal&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=Sunbird-Ed_SunbirdEd-portal)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Sunbird-Ed_SunbirdEd-portal&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=Sunbird-Ed_SunbirdEd-portal)
-
----
-
 # Installing Sunbird Portal
 
 Installing Sunbird requires two primary software components:
@@ -46,9 +37,8 @@ Installing Sunbird requires two primary software components:
 
 | Software dependencies |  |
 | :--- | ------- |
-| **[Node](https://nodejs.org/en/download/)** | > 14.x.x (Install the latest release of LTS version) |
-| **[Angular CLI](https://angular.io/cli#installing-angular-cli)** | > 10.x.x (Install the latest Angular CLI version) |
-| **[yarn](https://classic.yarnpkg.com/en/)** | Latest version of yarn: `npm install --global yarn` |
+| **[Node](https://nodejs.org/en/download/)** | > 8.x.x (Install the latest release of LTS version) |
+| **[Gulp](https://github.com/gulpjs/gulp/blob/master/docs/getting-started/1-quick-start.md)** | Latest version of gulp: `npm install -g gulp-cli` |
 | **[nodemon](https://www.npmjs.com/package/nodemon)** | Latest version  of nodemon: `npm install -g nodemon` |
 
 
@@ -62,20 +52,30 @@ Installing Sunbird requires two primary software components:
 
     > ***Note***: Stable versions of the sunbird portal are available via tags for each release, and the master branch contains latest stable release. For latest stable release [refer](https://github.com/Sunbird-Ed/SunbirdEd-portal/branches)
 
-2. Install required dependencies
+2. Add the following environment variables - *Required for downloading editors (Via gulp task)*
+
+      ```console
+      export sunbird_content_editor_artifact_url="https://sunbirddev.blob.core.windows.net/sunbird-content-dev/artefacts/editor/content-editor-iframe-2.6.0.zip"
+
+      export sunbird_collection_editor_artifact_url="https://sunbirddev.blob.core.windows.net/sunbird-content-dev/artefacts/editor/collection-editor-iframe-2.6.0.zip"
+
+      export sunbird_generic_editor_artifact_url="https://sunbirddev.blob.core.windows.net/sunbird-content-dev/artefacts/editor/generic-editor-iframe-2.6.0.zip"
+      ```
+
+3. Install required dependencies
 
     1. Sunbird portal or web application
 
         1. $ cd {PROJECT-FOLDER}/src/app/client
-        2. $ yarn install
+        2. $ npm install
 
     2. Sunbird services stack or the backend API interface
 
         1. $ gulp download:editors
         2. $ cd {PROJECT-FOLDER}/src/app
-        3. $ yarn install
+        3. $ npm install
 
-3. Configuring the Environment and Services Stack
+4. Configuring the Environment and Services Stack
 
     > Configure the following system environment variables in the terminal which you have opened
 
@@ -88,7 +88,7 @@ Installing Sunbird requires two primary software components:
 
     > The initialization of these environmental variables can take place in a common place like in your **.bashrc** or **.bash_profile**
 
-4. Edit the Application Configuration
+5. Edit the Application Configuration
 
     > Open `<PROJECT-FOLDER>/src/app/helpers/environmentVariablesHelper.js` in any available text editor and update the contents of the file so that it contains exactly the following values
 
@@ -127,13 +127,16 @@ Installing Sunbird requires two primary software components:
 1. Sunbird portal or web application
 
     1. Run the following command in the **{PROJECT-FOLDER}/src/app/client** folder
-    2. $ ng build --watch=true
-    3. Wait for the build process to complete before proceeding to the next step
+    2. $ nodemon
+    3. Wait for the following message before proceeding to the next step 
+        ```
+        [nodemon] clean exit - waiting for changes before restart
+        ```
 
 2. Sunbird services stack or the backend API interface
 
     1. Run the following command in the **{PROJECT-FOLDER}/src/app** folder
-    2. $ npm run server
+    2. $ node server.js
 
 3. The local HTTP server is launched at `http://localhost:3000`
 

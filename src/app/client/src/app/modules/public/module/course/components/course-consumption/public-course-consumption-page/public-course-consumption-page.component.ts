@@ -1,5 +1,5 @@
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { combineLatest, Subject, throwError } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 import { ResourceService, ToasterService, ConfigService, ContentUtilsServiceService, ITelemetryShare,
   LayoutService, UtilService } from '@sunbird/shared';
 import { CourseBatchService, CourseConsumptionService } from '@sunbird/learn';
@@ -66,12 +66,6 @@ export class PublicCourseConsumptionPageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.layoutConfiguration = this.layoutService.initlayoutConfig();
-    this.layoutService.switchableLayout().
-      pipe(takeUntil(this.unsubscribe)).subscribe(layoutConfig => {
-        if (layoutConfig != null) {
-          this.layoutConfiguration = layoutConfig.layout;
-        }
-      });
     this.isDesktopApp = this.utilService.isDesktopApp;
     if (this.isDesktopApp) {
       this.connectionService.monitor().pipe(takeUntil(this.unsubscribe)).subscribe(isConnected => {

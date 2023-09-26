@@ -5,14 +5,13 @@ import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v9'
 import { InAppNotificationComponent } from './components/in-app-notification/in-app-notification.component';
 import { SbNotificationModule } from 'sb-notification';
 import { NotificationServiceImpl } from './services/notification/notification-service-impl';
-import { SharedModule } from '@sunbird/shared';
+
 @NgModule({
   imports: [
     CommonModule,
     SuiModule,
     CommonConsumptionModule,
     SbNotificationModule,
-    SharedModule
   ],
   declarations: [InAppNotificationComponent],
   exports: [InAppNotificationComponent],

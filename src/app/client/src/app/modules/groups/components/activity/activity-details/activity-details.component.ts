@@ -5,11 +5,14 @@ import { ResourceService, ToasterService, LayoutService, UtilService, ConfigServ
 import { IImpressionEventInput } from '@sunbird/telemetry';
 import * as _ from 'lodash-es';
 import { combineLatest, Subject } from 'rxjs';
-import { debounceTime, delay, map, takeUntil, tap } from 'rxjs/operators';
+import { concatMap, debounceTime, delay, map, takeUntil, tap } from 'rxjs/operators';
 import { GroupsService } from './../../../services';
 import { IActivity } from '../activity-list/activity-list.component';
 import { PublicPlayerService } from '@sunbird/public';
 import { ACTIVITY_DASHBOARD, MY_GROUPS, GROUP_DETAILS } from '../../../interfaces/routerLinks';
+import {
+  CsGroupActivityAggregationMetric
+} from '@project-sunbird/client-services/services/group/activity';
 @Component({
   selector: 'app-activity-details',
   templateUrl: './activity-details.component.html',

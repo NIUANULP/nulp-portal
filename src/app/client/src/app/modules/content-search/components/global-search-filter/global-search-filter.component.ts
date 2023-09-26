@@ -10,7 +10,7 @@ import {
   SimpleChanges, ViewChild
 } from '@angular/core';
 import * as _ from 'lodash-es';
-import { ResourceService, UtilService, ConnectionService } from '@sunbird/shared';
+import { ResourceService, UtilService } from '@sunbird/shared';
 import { IInteractEventEdata } from '@sunbird/telemetry';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -28,13 +28,12 @@ import { CacheService } from 'ng2-cache-service';
 export class GlobalSearchFilterComponent implements OnInit, OnChanges, OnDestroy {
   @Input() facets;
   @Input() queryParamsToOmit;
-  @Input() supportedFilterAttributes = ['se_boards', 'se_mediums', 'se_gradeLevels', 'se_subjects', 'primaryCategory', 'mediaType', 'additionalCategories', 'channel'];
+  @Input() supportedFilterAttributes = ['se_boards', 'se_mediums', 'se_gradeLevels', 'se_subjects', 'primaryCategory', 'mediaType', 'additionalCategories'];
   public filterLayout = LibraryFiltersLayout;
   public selectedMediaTypeIndex = 0;
   public selectedMediaType: string;
   public selectedFilters: any = {};
   public refresh = true;
-  public isConnected = true;
   public filterChangeEvent = new Subject();
   private unsubscribe$ = new Subject<void>();
   public resetFilterInteractEdata: IInteractEventEdata;
@@ -42,14 +41,14 @@ export class GlobalSearchFilterComponent implements OnInit, OnChanges, OnDestroy
   @Input() isOpen;
   @Output() filterChange: EventEmitter<{ status: string, filters?: any }> = new EventEmitter();
   @Input() cachedFilters?: any;
-
+  
   @ViewChild('sbSearchFacetFilterComponent') searchFacetFilterComponent: any;
 
   filterFormTemplateConfig?: IFacetFilterFieldTemplateConfig[];
 
   constructor(public resourceService: ResourceService, public router: Router,
     private activatedRoute: ActivatedRoute, private cdr: ChangeDetectorRef, private utilService: UtilService,
-    public userService: UserService, private cacheService: CacheService, public connectionService: ConnectionService) {
+    public userService: UserService, private cacheService: CacheService) {
   }
 
   onChange(facet) {
@@ -113,9 +112,6 @@ export class GlobalSearchFilterComponent implements OnInit, OnChanges, OnDestroy
         if (window.innerWidth <= 992 ) {
           this.isOpen = false;
         }
-    this.connectionService.monitor().subscribe(isConnected => {
-      this.isConnected = isConnected;
-    });
   }
 
   public resetFilters() {
@@ -123,7 +119,7 @@ export class GlobalSearchFilterComponent implements OnInit, OnChanges, OnDestroy
     if (this.utilService.isDesktopApp) {
       const userPreferences: any = this.userService.anonymousUserPreference;
       if (userPreferences) {
-        _.forEach(['board', 'medium', 'gradeLevel', 'channel'], (item) => {
+        _.forEach(['board', 'medium', 'gradeLevel'], (item) => {
           if (!_.has(this.selectedFilters, item)) {
             this.selectedFilters[item] = _.isArray(userPreferences.framework[item]) ?
             userPreferences.framework[item] : _.split(userPreferences.framework[item], ', ');
@@ -158,9 +154,6 @@ export class GlobalSearchFilterComponent implements OnInit, OnChanges, OnDestroy
             queryFilters[key] = key === 'key' || _.isArray(value) ? value : [value];
           }
         });
-        if(_.get(queryParams,'ignoreSavedFilter')){
-          queryFilters['ignoreSavedFilter'] = queryParams.ignoreSavedFilter;
-        }
         if (queryParams.selectedTab) {
           queryFilters['selectedTab'] = queryParams.selectedTab;
         }
@@ -172,19 +165,10 @@ export class GlobalSearchFilterComponent implements OnInit, OnChanges, OnDestroy
         }
         return queryFilters;
       })).subscribe(filters => {
-        if (_.get(filters, 'key') && _.get(filters, 'ignoreSavedFilter') !== 'true') {
-          this.cacheService.remove('searchFiltersAll');
-        }
-        if (this.cacheService.exists('searchFiltersAll') && !_.get(filters, 'key') &&
-        _.get(filters, 'ignoreSavedFilter') !== 'true') {
-          this.selectedFilters = _.cloneDeep(this.cacheService.get('searchFiltersAll'));
-        } else {
-          if( _.get(filters, 'ignoreSavedFilter') === 'true'){
-
-          } else{
-            this.cacheService.remove('searchFiltersAll');
-            this.selectedFilters = _.cloneDeep(filters);
-          }
+        this.selectedFilters = _.cloneDeep(filters);
+        /* istanbul ignore next */
+        if (this.cachedFilters) {
+          this.selectedFilters = this.cachedFilters;
         }
         this.emitFilterChangeEvent(true);
         this.hardRefreshFilter();
@@ -217,21 +201,12 @@ export class GlobalSearchFilterComponent implements OnInit, OnChanges, OnDestroy
       });
       this.selectedFilters.channel = channelIds;
     }
-    if(this.utilService.isDesktopApp && queryFilters.selectedTab === 'mydownloads' && this.isConnected) {
-      this.queryParamsToOmit = this.queryParamsToOmit && this.queryParamsToOmit.length ? this.queryParamsToOmit.push('key') : ['key']
-      if(this.selectedFilters.key) {
-        delete this.selectedFilters.key;
-      }
-    }
     if (this.queryParamsToOmit) {
       queryFilters = _.omit(_.get(this.activatedRoute, 'snapshot.queryParams'), this.queryParamsToOmit);
       queryFilters = {...queryFilters, ...this.selectedFilters};
     }
-    if (this.cacheService.get('searchFiltersAll')) {
-      this.selectedFilters['selectedTab'] = 'all';
-    }
     this.router.navigate([], {
-      queryParams: this.queryParamsToOmit ? queryFilters : { ...queryFilters, ...this.selectedFilters },
+      queryParams: this.queryParamsToOmit ? queryFilters : this.selectedFilters,
       relativeTo: this.activatedRoute.parent
     });
   }
@@ -239,10 +214,6 @@ export class GlobalSearchFilterComponent implements OnInit, OnChanges, OnDestroy
   private emitFilterChangeEvent(skipUrlUpdate = false) {
     this.filterChange.emit({ status: 'FETCHED', filters: this.selectedFilters });
     if (!skipUrlUpdate) {
-      this.updateRoute();
-    } else if (this.cacheService.get('searchFiltersAll') && !_.get(this.selectedFilters, 'key')) {
-      this.updateRoute();
-    } else if (_.get(this.selectedFilters, 'key')) {
       this.updateRoute();
     }
   }
@@ -278,17 +249,15 @@ export class GlobalSearchFilterComponent implements OnInit, OnChanges, OnDestroy
   }
 
   onSearchFacetFilterReset() {
-    this.cacheService.remove('searchFiltersAll');
     /* istanbul ignore else */
     if (this.searchFacetFilterComponent) {
       this.searchFacetFilterComponent.resetFilter();
     }
-    /* istanbul ignore next */
     this.router.navigate([], {
       queryParams: {
         ...(() => {
           const queryParams = _.cloneDeep(this.activatedRoute.snapshot.queryParams);
-          const queryFilters = [...this.supportedFilterAttributes, ...['board', 'medium', 'gradeLevel', 'channel']];
+          const queryFilters = [...this.supportedFilterAttributes, ...['board', 'medium', 'gradeLevel']];
           queryFilters.forEach((attr) => delete queryParams[attr]);
           return queryParams;
         })()
