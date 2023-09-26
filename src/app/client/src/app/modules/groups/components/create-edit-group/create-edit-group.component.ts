@@ -95,11 +95,12 @@ export class CreateEditGroupComponent implements OnInit, OnDestroy, AfterViewIni
       this.groupService.createGroup(request).pipe(takeUntil(this.unsubscribe$)).subscribe(group => {
         if (group) {
           this.toasterService.success(this.resourceService.messages.smsg.grpcreatesuccess);
-          location.reload()
+         
         }
         this.groupService.emitCloseForm();
         this.disableBtn = false;
         this.closeModal({ modalId });
+        // location.reload()
       }, err => {
         this.disableBtn = false;
         const errCode: string = _.get(err, 'response.body.params.err') || _.get(err, 'params.err');
