@@ -2,206 +2,260 @@
 @import "./mixins/mixins";
 @import "layout/footer";
 
-:host ::ng-deep{
-  .new-layout-footer{
-    margin-top:calculateRem(24px);
-    &.player-fullscreen-footer{
-      display: none;
-    }
-    .sbt-footer-container {
-      height: 19rem; //296px
-      width: 100%;
-      padding: 0% 2%;
-      background: none;
-      margin-top:calculateRem(8px);
-    }
-    .icon{
-      color: #007ad9 !important;
-    }
-    .sbt-page-content-area {
-      border-radius: 0rem 0 0 0;
-    }
-    .sbt-container{
-      width:calc(100% - 4%);
-      padding: 0;
-      margin: 0 auto;
-      padding-top: 1.75rem;
-      border-radius: calculateRem(40px) calculateRem(40px) 0 0;
-      background-color: var(--sbt-footer-bg);
-      box-shadow: var(--sbt-box-shadow-6px);
-      left:0;
-      position:absolute;
-      top:calculateRem(0px); //24px
-      bottom: 0;
-      right:0;
-      z-index:8;
-      @include respond-below(sm){
-        bottom: auto;
-      }
-      .sbt-skyline-path{
-        position: absolute;
-        bottom: 0%;
-        overflow: hidden;
-        width: 88%;
-        html[dir="rtl"] & {
-          -webkit-transform: scaleX(-1);
-          transform: scaleX(-1);
-        }
-        @include respond-below(sm){
-          display: none;
-        }
-      }
-      .sbt-footer-shade{
-        position: absolute;
-        bottom: 0;
-        left: calculateRem(40px);
-        html[dir="rtl"] & {
-          left: auto;
-          right: calculateRem(40px);
-          -webkit-transform: scaleX(-1);
-          transform: scaleX(-1);
-        }
-        @include respond-below(sm){
-          display: none;
-        }
-      }
-      .footerMenu {
-        .help-center{
-          margin-bottom: calculateRem(24px);
-          @include respond-below(sm) {
-            margin-bottom: calculateRem(16px);
-          }
-          a{
-            color: #0531FF;
-            font-size: calculateRem(14px);
-            font-weight: bold;
-          }
-        }
-        .contact-info{
-          @include respond-below(sm) {
-            margin-bottom: calculateRem(16px);
-          }
-          a{
-            color: #6236FF;
-            font-size: calculateRem(14px);
-          }
-          .contact-info-title{
-            color: #6236FF;
-            font-weight: bold;
-            font-size: calculateRem(14px);
-            margin-bottom: calculateRem(8px);
-            @include respond-below(sm){
-              margin-bottom: calculateRem(4px);
-            }
-          }
-        }
-      }
-      .footer-terms-info{
-        a{
-          color: var(--sbt-footer-info-links);
-          font-size: calculateRem(14px);
-          font-weight: bold;
-          &:hover{
-            color: var(--sbt-footer-info-links-hover);
-          }
-        }
-        color: var(--sbt-footer-info-links);
-        font-size: calculateRem(14px);
-        font-weight: bold
-      }
-      .sbt-footer-download-app{
-        justify-content: flex-end;
-        @include respond-below(sm){
-          justify-content: center;
-        }
-        .sbt-footer-bg{
-          padding-top: calculateRem(30px);
-          .sbt-footer-bg-img{
-            height: calculateRem(200px);
-            width: calculateRem(380px);
-            @include respond-below (sm){
-              height: calculateRem(180px);
-              width: calculateRem(320px);
-            }
-          }
-          .sbt-footer-title{
-            font-size: calculateRem(16px) !important;
-            color: var(--gray-800);
-            padding: 0 calculateRem(24px);
-            position: absolute;
-            width: calculateRem(130px);
-            bottom: calculateRem(95px);
-            left: 0;
-            right: 0;
-            margin: 0 auto;
-            @include respond-below (sm){
-              bottom: calculateRem(80px);
-            }
-          }
-          .playStore-img{
-            width: calculateRem(164px);
-            position: absolute;
-            bottom: calculateRem(30px);
-            left: 0;
-            right: 0;
-            margin: 0 auto;
-            @include respond-below(sm){
-              width: calculateRem(144px);
-              position: absolute;
-              bottom: calculateRem(20px);
-            }
-          }
-        }
-      }
-      .ui.grid.stackable{
-        @include respond-below(md){
-          padding: 0 calculateRem(32px) !important;
-        }
-      }
-      .ui.stackable.grid>.wide.column{
-        @include respond-below(md){
-          padding: 0 !important;
-        }
-      }
-    }   
-  }
+// :host ::ng-deep{
+//   .new-layout-footer{
+//     margin-top:calculateRem(24px);
+//     &.player-fullscreen-footer{
+//       display: none;
+//     }
+//     .sbt-footer-container {
+//       height: 19rem; //296px
+//       width: 100%;
+//       padding: 0% 2%;
+//       background: none;
+//       margin-top:calculateRem(8px);
+//     }
+//     .icon{
+//       color: #007ad9 !important;
+//     }
+//     .sbt-page-content-area {
+//       border-radius: 0rem 0 0 0;
+//     }
+//     .sbt-container{
+//       width:calc(100% - 4%);
+//       padding: 0;
+//       margin: 0 auto;
+//       padding-top: 1.75rem;
+//       border-radius: calculateRem(40px) calculateRem(40px) 0 0;
+//       background-color: var(--sbt-footer-bg);
+//       box-shadow: var(--sbt-box-shadow-6px);
+//       left:0;
+//       position:absolute;
+//       top:calculateRem(0px); //24px
+//       bottom: 0;
+//       right:0;
+//       z-index:8;
+//       @include respond-below(sm){
+//         bottom: auto;
+//       }
+//       .sbt-skyline-path{
+//         position: absolute;
+//         bottom: 0%;
+//         overflow: hidden;
+//         width: 88%;
+//         html[dir="rtl"] & {
+//           -webkit-transform: scaleX(-1);
+//           transform: scaleX(-1);
+//         }
+//         @include respond-below(sm){
+//           display: none;
+//         }
+//       }
+//       .sbt-footer-shade{
+//         position: absolute;
+//         bottom: 0;
+//         left: calculateRem(40px);
+//         html[dir="rtl"] & {
+//           left: auto;
+//           right: calculateRem(40px);
+//           -webkit-transform: scaleX(-1);
+//           transform: scaleX(-1);
+//         }
+//         @include respond-below(sm){
+//           display: none;
+//         }
+//       }
+//       .footerMenu {
+//         .help-center{
+//           margin-bottom: calculateRem(24px);
+//           @include respond-below(sm) {
+//             margin-bottom: calculateRem(16px);
+//           }
+//           a{
+//             color: #0531FF;
+//             font-size: calculateRem(14px);
+//             font-weight: bold;
+//           }
+//         }
+//         .contact-info{
+//           @include respond-below(sm) {
+//             margin-bottom: calculateRem(16px);
+//           }
+//           a{
+//             color: #6236FF;
+//             font-size: calculateRem(14px);
+//           }
+//           .contact-info-title{
+//             color: #6236FF;
+//             font-weight: bold;
+//             font-size: calculateRem(14px);
+//             margin-bottom: calculateRem(8px);
+//             @include respond-below(sm){
+//               margin-bottom: calculateRem(4px);
+//             }
+//           }
+//         }
+//       }
+//       .footer-terms-info{
+//         a{
+//           color: var(--sbt-footer-info-links);
+//           font-size: calculateRem(14px);
+//           font-weight: bold;
+//           &:hover{
+//             color: var(--sbt-footer-info-links-hover);
+//           }
+//         }
+//         color: var(--sbt-footer-info-links);
+//         font-size: calculateRem(14px);
+//         font-weight: bold
+//       }
+//       .sbt-footer-download-app{
+//         justify-content: flex-end;
+//         @include respond-below(sm){
+//           justify-content: center;
+//         }
+//         .sbt-footer-bg{
+//           padding-top: calculateRem(30px);
+//           .sbt-footer-bg-img{
+//             height: calculateRem(200px);
+//             width: calculateRem(380px);
+//             @include respond-below (sm){
+//               height: calculateRem(180px);
+//               width: calculateRem(320px);
+//             }
+//           }
+//           .sbt-footer-title{
+//             font-size: calculateRem(16px) !important;
+//             color: var(--gray-800);
+//             padding: 0 calculateRem(24px);
+//             position: absolute;
+//             width: calculateRem(130px);
+//             bottom: calculateRem(95px);
+//             left: 0;
+//             right: 0;
+//             margin: 0 auto;
+//             @include respond-below (sm){
+//               bottom: calculateRem(80px);
+//             }
+//           }
+//           .playStore-img{
+//             width: calculateRem(164px);
+//             position: absolute;
+//             bottom: calculateRem(30px);
+//             left: 0;
+//             right: 0;
+//             margin: 0 auto;
+//             @include respond-below(sm){
+//               width: calculateRem(144px);
+//               position: absolute;
+//               bottom: calculateRem(20px);
+//             }
+//           }
+//         }
+//       }
+//       .ui.grid.stackable{
+//         @include respond-below(md){
+//           padding: 0 calculateRem(32px) !important;
+//         }
+//       }
+//       .ui.stackable.grid>.wide.column{
+//         @include respond-below(md){
+//           padding: 0 !important;
+//         }
+//       }
+//     }   
+//   }
+// }
+
+// .footer{
+//   padding: 0 10px;
+// }
+// .footer p {
+//   font-size: 25px;
+// }
+// .footer .icon:hover{
+//   color: #00aecd;
+// }
+// .footer {
+//   background-color: #004367;
+//   padding: 25px 19px;
+//   color: #ffffff;
+// }
+// .footer h4 {
+//   font-size: 25px;
+// }
+// .sb-social {
+//   margin-top: 70px;
+// }
+// .sb-social a {
+//   margin-right: 20px;
+// }
+// .footer .item {
+//   font-size: 18px;
+//   padding-bottom: 10px !important;
+// }
+// .footer .ui.list {
+//   padding: 20px 20px !important;
+//   margin: 0;
+//   position: relative;
+//   margin-left: 40px;
+//   margin-top: 25px;
+// }
+// .footer .ui.list:before {
+//   content: "";
+//   position: absolute;
+//   height: 100%;
+//   width: 2px;
+//   background-color: #ffffff;
+//   left: 0;
+//   top: 0;
+// }
+// .fs-0-925{
+//   font-size: 16px !important;
+//   font-weight: 300;
+// }
+// .icon{
+//   color: #fff;
+//   font-size: 28px !important;
+// }
+
+footer{
+    background-color: #004367 !important;
+    padding: 25px 19px;
+    color: #ffffff;
 }
 
-.footer{
-  padding: 0 10px;
+.footer-img {
+  // background-image: url("../images/Footer_bg.png");
+  padding: 180px 30px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
-.footer p {
-  font-size: 25px;
+
+.footer-title {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 39px;
+  text-align: right;
+  color: #FFFFFF;
 }
-.footer .icon:hover{
-  color: #00aecd;
+
+.footer-st {
+  font-weight: 400 !important;
 }
-.footer {
-  background-color: #004367;
-  padding: 25px 19px;
-  color: #ffffff;
-}
-.footer h4 {
-  font-size: 25px;
-}
-.sb-social {
-  margin-top: 70px;
-}
-.sb-social a {
-  margin-right: 20px;
-}
-.footer .item {
-  font-size: 18px;
-  padding-bottom: 10px !important;
-}
-.footer .ui.list {
+
+footer .ui.list {
   padding: 20px 20px !important;
   margin: 0;
   position: relative;
   margin-left: 40px;
   margin-top: 25px;
 }
-.footer .ui.list:before {
+
+footer .ui.list:before {
   content: "";
   position: absolute;
   height: 100%;
@@ -210,11 +264,67 @@
   left: 0;
   top: 0;
 }
-.fs-0-925{
-  font-size: 16px !important;
-  font-weight: 300;
+
+footer .item {
+  font-size: 1.1vw !important;
+  padding-bottom: 10px !important;
+  font-weight: 400;
 }
-.icon{
+
+@media (min-width: 768px){
+  h4.fs-0-925 {
+      font-size: 1.8vw;
+      font-weight: 400 !important;
+  }
+
+  .sb-social {
+    margin-top: 103px;
+  }
+
+  p.fs-0-925 {
+    font-size: 1.2vw !important;
+    font-weight: 400;
+    margin-bottom: 0;
+  }
+
+  .pt-18 {
+    padding-top: 18px;
+  }
+
+  .px-74{
+    padding: 0 74px;
+  }
+}
+
+a{
+  text-decoration: none;
+}
+
+.text-white{
+  color: #fff !important;
+}
+
+.mt-15 {
+    margin-top: 15px;
+}
+
+.sb-social a {
+  margin-right: 20px;
+}
+
+.icon {
   color: #fff;
   font-size: 28px !important;
+}
+
+.sb-mb-10 {
+  margin-bottom: 10px !important;
+}
+
+.sb-foot-separate {
+  width: 100%;
+  height: 10px;
+  display: block;
+  background-color: #00aecd;
+  margin-top: 70px;
 }

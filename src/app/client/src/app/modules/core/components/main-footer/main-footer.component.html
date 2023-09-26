@@ -1,34 +1,48 @@
 <div *ngIf="showFooter">
+  <div class="sb-foot-separate"></div>
   <footer class="footer old-footer" #footerFix *ngIf="!layoutConfiguration" [ngClass]="{'player-fullscreen-footer': isFullScreenView}">
-    <div class="ui container">
-      <div class="ui grid stackable">
-				<div class="twelve wide tablet column six wide computer">
-					<h4 class="fs-0-925">Important Links</h4>
-					<div class="ui list">
-						<a href="https://niua.org/cdg/" target="_blank" class="item fs-0-925 text-white">Centre for Digital Governance</a>
-						<a href="https://nudm.mohua.gov.in/" target="_blank" class="item fs-0-925 text-white">National Urban Digital Mission</a>
-					</div>
-					<div class="sb-social">
-						<a href="https://www.linkedin.com/school/national-institute-of-urban-affairs/"  target="_blank" ><i class="icon linkedin"></i></a>
-						<a href="https://www.facebook.com/profile.php?id=100068273286928"  target="_blank" ><i class="icon facebook"></i></a>
-						<a href="https://twitter.com/NIUA_India"  target="_blank" ><i class="icon twitter"></i></a>
-					</div>
-				</div>
-				<div class="twelve wide tablet column six wide computer">
-					<p class="fs-0-925 font-weight-bold sb-mb-10">Nodal Ministry:</p>
+    <footer>
+      <div class="ui grid sm-text-center px-74">
+          <div class="row py-40">
+              <div class="twelve wide tablet column six wide computer">
+                  <h4 class="fs-0-925">Important Links</h4>
+                  <div class="ui list">
+                      <a href="https://niua.org/cdg/" target="_blank" class="item fs-0-925 text-white">Centre for
+                          Digital Governance</a>
+                      <a href="https://nudm.mohua.gov.in/" target="_blank" class="item fs-0-925 text-white">National
+                          Urban Digital Mission</a>
+                  </div>
+                  <div class="sb-social sm-d-none">
+                      <a href="https://www.linkedin.com/school/national-institute-of-urban-affairs/"
+                          target="_blank"><i class="icon linkedin"></i></a>
+                      <a href="https://www.facebook.com/profile.php?id=100068273286928" target="_blank"><i
+                              class="icon facebook"></i></a>
+                      <a href="https://twitter.com/NIUA_India" target="_blank"><i class="icon twitter"></i></a>
+                  </div>
+              </div>
+              <div class="twelve wide tablet column six wide computer">
+                  <h4 class="fs-0-925 font-weight-bold sb-mb-10">Nodal Ministry:</h4>
 
-					<h4 class="fs-0-925 mt-15">Ministry of Housing and Urban Affairs, Government of India</h4>
-					<p class="fs-0-925">Nirman Bhawan, New Delhi- 110001, INDIA</p>
-					<p class="fs-0-925 font-weight-bold">Anchor Institute:</p>
+                  <p class="fs-0-925 mt-15">Ministry of Housing and Urban Affairs, Government of India</p>
+                  <p class="fs-0-925">Nirman Bhawan, New Delhi- 110001, INDIA</p>
+                  <h4 class="fs-0-925 font-weight-bold pt-18">Anchor Institute:</h4>
 
-					<h4 class="fs-0-925 mt-0 sb-mb-10">National Institute of Urban Affairs</h4>
+                  <p class="fs-0-925 mt-0 sb-mb-10">National Institute of Urban Affairs</p>
 
-					<p class="fs-0-925"> 1st Floor, Core 4B, India Habitat Centre, Lodhi Road, New Delhi - 110003, INDIA
-					</p>
-					<p class="fs-0-925">Phone: (+91 11) 24617517, 24617543, 24617595</p>
-				</div>
-			</div>
-		</div>
+                  <p class="fs-0-925"> 1st Floor, Core 4B, India Habitat Centre, Lodhi Road, New Delhi - 110003, INDIA
+                  </p>
+                  <p class="fs-0-925">Phone: (+91 11) 24617517, 24617543, 24617595</p>
+                  <!-- <div class="sb-social sm-position">
+                      <a href="https://www.linkedin.com/school/national-institute-of-urban-affairs/"
+                          target="_blank"><i class="icon linkedin"></i></a>
+                      <a href="https://www.facebook.com/profile.php?id=100068273286928" target="_blank"><i
+                              class="icon facebook"></i></a>
+                      <a href="https://twitter.com/NIUA_India" target="_blank"><i class="icon twitter"></i></a>
+                  </div> -->
+              </div>
+          </div>
+      </div>
+  </footer>
     <!-- <div  class="ui container">
       <div class="ui grid stackable">
         <div class="four wide column footerMenu mr-auto"> -->
@@ -102,91 +116,51 @@
         </div> -->
       <!-- </div>
     </div> -->
-  <div class="sb-foot-separate"></div>
-  <footer>
-      <div class="ui grid sm-text-center px-74">
-          <div class="row py-40">
-              <div class="sixteen wide tablet column eight wide computer">
-                  <h4 class="fs-0-925">Important Links</h4>
-                  <div class="ui list">
-                      <a href="https://niua.org/cdg/" target="_blank" class="item fs-0-925 text-white">Centre for
-                          Digital Governance</a>
-                      <a href="https://nudm.mohua.gov.in/" target="_blank" class="item fs-0-925 text-white">National
-                          Urban Digital Mission</a>
-                  </div>
-                  <div class="sb-social sm-d-none">
-                      <a href="https://www.linkedin.com/school/national-institute-of-urban-affairs/"
-                          target="_blank"><i class="icon linkedin"></i></a>
-                      <a href="https://www.facebook.com/profile.php?id=100068273286928" target="_blank"><i
-                              class="icon facebook"></i></a>
-                      <a href="https://twitter.com/NIUA_India" target="_blank"><i class="icon twitter"></i></a>
-                  </div>
-              </div>
-              <div class="sixteen wide tablet column eight wide computer">
-                  <h4 class="fs-0-925 font-weight-bold sb-mb-10">Nodal Ministry:</h4>
-
-                  <p class="fs-0-925 mt-15">Ministry of Housing and Urban Affairs, Government of India</p>
-                  <p class="fs-0-925">Nirman Bhawan, New Delhi- 110001, INDIA</p>
-                  <h4 class="fs-0-925 font-weight-bold pt-18">Anchor Institute:</h4>
-
-                  <p class="fs-0-925 mt-0 sb-mb-10">National Institute of Urban Affairs</p>
-
-                  <p class="fs-0-925"> 1st Floor, Core 4B, India Habitat Centre, Lodhi Road, New Delhi - 110003, INDIA
-                  </p>
-                  <p class="fs-0-925">Phone: (+91 11) 24617517, 24617543, 24617595</p>
-                  <div class="sb-social sm-position">
-                      <a href="https://www.linkedin.com/school/national-institute-of-urban-affairs/"
-                          target="_blank"><i class="icon linkedin"></i></a>
-                      <a href="https://www.facebook.com/profile.php?id=100068273286928" target="_blank"><i
-                              class="icon facebook"></i></a>
-                      <a href="https://twitter.com/NIUA_India" target="_blank"><i class="icon twitter"></i></a>
-                  </div>
-              </div>
-          </div>
-      </div>
   </footer>
-  <!-- <footer class="new-layout-footer" #footerFix *ngIf="layoutConfiguration" [ngClass]="{'player-fullscreen-footer': isFullScreenView}">
-    <div class="sb-g sbt-fluid-content-bg sbt-footer-container relative">
-      <div [ngClass]="FIRST_PANEL_LAYOUT"></div>
-      <div [ngClass]="SECOND_PANEL_LAYOUT"></div>
-      <div class="sbt-container">
-        <div class="ui grid stackable px-72">
-            <div class="twelve wide tablet column six wide computer">
-              <h4 class="fs-0-925 font-weight-bold">Important Links</h4>
-              <div class="ui list">
-                <a href="https://niua.org/cdg/" target="_blank" class="item fs-0-925 text-white">Centre for Digital Governance</a>
-                <a href="https://nudm.mohua.gov.in/" target="_blank" class="item fs-0-925 text-white">National Urban Digital Mission</a>
-              </div>
-              <div class="sb-social">
-                <a href="https://www.linkedin.com/school/national-institute-of-urban-affairs/"  target="_blank" ><i class="icon linkedin"></i></a>
-                <a href="https://www.facebook.com/profile.php?id=100068273286928"  target="_blank" ><i class="icon facebook"></i></a>
-                <a href="https://twitter.com/NIUA_India"  target="_blank" ><i class="icon twitter"></i></a>
-              </div>
-            </div>
-            <div class="twelve wide tablet column six wide computer">
-              <p class="fs-0-925 font-weight-bold sb-mb-10">Nodal Ministry:</p>
+  <footer class="new-layout-footer" #footerFix *ngIf="layoutConfiguration" [ngClass]="{'player-fullscreen-footer': isFullScreenView}">
+    <footer>
+        <div class="ui grid sm-text-center px-74">
+            <div class="row py-40">
+                <div class="twelve wide tablet column six wide computer">
+                    <h4 class="fs-0-925">Important Links</h4>
+                    <div class="ui list">
+                        <a href="https://niua.org/cdg/" target="_blank" class="item fs-0-925 text-white">Centre for
+                            Digital Governance</a>
+                        <a href="https://nudm.mohua.gov.in/" target="_blank" class="item fs-0-925 text-white">National
+                            Urban Digital Mission</a>
+                    </div>
+                    <div class="sb-social sm-d-none">
+                        <a href="https://www.linkedin.com/school/national-institute-of-urban-affairs/"
+                            target="_blank"><i class="icon linkedin"></i></a>
+                        <a href="https://www.facebook.com/profile.php?id=100068273286928" target="_blank"><i
+                                class="icon facebook"></i></a>
+                        <a href="https://twitter.com/NIUA_India" target="_blank"><i class="icon twitter"></i></a>
+                    </div>
+                </div>
+                <div class="twelve wide tablet column six wide computer">
+                    <h4 class="fs-0-925 font-weight-bold sb-mb-10">Nodal Ministry:</h4>
 
-              <h4 class="fs-0-925 mt-15">Ministry of Housing and Urban Affairs, Government of India</h4>
-              <p class="fs-0-925">Nirman Bhawan, New Delhi- 110001, INDIA</p>
-              <p class="fs-0-925 font-weight-bold">Anchor Institute:</p>
+                    <p class="fs-0-925 mt-15">Ministry of Housing and Urban Affairs, Government of India</p>
+                    <p class="fs-0-925">Nirman Bhawan, New Delhi- 110001, INDIA</p>
+                    <h4 class="fs-0-925 font-weight-bold pt-18">Anchor Institute:</h4>
 
-              <h4 class="fs-0-925 mt-0 sb-mb-10">National Institute of Urban Affairs</h4>
+                    <p class="fs-0-925 mt-0 sb-mb-10">National Institute of Urban Affairs</p>
 
-              <p class="fs-0-925"> 1st Floor, Core 4B, India Habitat Centre, Lodhi Road, New Delhi - 110003, INDIA
-              </p>
-              <p class="fs-0-925">Phone: (+91 11) 24617517, 24617543, 24617595</p>
+                    <p class="fs-0-925"> 1st Floor, Core 4B, India Habitat Centre, Lodhi Road, New Delhi - 110003, INDIA
+                    </p>
+                    <p class="fs-0-925">Phone: (+91 11) 24617517, 24617543, 24617595</p>
+                    <!-- <div class="sb-social sm-position">
+                        <a href="https://www.linkedin.com/school/national-institute-of-urban-affairs/"
+                            target="_blank"><i class="icon linkedin"></i></a>
+                        <a href="https://www.facebook.com/profile.php?id=100068273286928" target="_blank"><i
+                                class="icon facebook"></i></a>
+                        <a href="https://twitter.com/NIUA_India" target="_blank"><i class="icon twitter"></i></a>
+                    </div> -->
+                </div>
             </div>
-            <div class="footerMenu text-left">
-             
-            </div>
-            <div>
-           
-          </div>
-          
         </div>
-      </div>
-    </div>
-  </footer> -->
+    </footer>
+  </footer>
   </div>
 
   <extension-point *appDesktopOnly [name]="'content-manager'"></extension-point>
