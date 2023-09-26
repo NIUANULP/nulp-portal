@@ -27,7 +27,7 @@ export class CertificateTemplateUploadComponent implements OnInit {
   removeTemplatePopup: boolean = false;
   fileUploadForm: FormGroup
   showLoader = false
-  certTemplateList: Array<{}> = [];
+  certTemplateList: any;
   // previewTemplate: any;
   // showPreviewModal;
   queryParams: any;
