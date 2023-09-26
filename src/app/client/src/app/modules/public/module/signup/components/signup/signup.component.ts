@@ -108,7 +108,7 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
   initializeFormFields() {
     this.signUpForm = {
       basicInfo: null,
-      onboardingInfo: null,
+      // onboardingInfo: null,
       emailPassInfo: null
     };
   }
@@ -120,9 +120,9 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
   changeStep() {
     switch(this.signupStage) {
       case this.Stage.BASIC_INFO:
-        this.signupStage = this.Stage.ONBOARDING_INFO;
-        break;
-      case this.Stage.ONBOARDING_INFO:
+      //   this.signupStage = this.Stage.ONBOARDING_INFO;
+      //   break;
+      // case this.Stage.ONBOARDING_INFO:
         this.signupStage = this.Stage.EMAIL_PASSWORD;
         break;
       case this.Stage.EMAIL_PASSWORD:

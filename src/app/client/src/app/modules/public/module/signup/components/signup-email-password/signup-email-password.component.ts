@@ -94,8 +94,10 @@ export class SignupEmailPasswordComponent implements OnInit, OnDestroy, AfterVie
     this.setInteractEventData();
     // Telemetry Start
     this.signUpTelemetryStart();
+
     this.isP1CaptchaEnabled = (<HTMLInputElement>document.getElementById('p1reCaptchaEnabled'))
       ? (<HTMLInputElement>document.getElementById('p1reCaptchaEnabled')).value : 'true';
+      console.log("this.isP1CaptchaEnabled====",this.isP1CaptchaEnabled);
   }
 
   signUpTelemetryStart() {
