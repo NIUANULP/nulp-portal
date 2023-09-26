@@ -361,11 +361,11 @@
             [title]="userProfile?.firstName" [isMenu]="false">
           </sb-member-card>
         </div>
-        <div class="fsmall sb-color-gray-400 my-12 profile__info__desc text-left">
+        <!-- <div class="fsmall sb-color-gray-400 my-12 profile__info__desc text-left">
           {{resourceService.frmelmnts?.lbl?.useInstanceAs | interpolate:'{instance}': instance}}
-        </div>
+        </div> -->
 
-        <div appOnlineOnly (click)="toggleSideMenu(false);navigate('/profile/create-managed-user')"
+        <!-- <div appOnlineOnly (click)="toggleSideMenu(false);navigate('/profile/create-managed-user')"
         role="button" tabindex="0" class="add-user mb-16" *ngIf="totalUsersCount <1">
           <div class="add-user__icon">
             <img src="assets/images/user-circle.svg" alt="Add user">
@@ -399,7 +399,7 @@
           <div class="add-user__label fnormal sb-color-secondary">
             {{resourceService.frmelmnts?.lbl?.addAnotherUser}}
           </div>
-        </div>
+        </div> -->
         <ul class="profile__actions__list pl-0">
           <div class="mobile only" *ngIf="!layoutConfiguration" tabindex="0">
             <app-content-type [layoutConfiguration]="layoutConfiguration" (closeSideMenu)="toggleSideMenu(false)">
