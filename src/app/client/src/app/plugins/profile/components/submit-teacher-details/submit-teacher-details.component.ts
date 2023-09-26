@@ -10,7 +10,7 @@ import {
   ResourceService,
   ServerResponse,
   ToasterService,
-  UtilService, LayoutService
+  UtilService
 } from '@sunbird/shared';
 import { IInteractEventEdata, IInteractEventObject, TelemetryService } from '@sunbird/telemetry';
 import { FieldConfig } from 'common-form-elements-web-v9';
@@ -31,7 +31,6 @@ export class SubmitTeacherDetailsComponent implements OnInit, OnDestroy {
   userProfile: any;
   formAction: string;
   unsubscribe = new Subject<void>();
-  layoutConfiguration: any;
   selectedState;
   selectedDistrict;
   forChanges = {
@@ -93,18 +92,9 @@ export class SubmitTeacherDetailsComponent implements OnInit, OnDestroy {
     public navigationHelperService: NavigationHelperService,
     public otpService: OtpService,
     public tncService: TncService,
-    public utilService: UtilService, public layoutService: LayoutService) { }
+    public utilService: UtilService) { }
 
   ngOnInit() {
-
-    this.layoutConfiguration = this.layoutService.initlayoutConfig();
-    this.layoutService.switchableLayout().
-      pipe(takeUntil(this.unsubscribe)).subscribe(layoutConfig => {
-        if (layoutConfig != null) {
-          this.layoutConfiguration = layoutConfig.layout;
-        }
-      });
-
     this.instance = _.upperCase(this.resourceService.instance || 'SUNBIRD');
     this.consentConfig = { tncLink: this.resourceService.frmelmnts.lbl.tncLabelLink,
        tncText: this.resourceService.frmelmnts.lbl.nonCustodianTC };
@@ -317,11 +307,6 @@ export class SubmitTeacherDetailsComponent implements OnInit, OnDestroy {
         this.resourceService.messages.emsg.m0052);
     });
   }
-
-  goBack() {
-    this.navigationHelperService.goBack();
-  }
-
 
   logAuditEvent() {
     this.telemetryService.audit({

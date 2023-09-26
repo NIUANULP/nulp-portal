@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { ConfigService, ServerResponse, IUserProfile, IUserData, IAppIdEnv } from '@sunbird/shared';
+import { HttpClient } from '@angular/common/http';
 /**
  * Service to fetch user details from server
  *
@@ -11,7 +13,7 @@ export class BrowserCacheTtlService {
   private _browserCacheTtl = '600';
   constructor() {
     try {
-      this._browserCacheTtl = document.getElementById('apiCacheTtl')?(<HTMLInputElement>document.getElementById('apiCacheTtl')).value:'';
+      this._browserCacheTtl = (<HTMLInputElement>document.getElementById('apiCacheTtl')).value;
     } catch (error) {
     }
 

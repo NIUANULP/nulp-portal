@@ -5,7 +5,7 @@ import {
   TenantService,
   OrgDetailsService,
   FormService,
-  ManagedUserService, CoursesService, DeviceRegisterService, ElectronService, ObservationUtilService
+  ManagedUserService, CoursesService, DeviceRegisterService, ElectronService
 } from './../../services';
 import { Component, OnInit, ChangeDetectorRef, Input, OnDestroy } from '@angular/core';
 import {
@@ -19,12 +19,12 @@ import {
 } from '@sunbird/shared';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import * as _ from 'lodash-es';
-import { IInteractEventEdata, TelemetryService } from '@sunbird/telemetry';
+import { IInteractEventObject, IInteractEventEdata, TelemetryService } from '@sunbird/telemetry';
 import { CacheService } from 'ng2-cache-service';
 import { environment } from '@sunbird/environment';
 import { Subject, zip, forkJoin } from 'rxjs';
 import { EXPLORE_GROUPS, MY_GROUPS } from '../../../public/module/group/components/routerLinks';
-
+import { ObservationUtilService} from '../../../observation/service'
 
 declare var jQuery: any;
 type reportsListVersionType = 'v1' | 'v2';
@@ -43,11 +43,6 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     formAction: 'search',
     filterEnv: 'resourcebundle'
   };
-  baseCategoryForm = {
-    formType: 'contentcategory',
-    formAction: 'menubar',
-    filterEnv: 'global'
-  };
   exploreButtonVisibility: string;
   queryParam: any = {};
   showExploreHeader = false;
@@ -61,6 +56,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   orgAdminRole: Array<string>;
   orgSetupRole: Array<string>;
   programDashboardRole: Array<string>;
+  adminVarLink: string;
   avtarMobileStyle = {
     backgroundColor: 'transparent',
     color: '#AAAAAA',
@@ -107,7 +103,6 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   showOfflineHelpCentre = false;
   contributeTabActive: boolean;
   showExploreComponent: boolean;
-  showMainMenuBar = true;
   showSideMenu = false;
   instance: string;
   userListToShow = [];
@@ -161,12 +156,10 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   userType: any;
   showBackButton: boolean;
   showingResult: string;
-  userPreference: any;
-  showReportMenu = false;
+  userPreference:any;
+  showReportMenu:boolean=false;
   showingDescription: string;
-  showSwitchTheme = false;
   urlPaths: string;
-  adminVarLink: string;
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
     public orgDetailsService: OrgDetailsService, public formService: FormService,
@@ -175,10 +168,10 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     private courseService: CoursesService, private utilService: UtilService, public layoutService: LayoutService,
     public activatedRoute: ActivatedRoute, private cacheService: CacheService, private cdr: ChangeDetectorRef,
     public navigationHelperService: NavigationHelperService, private deviceRegisterService: DeviceRegisterService,
-    private connectionService: ConnectionService, public electronService: ElectronService, private observationUtilService: ObservationUtilService) {
+    private connectionService: ConnectionService, public electronService: ElectronService,private observationUtilService:ObservationUtilService) {
     try {
-      this.exploreButtonVisibility = document.getElementById('exploreButtonVisibility')?(<HTMLInputElement>document.getElementById('exploreButtonVisibility')).value:'true';
-      this.reportsListVersion = document.getElementById('reportsListVersion')?(<HTMLInputElement>document.getElementById('reportsListVersion')).value as reportsListVersionType:'v1';
+      this.exploreButtonVisibility = (<HTMLInputElement>document.getElementById('exploreButtonVisibility')).value;
+      this.reportsListVersion = (<HTMLInputElement>document.getElementById('reportsListVersion')).value as reportsListVersionType;
     } catch (error) {
       this.exploreButtonVisibility = 'false';
       this.reportsListVersion = 'v1';
@@ -200,7 +193,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     this.subscription = this.utilService.currentRole.subscribe(async (result) => {
       if (result) {
         this.userType = result;
-        if (this.userType != 'adminstrator') {
+        if(this.userType!='adminstrator'){
           this.setUserPreferences();
           }
       } else {
@@ -208,7 +201,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
           this.userService.userData$.subscribe((profileData: IUserData) => {
             if (_.get(profileData, 'userProfile.profileUserType.type')) {
               this.userType = profileData.userProfile['profileUserType']['type'];
-              if (this.userType != 'adminstrator') {
+              if(this.userType!='adminstrator'){
                 this.setUserPreferences();
                 }
             }
@@ -222,15 +215,16 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     this.observationUtilService.browseByCategoryForm()
       .then((data: any) => {
         let currentBoard;
-        if (this.userPreference && this.userPreference['framework'] && this.userPreference['framework']['id']) {
-            currentBoard = Array.isArray(this.userPreference?.framework?.id) ? (this.userPreference?.framework?.id[0]) : (this.userPreference?.framework?.id);
+        if(this.userPreference && this.userPreference['framework'] && this.userPreference['framework']['id']){
+            currentBoard = Array.isArray(this.userPreference?.framework?.id) ? (this.userPreference?.framework?.id[0]) : (this.userPreference?.framework?.id)
         }
-        const currentUserType = this.userType.toLowerCase();
+        let currentUserType=this.userType.toLowerCase();
         if (data && data[currentBoard] &&
           data[currentBoard][currentUserType]) {
-            this.showReportMenu = true;
-        } else {
-          this.showReportMenu = false;
+            this.showReportMenu=true;
+        }
+        else{
+          this.showReportMenu=false;
         }
       });
   }
@@ -323,52 +317,13 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
       this.languages = [{ 'value': 'en', 'label': 'English', 'dir': 'ltr', 'accessibleText': 'English' }];
     });
   }
-
-  navigateByUrl(url: string) {
-    window.location.href = url;
-  }
-  switchToNewTheme(){
-    const formServiceInputParams = {
-      formType: this.baseCategoryForm.formType,
-      formAction: this.baseCategoryForm.formAction,
-      contentType: this.baseCategoryForm.filterEnv
-    };
-    this.formService.getFormConfig(formServiceInputParams).subscribe((data: any) => {
-      const layoutType = localStorage.getItem('layoutType') || '';
-      const contentTypes = _.sortBy(data, 'index');
-      const defaultTab = _.find(contentTypes, ['default', true]);
-      const isOldThemeDisabled = _.get(defaultTab, 'isOldThemeDisabled');
-      if (!isOldThemeDisabled) {
-        this.showSwitchTheme = true;
-      }
-      if(isOldThemeDisabled && layoutType !== 'joy') {
-        this.layoutService.initiateSwitchLayout();
-      }
-    })
-  }
   navigateToHome() {
-    const formServiceInputParams = {
-      formType: this.baseCategoryForm.formType,
-      formAction: this.baseCategoryForm.formAction,
-      contentType: this.baseCategoryForm.filterEnv
-    };
-    this.formService.getFormConfig(formServiceInputParams).subscribe((data: any) => {
-      const contentTypes = _.sortBy(data, 'index');
-      const defaultTab = _.find(contentTypes, ['default', true]);
-      const goToBasePath = _.get(defaultTab, 'goToBasePath');
-      if (goToBasePath) {
-        this.navigateByUrl(goToBasePath);
-      } else {
-        if (this.userService.loggedIn) {
-          this.navigateByUrl('/resources');
-        } else {
-          this.navigateByUrl(this.userService.slug ? this.userService.slug + '/explore' : '/explore');
-        }
-      }
-    }, (err: any) => {
-
-    });
+    if (this.userService.loggedIn) {
+      window.location.href = '/resources';
+    } else {
+      window.location.href = this.userService.slug ? this.userService.slug + '/explore' : '/explore';
     }
+  }
   onEnter(key) {
     this.queryParam = {};
     if (key && key.length) {
@@ -419,8 +374,6 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
           const child: ActivatedRoute[] = currentRoute.children;
           child.forEach(route => {
             currentRoute = route;
-            const { menuBar: { visible = true } = {} } = currentRoute.snapshot.data;
-            this.showMainMenuBar = visible;
             if (route.snapshot.data.telemetry) {
               if (route.snapshot.data.telemetry.pageid) {
                 this.pageId = route.snapshot.data.telemetry.pageid;
@@ -624,7 +577,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     this.getGuestUser();
     this.checkFullScreenView();
     try {
-      this.helpLinkVisibility = document.getElementById('helpLinkVisibility')?(<HTMLInputElement>document.getElementById('helpLinkVisibility')).value:'false';
+      this.helpLinkVisibility = (<HTMLInputElement>document.getElementById('helpLinkVisibility')).value;
     } catch (error) {
       this.helpLinkVisibility = 'false';
     }
@@ -662,11 +615,10 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     this.setInteractEventData();
     this.cdr.detectChanges();
     this.setWindowConfig();
-    this.switchToNewTheme();
   }
 
   checkFullScreenView() {
-    this.navigationHelperService.contentFullScreenEvent?.pipe(takeUntil(this.unsubscribe$)).subscribe(isFullScreen => {
+    this.navigationHelperService.contentFullScreenEvent.pipe(takeUntil(this.unsubscribe$)).subscribe(isFullScreen => {
       this.isFullScreenView = isFullScreen;
     });
   }

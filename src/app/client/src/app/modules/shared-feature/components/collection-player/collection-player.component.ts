@@ -8,7 +8,7 @@ import * as _ from 'lodash-es';
 import {
   WindowScrollService, ILoaderMessage, PlayerConfig, ICollectionTreeOptions, NavigationHelperService,
   ToasterService, ResourceService, ContentData, ContentUtilsServiceService, ITelemetryShare, ConfigService,
-  ExternalUrlPreviewService, LayoutService, UtilService, ConnectionService, OfflineCardService,
+  ExternalUrlPreviewService, LayoutService, UtilService, ConnectionService, OfflineCardService
 } from '@sunbird/shared';
 import { IInteractEventObject, IInteractEventEdata, IImpressionEventInput, IEndEventInput, IStartEventInput, TelemetryService } from '@sunbird/telemetry';
 import * as TreeModel from 'tree-model';
@@ -119,17 +119,21 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy, AfterViewIn
     this.router.onSameUrlNavigation = 'ignore';
     this.collectionTreeOptions = this.configService.appConfig.collectionTreeOptions;
     this.playerOption = { showContentRating: true };
+    this.mimeTypeFilters = [
+      { text: _.get(this.resourceService, 'frmelmnts.btn.all', 'All'), value: 'all' },
+      { text: _.get(this.resourceService, 'frmelmnts.btn.video', 'Video'), value: 'video' },
+      { text: _.get(this.resourceService, 'frmelmnts.btn.interactive', 'Interactive'), value: 'interactive' },
+      { text: _.get(this.resourceService, 'frmelmnts.btn.docs', 'Docs'), value: 'docs' }
+    ];
     this.activeMimeTypeFilter = ['all'];
   }
 
   ngOnInit() {
-    this.setMimeTypeFilters();
     this.layoutConfiguration = this.layoutService.initlayoutConfig();
     this.isDesktopApp = this.utilService.isDesktopApp;
     this.noContentMessage = _.get(this.resourceService, 'messages.stmsg.m0121');
     this.playerServiceReference = this.userService.loggedIn ? this.playerService : this.publicPlayerService;
     this.initLayout();
-
     this.dialCode = _.get(this.route, 'snapshot.queryParams.dialCode');
     this.contentType = _.get(this.route, 'snapshot.queryParams.contentType') || 'Collection';
     this.contentData = this.getContent();
@@ -139,7 +143,7 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy, AfterViewIn
     });
 
     if (this.isDesktopApp) {
-      this.contentManagerService.contentDownloadStatus$.pipe(takeUntil(this.unsubscribe$)).subscribe(contentDownloadStatus => {
+      this.contentManagerService.contentDownloadStatus$.pipe(takeUntil(this.unsubscribe$)).subscribe( contentDownloadStatus => {
         this.contentDownloadStatus = contentDownloadStatus;
         this.checkDownloadStatus();
       });
@@ -151,6 +155,7 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy, AfterViewIn
 
   initLayout() {
     this.layoutConfiguration = this.layoutService.initlayoutConfig();
+    this.layoutService.scrollTop();
     this.layoutService.switchableLayout().
       pipe(takeUntil(this.unsubscribe$)).subscribe(layoutConfig => {
         if (layoutConfig != null) {
@@ -213,20 +218,12 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy, AfterViewIn
   }
 
   private initPlayer(id: string): void {
-    this.playerConfig = this.getPlayerConfig(id).pipe(map((content:any) => {
-
-      if(this.activeContent.mimeType === this.configService.appConfig.PLAYER_CONFIG.MIME_TYPE.questionset) {
-        const contentDetails = {contentId: id, contentData: content.questionSet };
-        content = this.playerServiceReference.getConfig(contentDetails);
-        this.publicPlayerService.getQuestionSetRead(id).subscribe((data: any) => {
-          content['metadata']['instructions'] = _.get(data, 'result.questionset.instructions');
-        });
-      }
+    this.playerConfig = this.getPlayerConfig(id).pipe(map((content) => {
 
       const CData: Array<{}> = this.dialCode ? [{ id: this.dialCode, type: 'dialCode' }] : [];
-      if (this.groupId) {
-        CData.push({ id: this.groupId, type: 'Group' });
-      }
+        if (this.groupId) {
+          CData.push({ id: this.groupId, type: 'Group' });
+        }
 
       content.context.objectRollup = this.objectRollUp;
       this.telemetryContentImpression = {
@@ -303,15 +300,10 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy, AfterViewIn
   }
 
   private getPlayerConfig(contentId: string): Observable<PlayerConfig> {
-
-    if(this.activeContent.mimeType === this.configService.appConfig.PLAYER_CONFIG.MIME_TYPE.questionset) {
-      return this.publicPlayerService.getQuestionSetHierarchy(contentId);
+    if (this.dialCode) {
+      return this.playerServiceReference.getConfigByContent(contentId, { dialCode: this.dialCode });
     } else {
-      if (this.dialCode) {
-        return this.playerServiceReference.getConfigByContent(contentId, { dialCode: this.dialCode });
-      } else {
-        return this.playerServiceReference.getConfigByContent(contentId);
-      }
+      return this.playerServiceReference.getConfigByContent(contentId);
     }
   }
 
@@ -363,7 +355,6 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy, AfterViewIn
     this.resourceService.languageSelected$.pipe(takeUntil(this.unsubscribe$)).subscribe(item => {
       this.generaliseLabelService.initialize(data, item.value);
       this.noContentMessage = _.get(this.resourceService, 'messages.stmsg.m0121');
-      this.setMimeTypeFilters();
     });
   }
 
@@ -378,7 +369,7 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy, AfterViewIn
           this.telemetryCdata.push({ id: this.dialCode, type: 'dialCode' });
         }
         if (this.groupId) {
-          this.telemetryCdata.push({ id: this.groupId, type: 'Group' });
+          this.telemetryCdata.push({ id: this.groupId, type: 'Group'});
         }
         this.collectionStatus = params.collectionStatus;
         return this.getCollectionHierarchy(params.collectionId);
@@ -483,7 +474,7 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy, AfterViewIn
         const navigateUrl = this.userService.loggedIn ? '/search/Library' : '/explore';
         this.router.navigate([navigateUrl, 1], { queryParams: { key: textbook } });
       } else if (previousPageUrl.queryParams) {
-        this.router.navigate([previousPageUrl.url], { queryParams: previousPageUrl.queryParams });
+        this.router.navigate([previousPageUrl.url], {queryParams: previousPageUrl.queryParams});
       } else {
         const url = this.userService.loggedIn ? '/resources' : '/explore';
         this.router.navigate([url], { queryParams: { selectedTab: 'textbook' } });
@@ -524,7 +515,7 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy, AfterViewIn
 
     if (this.groupId) {
       this.tocTelemetryInteractEdata.id = 'group-library-toc';
-      this.tocTelemetryInteractCdata = [{ id: this.groupId, type: 'Group' }];
+      this.tocTelemetryInteractCdata = [{id: this.groupId, type: 'Group'}];
     }
   }
 
@@ -618,8 +609,8 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy, AfterViewIn
   }
 
   private setTelemetryStartEndData() {
-    if (this.groupId && !_.find(this.telemetryCdata, { id: this.groupId })) {
-      this.telemetryCdata.push({ id: this.groupId, type: 'Group' });
+    if (this.groupId && !_.find(this.telemetryCdata, {id: this.groupId})) {
+      this.telemetryCdata.push({ id: this.groupId, type: 'Group'});
     }
     const deviceInfo = this.deviceDetectorService.getDeviceInfo();
     setTimeout(() => {
@@ -735,7 +726,7 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy, AfterViewIn
       const downloadStatus = ['CANCELED', 'CANCEL', 'FAILED', 'DOWNLOAD'];
       const status = this.contentDownloadStatus[this.collectionData.identifier];
       this.collectionData['downloadStatus'] = _.isEqual(downloadStatus, status) ? 'DOWNLOAD' :
-        (_.includes(['INPROGRESS', 'RESUME', 'INQUEUE'], status) ? 'DOWNLOADING' : _.isEqual(status, 'COMPLETED') ? 'DOWNLOADED' : status);
+      (_.includes(['INPROGRESS', 'RESUME', 'INQUEUE'], status) ? 'DOWNLOADING' : _.isEqual(status, 'COMPLETED') ? 'DOWNLOADED' : status);
     }
   }
 
@@ -802,14 +793,14 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy, AfterViewIn
       collection['downloadStatus'] = this.resourceService.messages.stmsg.m0138;
       if (!(error.error.params.err === 'LOW_DISK_SPACE')) {
         this.toasterService.error(this.resourceService.messages.fmsg.m0090);
-      }
+          }
     });
   }
 
   deleteCollection(collectionData) {
     this.disableDelete = true;
     this.logTelemetry('delete-collection');
-    const request = { request: { contents: [collectionData.identifier] } };
+    const request = {request: {contents: [collectionData.identifier]}};
     this.contentManagerService.deleteContent(request).pipe(takeUntil(this.unsubscribe$)).subscribe(data => {
       this.toasterService.success(this.resourceService.messages.stmsg.desktop.deleteTextbookSuccessMessage);
       collectionData['downloadStatus'] = 'DOWNLOAD';
@@ -839,15 +830,6 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy, AfterViewIn
       }
     };
     this.telemetryService.interact(interactData);
-  }
-
-  private setMimeTypeFilters() {
-    this.mimeTypeFilters = [
-      { text: _.get(this.resourceService, 'frmelmnts.btn.all', 'All'), value: 'all' },
-      { text: _.get(this.resourceService, 'frmelmnts.btn.video', 'Video'), value: 'video' },
-      { text: _.get(this.resourceService, 'frmelmnts.btn.interactive', 'Interactive'), value: 'interactive' },
-      { text: _.get(this.resourceService, 'frmelmnts.btn.docs', 'Docs'), value: 'docs' }
-    ];
   }
 }
 

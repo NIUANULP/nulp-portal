@@ -38,11 +38,7 @@ export class ForumComponent implements OnInit, OnDestroy, AfterViewInit {
     const option = {
       url: `${this.config.urlConFig.URLS.USER.GET_SESSION}/${this.userService.userid}`
     };
-    console.log("discussionUrl options:::::::::::::::::::", option);
     this.learnerService.get(option).subscribe((data: any) => {
-      console.log("discussionUrl:::::::::::::::::::", this.sanitizer.bypassSecurityTrustResourceUrl(
-        `discussions/auth/sunbird-oidc/callback${data.id}&returnTo=/category/${_.get(this.activatedRoute.snapshot, 'queryParams.forumId')}`
-));
       this.discussionUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
         `discussions/auth/sunbird-oidc/callback${data.id}&returnTo=/category/${_.get(this.activatedRoute.snapshot, 'queryParams.forumId')}`
       );

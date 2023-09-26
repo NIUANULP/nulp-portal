@@ -1,8 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ProfileService } from '@sunbird/profile';
 import { ConfigService, ResourceService } from '@sunbird/shared';
-import * as _ from 'lodash-es';
 
 @Component({
     selector: 'app-year-of-birth',
@@ -43,6 +42,6 @@ export class YearOfBirthComponent implements OnInit {
     }
 
     changeBirthYear(year) {
-        this.selectedYearOfBirth = _.get(year, 'value');
+        this.selectedYearOfBirth = year;
     }
 }

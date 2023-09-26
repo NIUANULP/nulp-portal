@@ -13,7 +13,7 @@ import {
 import * as _ from 'lodash-es';
 import { ProfileService } from '@sunbird/profile';
 import { Observable, of, throwError, combineLatest, BehaviorSubject, forkJoin, zip, Subject } from 'rxjs';
-import { first, filter, mergeMap, tap, skipWhile, startWith, takeUntil, debounceTime } from 'rxjs/operators';
+import { first, filter, mergeMap, tap, map, skipWhile, startWith, takeUntil, debounceTime } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import { DOCUMENT } from '@angular/common';
 import { image } from '../assets/images/tara-bot-icon';
@@ -116,7 +116,6 @@ export class AppComponent implements OnInit, OnDestroy {
   guestUserDetails;
   showYearOfBirthPopup = false;
   public isIOS = false;
-  loadPopUps = true;
   @ViewChild('increaseFontSize') increaseFontSize: ElementRef;
   @ViewChild('decreaseFontSize') decreaseFontSize: ElementRef;
   @ViewChild('resetFontSize') resetFontSize: ElementRef;
@@ -208,6 +207,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   setTagManager() {
+    console.log('Tag Manager');
     window['TagManager'] = SBTagModule.instance;
     window['TagManager'].init();
     if (this.userService.loggedIn) {
@@ -223,35 +223,13 @@ export class AppComponent implements OnInit, OnDestroy {
 
   setTheme() {
     const themeColour = localStorage.getItem('layoutColour') || 'Default';
-    if (this.darkModeToggle && this.darkModeToggle.nativeElement) {
-      this.renderer.setAttribute(this.darkModeToggle.nativeElement, 'aria-label', `Selected theme ${themeColour}`);
-    }
+    this.renderer.setAttribute(this.darkModeToggle.nativeElement, 'aria-label', `Selected theme ${themeColour}`);
     this.setSelectedThemeColour(themeColour);
     document.documentElement.setAttribute('data-theme', themeColour);
     this.layoutService.setLayoutConfig(this.layoutConfiguration);
   }
-  checkToShowPopups() {
-    const formReadInputParams = {
-      formType: 'user',
-      formAction: 'onboarding',
-      contentType: 'exclusion',
-      component: 'portal'
-    };
-    this.formService.getFormConfig(formReadInputParams).subscribe(
-      (formResponsedata) => {
-        const routesArray = formResponsedata;
-        const url = location.href
-        routesArray.forEach(element => {
-          if (_.includes(url, element)) {
-            this.loadPopUps = false;
-          }
-        });
-      }
-    );
-  }
-  
+
   ngOnInit() {
-    this.checkToShowPopups();
     this.isIOS = this.utilService.isIos;
     this.isDesktopApp = this.utilService.isDesktopApp;
     if (this.isDesktopApp) {
@@ -295,6 +273,7 @@ export class AppComponent implements OnInit, OnDestroy {
             return this.setUserDetails();
           } else {
             this.isGuestUser = true;
+            // this.updateFrameWork($event);
             this.userService.getGuestUser().subscribe((response) => {
               this.guestUserDetails = response;
             }, error => {
@@ -334,8 +313,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.generaliseLabelService.getGeneraliseResourceBundle();
   // keyboard accessibility enter key click event
     document.onkeydown = function(e) {
-      const element = document.getElementById('overlay-button') as HTMLElement;
-      if (e.keyCode === 13 && document.activeElement !== element) { // The Enter/Return key
+      if (e.keyCode === 13) { // The Enter/Return key
         (document.activeElement  as HTMLElement).click();
       }
     };
@@ -430,21 +408,10 @@ export class AppComponent implements OnInit, OnDestroy {
             let userType;
             if (this.isDesktopApp && this.isGuestUser) {
                userType = _.get(this.guestUserDetails, 'role') ? this.guestUserDetails.role : undefined;
-               this.showUserTypePopup = userType ? false : true;
-            } else if(this.isGuestUser) {
-              userType = localStorage.getItem('userType');
-              if(!this.showUserTypePopup && this.isLocationConfirmed){
-                this.checkFrameworkSelected();
-              }
-              if(!this.isLocationConfirmed){
-                this.zone.run(() => {
-                  this.showUserTypePopup = true
-                  })              
-                }
             } else {
               userType = localStorage.getItem('userType');
             }
-            this.showUserTypePopup = _.get(this.userService, 'loggedIn') ? (!_.get(this.userService, 'userProfile.profileUserType.type') || !userType) : this.showUserTypePopup;
+            this.showUserTypePopup = _.get(this.userService, 'loggedIn') ? (!_.get(this.userService, 'userProfile.profileUserType.type') || !userType) : !userType;
           // }
         }
       });
@@ -527,11 +494,11 @@ export class AppComponent implements OnInit, OnDestroy {
             this.consentConfig = { tncLink: _.get(this.resourceService, 'frmelmnts.lbl.privacyPolicy'), tncText: _.get(this.resourceService, 'frmelmnts.lbl.nonCustodianTC') };
             this.showGlobalConsentPopUpSection = true;
           } else {
-            this.isGuestUser ? this.checkLocationStatus() : this.checkFrameworkSelected();
+            this.checkFrameworkSelected();
           }
         });
       } else {
-        this.isGuestUser ? this.checkLocationStatus() : this.checkFrameworkSelected();
+        this.checkFrameworkSelected();
       }
     }
   }
@@ -568,7 +535,7 @@ export class AppComponent implements OnInit, OnDestroy {
       const frameWorkPopUp: boolean = this.cacheService.get('showFrameWorkPopUp');
       if (frameWorkPopUp) {
         this.showFrameWorkPopUp = false;
-        !this.isGuestUser ? this.checkLocationStatus() : null;
+        // this.checkLocationStatus();
       } else {
         if (this.userService.loggedIn && _.isEmpty(_.get(this.userProfile, 'framework'))) {
           this.showFrameWorkPopUp = true;
@@ -580,11 +547,9 @@ export class AppComponent implements OnInit, OnDestroy {
             }, error => {
               this.showFrameWorkPopUp = true;
             });
-          } else {
-            this.checkLocationStatus();
           }
         } else {
-          this.checkLocationStatus();
+          // this.checkLocationStatus();
         }
       }
     });
@@ -655,7 +620,6 @@ export class AppComponent implements OnInit, OnDestroy {
   private setOrgDetails(): Observable<any> {
     return this.orgDetailsService.getOrgDetails(this.userService.slug).pipe(
       tap(data => {
-        localStorage.setItem('orgHashTagId', _.get(data, 'hashTagId'));
         this.orgDetails = data;
         this.channel = this.orgDetails.hashTagId;
         this.botObject['channel'] = this.channel;
@@ -751,19 +715,16 @@ export class AppComponent implements OnInit, OnDestroy {
    * updates user framework. After update redirects to library
    */
   public updateFrameWork(event) {
+    console.log("event------", event);
     if (this.isGuestUser && !this.guestUserDetails) {
-      const user:any = { name: 'guest', formatedName: 'Guest', framework: event };
-      const userType = localStorage.getItem('userType');
-      if (userType) {
-        user.role = userType;
-      }
+      const user = { name: 'guest', formatedName: 'Guest', framework: event };
       this.userService.createGuestUser(user).subscribe(data => {
         this.toasterService.success(_.get(this.resourceService, 'messages.smsg.m0058'));
       }, error => {
         this.toasterService.error(_.get(this.resourceService, 'messages.emsg.m0005'));
       });
       this.closeFrameworkPopup();
-      this.checkLocationStatus();
+      // this.checkLocationStatus();
     } else {
       const req = {
         framework: event
@@ -771,13 +732,13 @@ export class AppComponent implements OnInit, OnDestroy {
       this.profileService.updateProfile(req).subscribe(res => {
         this.closeFrameworkPopup();
         this.userService.setUserFramework(event);
-        this.checkLocationStatus();
+        // this.checkLocationStatus();
         this.utilService.toggleAppPopup();
         this.showAppPopUp = this.utilService.showAppPopUp;
       }, err => {
         this.toasterService.warning(this.resourceService.messages.emsg.m0012);
         this.closeFrameworkPopup();
-        this.checkLocationStatus();
+        // this.checkLocationStatus();
       });
     }
   }
@@ -819,10 +780,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
   /** will be triggered once location popup gets closed */
   onLocationSubmit() {
-    if( this.isGuestUser){
-      this.showUserTypePopup=false;
-      this.checkFrameworkSelected();
-    }
     this.showYearOfBirthPopup = true;
     if (this.userFeed) {
       this.showUserVerificationPopup = true;
@@ -994,8 +951,5 @@ export class AppComponent implements OnInit, OnDestroy {
         this.router.navigate(['mydownloads'], { queryParams: { selectedTab: 'mydownloads' } });
       }
     });
-  }
-  onActivate(event) {
-    this.layoutService.scrollTop();
   }
 }

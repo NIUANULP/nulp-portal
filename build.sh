@@ -21,9 +21,8 @@ then
 fi
 
 commit_hash=$(git rev-parse --short HEAD)
- nvm install $NODE_VERSION # same is used in client and server
-# nvm install 14.19.0
-# nvm install 16.0.0
+nvm install $NODE_VERSION # same is used in client and server
+
 cd src/app
 mkdir -p app_dist/ # this folder should be created prior server and client build
 rm -rf dist-cdn # remove cdn dist folder

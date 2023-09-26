@@ -68,7 +68,8 @@
 
   <!--Progress Bar-->
   <div class="sb-card-progressbar" *ngIf="!hideProgress">
-    <mat-progress-bar *ngIf="data.completionPercentage > 0" mode="determinate" [value]="data.completionPercentage" class="ui progress"></mat-progress-bar>
+    <sui-progress class="ui progress" [value]="data.completionPercentage" [maximum]="100"
+      *ngIf="data.completionPercentage > 0"></sui-progress>
   </div>
   <!--/Progress Bar-->
 </div>

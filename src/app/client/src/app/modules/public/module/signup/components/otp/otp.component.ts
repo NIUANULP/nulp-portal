@@ -1,22 +1,24 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { SignupService } from './../../services';
-import { ResourceService, ServerResponse, UtilService, ConfigService, ToasterService } from '@sunbird/shared';
+import { ResourceService, ServerResponse, UtilService, ConfigService } from '@sunbird/shared';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash-es';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { IEndEventInput, IInteractEventEdata, TelemetryService } from '@sunbird/telemetry';
-import { TncService } from '@sunbird/core';
 import { RecaptchaComponent } from 'ng-recaptcha';
 
 @Component({
   selector: 'app-otp',
   templateUrl: './otp.component.html',
-  styleUrls: ['./otp.component.scss', '../signup/signup_form.component.scss']
+  styleUrls: ['./otp.component.scss']
 })
 export class OtpComponent implements OnInit {
   @ViewChild('captchaRef') captchaRef: RecaptchaComponent;
   @Input() signUpdata: any;
+  @Input() isMinor: boolean;
+  @Input() tncLatestVersion: any;
+  @Input() yearOfBirth: string;
   @Output() redirectToParent = new EventEmitter();
   otpForm: FormGroup;
   disableSubmitBtn = true;
@@ -44,45 +46,19 @@ export class OtpComponent implements OnInit {
   maxResendTry = 4;
   googleCaptchaSiteKey: string;
   isP2CaptchaEnabled: any;
-  redirecterrorMessage = false;
-  termsAndConditionLink: string;
-  tncLatestVersion: string;
-  showTncPopup = false;
-  @Output() subformInitialized: EventEmitter<{}> = new EventEmitter<{}>();
-  @Output() triggerNext: EventEmitter<boolean> = new EventEmitter<boolean>();
-  @Input() startingForm: any;
-
+  redirecterrorMessage=false;
   constructor(public resourceService: ResourceService, public signupService: SignupService,
     public activatedRoute: ActivatedRoute, public telemetryService: TelemetryService,
     public deviceDetectorService: DeviceDetectorService, public router: Router,
-    public utilService: UtilService, public configService: ConfigService,
-    public tncService: TncService, private toasterService: ToasterService) {
+    public utilService: UtilService, public configService: ConfigService) {
   }
 
   ngOnInit() {
-    console.log('Global Object data => ', this.startingForm); // TODO: log!
-    this.emailAddress = _.get(this.startingForm, 'emailPassInfo.type') === 'email' ? _.get(this.startingForm, 'emailPassInfo.key') : '';
-    this.phoneNumber = _.get(this.startingForm, 'emailPassInfo.type') === 'phone' ? _.get(this.startingForm, 'emailPassInfo.key') : '';
-    this.mode = _.get(this.startingForm, 'emailPassInfo.type');
+    this.emailAddress = this.signUpdata.value.email;
+    this.phoneNumber = this.signUpdata.value.phone;
+    this.mode = this.signUpdata.controls.contactType.value;
     this.otpForm = new FormGroup({
-      otp: new FormControl('', [Validators.required]),
-      tncAccepted: new FormControl(false, [Validators.requiredTrue])
-    });
-    this.tncService.getTncConfig().subscribe((data: ServerResponse) => {
-      this.telemetryLogEvents('fetch-terms-condition', true);
-      const response = _.get(data, 'result.response.value');
-      if (response) {
-        try {
-          const tncConfig = this.utilService.parseJson(response);
-          this.tncLatestVersion = _.get(tncConfig, 'latestVersion') || {};
-          this.termsAndConditionLink = tncConfig[this.tncLatestVersion].url;
-        } catch (e) {
-          this.toasterService.error(_.get(this.resourceService, 'messages.fmsg.m0004'));
-        }
-      }
-    }, (err) => {
-      this.telemetryLogEvents('fetch-terms-condition', false);
-      this.toasterService.error(_.get(this.resourceService, 'messages.fmsg.m0004'));
+      otp: new FormControl('', [Validators.required])
     });
     this.enableSignUpSubmitButton();
     this.unabletoVerifyErrorMessage = this.mode === 'phone' ? this.resourceService.frmelmnts.lbl.unableToVerifyPhone :
@@ -98,28 +74,29 @@ export class OtpComponent implements OnInit {
     this.isP2CaptchaEnabled = (<HTMLInputElement>document.getElementById('p2reCaptchaEnabled'))
       ? (<HTMLInputElement>document.getElementById('p2reCaptchaEnabled')).value : 'true';
   }
-  resendOtpEnablePostTimer() {
-    this.counter = 20;
-    this.disableResendButton = false;
-    setTimeout(() => {
-      this.disableResendButton = true;
-    }, 22000);
-    const interval = setInterval(() => {
-      this.resendOTPbtn = this.resourceService.frmelmnts.lbl.resendOTP + ' (' + this.counter + ')';
-      this.counter--;
-      if (this.counter < 0) {
-        this.resendOTPbtn = this.resourceService.frmelmnts.lbl.resendOTP;
-        clearInterval(interval);
-      }
-    }, 1000);
-  }
+resendOtpEnablePostTimer() {
+  this.counter = 20;
+  this.disableResendButton = false;
+  setTimeout(() => {
+    this.disableResendButton = true;
+  }, 22000);
+  const interval = setInterval(() => {
+    this.resendOTPbtn = this.resourceService.frmelmnts.lbl.resendOTP + ' (' + this.counter + ')';
+    this.counter--;
+    if (this.counter < 0) {
+      this.resendOTPbtn = this.resourceService.frmelmnts.lbl.resendOTP;
+      clearInterval(interval);
+    }
+  }, 1000);
+}
   verifyOTP() {
     const wrongOTPMessage = this.mode === 'phone' ? this.resourceService.frmelmnts.lbl.wrongPhoneOTP :
       this.resourceService.frmelmnts.lbl.wrongEmailOTP;
     this.disableSubmitBtn = true;
     const request = {
       'request': {
-        'key': _.get(this.startingForm, 'emailPassInfo.key'),
+        'key': this.mode === 'phone' ? this.signUpdata.controls.phone.value.toString() :
+          this.signUpdata.controls.email.value,
         'type': this.mode,
         'otp': _.trim(this.otpForm.controls.otp.value)
       }
@@ -177,22 +154,22 @@ export class OtpComponent implements OnInit {
         signupType: 'self'
       },
       'request': {
-        'firstName': _.trim(_.get(this.startingForm, 'basicInfo.name')),
-        'password': _.trim(_.get(this.startingForm, 'emailPassInfo.password')),
-        'dob': _.get(this.startingForm, 'basicInfo.yearOfBirth').toString(),
+        'firstName': _.trim(this.signUpdata.controls.name.value),
+        'password': _.trim(this.signUpdata.controls.password.value),
+        'dob': this.yearOfBirth,
       }
     };
     if (this.mode === 'phone') {
-      createRequest.request['phone'] = _.get(this.startingForm, 'emailPassInfo.key').toString();
+      createRequest.request['phone'] = this.signUpdata.controls.phone.value.toString();
       createRequest.request['phoneVerified'] = true;
-      identifier = _.get(this.startingForm, 'emailPassInfo.key').toString();
+      identifier = this.signUpdata.controls.phone.value.toString();
     } else {
-      createRequest.request['email'] = _.get(this.startingForm, 'emailPassInfo.key');
+      createRequest.request['email'] = this.signUpdata.controls.email.value;
       createRequest.request['emailVerified'] = true;
-      identifier = _.get(this.startingForm, 'emailPassInfo.key');
+      identifier = this.signUpdata.controls.email.value;
     }
     createRequest.request['reqData'] = _.get(data, 'reqData');
-    if (this.otpForm.controls.tncAccepted.value && this.otpForm.controls.tncAccepted.status === 'VALID') {
+    if (this.signUpdata.controls.tncAccepted.value && this.signUpdata.controls.tncAccepted.status === 'VALID') {
       this.signupService.createUserV3(createRequest).subscribe((resp: ServerResponse) => {
         this.telemetryLogEvents('sign-up', true);
         const tncAcceptRequestBody = {
@@ -210,6 +187,7 @@ export class OtpComponent implements OnInit {
         });
       },
         (err) => {
+          console.log(err);
           this.telemetryLogEvents('sign-up', false);
           this.infoMessage = '';
           this.errorMessage = this.resourceService.messages.fmsg.m0085;
@@ -261,7 +239,7 @@ export class OtpComponent implements OnInit {
   }
 
   resendOTP(captchaResponse?) {
-    this.resendOtpCounter = this.resendOtpCounter + 1;
+    this.resendOtpCounter = this.resendOtpCounter + 1 ;
     if (this.resendOtpCounter >= this.maxResendTry) {
       this.disableResendButton = false;
       this.infoMessage = '';
@@ -270,12 +248,12 @@ export class OtpComponent implements OnInit {
     }
     const request = {
       'request': {
-        'key': _.trim(_.get(this.startingForm, 'emailPassInfo.key').toString()),
+        'key': this.signUpdata.controls.contactType.value === 'phone' ?
+          this.signUpdata.controls.phone.value.toString() : this.signUpdata.controls.email.value,
         'type': this.mode
       }
     };
-    // if (this.isMinor) {
-    if (false) {
+    if (this.isMinor) {
       request.request['templateId'] = this.configService.constants.TEMPLATES.VERIFY_OTP_MINOR;
     }
     this.signupService.generateOTPforAnonymousUser(request, captchaResponse).subscribe(
@@ -393,29 +371,5 @@ export class OtpComponent implements OnInit {
       }
     };
     this.telemetryService.log(event);
-  }
-
-  showAndHidePopup(mode: boolean) {
-    this.showTncPopup = mode;
-  }
-
-  generateTelemetry(e) {
-    const selectedType = e.target.checked ? 'selected' : 'unselected';
-    const interactData = {
-      context: {
-        env: 'self-signup',
-        cdata: [
-          { id: 'user:tnc:accept', type: 'Feature' },
-          { id: 'SB-16663', type: 'Task' }
-        ]
-      },
-      edata: {
-        id: 'user:tnc:accept',
-        type: 'click',
-        subtype: selectedType,
-        pageid: 'self-signup'
-      }
-    };
-    this.telemetryService.interact(interactData);
   }
 }

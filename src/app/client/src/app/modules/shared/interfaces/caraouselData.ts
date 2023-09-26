@@ -1,5 +1,7 @@
 import { ICourses } from '@sunbird/core';
+import { IContents } from './content';
 import {ICard} from './card';
+import { IAction } from './action';
 /**
  * ICaraouselData interface
 */

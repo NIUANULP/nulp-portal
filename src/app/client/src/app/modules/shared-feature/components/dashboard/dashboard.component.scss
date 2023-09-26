@@ -2,8 +2,8 @@
 
 .group-name {
     font-family: Noto Sans Regular;
-    line-height: 1.5rem;
-    color: var(--primary-color);
+    line-height: 24px;
+    color: #024F9D;
     font-size: 1.25rem;
   }
   ::ng-deep {
@@ -11,7 +11,7 @@
       white-space: nowrap;
       // height: calc(100vh - 100px);
       display: block;
-      overflow: inherit;
+      overflow: auto;
   } 
   table.dataTable.no-footer {
       display: table;
@@ -22,24 +22,25 @@
       border-collapse: separate;
       border-spacing: 0;
       font-size: .875rem;
+      border-radius: 1.5rem;
       box-shadow: 0.375rem 0.375rem 0.125rem 0 rgb(0 0 0 / 10%);
       border-bottom: 0px !important;
-      background:var(--white);
-      border: 1px solid var(--rc-dddddd);
+      background:#fff;
+      border: 1px solid #ddd;
       cursor:pointer;
   }
   table.dataTable thead .sorting {
-    background-image: url(../../../../../assets/images/sort.svg) !important;
-    background-size: 1.5rem 1rem;
+    background-image: url(assets/images/sort.svg) !important;
+    background-size: 20px 10px;
 }
   table.dataTable tbody td {
-      padding: 0.5rem 2.5rem;
+      padding: 8px 40px;
   }
   thead tr th {
       text-align: left;
   }
   table.dataTable thead th {
-      padding: 0.5rem 1.5rem !important;
+      padding: 8px 24px !important;
       border-bottom: none !important;
   }
   table.dataTable thead .sorting,
@@ -61,7 +62,7 @@
       border-top: none !important;
   }
   table.dataTable tbody tr:nth-child(odd) {
-      background-color: var(--rc-F6F6F6) !important;
+      background-color: #f6f6f6 !important;
   }
   table.dataTable.display tbody tr:hover,
   table.dataTable.hover tbody tr:hover {
@@ -75,11 +76,11 @@
     margin: 1rem 0rem;
     .last-update-label {
         font-size: 0.87rem;
-        color: var(--gray-300);
+        color: #969696;
         margin-bottom: 0;
     }
     .download-csv {
-        color: var(--primary-color);
+        color: #024F9D;
         font-size: 0.87rem;
         font-weight: bold;
         border: none;

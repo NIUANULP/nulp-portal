@@ -8,9 +8,6 @@ const routes: Routes = [
         reuse: true,
         path: 'help'
       },
-      menuBar: {
-        visible: false
-    },
       telemetry: {
         env: 'help', pageid: 'faq', type: 'view', subtype: 'paginate'
       }

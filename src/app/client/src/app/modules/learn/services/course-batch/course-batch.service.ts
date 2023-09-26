@@ -1,6 +1,6 @@
 import { of as observableOf, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable, Input, EventEmitter } from '@angular/core';
 import { ConfigService, ServerResponse } from '@sunbird/shared';
 import { SearchParam, LearnerService, UserService, ContentService, SearchService } from '@sunbird/core';
 import * as _ from 'lodash-es';
@@ -57,7 +57,7 @@ export class CourseBatchService {
       } else if (mentorOrg) {
         option.data.request.filters['organisations.organisationId'] = mentorOrg;
       }
-      // option.data.request.filters['organisations.roles'] = ['COURSE_MENTOR'];
+      option.data.request.filters['organisations.roles'] = ['COURSE_MENTOR'];
       return this.learnerService.post(option).pipe(map((data) => {
         if (_.isEmpty(requestParam)) {
           this.defaultUserList = data;
@@ -139,30 +139,20 @@ export class CourseBatchService {
     };
     return this.learnerService.patch(option);
   }
-  addUsersToBatch(userId, batchId, courseId) {
+  addUsersToBatch(request, batchId) {
     const option = {
-      url: this.configService.urlConFig.URLS.BATCH.ADD_USERS,
+      url: this.configService.urlConFig.URLS.BATCH.ADD_USERS + '/' + batchId,
       data: {
-        request: {
-          courseId: courseId,
-          batchId: batchId,
-          userId: userId
-        }
+        request: request
       }
     };
     return this.learnerService.post(option);
   }
 
-  removeUsersFromBatch(userId, batchId, courseId) {
+  removeUsersFromBatch(batchId, request) {
     const option = {
-      url: this.configService.urlConFig.URLS.BATCH.REMOVE_USERS,
-      data: {
-        request: {
-          courseId: courseId,
-          batchId: batchId,
-          userId: userId
-        }
-      }
+      url: this.configService.urlConFig.URLS.BATCH.REMOVE_USERS + '/' + batchId,
+      data: request
     };
     return this.learnerService.post(option);
   }

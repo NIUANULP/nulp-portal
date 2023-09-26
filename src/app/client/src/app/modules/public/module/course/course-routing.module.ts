@@ -15,9 +15,6 @@ const routes: Routes = [
       telemetry: {
         env: 'explore-course', pageid: 'explore-view-all', type: 'view', subtype: 'paginate'
       },
-      menuBar: {
-        visible: false
-      },
       filterType: 'explore-course',
       frameworkName: true,
       formAction: 'filter',
@@ -28,9 +25,6 @@ const routes: Routes = [
     path: ':pageNumber', component: ExploreCourseComponent, data: {
       telemetry: {
         env: 'explore-course', pageid: 'explore-course-search', type: 'view', subtype: 'paginate'
-      },
-      menuBar: {
-        visible: false
       },
       softConstraints: { badgeAssertions: 98, board: 99, channel: 100 }
     }
@@ -44,9 +38,6 @@ const routes: Routes = [
         data: {
           telemetry: {
             env: 'explore-course-toc', pageid: 'explore-course-toc', type: 'view'
-          },
-          menuBar: {
-            visible: false
           }
         },
       },

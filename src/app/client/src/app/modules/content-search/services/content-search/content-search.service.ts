@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { FrameworkService, ChannelService } from '@sunbird/core';
+import { Injectable, EventEmitter } from '@angular/core';
+import { OrgDetailsService, FrameworkService, ChannelService } from '@sunbird/core';
 import { Observable, BehaviorSubject, of } from 'rxjs';
 import { skipWhile, mergeMap, first, map } from 'rxjs/operators';
 import * as _ from 'lodash-es';
@@ -29,7 +29,8 @@ export class ContentSearchService {
       .pipe(skipWhile(data => data === undefined || data === null));
   }
 
-  constructor(private frameworkService: FrameworkService, private channelService: ChannelService) { }
+  constructor(private frameworkService: FrameworkService, private orgDetailsService: OrgDetailsService,
+    private channelService: ChannelService) { }
 
   public initialize(channelId: string, custodianOrg = false, defaultBoard: string) {
     this.channelId = channelId;
@@ -39,7 +40,7 @@ export class ContentSearchService {
     this._searchResults$ = new BehaviorSubject<any>(undefined);
     return this.fetchChannelData();
   }
-  fetchChannelData() {
+  private fetchChannelData() {
     return this.channelService.getFrameWork(this.channelId)
       .pipe(mergeMap((channelDetails) => {
         if (this.custodianOrg) {

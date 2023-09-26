@@ -33,6 +33,7 @@ export class EntityListComponent implements OnInit {
   ngOnInit() {}
 
   public closeModal() {
+    this.modal.approve();
     this.closeEvent.emit({value: null});
   }
   onEntityChange(entity) {
@@ -54,5 +55,6 @@ export class EntityListComponent implements OnInit {
       selectedEntity: this.selectedEntity
     };
     this.closeEvent.emit({value: data});
+    this.modal.approve();
   }
 }

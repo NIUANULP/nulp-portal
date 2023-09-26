@@ -1,9 +1,9 @@
 
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, first, share } from 'rxjs/operators';
 import { combineLatest } from 'rxjs';
 import { CourseBatchService, CourseProgressService, CourseConsumptionService } from './../../../services';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Component, OnInit, Input, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, Output, EventEmitter, ViewChild } from '@angular/core';
 import { ResourceService, ServerResponse, ToasterService, ConnectionService } from '@sunbird/shared';
 import { PermissionService, UserService, GeneraliseLabelService } from '@sunbird/core';
 import * as _ from 'lodash-es';
@@ -77,15 +77,13 @@ export class BatchDetailsComponent implements OnInit, OnDestroy {
   }
   isUnenrollDisabled() {
     this.isUnenrollbtnDisabled = true;
-    let progressToDisplay = 0;
     if (this.courseProgressData) {
       this.progress = _.get(this.courseProgressData , 'progress') ? Math.round(this.courseProgressData.progress) : 0;
-      progressToDisplay = Math.floor((this.courseProgressData.completedCount / this.courseHierarchy.leafNodesCount) * 100);
     } else {
       return;
     }
     if ((!this.enrolledBatchInfo.endDate || (this.enrolledBatchInfo.endDate >= this.todayDate)) &&
-    this.enrolledBatchInfo.enrollmentType === 'open' && this.progress !== 100 && progressToDisplay !== 100) {
+    this.enrolledBatchInfo.enrollmentType === 'open' && this.progress !== 100) {
       this.isUnenrollbtnDisabled = false;
     }
     if (!this.isConnected) {
@@ -163,7 +161,7 @@ export class BatchDetailsComponent implements OnInit, OnDestroy {
         }, (err) => {
           this.showError = true;
           if (!this.isDesktopApp || (this.isDesktopApp && this.isConnected)) {
-            this.toasterService.error(this.resourceService.messages?.fmsg?.m0004);
+            this.toasterService.error(this.resourceService.messages.fmsg.m0004);
           }
         });
      } else {
@@ -248,19 +246,19 @@ export class BatchDetailsComponent implements OnInit, OnDestroy {
   ShowCertDetails(isEnrolledBatch?: boolean) {
     let batchDetails: any;
     if (isEnrolledBatch) {
-      batchDetails = this.enrolledBatchInfo;
+      batchDetails = this.enrolledBatchInfo
     } else {
       if (this.batchList && this.batchList[0]) {
         batchDetails = this.batchList[0];
       }
     }
-    this.showCertificateDetails = !(_.isEmpty(_.get(batchDetails, 'certTemplates'))) ? true : false;
+    this.showCertificateDetails = _.get(batchDetails, 'certTemplates') ? true : false;
     const certDetails = _.get(batchDetails, 'certTemplates');
-    for (const key in certDetails) {
+    for (var key in certDetails) {
       const certCriteria = certDetails[key]['criteria'];
       this.showCompletionCertificate = _.get(certCriteria, 'enrollment.status') === 2 ? true : false;
       this.showMeritCertificate = _.get(certCriteria, 'assessment.score') ? true : false;
-      this.meritCertPercent = _.get(certCriteria, 'assessment.score.>=');
+      this.meritCertPercent = _.get(certCriteria, 'assessment.score.>=')
     }
   }
   getEnrolledCourseBatchDetails() {
@@ -334,8 +332,7 @@ export class BatchDetailsComponent implements OnInit, OnDestroy {
   unenrollBatch(batch) {
     // this.courseBatchService.setEnrollToBatchDetails(batch);
     const queryParams = this.tocId ? { textbook: this.tocId } : {};
-    this.router.navigate(['unenroll/batch', batch.identifier], { relativeTo: this.activatedRoute,
-      queryParams: {...queryParams, primaryCategory: _.get(this.courseHierarchy, 'primaryCategory')}});
+    this.router.navigate(['unenroll/batch', batch.identifier], { relativeTo: this.activatedRoute, queryParams });
   }
 
   navigateToConfigureCertificate(mode: string, batchId) {
@@ -388,7 +385,7 @@ export class BatchDetailsComponent implements OnInit, OnDestroy {
       },
       object: {
         id: content ? _.get(content, 'identifier') : this.courseId,
-        type: content ? _.get(content, 'primaryCategory') : 'Course',
+        type: content ? _.get(content, 'contentType') : 'Course',
         ver: content ? `${_.get(content, 'pkgVersion')}` : `1.0`,
         rollup: objectRollUp ? this.courseConsumptionService.getRollUp(objectRollUp) : {}
       }

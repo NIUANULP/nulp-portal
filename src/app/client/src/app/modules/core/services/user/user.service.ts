@@ -1,5 +1,4 @@
-/* eslint-disable */
-import { ConfigService, ServerResponse, IUserProfile, IUserData, IOrganization } from '@sunbird/shared';
+import { ConfigService, ServerResponse, IUserProfile, IUserData, IOrganization, HttpOptions } from '@sunbird/shared';
 import { LearnerService } from './../learner/learner.service';
 import { ContentService } from './../content/content.service';
 import { Injectable, Inject, EventEmitter } from '@angular/core';
@@ -27,11 +26,11 @@ export class UserService {
   /**
    * Contains user id
    */
-  _userid: string;
+  private _userid: string;
   /**
     * Contains session id
     */
-  _sessionId: string;
+  private _sessionId: string;
 
   timeDiff: any;
 
@@ -42,15 +41,15 @@ export class UserService {
   /**
    * Contains user profile.
    */
-  _userProfile: Partial<IUserProfile>;
+  private _userProfile: IUserProfile;
   /**
    * BehaviorSubject Containing user profile.
    */
-  _userData$ = new BehaviorSubject<Partial<IUserData>>(undefined);
+  private _userData$ = new BehaviorSubject<IUserData>(undefined);
   /**
    * Read only observable Containing user profile.
    */
-  public readonly userData$: Observable<Partial<IUserData>> = this._userData$.asObservable()
+  public readonly userData$: Observable<IUserData> = this._userData$.asObservable()
     .pipe(skipWhile(data => data === undefined || data === null));
   /**
    * reference of config service.
@@ -63,25 +62,25 @@ export class UserService {
   /**
  * Contains hashTag id
  */
-  _hashTagId: string;
+  private _hashTagId: string;
   /**
  * Reference of appId
  */
-  _appId: string;
+  private _appId: string;
   /**
    * Reference of channel
    */
-  _channel: string;
+  private _channel: string;
   /**
    * Reference of dims
    */
-  _dims: Array<string> = [];
+  private _dims: Array<string> = [];
   /**
    * Reference of cloud Storage Urls
    */
-  _cloudStorageUrls: string[];
-  _authenticated: boolean;
-  _anonymousSid: string;
+  private _cloudStorageUrls: string[];
+  private _authenticated: boolean;
+  private _anonymousSid: string;
   /**
    * Reference of content service.
    */
@@ -96,15 +95,15 @@ export class UserService {
   public organizationsDetails: Array<IOrganization>;
   public createManagedUser = new EventEmitter();
   public isDesktopApp = false;
-  _guestData$ = new BehaviorSubject<any>(undefined);
-  public guestUserProfile;
+  private _guestData$ = new BehaviorSubject<any>(undefined);
+  private guestUserProfile;
   public readonly guestData$: Observable<any> = this._guestData$.asObservable()
     .pipe(skipWhile(data => data === undefined || data === null));
   /**
    * Reference of public data service.
    */
   public publicDataService: PublicDataService;
-  _slug = '';
+  private _slug = '';
   public _isCustodianUser: boolean;
   public anonymousUserPreference;
   public readonly userOrgDetails$ = this.userData$.pipe(
@@ -137,8 +136,8 @@ export class UserService {
       DataService.sessionId = this._anonymousSid;
     }
     try {
-      this._appId = document.getElementById('appId')?(<HTMLInputElement>document.getElementById('appId')).value: undefined;
-      this._cloudStorageUrls = document.getElementById('cloudStorageUrls')?(<HTMLInputElement>document.getElementById('cloudStorageUrls')).value.split(','):[];
+      this._appId = (<HTMLInputElement>document.getElementById('appId')).value;
+      this._cloudStorageUrls = (<HTMLInputElement>document.getElementById('cloudStorageUrls')).value.split(',');
     } catch (error) {
     }
     this._slug = baseHref && baseHref.split('/')[1] ? baseHref.split('/')[1] : '';
@@ -195,7 +194,7 @@ export class UserService {
         this.setUserProfile(data);
       },
       (err: ServerResponse) => {
-        this._userData$.next({ err: err, userProfile: this._userProfile as any });
+        this._userData$.next({ err: err, userProfile: this._userProfile });
       }
     );
   }
@@ -267,7 +266,7 @@ export class UserService {
     this._hashTagId = _.get(this._userProfile, 'rootOrg.hashTagId');
     this.setRoleOrgMap(profileData);
     this.setOrgDetailsToRequestHeaders();
-    this._userData$.next({ err: null, userProfile: this._userProfile as any });
+    this._userData$.next({ err: null, userProfile: this._userProfile });
     this.rootOrgName = _.get(this._userProfile, 'rootOrg.orgName');
 
     // Storing profile details of stroger credentials user in cache
@@ -323,7 +322,6 @@ export class UserService {
     return this.learnerService.post(options).pipe(map(
       (res: ServerResponse) => {
         this._userProfile.promptTnC = false;
-        this.getUserProfile();
       }
     ));
   }
@@ -362,27 +360,12 @@ export class UserService {
   private setRoleOrgMap(profile) {
     let roles = [];
     const roleOrgMap = {};
-    const roleOrgDetails = {};
     roles = _.map(profile.roles, 'role');
     roles = _.uniq(roles);
-    const orgList = profile.organisations;
     _.forEach(this._userProfile.roles, (roleObj, index) => {
       roleOrgMap[roleObj.role] = _.map(roleObj.scope, 'organisationId');
-      const roleObjScope = roleObj.scope && roleObj.scope[0];
-      roleOrgDetails[roleObj.role] = {
-        orgId: _.get(roleObjScope, 'organisationId')
-      };
-      _.forEach(orgList, (org, index) => {
-        if (org.organisationId === _.get(roleObjScope, 'organisationId')) {
-          roleOrgDetails[roleObj.role]['orgName'] = org.orgName;
-        }
-      });
     });
-    this._userProfile.userOrgDetails = roleOrgDetails;
     this._userProfile.roleOrgMap = roleOrgMap;
-  }
-  get UserOrgDetails() {
-    return _.cloneDeep(this._userProfile.userOrgDetails);
   }
   get RoleOrgMap() {
     return _.cloneDeep(this._userProfile.roleOrgMap);
@@ -534,7 +517,7 @@ export class UserService {
   get defaultFrameworkFilters() {
     const isUserLoggedIn = this.loggedIn || false;
     const { framework = null } = this.userProfile || {};
-    const userFramework = (isUserLoggedIn && framework && _.pick(framework, ['medium', 'gradeLevel', 'board', 'id'])) || {};
-    return { board: ['CBSE'], ...userFramework };
+    const userFramework = (isUserLoggedIn && framework && _.pick(framework, ['medium', 'gradeLevel', 'board',"id"])) || {};
+    return { board: ['CBSE'], gradeLevel: isUserLoggedIn ? [] : ['Class 10'], medium: [], ...userFramework };
   }
 }

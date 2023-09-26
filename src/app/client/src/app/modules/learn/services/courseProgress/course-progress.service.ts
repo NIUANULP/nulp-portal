@@ -162,7 +162,7 @@ export class CourseProgressService {
   /**
    * to make api call to server
    */
-  updateContentStateToServer(data) {
+  private updateContentStateToServer(data) {
     const req = {
       contentId: data.contentId,
       batchId: data.batchId,

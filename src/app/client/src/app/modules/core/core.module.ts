@@ -1,6 +1,6 @@
 import { PermissionDirective, BodyScrollDirective, OnlineOnlyDirective, DesktopOnlyDirective } from './directives';
 import { RouterModule } from '@angular/router';
-import { NgModule } from '@angular/core';
+import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, SuiDropdownModule,
@@ -23,6 +23,7 @@ import { ContentTypeComponent } from './components/content-type/content-type.com
 import { LocationModule } from '../../plugins/location/location.module';
 import { NotificationModule } from '../notification/notification.module';
 import { TelemetryErrorModalComponent } from '../shared';
+import {ObservationUtilService} from '../observation/service'
 @NgModule({
   imports: [
     CommonModule,
@@ -44,7 +45,7 @@ import { TelemetryErrorModalComponent } from '../shared';
     ErrorPageComponent, LanguageDropdownComponent, ContentTypeComponent, DesktopOnlyDirective, TelemetryErrorModalComponent],
   exports: [MainHeaderComponent, MainFooterComponent, PermissionDirective, BodyScrollDirective, OnlineOnlyDirective,
     TelemetryModule, LanguageDropdownComponent, DesktopOnlyDirective, TelemetryErrorModalComponent],
-  providers: [CacheService, AuthGuard, {
+  providers: [CacheService, AuthGuard,ObservationUtilService, {
     provide: APP_BASE_HREF,
     useFactory: (s: PlatformLocation) => s.getBaseHrefFromDOM(),
     deps: [PlatformLocation]

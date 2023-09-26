@@ -1,4 +1,4 @@
-import { Injectable, InjectionToken } from '@angular/core';
+import { Injectable, Inject, InjectionToken } from '@angular/core';
 import * as _ from 'lodash-es';
 import { IAuditEventInput } from '../../interfaces/telemetry';
 import {
@@ -318,7 +318,7 @@ export class TelemetryService {
       type: 'Device'
     });
     eventContextData.cdata.push({
-      id: document.documentElement.getAttribute('layout') === 'joy' ? 'joy' : 'default',
+      id: localStorage.getItem('layoutType') || 'default',
       type: 'Theme',
     });
     return eventContextData;

@@ -14,12 +14,12 @@ import {
 import {
   ConfigService, ResourceService, ToasterService, WindowScrollService, BrowserCacheTtlService,
   PaginationService, RouterNavigationService, NavigationHelperService, UtilService, ContentUtilsServiceService, ExternalUrlPreviewService,
-  OfflineCardService, RecaptchaService, ConnectionService
+  OfflineCardService, RecaptchaService, LayoutService, ConnectionService
 } from './services';
 import { ContentDirectionDirective, HighlightTextDirective, MarkdownDirective, TelemetryEventsDirective } from './directives';
 import { CommonModule } from '@angular/common';
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { DateFormatPipe, FilterPipe, InterpolatePipe, SortByPipe, SbDataTablePipe, ParticipantsPipe } from './pipes';
+import { DateFormatPipe, FilterPipe, InterpolatePipe, SortByPipe, SbDataTablePipe } from './pipes';
 import { CacheService } from 'ng2-cache-service';
 import { DeviceDetectorModule } from 'ngx-device-detector';
 import { DeviceDetectorService } from 'ngx-device-detector';
@@ -37,16 +37,15 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatDialogModule } from '@angular/material/dialog';
 import { AutocompletePipe } from './components/material-auto-complete/auto-complete-pipe';
 import { MaterialAutoCompleteComponent } from './components/material-auto-complete/material-auto-complete.component';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatInputModule   } from '@angular/material/input';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatListModule } from '@angular/material/list';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { MatInputModule   } from "@angular/material/input";
+import { MatChipsModule } from "@angular/material/chips";
+import { MatListModule } from "@angular/material/list";
+import { MatSelectModule } from "@angular/material/select";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MaterialModule } from './modules/material/material.module';
 // import {MatAutocompleteModule} from '@angular/material/autocomplete';
 
 
@@ -59,8 +58,8 @@ import { MaterialModule } from './modules/material/material.module';
     TelemetryModule,
     TranslateModule.forChild(),
     MatTooltipModule, MatTabsModule, MatDialogModule,
-    MatAutocompleteModule, MatFormFieldModule, MatInputModule,
-    MatChipsModule, MatIconModule, MatSelectModule, MatListModule, MatButtonModule, MatCheckboxModule, MaterialModule
+    MatAutocompleteModule,MatFormFieldModule, MatInputModule,
+    MatChipsModule,MatIconModule,MatSelectModule,MatListModule,MatButtonModule,MatCheckboxModule
   ],
   declarations: [AppLoaderComponent, DateFormatPipe,
     BatchCardComponent, NoResultComponent, CardComponent, CardCreationComponent, FilterPipe, InterpolatePipe,
@@ -70,7 +69,7 @@ import { MaterialModule } from './modules/material/material.module';
     ConfirmPopupComponent, AddToGroupDirective, SelectOptionGroupComponent, AppLandingSectionComponent, MarkdownDirective,
     SbDatatableComponent, OnDemandReportsComponent, SbDataTablePipe, NetworkStatusComponent, LoadOfflineContentComponent,
     TelemetryEventsDirective, DesktopAppUpdateComponent, AlertModalComponent, SystemWarningComponent, FullPageLoaderComponent, ModalWrapperComponent, ModalContentDirective,
-    AutocompletePipe, MaterialAutoCompleteComponent, ParticipantsPipe
+    AutocompletePipe,MaterialAutoCompleteComponent
   ],
   exports: [AppLoaderComponent, DateFormatPipe, TranslateModule,
     BatchCardComponent, NoResultComponent, CardComponent, CardCreationComponent, FilterPipe,
@@ -81,7 +80,7 @@ import { MaterialModule } from './modules/material/material.module';
     MarkdownDirective, AddToGroupDirective, SbDatatableComponent, OnDemandReportsComponent, NgxDatatableModule, SbDataTablePipe,
     InterpolatePipe, NetworkStatusComponent, LoadOfflineContentComponent, DesktopAppUpdateComponent, SystemWarningComponent, TelemetryEventsDirective,
     AlertModalComponent, FullPageLoaderComponent, MatTooltipModule, MatTabsModule, MatDialogModule, ModalWrapperComponent, ModalContentDirective,
-    AutocompletePipe, MaterialAutoCompleteComponent, MaterialModule, ParticipantsPipe
+    AutocompletePipe,MaterialAutoCompleteComponent
   ],
   entryComponents: [AlertModalComponent]
 })
@@ -91,7 +90,8 @@ export class SharedModule {
       ngModule: SharedModule,
       providers: [ResourceService, ConfigService, ToasterService, PaginationService, RecaptchaService,
         RouterNavigationService, WindowScrollService, NavigationHelperService, CacheService, UtilService, ContentUtilsServiceService,
-        DeviceDetectorModule, DeviceDetectorService, BrowserCacheTtlService, ExternalUrlPreviewService, OfflineCardService, TranslateStore, TitleCasePipe, ConnectionService]
+        DeviceDetectorModule, DeviceDetectorService, BrowserCacheTtlService, ExternalUrlPreviewService, OfflineCardService,
+        TranslateStore, TitleCasePipe, ConnectionService]
     };
   }
 }

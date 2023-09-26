@@ -12,19 +12,13 @@ const routes: Routes = [
     data: {
       breadcrumbs: [{ label: 'Home', url: '/home' }, { label: 'Courses', url: '' }],
       telemetry: { env: 'explore-course', pageid: 'explore-course', type: 'view', subtype: 'paginate' },
-      menuBar: {
-        visible: false
-      },
       baseUrl: 'learn'
     }
   },
   {
     path: 'redirect', component: RedirectComponent,
     data: {
-      telemetry: { env: telemetryEnv, pageid: 'learn-redirect', type: 'view' },
-      menuBar: {
-        visible: false
-      }
+      telemetry: { env: telemetryEnv, pageid: 'learn-redirect', type: 'view' }
     }
   },
   {
@@ -33,9 +27,6 @@ const routes: Routes = [
       breadcrumbs: [{ label: 'Home', url: '/home' }, { label: 'Courses', url: '/learn' }],
       telemetry: {
         env: telemetryEnv, pageid: 'view-all', type: 'view', subtype: 'paginate'
-      },
-      menuBar: {
-        visible: false
       },
       baseUrl: 'learn',
       filterType: 'courses',

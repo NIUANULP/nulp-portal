@@ -38,7 +38,7 @@ export class AddusersComponent implements OnInit {
     this.userSearchService = userSearchService;
     this.toasterService = toasterService;
 
-    
+
     this.orgStatus = [{
       "status": "Active",
       "value": 1
@@ -82,7 +82,7 @@ export class AddusersComponent implements OnInit {
   addOrgForm: FormGroup;
   confirmUserForm: FormGroup;
   genericForm: FormGroup
-  
+
   rootOrgIdOrg: any;
   selectedRootOrgOption:any="";
   orgStatusValOrg:any='';
@@ -201,7 +201,7 @@ export class AddusersComponent implements OnInit {
  */
 
   private userSearchService: UserSearchService;
-  
+
   ngOnInit(): void {
     this.createUserForm = new FormGroup({
       firstname:  new FormControl("",  [Validators.required,Validators.pattern(this._validation.alphanumericspaceRegex)]),
@@ -219,7 +219,7 @@ export class AddusersComponent implements OnInit {
       orgName: new FormControl(null, [Validators.required,Validators.pattern(this._validation.alphanumericspaceRegex)]),
       description: new FormControl(null,  [Validators.required,Validators.pattern(this._validation.alphanumericspaceRegex)]),
     })
- 
+
 
     this.createRootOrgForm = new FormGroup({
       orgName: new FormControl(null, [Validators.required,Validators.pattern(this._validation.alphanumericspaceRegex)]),
@@ -282,7 +282,7 @@ export class AddusersComponent implements OnInit {
       enableSearchFilter: false,
       labelKey: 'itemName',
       badgeShowLimit: 5
-    };   
+    };
 
     this.selectedItems = [
       { "id": 1, "itemName": "PUBLIC" }
@@ -319,7 +319,7 @@ export class AddusersComponent implements OnInit {
 
   onFilter(event) {
     this.countUserRecord = event.filteredValue.length;
-  } 
+  }
 
   onItemSelect(item: any) {
   }
@@ -368,10 +368,10 @@ export class AddusersComponent implements OnInit {
           this.orgDataRole = this.userLoginData.roles.map(obj => obj.role)
           if (this.orgDataRole.includes("ORG_ADMIN") || this.orgDataRole.includes("SYSTEM_ADMINISTRATION")) {
             this.userTab = true;
+            this.UploadTemplate = true;
             this.usersUpload = true
             if (this.orgData.length == 1) {
               this.organizationTab = true;
-              this.UploadTemplate = true;
             }
           }
           else {
@@ -436,7 +436,7 @@ export class AddusersComponent implements OnInit {
             }
             this.checkRootOrg = false;
           }
-        
+
         this.populateUserSearch(this.userLoginDataChannel, this.organisationId, this.systemVar);
       },
       err => {
@@ -616,12 +616,12 @@ export class AddusersComponent implements OnInit {
       { field: 'orgType', header: 'Organization Type', width: '183px' },
       { field: 'description', header: 'Description', width: '170px' },
       { field: 'channel', header: 'Channel', width: '170px' },
-      { field: 'status', header: 'Status', width: '170px' }, 
+      { field: 'status', header: 'Status', width: '170px' },
     ]
   }
 
   editOrg(orgDataId){
-    this.editOrgrPopup=true 
+    this.editOrgrPopup=true
     this.addRootOrgrPopup=false
     this.addOrgrPopup=false
     this.editOrgrStatusPopup=false
@@ -648,7 +648,7 @@ export class AddusersComponent implements OnInit {
   }
 
   editStatusOrg(orgDataId){
-    this.editOrgrStatusPopup=true 
+    this.editOrgrStatusPopup=true
     sessionStorage.setItem("orgDataId", orgDataId);
     this.readOrgData(orgDataId)
   }
@@ -709,7 +709,7 @@ export class AddusersComponent implements OnInit {
             this.addOrgrPopup = false
             this.editOrgrStatusPopup = false
             this.sucesErrorPopup = true
-            this.popupMsg = "Sub Organization created successfully!";  
+            this.popupMsg = "Sub Organization created successfully!";
 
             this.getUserProfileOrg()
 
@@ -757,7 +757,7 @@ export class AddusersComponent implements OnInit {
             "isRootOrg": true,
             "channel": 'channel_' + this.randomNumber,
             "organisationType": "school",
-            "isTenant": true 
+            "isTenant": true
           }
 
         }
@@ -851,7 +851,7 @@ export class AddusersComponent implements OnInit {
             if (this.systemVar == 'notpresent') {
               this.rootOrgIdOrg = this.orgData[0].organisationId
               this.rootOrgIdOrgName = this.orgData[0].orgName
-              //this.mentorList.push( {'id' :this.orgData[0].organisationId,'orgName': this.orgData[0].orgName}) 
+              //this.mentorList.push( {'id' :this.orgData[0].organisationId,'orgName': this.orgData[0].orgName})
             }
           }
           else if (this.orgData.length == 2) {
@@ -975,7 +975,7 @@ export class AddusersComponent implements OnInit {
   }
 
   /**
-   * This method for fetches the org list 
+   * This method for fetches the org list
    */
   getOrgList(systemVar: any) {
     this.userLoginDataChannel = sessionStorage.getItem("userLoginDataChannel")
@@ -1039,7 +1039,7 @@ export class AddusersComponent implements OnInit {
 
 
     let tempArray1 : any
-    tempArray1 = 
+    tempArray1 =
     {
       "request": {
         "framework": "*",
@@ -1090,9 +1090,9 @@ export class AddusersComponent implements OnInit {
     }
 
     this._httpService.createForm(tempArray1).subscribe(res=>{
-    
+
       this.addOrgrPopup=false
-    
+
     },err=>{
       this.toasterService.error(this.resourceService.messages.emsg.m0005);
     })
@@ -1103,7 +1103,7 @@ export class AddusersComponent implements OnInit {
 
 
     let tempArray1 : any
-    tempArray1 = 
+    tempArray1 =
     {
       "request": {
         "framework": "nulp",
@@ -1153,9 +1153,9 @@ export class AddusersComponent implements OnInit {
         }
     }
     this._httpService.createForm(tempArray1).subscribe(res=>{
-    
+
       this.addOrgrPopup=false
-    
+
     },err=>{
       this.toasterService.error(this.resourceService.messages.emsg.m0005);
     })
@@ -1166,7 +1166,7 @@ export class AddusersComponent implements OnInit {
 
 
     let tempArray1 : any
-    tempArray1 = 
+    tempArray1 =
     {
       "request": {
         "framework": "nulp",
@@ -1216,9 +1216,9 @@ export class AddusersComponent implements OnInit {
         }
     }
     this._httpService.createForm(tempArray1).subscribe(res=>{
-    
+
       this.addOrgrPopup=false
-    
+
     },err=>{
       this.toasterService.error(this.resourceService.messages.emsg.m0005);
     })
@@ -1230,13 +1230,13 @@ export class AddusersComponent implements OnInit {
 
 
     let tempArray1 : any
-    tempArray1 = 
+    tempArray1 =
     {
       "request": {
         "type": "content",
                 "subType": "collection",
                 "action": "requestforchanges",
-              
+
                 "framework": "nulp",
                 "rootOrgId": rootOrgIdCreate,
           "data": {
@@ -1282,9 +1282,9 @@ export class AddusersComponent implements OnInit {
         }
     }
     this._httpService.createForm(tempArray1).subscribe(res=>{
-    
+
       this.addOrgrPopup=false
-    
+
     },err=>{
     })
   }
@@ -1294,10 +1294,10 @@ export class AddusersComponent implements OnInit {
 
 
     let tempArray1 : any
-    tempArray1 = 
+    tempArray1 =
     {
       "request": {
-                  
+
               "type": "content",
               "subType": "collection",
               "action": "review",
@@ -1307,7 +1307,7 @@ export class AddusersComponent implements OnInit {
                   "templateName": "defaultTemplate",
                   "action": "review",
                   "fields": [
-                                      
+
                             {
                               "code": "appicon",
                               "dataType": "url",
@@ -1380,7 +1380,7 @@ export class AddusersComponent implements OnInit {
                                   "gradeLevel"
                               ]
                           },
-      
+
                           {
                               "code": "gradeLevel",
                               "dataType": "list",
@@ -1395,7 +1395,7 @@ export class AddusersComponent implements OnInit {
                               "required": true,
                               "visible": true
                           },
-                        
+
                           {
                               "code": "subject",
                               "dataType": "text",
@@ -1410,7 +1410,7 @@ export class AddusersComponent implements OnInit {
                               "required": true,
                               "visible": true
                           },
-      
+
                           {
                               "code": "medium",
                               "dataType": "text",
@@ -1425,9 +1425,9 @@ export class AddusersComponent implements OnInit {
                               "required": false,
                               "visible": true
                           },
-                                            
-                        
-                          
+
+
+
                           {
                               "code": "attributions",
                               "dataType": "list",
@@ -1446,11 +1446,11 @@ export class AddusersComponent implements OnInit {
               }
           }
       }
-      
+
       this._httpService.createForm(tempArray1).subscribe(res=>{
-    
+
       this.addOrgrPopup=false
-    
+
     },err=>{
     })
   }
@@ -1460,10 +1460,10 @@ export class AddusersComponent implements OnInit {
 
 
     let tempArray1 : any
-    tempArray1 = 
+    tempArray1 =
     {
       "request": {
-                  
+
               "type": "content",
               "subType": "collection",
               "action": "resource-filters",
@@ -1509,12 +1509,12 @@ export class AddusersComponent implements OnInit {
               }
           }
       }
-      
-      
+
+
       this._httpService.createForm(tempArray1).subscribe(res=>{
-    
+
       this.addOrgrPopup=false
-    
+
     },err=>{
     })
   }
@@ -4413,7 +4413,7 @@ export class AddusersComponent implements OnInit {
     this.editOrgrPopup=false
     this.editOrgrStatusPopup=false
     this.addRootOrgrPopup=false
-    this.sucesErrorPopup=false 
+    this.sucesErrorPopup=false
   }
 
   editOrgFormSubmit(){
@@ -4430,7 +4430,7 @@ export class AddusersComponent implements OnInit {
       }
 
     }
-    
+
     this._httpService.updateOrgDetail(tempArray).subscribe(res => {
       this.editOrgrPopup = false
       this.addRootOrgrPopup = false
@@ -4509,7 +4509,7 @@ export class AddusersComponent implements OnInit {
   }
 
   /**
-   * This method used for fetch particular user organization data 
+   * This method used for fetch particular user organization data
    */
 
   getUserOrgList(userChannel: any) {
@@ -4537,26 +4537,26 @@ export class AddusersComponent implements OnInit {
 
   closepopup()
   {
-   
+
     this.editeUserPopup= false
     this.confirmPopup=false;
-    this.addUserPopup=false 
-    this.genericPopup=false  
+    this.addUserPopup=false
+    this.genericPopup=false
     this.addRolePopup = false
     this.addOrgPopup = false
     this.addRoleForm.reset()
    // this.populateUserProfile();
   }
- 
+
   populateEditRoles(){
     if( this.roleEditData?.length > 0 ) {
-      for( var i = 0; i < this.dropdownList.length; i++ ) {      
+      for( var i = 0; i < this.dropdownList.length; i++ ) {
        for( var j = 0; j < this.roleEditData.length; j++ ) {
          if(this.roleEditData[j] !="PUBLIC"){
          if( this.roleEditData[j] == this.dropdownList[i].itemName ) {
                  this.selectedItems.push({"id" :this.dropdownList[i].id,"itemName":this.dropdownList[i].itemName});
-            } 
-          }   
+            }
+          }
         }
       }
     }
@@ -4732,7 +4732,7 @@ export class AddusersComponent implements OnInit {
     }
 
     this._httpService.updateOrgStatusDetail(tempArray).subscribe(res => {
-      // this.getUserOrganization() 
+      // this.getUserOrganization()
       this.editOrgrPopup = false
       this.addRootOrgrPopup = false
       this.addOrgrPopup = false
@@ -4799,7 +4799,7 @@ export class AddusersComponent implements OnInit {
     }
 
 
-  } 
+  }
 
   getRoleName(str: any) {
     this.subMentorList = []
@@ -4828,7 +4828,7 @@ export class AddusersComponent implements OnInit {
       if(rootOrgVal){
         channel = rootOrgVal.split("/")[2];
       }
-      
+
       this.onchangeorgId = this.onchangeorgName[1]
       let subOrgList: any;
       subOrgList = {
@@ -4871,7 +4871,7 @@ export class AddusersComponent implements OnInit {
     if(subOrg){
       this.onchangeorgId = subOrg
     }
-   
+
     if (this.isRootSubCondition == 'no' && (this.createUserForm.value['subRootorgname'] == '' || this.createUserForm.value['subRootorgname'] == null)) {
       this.popupMsg = "Please select  the sub organization....";
       this.subOrgSucesErrorPopup = true
@@ -5020,7 +5020,7 @@ export class AddusersComponent implements OnInit {
   }
 
   /**
-   * This method used for add org button form submit 
+   * This method used for add org button form submit
    */
   addOrgFormSubmit() {
     this.findePublic = false;

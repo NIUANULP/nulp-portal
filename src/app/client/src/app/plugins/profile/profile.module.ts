@@ -1,4 +1,5 @@
 import { SharedFeatureModule } from '@sunbird/shared-feature';
+import { ProfileService } from './services';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '@sunbird/shared';
@@ -31,14 +32,6 @@ export const csCourseServiceFactory = (csLibInitializerService: CsLibInitializer
   }
   return CsModule.instance.courseService;
 };
-
-export const csCertificateServiceFactory = (csLibInitializerService: CsLibInitializerService) => {
-  if (!CsModule.instance.isInitialised) {
-    csLibInitializerService.initializeCs();
-  }
-  return CsModule.instance.certificateService;
-};
-
 @NgModule({
   imports: [
     CommonModule,
@@ -66,9 +59,6 @@ export const csCertificateServiceFactory = (csLibInitializerService: CsLibInitia
    CreateUserComponent,
    ChooseUserComponent,
    SubmitTeacherDetailsComponent],
-  providers: [
-    {provide: 'CS_COURSE_SERVICE', useFactory: csCourseServiceFactory, deps: [CsLibInitializerService]},
-    {provide: 'CS_CERTIFICATE_SERVICE', useFactory: csCertificateServiceFactory, deps: [CsLibInitializerService]}
-  ]
+  providers: [{provide: 'CS_COURSE_SERVICE', useFactory: csCourseServiceFactory, deps: [CsLibInitializerService]}]
 })
 export class ProfileModule { }

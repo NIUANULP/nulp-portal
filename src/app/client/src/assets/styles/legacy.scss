@@ -347,7 +347,7 @@ body ::-webkit-scrollbar {
 ul {
   list-style: none;
 }
-ul li {
+ul li:not(.pure-checkbox) {
   margin-bottom: calculateRem(29px);
   position: relative;
 }
@@ -998,23 +998,23 @@ iframe.iziModal-iframe {
 .uppercase {
   text-transform: uppercase !important;
 }
-angular2-multiselect .select-all {
-  padding: 0;
-  border: 0;
-}
-angular2-multiselect .select-all span[hidden] {
-  display: none !important;
-}
-angular2-multiselect .arrow-up {
-  display: none;
-}
-angular2-multiselect .dropdown-list {
-  padding: 0;
-}
-angular2-multiselect .list-area {
-  box-shadow: none;
-  border-radius: 0;
-}
+// angular2-multiselect .select-all {
+//   padding: 0;
+//   border: 0;
+// }
+// angular2-multiselect .select-all span[hidden] {
+//   display: none !important;
+// }
+// angular2-multiselect .arrow-up {
+//   display: none;
+// }
+// angular2-multiselect .dropdown-list {
+//   padding: 0;
+// }
+// angular2-multiselect .list-area {
+//   box-shadow: none;
+//   border-radius: 0;
+// }
 /* placeholder if content is not there */
 .placeholder {
   align-items: center;

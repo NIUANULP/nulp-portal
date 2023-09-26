@@ -301,8 +301,6 @@ export class ContentManagerComponent implements OnInit, OnDestroy {
         } else {
           path = 'play/collection';
         }
-      } else if(mimeType === this.configService.appConfig.PLAYER_CONFIG.MIME_TYPE.questionset) {
-        path = 'resources/play/questionset';
       } else {
         path = 'play/content';
       }

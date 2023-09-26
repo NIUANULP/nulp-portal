@@ -1,33 +1,21 @@
-import { of, throwError } from "rxjs";
-import { ConfigService } from '../../../shared/services/config/config.service';
-import { HttpClient } from "@angular/common/http";
+import { TestBed, inject } from '@angular/core/testing';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ConfigService } from '@sunbird/shared';
+import { configureTestSuite } from '@sunbird/test-util';
 import { KendraService } from './kendra.service';
 
-describe('KendraService', () => {
-  let kendraService: KendraService;
-  const mockConfigService: Partial<ConfigService> = {
-    urlConFig: {
-      URLS: {
-        KENDRA_PREFIX: '/kendra/'
-      }
-    }
-  };
-  const mockHttpClient: Partial<HttpClient> = {
-  };
-  beforeAll(() => {
-    kendraService = new KendraService(
-      mockConfigService as ConfigService,
-      mockHttpClient as HttpClient
-    );
-  });
-
+describe('ObservationService', () => {
+  configureTestSuite();
   beforeEach(() => {
-    jest.clearAllMocks();
-    jest.resetAllMocks();
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
+      providers: [KendraService, ConfigService, HttpClient]
+    });
   });
 
-  it('should create a instance of KendraService', () => {
-    expect(kendraService).toBeTruthy();
-    expect(kendraService.baseUrl).toBe('/kendra/');
-  });
+  it('should be created', inject([KendraService], (service: KendraService) => {
+    expect(service).toBeTruthy();
+  }));
 });
+

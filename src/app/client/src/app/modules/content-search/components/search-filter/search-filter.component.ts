@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, Input, OnInit, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
+import {Component, Output, EventEmitter, Input, OnInit, OnDestroy, ChangeDetectorRef, ViewChild} from '@angular/core';
 import * as _ from 'lodash-es';
 import { LibraryFiltersLayout } from '@project-sunbird/common-consumption-v9';
 import { ResourceService, LayoutService } from '@sunbird/shared';
@@ -7,7 +7,7 @@ import { Subject, merge, of, zip, BehaviorSubject, defer } from 'rxjs';
 import { debounceTime, map, tap, switchMap, takeUntil, retry, catchError } from 'rxjs/operators';
 import { ContentSearchService } from '../../services';
 import { FormService } from '@sunbird/core';
-import { IFrameworkCategoryFilterFieldTemplateConfig } from 'common-form-elements-web-v9';
+import {IFrameworkCategoryFilterFieldTemplateConfig} from 'common-form-elements-web-v9';
 import { CacheService } from 'ng2-cache-service';
 
 @Component({
@@ -27,7 +27,8 @@ export class SearchFilterComponent implements OnInit, OnDestroy {
   public selectedBoard: { label: string, value: string, selectedOption: string };
   public selectedOption: { label: string, value: string, selectedOption: string };
   public optionLabel = {
-    Publisher: _.get(this.resourceService, 'frmelmnts.lbl.publisher'), Board: _.get(this.resourceService, 'frmelmnts.lbl.boards')
+    Publisher: this.resourceService.RESOURCE_CONSUMPTION_ROOT +
+      'frmelmnts.lbl.publisher', Board: this.resourceService.RESOURCE_CONSUMPTION_ROOT + 'frmelmnts.lbl.boards'
   };
   public boards: any[] = [];
   filterChangeEvent = new Subject();
@@ -52,21 +53,21 @@ export class SearchFilterComponent implements OnInit, OnDestroy {
       category: 'board',
       type: 'dropdown',
       labelText: _.get(this.resourceService, 'frmelmnts.lbl.boards'),
-      placeholderText: 'Select Board',
+      placeholderText: 'Select Category',
       multiple: false
-    },
-    {
-      category: 'medium',
-      type: 'dropdown',
-      labelText: _.get(this.resourceService, 'frmelmnts.lbl.medium'),
-      placeholderText: 'Select Medium',
-      multiple: true
     },
     {
       category: 'gradeLevel',
       type: 'dropdown',
       labelText: _.get(this.resourceService, 'frmelmnts.lbl.class'),
-      placeholderText: 'Select Class',
+      placeholderText: 'Select Sub-Category',
+      multiple: true
+    },
+    {
+      category: 'medium',
+      type: 'dropdown',
+      labelText: _.get(this.resourceService, 'frmelmnts.lbl.medium'),
+      placeholderText: 'Select Language',
       multiple: true
     },
     {
@@ -83,13 +84,13 @@ export class SearchFilterComponent implements OnInit, OnDestroy {
     //   placeholderText: 'Select Published by',
     //   multiple: true
     // },
-    {
-      category: 'audience',
-      type: 'dropdown',
-      labelText: _.get(this.resourceService, 'frmelmnts.lbl.publishedUserType'),
-      placeholderText: 'Select User Type',
-      multiple: true
-    }
+    // {
+    //   category: 'audience',
+    //   type: 'dropdown',
+    //   labelText: _.get(this.resourceService, 'frmelmnts.lbl.publishedUserType'),
+    //   placeholderText: 'Select User Type',
+    //   multiple: true
+    // }
   ]));
 
   constructor(public resourceService: ResourceService, private router: Router,
@@ -103,6 +104,7 @@ export class SearchFilterComponent implements OnInit, OnDestroy {
   }
   public getChannelId(index) {
     const { publisher: publishers = [] } = this.filters || {};
+
     return _.get(publishers[index], 'value');
   }
   private fetchAndFormatQueryParams() {
@@ -112,6 +114,7 @@ export class SearchFilterComponent implements OnInit, OnDestroy {
           queryParams => {
             const queryFilters: Record<string, string[]> = {};
             _.forIn(queryParams, (value, key) => {
+
               if (this.filterData.includes(key)) {
                 queryFilters[key] = _.isArray(value) ? value : [value];
               }
@@ -142,8 +145,8 @@ export class SearchFilterComponent implements OnInit, OnDestroy {
       .pipe(
         switchMap(queryParams => {
           this.filterChange.emit({ status: 'FETCHING' });
-          let boardName = _.get(queryParams, 'board[0]') || _.get(this.boards, '[0]');
-          boardName = boardName === 'CBSE/NCERT' ? 'CBSE' : boardName;
+          // const boardName = _.get(this.boards, '[9]') || _.get(this.boards, '[0]');
+          const boardName = _.get(queryParams, 'board[0]') || _.get(this.boards, '[0]');
           return zip(this.getFramework({ boardName }), this.getAudienceTypeFormConfig())
             .pipe(map(([filters, audienceTypeFilter]: [object, object]) => ({ ...filters, audience: audienceTypeFilter })));
         })
@@ -159,7 +162,7 @@ export class SearchFilterComponent implements OnInit, OnDestroy {
 
     if (!_.get(this.activatedRoute, 'snapshot.queryParams["board"]')) {
       const queryParams = { ...this.defaultFilters, selectedTab: _.get(this.activatedRoute, 'snapshot.queryParams.selectedTab') || _.get(this.defaultTab, 'contentType') || 'textbook' };
-      this.router.navigate([], { queryParams, relativeTo: this.activatedRoute });
+      this.router.navigate([], { queryParams, relativeTo: this.activatedRoute } );
     }
   }
   private boardChangeHandler() {
@@ -217,6 +220,7 @@ export class SearchFilterComponent implements OnInit, OnDestroy {
   }
 
   private updateBoardList() {
+    
     if (_.get(this.filters, 'board') || !_.get(this.filters, 'board.length')) {
       this.emptyBoard = true;
     }
@@ -232,12 +236,12 @@ export class SearchFilterComponent implements OnInit, OnDestroy {
     });
     this.optionData = _.uniqBy(this.optionData, 'label');
     if (this.boards.length) {
+      console.log("this.boards====", this.boards);
       const selectedOption = _.find(this.boards, { name: _.get(this.queryFilters, 'board[0]') }) ||
         _.find(this.boards, { name: _.get(this.defaultFilters, 'board[0]') }) || this.boards[0];
       this.selectedBoard = { label: this.optionLabel.Board, value: 'board', selectedOption: _.get(selectedOption, 'name') };
-      this.selectedBoard.selectedOption = this.selectedBoard.selectedOption === 'CBSE' ? 'CBSE/NCERT' : this.selectedBoard.selectedOption;
       this.selectedOption = this.selectedBoard;
-    }
+      }
   }
   private popFilter({ type, index }) {
     const selectedIndices = _.get(this.selectedFilters, type) || [];
@@ -269,10 +273,6 @@ export class SearchFilterComponent implements OnInit, OnDestroy {
     this.selectedNgModels = {};
     this.allValues = {};
     _.forEach(filters, (filterValues: { name: any }[], filterKey: string) => {
-      if (filterKey === 'board') {
-        const boardName = filterValues.find((board) => board.name === 'CBSE');
-        boardName && (boardName.name = 'CBSE/NCERT');
-      }
       const values = this.allValues[filterKey] = _.map(filterValues, 'name');
       if (_.get(values, 'length')) {
         let selectedIndices;
@@ -297,7 +297,6 @@ export class SearchFilterComponent implements OnInit, OnDestroy {
       this.selectedFilters['subject'] = [];
       this.selectedFilters['publisher'] = [];
       this.selectedFilters['audience'] = [];
-      this.selectedFilters['channel'] = [];
       return this.updateRouteForBoardChange();
     }
   }
@@ -310,16 +309,16 @@ export class SearchFilterComponent implements OnInit, OnDestroy {
     _selectedFilters['subject'] = [];
     _selectedFilters['publisher'] = [];
     _selectedFilters['audience'] = [];
-    _selectedFilters['channel'] = [];
     this.router.navigate([], {
       queryParams: resetFilters ? { ...this.defaultFilters, selectedTab } : _.omit(_selectedFilters || {}, ['audienceSearchFilterValue']),
       relativeTo: this.activatedRoute.parent
     });
   }
+  
   private updateRoute(resetFilters?: boolean) {
     const selectedTab = _.get(this.activatedRoute, 'snapshot.queryParams.selectedTab') || _.get(this.defaultTab, 'contentType') || 'textbook';
     this.router.navigate([], {
-      queryParams: resetFilters ? { ...this.defaultFilters, selectedTab } : _.omit(this.getSelectedFilter() || {}, ['audienceSearchFilterValue']),
+      queryParams: resetFilters ? { ...this.defaultFilters, selectedTab} : _.omit(this.getSelectedFilter() || {}, ['audienceSearchFilterValue']),
       relativeTo: this.activatedRoute.parent
     });
   }
@@ -422,6 +421,7 @@ export class SearchFilterComponent implements OnInit, OnDestroy {
       switchMap(_ => this._filterConfig$),
       tap((config: IFrameworkCategoryFilterFieldTemplateConfig[]) => {
         this.filterFormTemplateConfig = config;
+        console.log("_filterConfig-----", config);
         this.refreshSearchFilterComponent = false;
         this.cdr.detectChanges();
         this.refreshSearchFilterComponent = true;

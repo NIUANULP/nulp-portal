@@ -28,11 +28,6 @@ export default (app, proxyURL) => {
                 try {
                     const userToken = await userSDK.getUserToken();
                     user.accessToken = userToken;
-                    if(user.managedBy) {
-                        const allmanagedUser = await userSDK.getAllManagedUsers();
-                        const managedUser = allmanagedUser.find((mUser:any) => mUser.identifier === user.identifier)
-                        user.managedToken = managedUser.managedToken;
-                    }
                     await userSDK.insertLoggedInUser(user);
                     res.status(res.statusCode).send(res.body);
                 } catch (err) {
@@ -48,7 +43,6 @@ export default (app, proxyURL) => {
 
     app.get([
         "/learner/user/v1/feed/:userId", 
-        "/learner/notification/v1/feed/read/:id",
         "/learner/certreg/v2/certs/download/:id"
     ], customProxy(proxyURL, defaultProxyConfig), (req, res) => {
         res.status(res.statusCode).send(res.body);
@@ -62,18 +56,13 @@ export default (app, proxyURL) => {
         res.status(res.statusCode).send(res.body);
     });
 
-    app.post("/learner/notification/v1/feed/delete", customProxy(proxyURL, defaultProxyConfig), (req, res) => {
-        res.status(res.statusCode).send(res.body);
-    });
-   
     app.patch("/learner/user/v1/feed/update", customProxy(proxyURL, defaultProxyConfig), (req, res) => {
         res.status(res.statusCode).send(res.body);
     });
 
     app.patch([
         '/learner/user/v1/update',
-        '/learner/user/v3/update',
-        "/learner/notification/v1/feed/update",
+        '/learner/user/v2/update',
         '/learner/user/v1/declarations'
     ], customProxy(proxyURL, defaultProxyConfig), (req, res) => {
         res.status(res.statusCode).send(res.body);
@@ -127,7 +116,7 @@ export default (app, proxyURL) => {
         res.status(res.statusCode).send(res.body);
     });
 
-    app.post(["/learner/user/v4/create", "/learner/user/v5/create", "/learner/user/v1/managed/create"], customProxy(proxyURL, defaultProxyConfig),async (req, res) => {
+    app.post(["/learner/user/v4/create", "/learner/user/v1/managed/create"], customProxy(proxyURL, defaultProxyConfig),async (req, res) => {
         const userSDK: any = containerAPI.getUserSdkInstance();
         const userId = _.get(res, 'body.result.userId');
         const userToken: string = await userSDK.getUserToken().catch(error => { 
