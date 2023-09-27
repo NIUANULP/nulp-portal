@@ -389,7 +389,7 @@ getActivity(groupId, activity, mergeGroup, leafNodesCount?) {
       }
     };
 
-    option.data.request.filters['rootOrgId'] = this.userService.rootOrgId;
+    // option.data.request.filters['rootOrgId'] = this.userService.rootOrgId;
 
     return this.learnerService.post(option).pipe(map((data) => {
       return data;

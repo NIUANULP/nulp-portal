@@ -264,7 +264,7 @@ export class GroupHeaderComponent implements OnInit, OnDestroy {
         'cid': this.forumIds
       };
       this.discussionService.removeForum(requestBody).subscribe(resp => {
-       
+        location.reload();
         this.toasterService.success('Disabled discussion forum successfully');
         this.fetchForumIds(this.groupData.id);
       }, error => {
@@ -278,7 +278,7 @@ export class GroupHeaderComponent implements OnInit, OnDestroy {
       this.addTelemetry('confirm-enable-forum', {status: _.get(this.groupData, 'status')});
       
       this.discussionService.createForum(this.createForumRequest).subscribe(resp => {
-        
+        location.reload();
         this.toasterService.success('Enabled discussion forum successfully');
         this.fetchForumIds(this.groupData.id);
       }, error => {
