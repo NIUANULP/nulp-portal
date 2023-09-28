@@ -518,10 +518,6 @@ const API_LIST = {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [ROLE.ADMIN, ROLE.ORG_ADMIN]
     },
-    'learner/org/v1/read/:id': {
-      checksNeeded: ['ROLE_CHECK'],
-      ROLE_CHECK: [ROLE.ADMIN, ROLE.ORG_ADMIN]
-    },
     '/learner/user/v5/read/:userId': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [ROLE.PUBLIC, ROLE.ADMIN]
@@ -591,7 +587,7 @@ const API_LIST = {
     },
     '/learner/data/v1/role/read': {
       checksNeeded: ['ROLE_CHECK'],
-      ROLE_CHECK: [ROLE.PUBLIC, ROLE.ORG_ADMIN]
+      ROLE_CHECK: [ROLE.PUBLIC]
     },
     '/learner/certreg/v1/certs/validate': {
       checksNeeded: ['ROLE_CHECK'],
@@ -2068,9 +2064,7 @@ const API_LIST = {
     '/learner/course/v1/admin/unenroll',
     '/learner/org/v1/create',
     'learner/org/v1/status/update',
-    '/learner/user/v1/upload',
-    'learner/org/v1/read/:id',
-    '/learner/data/v1/role/read'
+    '/learner/user/v1/upload'
   ]
 };
 module.exports = API_LIST;
