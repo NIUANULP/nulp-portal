@@ -34,7 +34,7 @@ export class CourseBatchService {
     };
     return this.learnerService.post(option);
   }
-  getUserList(requestParam: SearchParam = {}): Observable<ServerResponse> {
+  getUserList(requestParam: SearchParam = {},type =''): Observable<ServerResponse> {
     if (_.isEmpty(requestParam) && this.defaultUserList) {
       return observableOf(this.defaultUserList);
     } else {
@@ -51,11 +51,16 @@ export class CourseBatchService {
       if (requestParam.limit) {
         option.data.request['limit'] = requestParam.limit;
       }
-      const mentorOrg = this.userService.userProfile.roleOrgMap['CONTENT_CREATOR'];
-      if (mentorOrg && mentorOrg.includes(this.userService.rootOrgId)) {
-        option.data.request.filters['rootOrgId'] = this.userService.rootOrgId;
-      } else if (mentorOrg) {
-        option.data.request.filters['organisations.organisationId'] = mentorOrg;
+      if (type === 'participant') {
+        delete option.data.request.filters['rootOrgId'];
+      }else{
+        const mentorOrg = this.userService.userProfile.roleOrgMap['CONTENT_CREATOR'];
+        if (mentorOrg && mentorOrg.includes(this.userService.rootOrgId)) {
+          console.log('option before includes', option);
+          option.data.request.filters['rootOrgId'] = this.userService.rootOrgId;
+        } else if (mentorOrg) {
+          option.data.request.filters['organisations.organisationId'] = mentorOrg;
+        }
       }
       // option.data.request.filters['organisations.roles'] = ['COURSE_MENTOR'];
       return this.learnerService.post(option).pipe(map((data) => {
