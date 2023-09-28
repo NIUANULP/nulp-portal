@@ -456,7 +456,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
       filters: {'status': '1'},
       query: query
     };
-    this.courseBatchService.getUserList(requestBody).pipe(takeUntil(this.unsubscribe))
+    this.courseBatchService.getUserList(requestBody,type).pipe(takeUntil(this.unsubscribe))
       .subscribe((res) => {
         const userList = this.sortUsers(res);
         if (type === 'participant') {
