@@ -591,7 +591,7 @@ const API_LIST = {
     },
     '/learner/data/v1/role/read': {
       checksNeeded: ['ROLE_CHECK'],
-      ROLE_CHECK: [ROLE.PUBLIC]
+      ROLE_CHECK: [ROLE.PUBLIC, ROLE.ORG_ADMIN]
     },
     '/learner/certreg/v1/certs/validate': {
       checksNeeded: ['ROLE_CHECK'],
@@ -2069,7 +2069,8 @@ const API_LIST = {
     '/learner/org/v1/create',
     'learner/org/v1/status/update',
     '/learner/user/v1/upload',
-    'learner/org/v1/read/:id'
+    'learner/org/v1/read/:id',
+    '/learner/data/v1/role/read'
   ]
 };
 module.exports = API_LIST;
