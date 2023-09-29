@@ -82,7 +82,7 @@ export class AddusserService {
   getEditUserById(data)
   {
     const option = {
-      url: this.configService.urlConFig.URLS.USER.GET_PROFILE +'/'+data
+      url: this.configService.urlConFig.URLS.USER.GET_PROFILE + data
     };
     return this.learnerService.get(option);
   }
