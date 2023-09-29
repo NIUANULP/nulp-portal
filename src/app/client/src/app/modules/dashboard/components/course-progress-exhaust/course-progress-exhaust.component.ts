@@ -218,6 +218,7 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
   fileName = 'course-progress-exhaust-data';
   
   userRoles;
+  firstTime = false;
   
   /**
 	 * Constructor to create injected service(s) object
@@ -335,8 +336,10 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
       option.query = this.searchText;
     }
 
+
     this.courseProgressService.getCourseProgressExhaustData(option).subscribe(
       (apiResponse) => {
+        console.log("Success Handler => getCourseProgressExhaustData() : ", apiResponse);
         this.courseProgressExhaustData = apiResponse?.result?.content;
         this.totalCount = apiResponse?.result?.total_items;
         this.pager = this.paginationService.getPager(this.totalCount, this.pageNumber, this.pageLimit);
@@ -345,15 +348,20 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
           this.noResult = true;
         }
         this.noResult = false;
+        if (this.firstTime){
+          this.searchBatch();
+          this.setInteractEventData();
+        }
         this.paramSubcription.unsubscribe();
-
       },
       (err) => {
-        this.toasterService.error(err.error.params.errmsg);
+        console.log("Error Handler => getCourseProgressExhaustData():",  err);
+        this.toasterService.error(err);
         this.showLoader = false;
         this.paramSubcription.unsubscribe();
       }
     );
+
   }
 
   /**
@@ -465,8 +473,6 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
           });
       }
     });
-    this.searchBatch();
-    this.setInteractEventData();
   }
 
 
@@ -534,13 +540,15 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
 
     this.courseProgressService.getExportData(option).subscribe(
       (apiResponse) => {
+        console.log("Success Handler => exportToCsv() : ", apiResponse);
         this.courseProgressExhaustData = apiResponse?.result?.content;
         this.totalCount = apiResponse?.result?.total_items;
         this.exportCsvService.downloadFile(this.courseProgressExhaustData, this.columns, this.fileName);
         this.paramSubcription.unsubscribe();
       },
       err => {
-        this.toasterService.error(err.error.params.errmsg);
+        console.log("Error Handler => exportToCsv()  : ", err);
+        this.toasterService.error(err);
         this.paramSubcription.unsubscribe();
       }
     );
