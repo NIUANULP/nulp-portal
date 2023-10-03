@@ -4487,19 +4487,19 @@ export class AddusersComponent implements OnInit {
       if (this.roleEditeUserData.organisations.length == 1) {
         this.addRolePopup = true
         this.rootAdminOrgList();
-        this.roleEditData = this.roleEditeUserData.organisations[0].roles;
+        this.roleEditData = this.roleEditeUserData.roles;
         this.addRoleorgId = this.roleEditeUserData.organisations[0].organisationId;
       }
       else if ((this.roleEditeUserData.organisations.length > 1) && (this.roleEditeUserData.rootOrgId != this.roleEditeUserData.organisations[1].organisationId)) {
         this.addRolePopup = true
         this.subRootAdminOrgList();
-        this.roleEditData = this.roleEditeUserData.organisations[1].roles;
+        this.roleEditData = this.roleEditeUserData.roles;
         this.addRoleorgId = this.roleEditeUserData.organisations[1].organisationId;
       }
       else if ((this.roleEditeUserData.organisations.length > 1) && (this.roleEditeUserData.rootOrgId == this.roleEditeUserData.organisations[1].organisationId)) {
         this.addRolePopup = true
         this.rootAdminOrgList();
-        this.roleEditData = this.roleEditeUserData.organisations[0].roles;
+        this.roleEditData = this.roleEditeUserData.roles;
         this.addRoleorgId = this.roleEditeUserData.organisations[0].organisationId;
       }
       this.populateEditRoles()
@@ -4552,8 +4552,8 @@ export class AddusersComponent implements OnInit {
     if( this.roleEditData?.length > 0 ) {
       for( var i = 0; i < this.dropdownList.length; i++ ) {      
        for( var j = 0; j < this.roleEditData.length; j++ ) {
-         if(this.roleEditData[j] !="PUBLIC"){
-         if( this.roleEditData[j] == this.dropdownList[i].itemName ) {
+         if(this.roleEditData[j].role !="PUBLIC"){
+         if( this.roleEditData[j].role == this.dropdownList[i].itemName ) {
                  this.selectedItems.push({"id" :this.dropdownList[i].id,"itemName":this.dropdownList[i].itemName});
             } 
           }   
