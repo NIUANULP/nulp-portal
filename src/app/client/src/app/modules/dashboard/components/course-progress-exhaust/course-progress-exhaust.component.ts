@@ -218,7 +218,7 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
   fileName = 'course-progress-exhaust-data';
   
   userRoles;
-  firstTime = true;
+  firstTime = false;
   
   /**
 	 * Constructor to create injected service(s) object
@@ -348,8 +348,7 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
           this.noResult = true;
         }
         this.noResult = false;
-        if (this.firstTime) {
-          this.firstTime = false;
+        if (this.firstTime){
           this.searchBatch();
           this.setInteractEventData();
         }
