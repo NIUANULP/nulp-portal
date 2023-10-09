@@ -48,6 +48,7 @@ export class AddMemberComponent implements OnInit, OnDestroy {
   notAddedUserList = [];
   file: any;
   activateUpload: boolean;
+  private userSearchTime: any;
 
   constructor(public resourceService: ResourceService, private groupsService: GroupsService,
     private toasterService: ToasterService,
@@ -216,6 +217,26 @@ export class AddMemberComponent implements OnInit, OnDestroy {
       });
     }
   }
+  private getUserListWithQuery(query) {
+    if (this.userSearchTime) {
+      clearTimeout(this.userSearchTime);
+    }
+    this.userSearchTime = setTimeout(() => {
+      this.getUserList(query);
+    }, 1000);
+  }
+  private getUserList(query: string = '') {
+    const requestBody = {
+      filters: {'status': '1'},
+      query: query
+    };
+    this.groupsService.getUserList(requestBody).subscribe((data) => {
+      const users = this.getUsers(data)
+      this.userList = users.userList;
+      this.getNotAddedUsers();
+      this.initDropDown();
+    })
+  }
 
   private initDropDown() {
     this.lazzyLoadScriptService.loadScript('semanticDropdown.js').subscribe(() => {
@@ -225,9 +246,9 @@ export class AddMemberComponent implements OnInit, OnDestroy {
         onAdd: () => {
         }
       });
-      // $('#participants input.search').on('keyup', (e) => {
-      //   this.getUserListWithQuery($('#participants input.search').val(), 'participant');
-      // });
+      $('#users input.search').on('keyup', (e) => {
+        this.getUserListWithQuery($('#users input.search').val());
+      });
       // $('#mentors input.search').on('keyup', (e) => {
       //   this.getUserListWithQuery($('#mentors input.search').val(), 'mentor');
       // });
