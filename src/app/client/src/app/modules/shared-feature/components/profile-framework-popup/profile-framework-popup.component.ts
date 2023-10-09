@@ -103,9 +103,9 @@ export class ProfileFrameworkPopupComponent implements OnInit, OnDestroy {
         let userType = localStorage.getItem('userType');
         userType == "administrator" ? board.required = true  : null;
         const fieldOptions = [board,
-          { code: 'medium', label: 'Medium', index: 2 },
-          { code: 'gradeLevel', label: 'Class', index: 3 },
-          { code: 'subject', label: 'Subject', index: 4 }];
+          { code: 'medium', label: 'Language', index: 2 },
+          { code: 'gradeLevel', label: 'Sub-Category', index: 3 },
+          { code: 'subject', label: 'Topic', index: 4 }];
         return of(fieldOptions);
       }
     }));
@@ -116,7 +116,7 @@ export class ProfileFrameworkPopupComponent implements OnInit, OnDestroy {
       this.custOrgFrameworks = _.sortBy(this.custOrgFrameworks, 'index');
       return {
         range: this.custOrgFrameworks,
-        label: 'Board',
+        label: 'Category',
         code: 'board',
         index: 1
       };
@@ -139,9 +139,9 @@ export class ProfileFrameworkPopupComponent implements OnInit, OnDestroy {
         }));
       } else {
         const fieldOptions = [board,
-          { code: 'medium', label: 'Medium', index: 2 },
-          { code: 'gradeLevel', label: 'Class', index: 3 },
-          { code: 'subject', label: 'Subject', index: 4 }];
+          { code: 'medium', label: 'Language', index: 2 },
+          { code: 'gradeLevel', label: 'Sub-Category', index: 3 },
+          { code: 'subject', label: 'Topic', index: 4 }];
         return of(fieldOptions);
       }
     }));
@@ -268,7 +268,7 @@ export class ProfileFrameworkPopupComponent implements OnInit, OnDestroy {
       this.custOrgFrameworks = _.sortBy(this.custOrgFrameworks, 'index');
       return {
         range: this.custOrgFrameworks,
-        label: 'Board',
+        label: 'Category',
         code: 'board',
         index: 1
       };
