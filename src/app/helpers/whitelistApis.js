@@ -759,7 +759,7 @@ const API_LIST = {
     },
 
     // notification apis
-    '/learner/notification/v1/feed/read/:uid': {
+    '/learner/notification/v2/feed/read/:uid': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [ROLE.PUBLIC]
     },
@@ -1927,7 +1927,7 @@ const API_LIST = {
     '/learner/course/v1/hierarchy/:do_id',
     '/learner/user/v5/read/:userId',
     '/learner/course/v1/user/enrollment/list/:userId',
-    '/learner/user/v1/feed/:userId',
+    '/learner/user/v2/feed/:userId',
     '/learner/course/v1/batch/read/:batchId',
     '/learner/dashboard/v2/progress/course/:batchId',
     '/learner/user/v1/exists/email/:emailId',
@@ -2064,7 +2064,9 @@ const API_LIST = {
     '/learner/course/v1/admin/unenroll',
     '/learner/org/v1/create',
     'learner/org/v1/status/update',
-    '/learner/user/v1/upload'
+    '/learner/user/v1/upload',
+    '/learner/user/v2/role/assign',
+    '/learner/notification/v2/feed/read/:uid'
   ]
 };
 module.exports = API_LIST;

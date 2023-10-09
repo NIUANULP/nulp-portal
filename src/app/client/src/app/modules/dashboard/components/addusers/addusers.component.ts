@@ -4552,7 +4552,7 @@ export class AddusersComponent implements OnInit {
     if( this.roleEditData?.length > 0 ) {
       for( var i = 0; i < this.dropdownList.length; i++ ) {      
        for( var j = 0; j < this.roleEditData.length; j++ ) {
-         if(this.roleEditData[j].role !="PUBLIC"){
+         if(this.roleEditData[j].role !== "PUBLIC"){
          if( this.roleEditData[j].role == this.dropdownList[i].itemName ) {
                  this.selectedItems.push({"id" :this.dropdownList[i].id,"itemName":this.dropdownList[i].itemName});
             } 
@@ -4577,15 +4577,15 @@ export class AddusersComponent implements OnInit {
       if (this.orgEditeUserData.organisations.length == 1) {
         this.addOrgPopup = true
         this.rootAdminOrgList();
-        this.roleEditData = this.orgEditeUserData.organisations[0].roles;
+        this.roleEditData = this.orgEditeUserData.roles;
         this.addRoleorgId = this.orgEditeUserData.organisations[0].organisationId;
         this.getUserOrgList(this.orgEditeUserData.channel)
-        // this.populateEditRoles()
+        this.populateEditRoles()
       }
       else if (this.orgEditeUserData.organisations.length > 1) {
         this.addOrgPopup = true
         this.subRootAdminOrgList();
-        this.roleEditData = this.orgEditeUserData.organisations[1].roles;
+        this.roleEditData = this.orgEditeUserData.roles;
         this.addRoleorgId = this.orgEditeUserData.organisations[1].organisationId;
         //this.addorgSelectName=this.orgEditeUserData.organisations[1].orgName+'/'+this.orgEditeUserData.organisations[1].organisationId+'/'+false;
       }
