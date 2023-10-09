@@ -14,8 +14,6 @@ const healthService     = require('../helpers/healthCheckService.js')
 const { decrypt }       = require('../helpers/crypto');
 const isAPIWhitelisted  = require('../helpers/apiWhiteList');
 const googleService     = require('../helpers/googleService')
-const request           = require('request-promise');
-const { getBearerToken } = require('../helpers/kongTokenHelper');
 const reqDataLimitOfContentUpload = '50mb'
 const { logger } = require('@project-sunbird/logger');
 const {parseJson, isDateExpired, decodeNChkTime} = require('../helpers/utilityService');
@@ -30,17 +28,17 @@ module.exports = function (app) {
     proxy(envHelper.learner_Service_Local_BaseUrl, {
       proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(envHelper.learner_Service_Local_BaseUrl),
       proxyReqPathResolver: (req) => {
-        return '/private/user/v1/update';
+        return '/private/user/v3/update';
       },
       userResDecorator: (proxyRes, proxyResData, req, res) => {
-        logger.info({ msg: '/learner/portal/user/v1/update called /private/user/v1/update' });
+        logger.info({ msg: '/learner/portal/user/v1/update called upstream url /private/user/v3/update' });
         try {
           const data = JSON.parse(proxyResData.toString('utf8'));
           if (req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
           else return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
         } catch (err) {
           logger.error({ msg: 'learner route : userResDecorator json parse error:', proxyResData });
-          logger.error({ msg: 'learner route : error for /learner/portal/user/v1/update', err });
+          logger.error({ msg: 'learner route : error for /learner/portal/user/v1/update upstram url is /private/user/v3/update ', err });
           return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null);
         }
       }
@@ -74,73 +72,6 @@ module.exports = function (app) {
     checkForValidUser()
   );
 
-
-  app.post('/learner/user/v1/upload',
-    proxy(learnerURL, {
-      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(learnerURL),
-      proxyReqPathResolver: function (req) {
-        let urlParam = 'user/v1/upload'
-        let query = require('url').parse(req.url).query
-        if (query) {
-          return require('url').parse(learnerURL + urlParam + '?' + query).path
-        } else {
-          return require('url').parse(learnerURL + urlParam).path
-        }
-      },
-      userResDecorator: (proxyRes, proxyResData, req, res) => {
-        try {
-          const data = JSON.parse(proxyResData.toString('utf8'));
-          if (req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
-          else return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
-        } catch (err) {
-          logger.error({ msg: 'learner route : userResDecorator json parse error:', proxyResData, error: JSON.stringify(err) })
-          return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res);
-        }
-      }
-    }))
-  /*
-    Use the new version for adding member to organization. Remove this when solution is found! 
-  */
-  app.patch('/learner/user/v1/update',
-    bodyParser.json(),
-    proxy(learnerURL, {
-      proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
-        return new Promise(function(resolve, reject){
-          var u2Token = null
-          const options = {
-            method: 'POST',
-            forever: true,
-            headers: {},
-            url: `${envHelper.PORTAL_AUTH_SERVER_URL}/realms/${envHelper.PORTAL_REALM}/protocol/openid-connect/token`,
-            form: {
-              client_id: 'admin-cli',
-              username: srcReq.body.request.username,
-              grant_type: 'password',
-            }
-          };
-          request(options).then(function (res) {
-            u2Token = parseJson(res);
-            u2Token = u2Token.access_token;
-            proxyReqOpts.headers['x-authenticated-user-token'] = u2Token
-            proxyReqOpts.headers.Authorization = 'Bearer ' + getBearerToken(srcReq);
-            resolve(proxyReqOpts);
-          }).
-          catch(function (err) { reject(err) })
-        })
-      },
-      proxyReqPathResolver: function (req) {
-        let urlParam = 'user/v1/update'
-        let query = require('url').parse(req.url).query
-        if (query) {
-          return require('url').parse(learnerURL + urlParam + '?' + query).path
-        } else {
-          return require('url').parse(learnerURL + urlParam).path
-        }
-      },
-    })
-  )
- 
-
   app.all('/learner/*',
     bodyParser.json(),
     isAPIWhitelisted.isAllowed(),
@@ -161,6 +92,12 @@ module.exports = function (app) {
           urlParam = req.originalUrl.replace('/learner/', '')
         }
         logger.info({ msg: '/learner/* called - ' + req.method + ' - ' + req.url });
+
+        if (req.originalUrl === ' /learner/rc/certificate/v1/search') {
+          logger.info({ msg: '/learner/rc/certificate/v1/search called - ' + req.method + ' - ' + '/api/rc/certificate/v1/search' });
+          return `/api/rc/certificate/v1/search`;
+        }
+       
         if (query) {
           return require('url').parse(learnerURL + urlParam + '?' + query).path
         } else {

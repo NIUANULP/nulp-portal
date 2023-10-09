@@ -35,7 +35,7 @@
     "programSearch": {
       "fields": "rootOrgId,rootOrgName"
     },
-    "contentGet": "ageGroup,appIcon,artifactUrl,attributions,attributions,audience,author,badgeAssertions,board,body,channel,code,concepts,contentCredits,contentType,contributors,copyright,copyrightYear,createdBy,createdOn,creator,creators,description,displayScore,domain,editorState,flagReasons,flaggedBy,flags,framework,gradeLevel,identifier,itemSetPreviewUrl,keywords,language,languageCode,lastUpdatedOn,license,mediaType,medium,mimeType,name,originData,osId,owner,pkgVersion,publisher,questions,resourceType,scoreDisplayConfig,status,streamingUrl,subject,template,templateId,totalQuestions,totalScore,versionKey,visibility,year,primaryCategory,additionalCategories,interceptionPoints,interceptionType",
+    "contentGet": "transcripts,ageGroup,appIcon,artifactUrl,attributions,attributions,audience,author,badgeAssertions,board,body,channel,code,concepts,contentCredits,contentType,contributors,copyright,copyrightYear,createdBy,createdOn,creator,creators,description,displayScore,domain,editorState,flagReasons,flaggedBy,flags,framework,gradeLevel,identifier,itemSetPreviewUrl,keywords,language,languageCode,lastUpdatedOn,license,mediaType,medium,mimeType,name,originData,osId,owner,pkgVersion,publisher,questions,resourceType,scoreDisplayConfig,status,streamingUrl,subject,template,templateId,totalQuestions,totalScore,versionKey,visibility,year,primaryCategory,additionalCategories,interceptionPoints,interceptionType",
     "questionSetRead": "instructions",
     "enrolledCourses": {
       "fields": "contentType,topic,name,channel,mimeType,appIcon,gradeLevel,resourceType,identifier,medium,pkgVersion,board,subject,trackable,primaryCategory,organisation",
@@ -94,9 +94,9 @@
       "CREATE": "review/comment/v1/create/comment"
     },
     "USER": {
-      "SIGNUP": "user/v3/create",
+      "SIGNUP": "user/v1/create",
       "TNC_ACCEPT": "user/v1/tnc/accept",
-      "UPDATE_USER_PROFILE": "user/v2/update",
+      "UPDATE_USER_PROFILE": "user/v3/update",
       "GET_PROFILE": "user/v5/read/",
       "GET_PROFILE_V5": "user/v5/read/",
       "TENANT_LOGO": "get/tenant/logo",
@@ -118,15 +118,12 @@
       "TNC_ACCEPT_LOGIN": "user/v2/accept/tnc",
       "SIGN_UP_V4": "user/v4/create",
       "SIGN_UP_MANAGED_USER": "user/v1/managed/create",
-      "SEARCH_USER": "user/v2/search",
       "SWITCH_USER": "user/v1/switch",
       "END_SESSION": "endSession",
       "GET_MANAGED_USER": "user/v1/managed",
       "USER_EXISTS_GET_USER_BY_KEY": "isUserExists/user/v1/get",
       "USER_DECLARATION": "user/v1/declarations",
-      "GET_SESSION": "get/user/sessionId",
-      "READ": "user/v1/read",
-      "ORG_ADD": "user/v1/update" 
+      "GET_SESSION": "get/user/sessionId"
     },
     "CERTIFICATE": {
       "FETCH_CERTIFICATES": "v1/certs/search",
@@ -207,20 +204,20 @@
     "BATCH": {
       "CREATE": "course/v1/batch/create",
       "UPDATE": "course/v1/batch/update",
-      "ADD_USERS": "course/v1/batch/user/add",
+      "ADD_USERS":"course/v1/admin/enroll", 
       "GET_DETAILS": "course/v1/batch/read",
       "GET_PARTICIPANT_LIST": "course/v1/batch/participants/list",
       "GET_BATCHS": "course/v1/batch/list",
-      "REMOVE_USERS": "course/v1/batch/user/remove"
+      "REMOVE_USERS": "course/v1/admin/unenroll"
     },
     "ADMIN": {
       "USER_SEARCH": "user/v3/search",
       "ORG_SEARCH": "org/v2/search",
-      "ORG_SEARCH_OLD": "org/v1/search",
+      "ORG_SEARCH_OLD": "org/v2/search",
       "ORG_CREATE":"org/v1/create",
-      "ORG_EXT_SEARCH": "org/v1/ext/search",
+      "ORG_EXT_SEARCH": "org/v2/search",
       "BULK": {
-        "USERS_UPLOAD": "user/v1/upload",
+        "USERS_UPLOAD": "user/v2/upload",
         "ORGANIZATIONS_UPLOAD": "org/v1/upload",
         "STATUS": "data/v1/upload/status"
       },
@@ -371,7 +368,8 @@
       "TARGETTED_ENTITY_TYPES": "users/mlcore/v1/targetedEntity/",
       "PRESIGNED_URLS": "cloud-services/mlcore/v1/files/preSignedUrls",
       "PROGRAMS_BY_PLATFORM_ROLES": "user-extension/mlcore/v1/programsByPlatformRoles",
-      "SOLUTIONS_BY_PROGRAMID": "user-extension/mlcore/v1/solutions"
+      "SOLUTIONS_BY_PROGRAMID": "user-extension/mlcore/v1/solutions",
+      "DISTRICTS_AND_ORGANISATIONS":"solutions/mlcore/v1/read"
     },
     "DHITI":{
       "GENERIC_REPORTS": "reports/mlreports/v1/fetch",
@@ -388,5 +386,6 @@
       "MEMBERREMOVE":"org/v1/member/remove",
       "PREFERENCES_CREATE" : "org/v2/preferences/create"
     }
+
   }
 }

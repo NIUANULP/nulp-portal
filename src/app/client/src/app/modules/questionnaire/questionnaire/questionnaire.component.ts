@@ -7,9 +7,8 @@ import {
 } from '@sunbird/shared';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { ObservationService } from '@sunbird/core';
+import { ObservationService, ObservationUtilService } from '@sunbird/core';
 import { Location } from '@angular/common';
-import { ObservationUtilService } from '../../observation/service';
 import { ComponentDeactivate } from '../guard/can-deactivate.guard';
 import { AssessmentInfo, Evidence, IAssessmentDetails, Section, SlQuestionnaireService } from '@shikshalokam/sl-questionnaire';
 import { QuestionnaireService } from '../questionnaire.service';
@@ -43,7 +42,7 @@ export class QuestionnaireComponent
     private location: Location,
     private observationUtilService: ObservationUtilService,
     private slQService: SlQuestionnaireService,
-    private questionnaireService:QuestionnaireService
+    private questionnaireService: QuestionnaireService
   ) {
     super();
   }
@@ -126,10 +125,10 @@ export class QuestionnaireComponent
   }
 
   async onSubmit(save?) {
-    let msg = save
+    const msg = save
       ? this.resourceService.frmelmnts.lbl.saveConfirm
       : this.resourceService.frmelmnts.lbl.submitConfirm;
-    let userConfirm = await this.openAlert(msg, true);
+    const userConfirm = await this.openAlert(msg, true);
     if (!userConfirm) {
       return;
     }
@@ -161,14 +160,14 @@ export class QuestionnaireComponent
           this.backOrContinue();
           return;
         }
-       let userResponse = await this.openAlert(
+       const userResponse = await this.openAlert(
           this.resourceService.frmelmnts.lbl.successfullySubmitted
        );
         if (userResponse) {
           this.canLeave = true;
           this.location.back();
         }
-        
+
       },
       (error) => {
         this.openAlert(
