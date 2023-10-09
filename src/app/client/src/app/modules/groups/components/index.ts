@@ -11,3 +11,5 @@ export * from './activity';
 export * from './create-edit-group/create-edit-group.component';
 export * from './group-details/group-details.component';
 export * from './popup/popup.component';
+// export * from './manage-members/manage-members.component';
+
