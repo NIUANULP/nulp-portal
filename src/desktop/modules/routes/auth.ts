@@ -47,8 +47,8 @@ export default (app, proxyURL) => {
         });
 
     app.get([
-        "/learner/user/v2/feed/:userId", 
-        "/learner/notification/v2/feed/read/:id",
+        "/learner/user/v1/feed/:userId", 
+        "/learner/notification/v1/feed/read/:id",
         "/learner/certreg/v2/certs/download/:id"
     ], customProxy(proxyURL, defaultProxyConfig), (req, res) => {
         res.status(res.statusCode).send(res.body);

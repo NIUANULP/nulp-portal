@@ -55,7 +55,7 @@ export class CsLibInitializerService {
                 questionListApiPath: '/api/question/v1'
               },
               notificationServiceConfig: {
-                apiPath: '/learner/notification/v2/feed'
+                apiPath: '/learner/notification/v1/feed'
               },
               certificateServiceConfig: {
                 apiPath: 'v1/certs/search',

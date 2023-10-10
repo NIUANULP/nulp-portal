@@ -113,7 +113,7 @@
       "TYPE": "user/v1/type/list",
       "VALIDATE_CERTIFICATE": "certreg/v1/certs/validate",
       "DOWNLOAD_CERTIFICATE": "certreg/v1/certs/download",
-      "GET_USER_FEED": "notification/v2/feed/read",
+      "GET_USER_FEED": "user/v1/feed",
       "USER_MIGRATE": "user/v1/migrate",
       "TNC_ACCEPT_LOGIN": "user/v2/accept/tnc",
       "SIGN_UP_V4": "user/v4/create",
@@ -225,7 +225,8 @@
       },
       "DELETE_USER": "user/v1/block",
       "UNDELETE_USER": "user/v1/unblock",
-      "UPDATE_USER_ORG_ROLES": "user/v2/role/assign"
+      "UPDATE_USER_ORG_ROLES": "user/v1/role/assign",
+      "UPDATE_USER_ORG": "user/v2/role/assign"
     },
     "BADGE": {
       "GET": "org/v1/badges/list",

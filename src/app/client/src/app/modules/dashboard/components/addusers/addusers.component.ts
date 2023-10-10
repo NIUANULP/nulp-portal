@@ -5044,12 +5044,21 @@ export class AddusersComponent implements OnInit {
     }
 
     let addOrgtempArray: any
+    let roles = [];
+    this.roleDataArr.forEach(role => {
+      roles.push({
+        "role": role,
+        "operation": "add",
+        "scope": [
+          { "organisationId": this.onchangeaddOrgId }
+        ]
+      })
+    })
     addOrgtempArray =
     {
       "request": {
-        "organisationId": this.onchangeaddOrgId,
         "userId": this.gridOrgUserId,
-        "username": this.username
+        "roles": roles
       }
     }
     //return;
