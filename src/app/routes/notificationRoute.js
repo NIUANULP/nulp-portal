@@ -7,7 +7,7 @@ const isAPIWhitelisted = require('../helpers/apiWhiteList');
 const { concatSeries } = require('async')
 
 module.exports = function (app) {
-    app.get('/learner/notification/v2/feed/read/:userId', proxyObject());
+    app.get('/learner/notification/v1/feed/read/:userId', proxyObject());
     app.get('/learner/notification/v1/feed/delete', proxyObject()),
     app.get('/learner/notification/v1/feed/update', proxyObject())
 }
