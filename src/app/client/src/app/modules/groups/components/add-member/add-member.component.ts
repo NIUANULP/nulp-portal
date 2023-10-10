@@ -15,6 +15,8 @@ import { TelemetryService } from '@sunbird/telemetry';
 import { VERIFY_USER, USER_SEARCH } from '../../interfaces/telemetryConstants';
 import { sessionKeys } from '../../../../modules/groups';
 import { LazzyLoadScriptService } from 'LazzyLoadScriptService';
+import { Angular2Csv } from 'angular2-csv';
+
 @Component({
   selector: 'app-add-member',
   templateUrl: './add-member.component.html',
@@ -44,6 +46,9 @@ export class AddMemberComponent implements OnInit, OnDestroy {
   private userService: UserService;
   userList = [];
   notAddedUserList = [];
+  file: any;
+  activateUpload: boolean;
+  private userSearchTime: any;
 
   constructor(public resourceService: ResourceService, private groupsService: GroupsService,
     private toasterService: ToasterService,
@@ -163,6 +168,31 @@ export class AddMemberComponent implements OnInit, OnDestroy {
     }
     return false;
   }
+  public fileChanged(event) {
+    this.file = event.target.files[0];
+    this.activateUpload = true;
+  }
+  uploadUsersCSV(){
+    let reader: FileReader = new FileReader();   
+    reader.readAsText(this.file);
+    reader.onload = (e) => {
+      let csv:string = reader.result as string;
+      var memberstoAdd = this.csvToArr(csv);
+      const member = {members: memberstoAdd};
+      this.addMembersById(member);
+    }
+  }
+   csvToArr(csv) {
+   
+    const [keys, ...rest] = csv.trim( ).split("\n").map((item) => item.split(','));
+    
+  const formedArr = rest.map((item) => {
+    const object = {};
+    keys.forEach((key, index) => (object[key] = item.at(index)));
+    return object;
+  });
+  return formedArr;
+  }
 
   addMemberToGroup() {
     this.setInteractData('add-user-to-group', {}, {id: _.get(this.verifiedMember, 'id'),  type: 'Member'});
@@ -187,6 +217,26 @@ export class AddMemberComponent implements OnInit, OnDestroy {
       });
     }
   }
+  private getUserListWithQuery(query) {
+    if (this.userSearchTime) {
+      clearTimeout(this.userSearchTime);
+    }
+    this.userSearchTime = setTimeout(() => {
+      this.getUserList(query);
+    }, 1000);
+  }
+  private getUserList(query: string = '') {
+    const requestBody = {
+      filters: {'status': '1'},
+      query: query
+    };
+    this.groupsService.getUserList(requestBody).subscribe((data) => {
+      const users = this.getUsers(data)
+      this.userList = users.userList;
+      this.getNotAddedUsers();
+      this.initDropDown();
+    })
+  }
 
   private initDropDown() {
     this.lazzyLoadScriptService.loadScript('semanticDropdown.js').subscribe(() => {
@@ -196,9 +246,9 @@ export class AddMemberComponent implements OnInit, OnDestroy {
         onAdd: () => {
         }
       });
-      // $('#participants input.search').on('keyup', (e) => {
-      //   this.getUserListWithQuery($('#participants input.search').val(), 'participant');
-      // });
+      $('#users input.search').on('keyup', (e) => {
+        this.getUserListWithQuery($('#users input.search').val());
+      });
       // $('#mentors input.search').on('keyup', (e) => {
       //   this.getUserListWithQuery($('#mentors input.search').val(), 'mentor');
       // });
@@ -247,28 +297,32 @@ export class AddMemberComponent implements OnInit, OnDestroy {
       this.toasterService.error("Please Select user to add");
       return;
     }
-
+    
     const memberstoAdd =  users.map((user) => ({userId: user, role: 'member'}))
-
     const member = {members: memberstoAdd};
+    this.addMembersById(member);
+  }
 
+  addMembersById(member){
     const groupId = _.get(this.groupData, 'id') || _.get(this.activatedRoute.snapshot, 'params.groupId');
-      this.groupsService.addMembersById(groupId, member).pipe(takeUntil(this.unsubscribe$)).subscribe(response => {
-        this.getUpdatedGroupData();
+    this.groupsService.addMembersById(groupId, member).pipe(takeUntil(this.unsubscribe$)).subscribe(response => {
+      this.getUpdatedGroupData();
 
-        this.disableBtn = false;
-        const value = _.isEmpty(response.error) ? this.toasterService.success((this.resourceService.messages.smsg.m004).replace('{memberName}',
-          "Member")) : this.showErrorMsg(response, "selection");
-          this.memberId = '';
-          this.reset();
-      }, err => {
-        this.groupsService.emitShowLoader(false);
-        this.disableBtn = false;
+      this.disableBtn = false;
+      const value = _.isEmpty(response.error) ? this.toasterService.success((this.resourceService.messages.smsg.m004).replace('{memberName}',
+        "Member")) : this.showErrorMsg(response, "selection");
         this.memberId = '';
         this.reset();
-        this.showErrorMsg();
-      });    
+    }, err => {
+      this.groupsService.emitShowLoader(false);
+      this.disableBtn = false;
+      this.memberId = '';
+      this.reset();
+      this.showErrorMsg();
+    });    
   }
+
+
 
   getNotAddedUsers() {
     const existingUsersIds = this.membersList.map(({userId}) => userId)
@@ -343,6 +397,26 @@ export class AddMemberComponent implements OnInit, OnDestroy {
     }
     this.telemetryService.interact(interactData);
   }
+   /**
+ * This method helps to download a sample csv file
+ */
+    public downloadSampleCSV() {
+      const options = {
+        fieldSeparator: ',',
+        // quoteStrings: '"',
+        decimalseparator: '.',
+        showLabels: true,
+        useBom: false,
+        headers: ['userId', 'role'],
+      };
+      const csvData = [{
+        'userId': '',
+        'role': ''
+      }];
+     
+        const csv = new Angular2Csv(csvData, 'Sample_members', options);
+     
+    }
 
   ngOnDestroy() {
     this.unsubscribe$.next();

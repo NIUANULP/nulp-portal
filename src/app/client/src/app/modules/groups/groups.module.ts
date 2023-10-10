@@ -10,7 +10,9 @@ import { MyGroupsComponent, AddMemberComponent, GroupHeaderComponent, NoGroupRes
   AddActivityComponent, MemberActionsComponent, GroupMembersComponent, FtuPopupComponent,
   BackButtonComponent, ActivityListComponent, ActivityDashboardComponent, ActivitySearchComponent,
   GroupDetailsComponent, ActivityFormComponent, CreateEditGroupComponent, AddActivityContentTypesComponent,
-  PopupComponent } from './components';
+  PopupComponent,
+  // ManageMembersComponent
+ } from './components';
 import { CoreModule } from '@sunbird/core';
 import { SharedFeatureModule } from '@sunbird/shared-feature';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v9';
@@ -56,7 +58,8 @@ import { ActivityDashboardDirective } from './directive/activity-dashboard/activ
     AddActivityContentTypesComponent,
     PopupComponent,
     ActivityDetailsComponent,
-    ActivityDashboardDirective
+    ActivityDashboardDirective,
+    // ManageMembersComponent
     ],
     exports: [ActivityDashboardDirective]
 })
