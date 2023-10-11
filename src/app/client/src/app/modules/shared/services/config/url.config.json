@@ -209,7 +209,8 @@
       "GET_PARTICIPANT_LIST": "course/v1/batch/participants/list",
       "GET_BATCHS": "course/v1/batch/list",
       "REMOVE_USERS": "course/v1/admin/unenroll",
-      "COURSE_PROGRESS_EXHAUST": "course/v1/progress/reports"
+      "COURSE_PROGRESS_EXHAUST": "course/v1/progress/reports",
+      "COURSE_PROGRESS_EXHAUST_CSV": "course/v1/progress/reports/csv"
     }, 
     "ADMIN": {
       "USER_SEARCH": "user/v3/search",
@@ -224,7 +225,8 @@
       },
       "DELETE_USER": "user/v1/block",
       "UNDELETE_USER": "user/v1/unblock",
-      "UPDATE_USER_ORG_ROLES": "user/v1/role/assign"
+      "UPDATE_USER_ORG_ROLES": "user/v1/role/assign",
+      "UPDATE_USER_ORG": "user/v2/role/assign"
     },
     "BADGE": {
       "GET": "org/v1/badges/list",

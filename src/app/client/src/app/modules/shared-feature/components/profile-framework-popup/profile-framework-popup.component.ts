@@ -94,6 +94,7 @@ export class ProfileFrameworkPopupComponent implements OnInit, OnDestroy {
       if (_.get(this.selectedOption, 'board[0]')) { // update mode, get 1st board framework and update all fields
         this.selectedOption.board = _.get(this.selectedOption, 'board[0]');
         this.frameWorkId = _.get(_.find(this.custOrgFrameworks, { 'name': this.selectedOption.board }), 'identifier');
+
         return this.getFormatedFilterDetails().pipe(map((formFieldProperties) => {
           this._formFieldProperties = formFieldProperties;
           this.mergeBoard(); // will merge board from custodian org and board from selected framework data
@@ -103,9 +104,9 @@ export class ProfileFrameworkPopupComponent implements OnInit, OnDestroy {
         let userType = localStorage.getItem('userType');
         userType == "administrator" ? board.required = true  : null;
         const fieldOptions = [board,
-          { code: 'medium', label: 'Medium', index: 2 },
-          { code: 'gradeLevel', label: 'Class', index: 3 },
-          { code: 'subject', label: 'Subject', index: 4 }];
+          { code: 'medium', label: 'Language', index: 2 },
+          { code: 'gradeLevel', label: 'Sub-Category', index: 3 },
+          { code: 'subject', label: 'Topic', index: 4 }];
         return of(fieldOptions);
       }
     }));
@@ -116,7 +117,7 @@ export class ProfileFrameworkPopupComponent implements OnInit, OnDestroy {
       this.custOrgFrameworks = _.sortBy(this.custOrgFrameworks, 'index');
       return {
         range: this.custOrgFrameworks,
-        label: 'Board',
+        label: 'Category',
         code: 'board',
         index: 1
       };
@@ -139,9 +140,9 @@ export class ProfileFrameworkPopupComponent implements OnInit, OnDestroy {
         }));
       } else {
         const fieldOptions = [board,
-          { code: 'medium', label: 'Medium', index: 2 },
-          { code: 'gradeLevel', label: 'Class', index: 3 },
-          { code: 'subject', label: 'Subject', index: 4 }];
+          { code: 'medium', label: 'Language', index: 2 },
+          { code: 'gradeLevel', label: 'Sub-Category', index: 3 },
+          { code: 'subject', label: 'Topic', index: 4 }];
         return of(fieldOptions);
       }
     }));
@@ -268,7 +269,7 @@ export class ProfileFrameworkPopupComponent implements OnInit, OnDestroy {
       this.custOrgFrameworks = _.sortBy(this.custOrgFrameworks, 'index');
       return {
         range: this.custOrgFrameworks,
-        label: 'Board',
+        label: 'Category',
         code: 'board',
         index: 1
       };

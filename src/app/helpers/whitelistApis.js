@@ -436,6 +436,14 @@ const API_LIST = {
           ROLE.ORG_ADMIN,
           ROLE.SYSTEM_ADMINISTRATION]
     },
+    '/learner/course/v1/progress/reports/csv/:courseId': {
+      checksNeeded: ['ROLE_CHECK'],
+        ROLE_CHECK: [ ROLE.CONTENT_CREATOR,
+          ROLE.COURSE_CREATOR,
+          ROLE.BOOK_CREATOR,
+          ROLE.ORG_ADMIN,
+          ROLE.SYSTEM_ADMINISTRATION]
+    },    
     //User related APIs
     '/learner/user/v1/create': {
       checksNeeded: ['ROLE_CHECK'],
@@ -751,7 +759,7 @@ const API_LIST = {
     },
 
     // notification apis
-    '/learner/notification/v1/feed/read/:uid': {
+    '/learner/notification/v2/feed/read/:uid': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [ROLE.PUBLIC]
     },
@@ -1930,6 +1938,7 @@ const API_LIST = {
     '/learner/rc/certificate/v1/download/:id',
     '/learner/rc/certificate/v1/key/:id',
     '/learner/course/v1/progress/reports/:courseId',
+    '/learner/course/v1/progress/reports/csv/:courseId',
     '/learner/user/v2/upload',
     '/content/asset/v1/upload/:id',
     '/action/asset/v1/upload/:id',
@@ -2055,7 +2064,10 @@ const API_LIST = {
     '/learner/course/v1/admin/unenroll',
     '/learner/org/v1/create',
     'learner/org/v1/status/update',
-    '/learner/user/v1/upload'
+    '/learner/user/v1/upload',
+    '/learner/user/v2/role/assign',
+    '/learner/notification/v1/feed/read/:uid',
+    '/learner/course/v1/batch/participants/list'
   ]
 };
 module.exports = API_LIST;

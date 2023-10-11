@@ -90,10 +90,27 @@
           </div>
         </div>
       </div>
+      <div class="sb-btn mt-8 sb-bulk-upload-btn">
+        <input type="file" #inputbtn class="sb-btn-upload" name="file" onclick="this.value = null"
+            accept=".csv" (change)="fileChanged($event)" />
+      </div>
+      <div *ngIf="file">
+        <span> {{resourceService?.frmelmnts?.lbl?.upldfile }} :</span>
+        <label>{{file.name}}</label>
+      </div>
+    <button [ngClass]="{'sb-btn-disabled' : !activateUpload}" 
+    [disabled]="!activateUpload" class="sb-btn sb-btn-normal sb-btn-primary" (click)="uploadUsersCSV()">
+    {{resourceService?.frmelmnts?.instn?.t0016}}
+    </button>
+    <button (click)="downloadSampleCSV()" class="sb-btn sb-btn-normal sb-btn-primary ml-10">
+      {{resourceService?.frmelmnts?.btn?.smplcsv}}
+  </button>
     </div>
-
+    
     <div class="sb-g-col-xs-12 sb-g-col-md-3 sb-g-col-lg-3 sb-g-col-xxxl-4 sb-members-column">
       <app-group-members [members]="membersList" [groupData]="groupData"></app-group-members>
+  <!-- <lib-manage-members [addCollaborator]="addCollaborator" [collectionId]="collectionId" (modalDismissEmitter)="toggleCollaboratorModalPoup()"></lib-manage-members> -->
+
     </div>
   </div>
 </div>

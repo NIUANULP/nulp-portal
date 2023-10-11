@@ -65,7 +65,7 @@ export class AddusserService {
   addroleSubRootOrganization(data)
   {
     const options = {
-      url: this.configService.urlConFig.URLS.USER.ORG_ADD,
+      url: this.configService.urlConFig.URLS.ADMIN.UPDATE_USER_ORG,
       data: data
     };
     return this.learnerService.patch(options);
@@ -82,7 +82,7 @@ export class AddusserService {
   getEditUserById(data)
   {
     const option = {
-      url: this.configService.urlConFig.URLS.USER.READ +'/'+data
+      url: this.configService.urlConFig.URLS.USER.GET_PROFILE + data
     };
     return this.learnerService.get(option);
   }

@@ -120,7 +120,7 @@ export class CourseProgressService  {
     let option: any;
     if (requestParam.batchId !== undefined) {
       option = {
-        url: this.config.urlConFig.URLS.BATCH.COURSE_PROGRESS_EXHAUST + '/' + requestParam.courseId,
+        url: this.config.urlConFig.URLS.BATCH.COURSE_PROGRESS_EXHAUST_CSV + '/' + requestParam.courseId,
         param: {
           batchid: requestParam.batchId,
         }
@@ -128,7 +128,7 @@ export class CourseProgressService  {
     }
     else {
       option = {
-        url: this.config.urlConFig.URLS.BATCH.COURSE_PROGRESS_EXHAUST + '/' + requestParam.courseId,
+        url: this.config.urlConFig.URLS.BATCH.COURSE_PROGRESS_EXHAUST_CSV + '/' + requestParam.courseId,
       };
     }
 
