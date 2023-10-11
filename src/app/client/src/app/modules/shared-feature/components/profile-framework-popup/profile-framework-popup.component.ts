@@ -94,6 +94,7 @@ export class ProfileFrameworkPopupComponent implements OnInit, OnDestroy {
       if (_.get(this.selectedOption, 'board[0]')) { // update mode, get 1st board framework and update all fields
         this.selectedOption.board = _.get(this.selectedOption, 'board[0]');
         this.frameWorkId = _.get(_.find(this.custOrgFrameworks, { 'name': this.selectedOption.board }), 'identifier');
+
         return this.getFormatedFilterDetails().pipe(map((formFieldProperties) => {
           this._formFieldProperties = formFieldProperties;
           this.mergeBoard(); // will merge board from custodian org and board from selected framework data

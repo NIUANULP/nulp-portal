@@ -58,6 +58,7 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
     downloadIdentifier: string;
     contentDownloadStatus = {};
     isConnected = true;
+    isGuestUser: any;
     private _facets$ = new Subject();
     public showBatchInfo = false;
     public enrolledCourses: Array<any>;
@@ -578,6 +579,7 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
             if (this.selectedTab === 'home') {
                 if (!this.userType) {
                     if (this.isUserLoggedIn()) {
+                        this.isGuestUser = false;
                     this.userService.userData$.subscribe((profileData: IUserData) => {
                         if (profileData
                             && profileData.userProfile
@@ -586,6 +588,7 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
                         }
                     });
                 } else {
+                    this.isGuestUser = true;
                     const user = localStorage.getItem('userType');
                     if (user) {
                         this.userType = user;
