@@ -423,15 +423,12 @@
                                         <ng-template pTemplate="caption">
                                             <tr class="d-flex d-jc-space-between">
                                                 <td>
-                                                    <div class="ui small left icon input align-left">
-
+                                                    <div id="userSearch" class="ui small left icon input align-left">
                                                         <i class="search icon"></i>
                                                         <input type="text" pInputText size="50" placeholder="Search"
                                                             (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
-
                                                     </div>
                                                 </td>
-
                                                 <td class="v-align-bottom">
                                                     <div class="ui-helper-clearfix export-btns">
                                                         <button type="button" style="float:right" icon="fa fa-file" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" pbutton=""

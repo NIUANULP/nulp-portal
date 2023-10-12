@@ -77,7 +77,7 @@ export class AppComponent implements OnInit, OnDestroy {
   instance: string;
   resourceDataSubscription: any;
   private fingerprintInfo: any;
-  hideHeaderNFooter = true;
+  hideHeaderNFooter = false;
   queryParams: any;
   telemetryContextData: any;
   didV2: boolean;
@@ -170,6 +170,8 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   handleHeaderNFooter() {
+console.log("111=====",_.get(this.activatedRoute, 'snapshot.firstChild.firstChild.data.hideHeaderNFooter'))
+console.log("222=====",_.get(this.activatedRoute, 'snapshot.firstChild.firstChild.firstChild.data.hideHeaderNFooter'))
     this.router.events
       .pipe(
         filter(event => event instanceof NavigationEnd),
