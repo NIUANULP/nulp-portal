@@ -47,33 +47,34 @@ export class SearchFilterComponent implements OnInit, OnDestroy {
 
   @ViewChild('sbSearchFrameworkFilterComponent') searchFrameworkFilterComponent: any;
   filterFormTemplateConfig: IFrameworkCategoryFilterFieldTemplateConfig[];
+
   private _filterConfig$ = defer(() => of([
     {
       category: 'board',
       type: 'dropdown',
       labelText: _.get(this.resourceService, 'frmelmnts.lbl.boards'),
-      placeholderText: 'Select Board',
+      placeholderText: 'Select Category',
       multiple: false
     },
     {
       category: 'medium',
       type: 'dropdown',
       labelText: _.get(this.resourceService, 'frmelmnts.lbl.medium'),
-      placeholderText: 'Select Medium',
+      placeholderText: 'Select language',
       multiple: true
     },
     {
       category: 'gradeLevel',
       type: 'dropdown',
       labelText: _.get(this.resourceService, 'frmelmnts.lbl.class'),
-      placeholderText: 'Select Class',
+      placeholderText: 'Select Sub-Category',
       multiple: true
     },
     {
       category: 'subject',
       type: 'dropdown',
       labelText: _.get(this.resourceService, 'frmelmnts.lbl.subject'),
-      placeholderText: 'Select Subject',
+      placeholderText: 'Select Topic',
       multiple: true
     },
     // {
@@ -83,13 +84,13 @@ export class SearchFilterComponent implements OnInit, OnDestroy {
     //   placeholderText: 'Select Published by',
     //   multiple: true
     // },
-    {
-      category: 'audience',
-      type: 'dropdown',
-      labelText: _.get(this.resourceService, 'frmelmnts.lbl.publishedUserType'),
-      placeholderText: 'Select User Type',
-      multiple: true
-    }
+    // {
+    //   category: 'audience',
+    //   type: 'dropdown',
+    //   labelText: _.get(this.resourceService, 'frmelmnts.lbl.publishedUserType'),
+    //   placeholderText: 'Select User Type',
+    //   multiple: true
+    // }
   ]));
 
   constructor(public resourceService: ResourceService, private router: Router,
@@ -161,6 +162,8 @@ export class SearchFilterComponent implements OnInit, OnDestroy {
       const queryParams = { ...this.defaultFilters, selectedTab: _.get(this.activatedRoute, 'snapshot.queryParams.selectedTab') || _.get(this.defaultTab, 'contentType') || 'textbook' };
       this.router.navigate([], { queryParams, relativeTo: this.activatedRoute });
     }
+
+    // console.log("ngOnInit");
   }
   private boardChangeHandler() {
     return this.boardChange$.pipe(
@@ -422,6 +425,7 @@ export class SearchFilterComponent implements OnInit, OnDestroy {
       switchMap(_ => this._filterConfig$),
       tap((config: IFrameworkCategoryFilterFieldTemplateConfig[]) => {
         this.filterFormTemplateConfig = config;
+        // console.log("filterFormTemplateConfig", this.filterFormTemplateConfig);
         this.refreshSearchFilterComponent = false;
         this.cdr.detectChanges();
         this.refreshSearchFilterComponent = true;
