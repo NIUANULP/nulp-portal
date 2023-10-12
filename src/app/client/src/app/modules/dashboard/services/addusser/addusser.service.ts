@@ -68,7 +68,7 @@ export class AddusserService {
       url: this.configService.urlConFig.URLS.ADMIN.UPDATE_USER_ORG,
       data: data
     };
-    return this.learnerService.patch(options);
+    return this.learnerService.post(options);
   }
 
   addroleRootOrganization(data)
