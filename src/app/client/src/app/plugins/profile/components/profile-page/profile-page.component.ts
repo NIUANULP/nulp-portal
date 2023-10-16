@@ -219,11 +219,15 @@ export class ProfilePageComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
     let userRoles;
-    userRoles = this.userProfile.userRoles;
+    if (_.get(this.userProfile, 'roles') && !_.isEmpty(this.userProfile.roles)) {
+      userRoles = _.map(this.userProfile.roles, 'role');
+    }
     _.forEach(userRoles, (value, key) => {
-      const roleName = _.find(this.userProfile.roleList, { id: value });
-      if (roleName) {
-        this.roles.push(roleName['name']);
+      if (value !== 'PUBLIC') {
+        const roleName = _.find(this.userProfile.roleList, { id: value });
+        if (roleName) {
+          this.roles.push(roleName['name']);
+        }
       }
     });
     this.roles = _.uniq(this.roles).sort();
