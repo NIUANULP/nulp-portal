@@ -49,6 +49,7 @@ export class AddMemberComponent implements OnInit, OnDestroy {
   file: any;
   activateUpload: boolean;
   private userSearchTime: any;
+  showCSVUpload = false;
 
   constructor(public resourceService: ResourceService, private groupsService: GroupsService,
     private toasterService: ToasterService,
@@ -61,8 +62,11 @@ export class AddMemberComponent implements OnInit, OnDestroy {
     public layoutService: LayoutService,
     userService: UserService,
     private lazzyLoadScriptService: LazzyLoadScriptService,
-    ) {
-      this.userService = userService;
+  ) {
+   this.userService = userService;
+    if (this.userService.userProfile.userRoles.includes("ORG_ADMIN") || this.userService.userProfile.userRoles.includes("ADMIN")) {
+      this.showCSVUpload = true;
+    }
   }
 
   ngOnInit() {

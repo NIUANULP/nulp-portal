@@ -294,6 +294,10 @@ export class AddusersComponent implements OnInit {
     this.getUserProfileOrg()
     this.getOrgDataUser()
     this.initLayout()
+    $('#userSearch input.search').on('keyup', (e) => {
+alert(e)
+    this.populateUserProfile($('#userSearch input.search').val());
+    });
   }
 
   initLayout() {
@@ -314,6 +318,8 @@ export class AddusersComponent implements OnInit {
       { field: 'email', header: 'Email', width: '233px' },
       { field: 'phone', header: 'Mobile', width: '101px' },
       { field: 'status', header: 'Status', width: '95px' },
+      { field: 'userId', header: 'User Id', width: '95px' }
+
     ]
   }
 
@@ -354,7 +360,9 @@ export class AddusersComponent implements OnInit {
   /**
    * This method fetches the user data
    */
-  populateUserProfile() {
+  populateUserProfile(query?) {
+    console.log("query111-----",query);
+
     this.showLoader = true;
     const option = { userId: this.userId };
     this.userSearchService.getUserById(option).subscribe(
@@ -436,8 +444,12 @@ export class AddusersComponent implements OnInit {
             }
             this.checkRootOrg = false;
           }
+          if(query){
+            this.populateUserSearch(this.userLoginDataChannel, this.organisationId, this.systemVar,query);}
+          else{
+            this.populateUserSearch(this.userLoginDataChannel, this.organisationId, this.systemVar);
+          }
         
-        this.populateUserSearch(this.userLoginDataChannel, this.organisationId, this.systemVar);
       },
       err => {
         this.toasterService.error(this.resourceService.messages.emsg.m0005);
@@ -447,7 +459,8 @@ export class AddusersComponent implements OnInit {
     );
   }
 
-  populateUserSearch(userLoginDataChannel, organisationId, systemVar) {
+  populateUserSearch(userLoginDataChannel, organisationId, systemVar,query?) {
+    console.log("query222-----",query);
     //sessionStorage.setItem("orgDatalength", this.orgData.length);
     this.orgDatalength = sessionStorage.getItem("orgDatalength")
     this.subOrgName = sessionStorage.getItem("subOrgName")
@@ -456,7 +469,7 @@ export class AddusersComponent implements OnInit {
       if (systemVar == 'present') {
         tempArray = {
           'request': {
-            'query': '',
+            'query': query?query:'',
             'filters': {
 
             },
@@ -616,7 +629,8 @@ export class AddusersComponent implements OnInit {
       { field: 'orgType', header: 'Organization Type', width: '183px' },
       { field: 'description', header: 'Description', width: '170px' },
       { field: 'channel', header: 'Channel', width: '170px' },
-      { field: 'status', header: 'Status', width: '170px' }, 
+      { field: 'status', header: 'Status', width: '170px' },
+      { field: 'userId', header: 'User ID', width: '150px' }
     ]
   }
 

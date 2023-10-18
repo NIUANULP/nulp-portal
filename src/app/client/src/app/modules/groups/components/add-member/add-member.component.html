@@ -90,6 +90,7 @@
           </div>
         </div>
       </div>
+     <div *ngIf="showCSVUpload">
       <div class="sb-btn mt-8 sb-bulk-upload-btn">
         <input type="file" #inputbtn class="sb-btn-upload" name="file" onclick="this.value = null"
             accept=".csv" (change)="fileChanged($event)" />
@@ -106,6 +107,10 @@
       {{resourceService?.frmelmnts?.btn?.smplcsv}}
   </button>
     </div>
+    <div *ngIf="!showCSVUpload">
+<label> Only admin and Org admin can upload CSV users.</label>
+    </div>
+     </div>
     
     <div class="sb-g-col-xs-12 sb-g-col-md-3 sb-g-col-lg-3 sb-g-col-xxxl-4 sb-members-column">
       <app-group-members [members]="membersList" [groupData]="groupData"></app-group-members>
