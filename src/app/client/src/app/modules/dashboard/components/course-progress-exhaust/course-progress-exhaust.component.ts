@@ -276,6 +276,7 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
       this.courseProgressService.getBatches(searchParamsMentor),
     ).pipe(takeUntil(this.unsubscribe))
       .subscribe((results) => {
+        console.log("results Batch -", results);
         this.batchlist = _.union(results[0].result.response.content, results[1].result.response.content);
         this.showLoader = false;
         const isBatchExist = _.find(this.batchlist, (batch) => batch.id === this.queryParams.batchIdentifier);
@@ -398,7 +399,11 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
   }   
 
   keyup(event) {
+    // console.log("event", event);
     this.modelChanged.next(_.trim(event));
+    // this.searchBatch();
+    this.searchText = _.trim(event);
+    this.populateCourseProgressExhaustData(this.currentBatch);
   }
   
   searchBatch() {
@@ -557,12 +562,12 @@ export class CourseProgressExhaustComponent implements OnInit, OnDestroy { //, A
   getColumns() {
     this.columns = [
       'userName', 
-      'maskedemail', 
-      'maskedphone', 
+      'maskedEmail', 
+      'maskedPhone', 
       'coursename', 
       'batchname',
-      'batch_start_date',
-      'batch_end_date',
+      'start_date',
+      'end_date',
       'enrolled_date',
       'completedon',
       'progress',
