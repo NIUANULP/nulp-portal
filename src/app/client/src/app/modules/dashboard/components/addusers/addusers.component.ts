@@ -5058,21 +5058,12 @@ alert(e)
     }
 
     let addOrgtempArray: any
-    let roles = [];
-    this.roleDataArr.forEach(role => {
-      roles.push({
-        "role": role,
-        "operation": "add",
-        "scope": [
-          { "organisationId": this.onchangeaddOrgId }
-        ]
-      })
-    })
     addOrgtempArray =
     {
       "request": {
+        "organisationId": this.onchangeaddOrgId,
         "userId": this.gridOrgUserId,
-        "roles": roles
+        "username": this.username
       }
     }
     //return;
@@ -5084,7 +5075,7 @@ alert(e)
         addOrgtempArray.request['roles'] = this.roleDataArr
         this._httpService.addroleRootOrganization(addOrgtempArray).subscribe();
       }
-      //this.populateUserProfile();
+      // this.populateUserProfile();
     }, err => {
       this.popupMsg = err.params.errmsg;
     })
