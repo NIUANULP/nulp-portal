@@ -65,7 +65,7 @@ export class AddusserService {
   addroleSubRootOrganization(data)
   {
     const options = {
-      url: this.configService.urlConFig.URLS.ADMIN.UPDATE_USER_ORG,
+      url: this.configService.urlConFig.URLS.ADMIN.UPDATE_USER_ORG_ROLES,
       data: data
     };
     return this.learnerService.post(options);
