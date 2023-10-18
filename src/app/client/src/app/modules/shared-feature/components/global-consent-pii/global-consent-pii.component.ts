@@ -307,9 +307,4 @@ export class GlobalConsentPiiComponent implements OnInit {
     }
   }
 
-  onChangeTncAgreed(event): void {
-    console.log(event);
-    console.log(this.isTncAgreed);
-  }
-
 }
