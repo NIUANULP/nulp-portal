@@ -66,9 +66,8 @@
                 :'DD/MM/YYYY'}}</span>
               <span *ngIf="!currentBatch.endDate">-</span>
             </span>
-
-            <span *ngIf="currentBatch.participantCount !== null" class="course-participants course-participants-label">
-              <span class="font-weight-bold">{{currentBatch.participantCount}}</span>
+            <span *ngIf="totalCount !== null" class="course-participants course-participants-label">
+              <span class="font-weight-bold">{{totalCount}}</span>
             </span>
           </div>
 
@@ -153,20 +152,20 @@
       <tbody *ngIf="courseProgressExhaustData">
         <tr class="UpForReviewListHover cursor-pointer" *ngFor="let courseProgressExhaust of courseProgressExhaustData">
           <td class="content">{{courseProgressExhaust?.userName}}</td>
-          <td class="content">{{courseProgressExhaust?.maskedemail}}</td>
-          <td class="content">{{courseProgressExhaust?.maskedphone}}</td>
+          <td class="content">{{courseProgressExhaust?.maskedEmail}}</td>
+          <td class="content">{{courseProgressExhaust?.maskedPhone}}</td>
 
           <td *ngIf="showCourseData" class="content">{{courseProgressExhaust?.batchid}}</td>
-          <td *ngIf="showCourseData" class="content">{{courseProgressExhaust?.batch_name}}</td>
-          <td *ngIf="showCourseData" class="content">{{courseProgressExhaust?.batch_start_date}}</td>
-          <td *ngIf="showCourseData" class="content">{{courseProgressExhaust?.batch_end_date}}</td>
+          <td *ngIf="showCourseData" class="content">{{courseProgressExhaust?.batchname}}</td>
+          <td *ngIf="showCourseData" class="content">{{courseProgressExhaust?.start_date}}</td>
+          <td *ngIf="showCourseData" class="content">{{courseProgressExhaust?.end_date}}</td>
 
           <td class="content">{{courseProgressExhaust?.enrolled_date | date:'dd/MM/yyyy'}}</td>
           <td class="content">{{courseProgressExhaust?.completedon  | dateFormat :'DD/MM/YYYY'}} </td>
           <td class="content">{{courseProgressExhaust?.progress}}</td>
           <td class="content">{{courseProgressExhaust?.completionpercentage}}</td>
-          <td  *ngIf="courseProgressExhaust?.issued_certificates?.name" class="content">Yes</td>
-          <td  *ngIf="!courseProgressExhaust?.issued_certificates?.name" class="content">No</td>
+          <td  *ngIf="courseProgressExhaust?.issued_certificates" class="content">Yes</td>
+          <td  *ngIf="!courseProgressExhaust?.issued_certificates" class="content">No</td>
         </tr>
       </tbody>
     </table>

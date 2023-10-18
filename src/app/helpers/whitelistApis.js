@@ -1720,7 +1720,7 @@ const API_LIST = {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [ROLE.PUBLIC]
     },
-    '/learner/user/v2/role/assign': {
+    '/learner/user/v1/role/assign': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [ROLE.ORG_ADMIN]
     },
@@ -2066,7 +2066,6 @@ const API_LIST = {
     'learner/org/v1/status/update',
     '/learner/user/v1/upload',
     '/learner/user/v1/role/assign',
-    '/learner/user/v2/role/assign',
     '/learner/notification/v1/feed/read/:uid',
     '/learner/course/v1/batch/participants/list'
   ]
