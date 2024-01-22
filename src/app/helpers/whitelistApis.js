@@ -418,7 +418,7 @@ const API_LIST = {
     },
     '/learner/course/v1/batch/participants/list': {
       checksNeeded: ['ROLE_CHECK'],
-      ROLE_CHECK: [ROLE.COURSE_MENTOR]
+      ROLE_CHECK: [ROLE.COURSE_MENTOR, ROLE.CONTENT_CREATOR]
     },
     '/learner/course/v1/batch/list': {
       checksNeeded: ['ROLE_CHECK'],
