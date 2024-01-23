@@ -70,7 +70,7 @@
     "@swimlane/ngx-datatable": "16.1.1",
     "@types/jquery": "3.3.31",
     "@types/jquery.fancytree": "2.7.34",
-    "@types/lodash": "^4.14.182",
+    "@types/lodash": "4.14.182",
     "angular-datatables": "8.0.0",
     "angular-inport": "^2.0.0",
     "angular2-csv": "0.2.5",
