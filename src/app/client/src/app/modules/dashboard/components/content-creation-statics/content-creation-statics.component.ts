@@ -92,6 +92,10 @@ export class ContentCreationStaticsComponent implements OnInit, OnDestroy {
             } else {
               obj.OrgName = '';
             }
+            obj.board = obj.board ? obj.board : ' - ' ;
+            obj.medium = obj.medium ? obj.medium : ' - ' ;
+            obj.gradeLevel = obj.gradeLevel ?  obj.gradeLevel : ' - ' ;
+            
             // if (!_.isEmpty(obj.createdBy)) {
             //   obj.UserName = _.get(_.find(self.allUserName, { 'id': obj.createdBy }), 'firstName') + " " + _.get(_.find(self.allUserName, { 'id': obj.createdBy }), 'lastName');
             // } else {
