@@ -54,7 +54,6 @@ export class ContentCreationStaticsComponent implements OnInit, OnDestroy {
     this.toDate = new Date();
   }
   getContentCreationStaticsReport() {
-    console.log('response')
     // let channelFilter = [];
     // _.map(this.orgList, function (obj) {
     //   channelFilter.push(obj.identifier)
@@ -79,12 +78,10 @@ export class ContentCreationStaticsComponent implements OnInit, OnDestroy {
       }
     };
     this.reportService.getContentCreationStaticsReport(data).subscribe((response) => {
-      console.log('response',response)
       if (_.get(response, 'responseCode') === 'OK') {
         if (response.result.count > 0) {
           this.tableData = [];
           let tempObj = _.cloneDeep(response.result.content);
-          console.log('tempObj',tempObj)
           var self = this;
           _.map(tempObj, function (obj) {
             obj.createdOn = self.datePipe.transform(obj.lastPublishedOn, 'MM/dd/yyyy');
