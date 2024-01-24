@@ -54,6 +54,7 @@ export class ContentCreationStaticsComponent implements OnInit, OnDestroy {
     this.toDate = new Date();
   }
   getContentCreationStaticsReport() {
+    console.log('response')
     // let channelFilter = [];
     // _.map(this.orgList, function (obj) {
     //   channelFilter.push(obj.identifier)
@@ -78,10 +79,12 @@ export class ContentCreationStaticsComponent implements OnInit, OnDestroy {
       }
     };
     this.reportService.getContentCreationStaticsReport(data).subscribe((response) => {
+      console.log('response',response)
       if (_.get(response, 'responseCode') === 'OK') {
         if (response.result.count > 0) {
           this.tableData = [];
           let tempObj = _.cloneDeep(response.result.content);
+          console.log('tempObj',tempObj)
           var self = this;
           _.map(tempObj, function (obj) {
             obj.createdOn = self.datePipe.transform(obj.lastPublishedOn, 'MM/dd/yyyy');
@@ -92,6 +95,10 @@ export class ContentCreationStaticsComponent implements OnInit, OnDestroy {
             } else {
               obj.OrgName = '';
             }
+            obj.board = obj.board ? obj.board : ' - ' ;
+            obj.medium = obj.medium ? obj.medium : ' - ' ;
+            obj.gradeLevel = obj.gradeLevel ?  obj.gradeLevel : ' - ' ;
+            
             // if (!_.isEmpty(obj.createdBy)) {
             //   obj.UserName = _.get(_.find(self.allUserName, { 'id': obj.createdBy }), 'firstName') + " " + _.get(_.find(self.allUserName, { 'id': obj.createdBy }), 'lastName');
             // } else {
