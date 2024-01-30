@@ -64,7 +64,8 @@ module.exports = function (app) {
   app.get('/learner/isUserExists/user/v1/get/phone/*', proxyObj());
 
   app.get('/learner/isUserExists/user/v1/get/email/*', proxyObj());
-  app.post('/learner/user/v2/bulk/upload', proxyObj());
+  // app.post('/learner/user/v2/bulk/upload', proxyObj());
+  app.post('/learner/user/v1/upload', proxyObj());
   // Route to handle user registration
   app.all('/learner/user/v2/signup',
     healthService.checkDependantServiceHealth(['LEARNER', 'CASSANDRA']),
@@ -107,6 +108,7 @@ module.exports = function (app) {
       userResDecorator: (proxyRes, proxyResData, req, res) => {
         try {
           const data = JSON.parse(proxyResData.toString('utf8'));
+          console.log('res2',proxyResData.toString('utf8'));
           if (req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
           else return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
         } catch (err) {
