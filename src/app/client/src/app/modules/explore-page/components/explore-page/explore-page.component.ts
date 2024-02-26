@@ -375,7 +375,7 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
         this.showLoader = true;
         this.selectedFilters = pick(filters, _.get(currentPageData , 'metaData.filters'));
        
-        //We dont have CBSC filter
+        // We dont have CBSC filter
         // if (this.selectedFilters['board'][0] === 'CBSE/NCERT') {
         //     this.selectedFilters['board'][0] = 'CBSE';
         // }
