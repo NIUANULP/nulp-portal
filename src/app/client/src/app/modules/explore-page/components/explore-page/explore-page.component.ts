@@ -374,9 +374,9 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
         this.cacheService.set('searchFilters', filters, { expires: Date.now() + _cacheTimeout });
         this.showLoader = true;
         this.selectedFilters = pick(filters, _.get(currentPageData , 'metaData.filters'));
-        if (this.selectedFilters['board'][0] === 'CBSE/NCERT') {
-            this.selectedFilters['board'][0] = 'CBSE';
-        }
+        // if (this.selectedFilters['board'][0] === 'CBSE/NCERT') {
+        //     this.selectedFilters['board'][0] = 'CBSE';
+        // }
         if (has(filters, 'audience') || (localStorage.getItem('userType') && currentPageData.contentType !== 'all')) {
             const userTypes = get(filters, 'audience') || [localStorage.getItem('userType')];
             const audienceSearchFilterValue = _.get(filters, 'audienceSearchFilterValue');
