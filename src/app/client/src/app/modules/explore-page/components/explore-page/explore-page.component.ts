@@ -374,6 +374,8 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
         this.cacheService.set('searchFilters', filters, { expires: Date.now() + _cacheTimeout });
         this.showLoader = true;
         this.selectedFilters = pick(filters, _.get(currentPageData , 'metaData.filters'));
+       
+        //We dont have CBSC filter
         // if (this.selectedFilters['board'][0] === 'CBSE/NCERT') {
         //     this.selectedFilters['board'][0] = 'CBSE';
         // }
