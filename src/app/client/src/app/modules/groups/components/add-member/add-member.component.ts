@@ -238,7 +238,7 @@ export class AddMemberComponent implements OnInit, OnDestroy {
       const users = this.getUsers(data)
       this.userList = users.userList;
       this.getNotAddedUsers();
-      this.initDropDown();
+      // this.initDropDown();
     })
   }
 

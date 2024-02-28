@@ -418,7 +418,7 @@ const API_LIST = {
     },
     '/learner/course/v1/batch/participants/list': {
       checksNeeded: ['ROLE_CHECK'],
-      ROLE_CHECK: [ROLE.COURSE_MENTOR]
+      ROLE_CHECK: [ROLE.COURSE_MENTOR, ROLE.CONTENT_CREATOR]
     },
     '/learner/course/v1/batch/list': {
       checksNeeded: ['ROLE_CHECK'],
@@ -543,7 +543,7 @@ const API_LIST = {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [ROLE.PUBLIC]
     },
-    '/learner/user/v2/bulk/upload': {
+    '/learner/user/v1/upload': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [ROLE.ADMIN]
     },
@@ -624,6 +624,14 @@ const API_LIST = {
     },
 
     // ORD related APIs
+    'learner/org/v1/read': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [ROLE.ADMIN]
+    },
+    'learner/org/v1/update': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [ROLE.ADMIN]
+    },  
     '/learner/org/v2/search': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [ROLE.PUBLIC]
@@ -2067,7 +2075,9 @@ const API_LIST = {
     '/learner/user/v1/upload',
     '/learner/user/v1/role/assign',
     '/learner/notification/v1/feed/read/:uid',
-    '/learner/course/v1/batch/participants/list'
+    '/learner/course/v1/batch/participants/list',
+    'learner/org/v1/read',
+    'learner/org/v1/update'
   ]
 };
 module.exports = API_LIST;

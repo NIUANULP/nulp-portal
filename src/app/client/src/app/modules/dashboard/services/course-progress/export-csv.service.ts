@@ -41,7 +41,8 @@ export class ExportCsvService {
             for (let index in headerList) {
                 let head = headerList[index];
                 if (head === 'issued_certificates') {
-                    if (array[i][head]?.name) {
+                    if (array[i][head]) {
+                        // if (array[i][head]?.name) {
                         line += ',' + 'Yes';
                     } else {
                         line += ',' + 'No';

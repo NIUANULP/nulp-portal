@@ -47,7 +47,7 @@ export class CourseProgressService  {
           'filters': {
             'courseId': requestParam.courseId,
             'status': requestParam.status,
-            'createdBy': requestParam.createdBy,
+            // 'createdBy': requestParam.createdBy,
             'mentors': requestParam.mentors
           },
           'sort_by': { 'createdDate': 'desc' }
@@ -107,6 +107,8 @@ export class CourseProgressService  {
     if (_.get(requestParam, 'query')) {
       option.param['query'] = requestParam.query;
     }
+
+    console.log("API option -", option);
 
     return this.learnerService.get(option);
   }
