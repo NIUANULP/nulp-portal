@@ -116,7 +116,8 @@ module.exports = function (app) {
   app.get("/learner/isUserExists/user/v1/get/phone/*", proxyObj());
 
   app.get("/learner/isUserExists/user/v1/get/email/*", proxyObj());
-  app.post("/learner/user/v2/bulk/upload", proxyObj());
+  // app.post('/learner/user/v2/bulk/upload', proxyObj());
+  app.post("/learner/user/v1/upload", proxyObj());
   // Route to handle user registration
   app.all(
     "/learner/user/v2/signup",
@@ -170,6 +171,7 @@ module.exports = function (app) {
       userResDecorator: (proxyRes, proxyResData, req, res) => {
         try {
           const data = JSON.parse(proxyResData.toString("utf8"));
+          console.log("data", data);
           if (
             req.method === "GET" &&
             proxyRes.statusCode === 404 &&

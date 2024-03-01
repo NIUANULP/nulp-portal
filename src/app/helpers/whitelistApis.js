@@ -623,7 +623,7 @@ const API_LIST = {
       checksNeeded: ["ROLE_CHECK"],
       ROLE_CHECK: [ROLE.PUBLIC],
     },
-    "/learner/user/v2/bulk/upload": {
+    "/learner/user/v1/upload": {
       checksNeeded: ["ROLE_CHECK"],
       ROLE_CHECK: [ROLE.ADMIN],
     },
