@@ -1,24 +1,25 @@
-'use strict';
+"use strict";
 /**
  * @file - Handle whitelisting and role checks of Portal API(s)
  * @since release-3.1.0
  * @version 1.0
  */
 
-const _                 = require('lodash');
-const uuidv1            = require('uuid/v1');
-const dateFormat        = require('dateformat');
-const { logger }        = require('@project-sunbird/logger');
-const { pathToRegexp, match }  = require("path-to-regexp");
+const _ = require("lodash");
+const uuidv1 = require("uuid/v1");
+const dateFormat = require("dateformat");
+const { logger } = require("@project-sunbird/logger");
+const { pathToRegexp, match } = require("path-to-regexp");
 
-const API_LIST          = require('./whitelistApis');
-const utils             = require('./utilityService');
-const envHelper         = require('./environmentVariablesHelper.js');
-const KONG_DEVICE_REGISTER_ANONYMOUS_TOKEN  = require('./environmentVariablesHelper.js').KONG_DEVICE_REGISTER_ANONYMOUS_TOKEN;
+const API_LIST = require("./whitelistApis");
+const utils = require("./utilityService");
+const envHelper = require("./environmentVariablesHelper.js");
+const KONG_DEVICE_REGISTER_ANONYMOUS_TOKEN =
+  require("./environmentVariablesHelper.js").KONG_DEVICE_REGISTER_ANONYMOUS_TOKEN;
 const ROLE = {
-  ORGADMIN : 'ORG_ADMIN',
-  SYSADMIN : 'SYSTEM_ADMINISTRATION'
-}
+  ORGADMIN: "ORG_ADMIN",
+  SYSADMIN: "SYSTEM_ADMINISTRATION",
+};
 
 /**
  * @description - Function to check whether
@@ -30,7 +31,7 @@ const ROLE = {
  */
 const isAllowed = () => {
   return function (req, res, next) {
-    if (envHelper.PORTAL_API_WHITELIST_CHECK == 'true') {
+    if (envHelper.PORTAL_API_WHITELIST_CHECK == "true") {
       if (shouldAllow(req)) {
         next();
       } else {
@@ -48,21 +49,26 @@ const isAllowed = () => {
           const URL_RULE_OBJ = _.get(API_LIST.URL, REQ_URL);
           let checksToExecute = [];
           // Iterate for checks defined for API and push to array
-          URL_RULE_OBJ.checksNeeded.forEach(CHECK => {
-            checksToExecute.push(new Promise((res, rej) => {
-              if (_.get(URL_RULE_OBJ, CHECK) && typeof urlChecks[CHECK] === 'function') {
-                urlChecks[CHECK](res, rej, req, URL_RULE_OBJ[CHECK], REQ_URL);
-              }
-            }));
+          URL_RULE_OBJ.checksNeeded.forEach((CHECK) => {
+            checksToExecute.push(
+              new Promise((res, rej) => {
+                if (
+                  _.get(URL_RULE_OBJ, CHECK) &&
+                  typeof urlChecks[CHECK] === "function"
+                ) {
+                  urlChecks[CHECK](res, rej, req, URL_RULE_OBJ[CHECK], REQ_URL);
+                }
+              })
+            );
           });
           executeChecks(req, res, next, checksToExecute);
         } else {
           // If API is not whitelisted
           logger.info({
-            msg: 'Portal_API_WHITELIST: URL not whitelisted',
+            msg: "Portal_API_WHITELIST: URL not whitelisted",
             reqPath: req.path,
             reqOriginalUrl: req.originalUrl,
-            method: req.method
+            method: req.method,
           });
           respond403(req, res);
         }
@@ -70,7 +76,7 @@ const isAllowed = () => {
     } else {
       next();
     }
-  }
+  };
 };
 
 /**
@@ -80,7 +86,7 @@ const isAllowed = () => {
  */
 const shouldAllow = (req) => {
   // Ignore static routes
-  return req.path === '/' || checkIsStaticRoute(req.path);
+  return req.path === "/" || checkIsStaticRoute(req.path);
 };
 
 /**
@@ -89,24 +95,24 @@ const shouldAllow = (req) => {
  */
 const checkIsStaticRoute = (REQ_URL) => {
   const excludePath = [
-    '.md',
-    '.js',
-    '.js.map',
-    '.ico',
-    '.ttf',
-    '.woff2',
-    '.woff',
-    '.eot',
-    '.svg',
-    '.gif',
-    '.png',
-    '.html',
-    '/dist/',
-    '/streaming/',
-    '/resourcebundles/',
-    '/assets/',
-    '/content-plugins/',
-    '/editors/'
+    ".md",
+    ".js",
+    ".js.map",
+    ".ico",
+    ".ttf",
+    ".woff2",
+    ".woff",
+    ".eot",
+    ".svg",
+    ".gif",
+    ".png",
+    ".html",
+    "/dist/",
+    "/streaming/",
+    "/resourcebundles/",
+    "/assets/",
+    "/content-plugins/",
+    "/editors/",
   ];
   return _.some(excludePath, (path) => _.includes(REQ_URL, path));
 };
@@ -117,7 +123,7 @@ const checkIsStaticRoute = (REQ_URL) => {
  * @since release-3.1.0
  */
 const urlChecks = {
-   /**
+  /**
    * @param  {Callback} resolve     - Callback to `isAllowed` function promise object
    * @param  {Callback} reject      - Callback to `isAllowed` function promise object
    * @param  {Object} req           - API request object
@@ -128,21 +134,27 @@ const urlChecks = {
    */
   ROLE_CHECK: (resolve, reject, req, rolesForURL, REQ_URL) => {
     logger.info({
-      msg: 'Portal_API_WHITELIST : Middleware for URL [ ' + REQ_URL + ' ]',
+      msg: "Portal_API_WHITELIST : Middleware for URL [ " + REQ_URL + " ]",
       reqPath: req.path,
       matchPattern: REQ_URL,
       method: req.method,
-      sessionRoles: _.get(req, 'session.roles') || 'no roles in session',
-      rulesForURL: rolesForURL
+      sessionRoles: _.get(req, "session.roles") || "no roles in session",
+      rulesForURL: rolesForURL,
     });
-    if (KONG_DEVICE_REGISTER_ANONYMOUS_TOKEN === 'false' && _.includes(rolesForURL, 'ANONYMOUS')) {
+    if (
+      KONG_DEVICE_REGISTER_ANONYMOUS_TOKEN === "false" &&
+      _.includes(rolesForURL, "ANONYMOUS")
+    ) {
       resolve();
-    } else if (_.includes(rolesForURL, 'ALL') && req.session['roles'].length > 0) {
+    } else if (
+      _.includes(rolesForURL, "ALL") &&
+      req.session["roles"].length > 0
+    ) {
       resolve();
-    } else if (_.intersection(rolesForURL, req.session['roles']).length > 0) {
+    } else if (_.intersection(rolesForURL, req.session["roles"]).length > 0) {
       resolve();
     } else {
-      return reject('User doesn\'t have appropriate roles');
+      return reject("User doesn't have appropriate roles");
     }
   },
   /**
@@ -155,15 +167,17 @@ const urlChecks = {
    * @since - release-3.1.0
    */
   OWNER_CHECK: async (resolve, reject, req, checksParams, REQ_URL) => {
-    if (_.get(checksParams, 'checks')) {
+    if (_.get(checksParams, "checks")) {
       let ownerChecks = [];
       checksParams.checks.forEach((ownerCheckObj) => {
-        ownerChecks.push(new Promise((res, rej) => {
-          let _checkFor = _.get(ownerCheckObj, 'entity');
-          if (_checkFor && typeof urlChecks[_checkFor] === 'function') {
-            urlChecks[_checkFor](res, rej, req, ownerCheckObj, REQ_URL);
-          }
-        }));
+        ownerChecks.push(
+          new Promise((res, rej) => {
+            let _checkFor = _.get(ownerCheckObj, "entity");
+            if (_checkFor && typeof urlChecks[_checkFor] === "function") {
+              urlChecks[_checkFor](res, rej, req, ownerCheckObj, REQ_URL);
+            }
+          })
+        );
       });
       try {
         await Promise.all(ownerChecks)
@@ -178,9 +192,9 @@ const urlChecks = {
         return reject();
       }
     } else {
-      return reject('Owner check validation failed.');
+      return reject("Owner check validation failed.");
     }
-  },  
+  },
   /**
    * @param  {Callback} resolve      - Callback to `OWNER_CHECK` promise object
    * @param  {Callback} reject       - Callback to `OWNER_CHECK` promise object
@@ -192,16 +206,23 @@ const urlChecks = {
    */
   __session__userId: (resolve, reject, req, ownerCheckObj, REQ_URL) => {
     try {
-      const _sessionUserId = _.get(req, 'session.userId');
-      const _reqUserId = _.get(ownerCheckObj, 'key') ? _.get(req, ownerCheckObj.key) : _.get(req, 'body.request.userId');
+      const _sessionUserId = _.get(req, "session.userId");
+      const _reqUserId = _.get(ownerCheckObj, "key")
+        ? _.get(req, ownerCheckObj.key)
+        : _.get(req, "body.request.userId");
       if (_sessionUserId === _reqUserId) {
         resolve();
       } else {
-        return reject('Mismatch in user id verification. Session UserId [ ' + _sessionUserId +
-          ' ] does not match with request body UserId [ ' + _reqUserId + ' ]');
+        return reject(
+          "Mismatch in user id verification. Session UserId [ " +
+            _sessionUserId +
+            " ] does not match with request body UserId [ " +
+            _reqUserId +
+            " ]"
+        );
       }
     } catch (error) {
-      return reject('User id validation failed.');
+      return reject("User id validation failed.");
     }
   },
   /**
@@ -210,27 +231,32 @@ const urlChecks = {
    * @param  {Object} req            - API request object
    * @param  {Object} ownerCheckObj  - `OWNER_CHECK` object
    * @access Private
-   * @description - Function to check session userId is an admin if yes resolve or if 
+   * @description - Function to check session userId is an admin if yes resolve or if
    *  the session userId is same as that of the request userId then also resolve
    * @since - release-3.3.0
    */
   __adminCheck__userId: (resolve, reject, req, ownerCheckObj, REQ_URL) => {
     try {
-      const _sessionUserId = _.get(req, 'session.userId');
-      const _reqUserId = _.get(req, 'body.request.userId');
-      const _sessionRole = _.get(req, 'session.roles');
-      if(_sessionRole === ROLE.ORGADMIN || _sessionRole === ROLE.SYSADMIN){
+      const _sessionUserId = _.get(req, "session.userId");
+      const _reqUserId = _.get(req, "body.request.userId");
+      const _sessionRole = _.get(req, "session.roles");
+      if (_sessionRole === ROLE.ORGADMIN || _sessionRole === ROLE.SYSADMIN) {
         resolve();
-      } else{
+      } else {
         if (_sessionUserId === _reqUserId) {
           resolve();
         } else {
-          return reject('Mismatch in user id verification. Session UserId [ ' + _sessionUserId +
-            ' ] is not an admin or does not match with request body UserId [ ' + _reqUserId + ' ]');
+          return reject(
+            "Mismatch in user id verification. Session UserId [ " +
+              _sessionUserId +
+              " ] is not an admin or does not match with request body UserId [ " +
+              _reqUserId +
+              " ]"
+          );
         }
       }
     } catch (error) {
-      return reject('User id validation failed.');
+      return reject("User id validation failed.");
     }
   },
   /**
@@ -244,19 +270,24 @@ const urlChecks = {
    */
   __urlparams__userId: (resolve, reject, req, ownerCheckObj, REQ_URL) => {
     try {
-      const _sessionUserId = _.get(req, 'session.userId');
+      const _sessionUserId = _.get(req, "session.userId");
       const _match = match(REQ_URL);
-      const params = _match(_.get(req, 'path')).params;
-      const _key = _.get(ownerCheckObj, 'key');
+      const params = _match(_.get(req, "path")).params;
+      const _key = _.get(ownerCheckObj, "key");
       if (_sessionUserId === _.get(params, _key)) {
         resolve();
       } else {
-        return reject('Mismatch in user id verification. Session UserId [ ' + _sessionUserId +
-          ' ] does not match with request body UserId [ ' + _reqUserId + ' ]');
+        return reject(
+          "Mismatch in user id verification. Session UserId [ " +
+            _sessionUserId +
+            " ] does not match with request body UserId [ " +
+            _reqUserId +
+            " ]"
+        );
       }
       resolve();
     } catch (error) {
-      return reject('User id validation failed for __urlparams__userId.');
+      return reject("User id validation failed for __urlparams__userId.");
     }
   },
 };
@@ -277,22 +308,22 @@ const executeChecks = async (req, res, next, checksToExecute) => {
     await Promise.allSettled(checksToExecute)
       .then((pSuccess) => {
         if (pSuccess) {
-          const _isRejected = _.find(pSuccess, {'status': 'rejected'});
+          const _isRejected = _.find(pSuccess, { status: "rejected" });
           if (_isRejected) {
             throw new Error(_isRejected.reason);
           } else {
             next();
           }
         } else {
-          throw new Error('API whitelisting validation failed');
+          throw new Error("API whitelisting validation failed");
         }
       })
       .catch((pError) => {
-        utils.logError(req, pError, _.get(pError, 'message'));
+        utils.logError(req, pError, _.get(pError, "message"));
         respond403(req, res);
       });
   } catch (error) {
-    utils.logError(req, error, _.get(error, 'message'));
+    utils.logError(req, error, _.get(error, "message"));
     respond403(req, res);
   }
 };
@@ -305,29 +336,32 @@ const executeChecks = async (req, res, next, checksToExecute) => {
  */
 const respond403 = (req, res) => {
   let REQ_URL = req.path;
-  const err = ({ msg: 'API WHITELIST :: Forbidden access for API [ ' + REQ_URL + ' ]', url: REQ_URL });
+  const err = {
+    msg: "API WHITELIST :: Forbidden access for API [ " + REQ_URL + " ]",
+    url: REQ_URL,
+  };
   utils.logError(req, err, err.msg);
   res.status(403);
   res.send({
-    id: 'api.error',
-    ver: '1.0',
-    ts: dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
+    id: "api.error",
+    ver: "1.0",
+    ts: dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss:lo"),
     params: {
       resmsgid: uuidv1(),
       msgid: null,
-      status: 'failed',
-      err: 'FORBIDDEN_ERROR',
-      errmsg: 'Forbidden: API WHITELIST Access is denied'
+      status: "failed",
+      err: "FORBIDDEN_ERROR",
+      errmsg: "Forbidden: API WHITELIST Access is denied",
     },
-    responseCode: 'FORBIDDEN',
-    result: {}
+    responseCode: "FORBIDDEN",
+    result: {},
   });
   res.end();
 };
 
 const apiWhiteListLogger = () => {
   return (req, res, next) => {
-    if (req.path === '/' || checkIsStaticRoute(req.path)) {
+    if (req.path === "/" || checkIsStaticRoute(req.path)) {
       next();
     } else {
       let REQ_URL = req.path;
@@ -345,19 +379,19 @@ const apiWhiteListLogger = () => {
       } else {
         // If API is not whitelisted
         logger.info({
-          msg: 'Portal_API_WHITELIST_LOGGER: URL not whitelisted',
+          msg: "Portal_API_WHITELIST_LOGGER: URL not whitelisted",
           reqPath: req.path,
           reqOriginalUrl: req.originalUrl,
           method: req.method,
-          sessionRoles: _.get(req, 'session.roles') || 'no roles in session'
+          sessionRoles: _.get(req, "session.roles") || "no roles in session",
         });
         next();
       }
     }
-  }
+  };
 };
 
 module.exports = {
   isAllowed,
-  apiWhiteListLogger
+  apiWhiteListLogger,
 };
