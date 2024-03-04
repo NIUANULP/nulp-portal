@@ -18,7 +18,14 @@ let envVariables = {
     env.sunbird_portal_session_secret !== ""
       ? env.sunbird_portal_session_secret.split(",")
       : "",
-
+  // Database
+  learnathon_voting_table_user: env.learnathon_voting_table_user || "nulp",
+  learnathon_voting_table_host: env.learnathon_voting_table_host || "localhost",
+  learnathon_voting_table_database:
+    env.learnathon_voting_table_database || "nulp",
+  Learnathon_voting_table_password:
+    env.Learnathon_voting_table_password || "nulp",
+  learnathon_voting_table_port: env.learnathon_voting_table_port || 5433,
   // discussion forum
   discussions_middleware:
     env.discussions_middleware || "http://discussionsmw-service:3002",
