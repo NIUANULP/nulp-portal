@@ -762,4 +762,15 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
       return [];
     }
   }
+  checkList(field){
+    if(field =='mentor' ){
+      this.disableSubmitBtn = true;
+      console.log(typeof($('#mentors').dropdown('get value')))
+    }else if(field =='participant'){
+      this.disableSubmitBtn = true;
+
+    }
+
+  }  
+  
 }
