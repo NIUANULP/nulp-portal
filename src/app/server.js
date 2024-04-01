@@ -53,7 +53,6 @@ const { loadTokenPublicKeys } = require('sb_api_interceptor');
 const { getGeneralisedResourcesBundles } = require('./helpers/resourceBundleHelper.js')
 const { apiWhiteListLogger, isAllowed } = require('./helpers/apiWhiteList');
 const { registerDeviceWithKong } = require('./helpers/kongTokenHelper');
-const { pool } = require('./helpers/postgresqlConfig.js');
 
 let keycloak = getKeyCloakClient({
   'realm': envHelper.PORTAL_REALM,
@@ -103,7 +102,7 @@ app.all([
   '/certreg/*', '/device/*', '/google/*', '/report/*', '/reports/*', '/v2/user/*', '/v1/sso/*', '/migrate/*', '/plugins/*', '/content-plugins/*',
   '/content-editor/telemetry','/discussion/*', '/collection-editor/telemetry', '/v1/user/*', '/sessionExpired', '/logoff', '/logout', '/assets/public/*', '/endSession',
   '/sso/sign-in/*','/v1/desktop/handleGauth', '/v1/desktop/google/auth/success', '/clearSession','/kendra/*','/dhiti/*', '/assessment/*','/cloudUpload/*', '/apple/auth/*',
-  '/uci/*','/directConnect/*'
+  '/uci/*'
 ],
   session({
     secret: envHelper.PORTAL_SESSION_SECRET_KEY,
@@ -291,7 +290,6 @@ require('./proxy/localProxy.js')(app) // Local proxy for content and learner ser
 
 app.all('/v1/user/session/create', (req, res) => trampolineServiceHelper.handleRequest(req, res, keycloak))
 
-require("./routes/directConnectRoute.js")(app)
 app.get('/getGeneralisedResourcesBundles/:lang/:fileName', proxyUtils.addCorsHeaders, getGeneralisedResourcesBundles);
 
 app.get('/v1/user/session/start/:deviceId', (req, res) => {
@@ -338,18 +336,6 @@ if (!process.env.sunbird_environment || !process.env.sunbird_instance) {
   start service Eg: sunbird_environment = dev, sunbird_instance = sunbird`})
   process.exit(1)
 }
-// Test database connection
-let isPostgresqlConnected;
-pool.query("SELECT NOW()", (err, res) => {
-  if (err) {
-    isPostgresqlConnected = false;
-    console.error("Error executing query", err);
-    console.error("Failed to connect to the PostgreSQL database");
-  } else {
-    console.log("Connected to the PostgreSQL database");
-    isPostgresqlConnected = true;
-  }
-});
 async function runApp() {
   await loadTokenPublicKeys(path.join(__dirname, kidTokenPublicKeyBasePath));
   app.all('*', (req, res) => res.redirect('/')) // redirect to home if nothing found
@@ -363,9 +349,6 @@ async function runApp() {
       logger.info({ msg: `✅ Portal global Session storage is set to                  - ${envHelper.PORTAL_SESSION_STORE_TYPE}` })
       logger.info({ msg: `✅ Portal global Kong anonymous device register is set to   - ${envHelper.KONG_DEVICE_REGISTER_ANONYMOUS_TOKEN}` })
       logger.info({ msg: `✅ Portal global Kong admin util is set to                  - ${envHelper.KONG_DEVICE_REGISTER_TOKEN}` })
-      logger.info({
-        msg: `✅ Connected to the PostgreSQL database  - ${isPostgresqlConnected}`,
-      });
     })
     handleShutDowns();
     portal.server.keepAliveTimeout = 60000 * 5;
