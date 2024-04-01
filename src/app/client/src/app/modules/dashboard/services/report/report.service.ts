@@ -428,7 +428,7 @@ export class ReportService  {
         masterData: () => {
           if (!this.cachedMapping.hasOwnProperty('$slug')) {
             const req = {
-              filters: { isRootOrg: true },
+              filters: { isTenant: true },
               fields: ['id', 'channel', 'slug', 'orgName'],
               pageNumber: 1,
               limit: 10000
@@ -482,7 +482,7 @@ export class ReportService  {
         masterData: () => {
           if (!this.cachedMapping.hasOwnProperty('$channel')) {
             const req = {
-              filters: { isRootOrg: true },
+              filters: { isTenant: true },
               fields: ['id', 'channel', 'slug', 'orgName'],
               pageNumber: 1,
               limit: 10000
