@@ -742,7 +742,6 @@ export class AddusersComponent implements OnInit {
               request: {
                 orgName: this.createOrgForm.value["orgName"],
                 description: this.createOrgForm.value["description"],
-                isTenant: false,
                 rootOrgId: this.onchangeorgId,
                 channel: this.channel,
                 organisationType: "school",
