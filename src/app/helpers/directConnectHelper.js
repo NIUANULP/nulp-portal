@@ -11,8 +11,6 @@ const uuidv1 = require("uuid/v1");
 const envHelper = require("./environmentVariablesHelper.js");
 const filter = new Filter();
 const nodemailer = require("nodemailer");
-
-
 async function startChat(req, res) {
   try {
     const { sender_id, receiver_id, message, sender_email, receiver_email } =
@@ -231,12 +229,6 @@ async function getChats(req, res) {
   try {
     const { sender_id, receiver_id, is_accepted, is_connection } = req.query;
 
-    if (!sender_id) {
-      const errorMessage = `Missing sender_id`;
-      const error = new Error(errorMessage);
-      error.statusCode = 400;
-      throw error;
-    }
     const chatRequests = await pool.query(
       "SELECT * FROM chat_request WHERE sender_id = $1 AND receiver_id = $2  AND is_accepted = $3",
       [sender_id, receiver_id, is_accepted]
@@ -247,10 +239,13 @@ async function getChats(req, res) {
     // Return connection of sender
     if (is_boolean === true) {
       const chatRequests = await pool.query(
-        "SELECT * FROM chat_request WHERE sender_id = $1",
-        [sender_id]
+        "SELECT * FROM chat_request WHERE sender_id = $1 OR receiver_id = $2 ",
+        [sender_id, receiver_id]
       );
-
+      const chatList = chatRequests?.rows;
+      for (const item of chatList) {
+        item.message = await decryptMessage(item?.message);
+      }
       res.send({
         ts: new Date().toISOString(),
         params: {
@@ -262,10 +257,10 @@ async function getChats(req, res) {
           errmsg: null,
         },
         responseCode: "OK",
-        result: chatRequests?.rows,
+        result: chatList,
       });
     } else {
-      // Return chat request and chats 
+      // Return chat request and chats
       if (chatRequests?.rows?.length > 0) {
         chats = await pool.query(
           "SELECT * FROM chat WHERE sender_id = $1 AND receiver_id = $2",
