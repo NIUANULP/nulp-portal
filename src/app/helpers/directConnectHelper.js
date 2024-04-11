@@ -480,9 +480,74 @@ async function notificationForPendingMessages() {
 function convertToBoolean(value) {
   return Boolean(value);
 }
+async function rejectInvitation(req, res) {
+  try {
+    const { sender_id, receiver_id } = req.body;
+
+    if (!sender_id) {
+      const errorMessage = `Missing sender_id`;
+      const error = new Error(errorMessage);
+      error.statusCode = 400;
+      throw error;
+    }
+    if (!receiver_id) {
+      const errorMessage = `Missing receiver_id`;
+      const error = new Error(errorMessage);
+      error.statusCode = 400;
+      throw error;
+    }
+    // Check if a chat request is pending
+    const pendingRequest = await pool.query(
+      "SELECT * FROM chat_request WHERE sender_id = $1 AND receiver_id = $2 AND is_accepted = false",
+      [sender_id, receiver_id]
+    );
+    const data = await pool.query(
+      'DELETE FROM chat_request WHERE is_accepted = false AND sender_id = $1 AND receiver_id = $2',
+      [sender_id, receiver_id]
+    );
+    if (pendingRequest?.rows?.length > 0) {
+      sendEmail(
+        "Your request has been Rejected. Please log in to your account to view it.",
+        "Chat Request Rejected",
+        pendingRequest?.rows[0]?.sender_email
+      );
+    }
+    res.send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "successful",
+        message: "Chat request Rejected !",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
 module.exports = {
   startChat,
   acceptInvitation,
+  rejectInvitation,
   getChats,
   blockUserChat,
 };

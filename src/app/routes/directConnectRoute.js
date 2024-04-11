@@ -5,6 +5,7 @@ const {
   acceptInvitation,
   getChats,
   blockUserChat,
+  rejectInvitation
 } = require("../helpers/directConnectHelper.js");
 
 module.exports = function (app) {
@@ -30,5 +31,12 @@ module.exports = function (app) {
     bodyParser.json({ limit: "10mb" }),
     proxyUtils.verifyToken(),
     blockUserChat
+  );
+  // Endpoint to reject chat request
+  app.post(
+    "/directConnect/reject-invitation",
+    bodyParser.json({ limit: "10mb" }),
+    proxyUtils.verifyToken(),
+    rejectInvitation
   );
 };
