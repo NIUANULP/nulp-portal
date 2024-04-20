@@ -11,6 +11,47 @@ const uuidv1 = require("uuid/v1");
 const envHelper = require("./environmentVariablesHelper.js");
 const filter = new Filter();
 const nodemailer = require("nodemailer");
+
+io.on("connection", (socket) => {
+  console.log("A user connected");
+
+  socket.on("disconnect", () => {
+    console.log("A user disconnected");
+  });
+
+  // Handle new chat messages
+  socket.on("message", async (data) => {
+    try {
+      const { sender_id, receiver_id, message } = data;
+
+      // Check if a chat request exists
+      const existingRequest = await pool.query(
+        "SELECT * FROM chat_request WHERE sender_id = $1 AND receiver_id = $2 AND is_accepted = true",
+        [sender_id, receiver_id]
+      );
+
+      if (existingRequest?.rows?.length > 0) {
+        // Send message to receiver
+        await pool.query(
+          "INSERT INTO chat (sender_id, receiver_id, message) VALUES ($1, $2, $3)",
+          [sender_id, receiver_id, message]
+        );
+
+        // Broadcast the message to all connected clients
+        io.emit("message", { sender_id, message });
+      } else {
+        // Insert message into chat_request table
+        await pool.query(
+          "INSERT INTO chat_request (sender_id, receiver_id, message, is_accepted) VALUES ($1, $2, $3, false)",
+          [sender_id, receiver_id, message]
+        );
+      }
+    } catch (error) {
+      console.error("Error handling message:", error);
+    }
+  });
+});
+
 async function startChat(req, res) {
   try {
     const { sender_id, receiver_id, message, sender_email, receiver_email } =
@@ -26,6 +67,12 @@ async function startChat(req, res) {
 
     if (!receiver_id) {
       const errorMessage = `Missing receiver_id`;
+      const error = new Error(errorMessage);
+      error.statusCode = 400;
+      throw error;
+    }
+    if (sender_id === receiver_id) {
+      const errorMessage = `You cannot send message yourself !`;
       const error = new Error(errorMessage);
       error.statusCode = 400;
       throw error;
@@ -59,8 +106,8 @@ async function startChat(req, res) {
 
     // Check if a chat request exists
     const existingRequest = await pool.query(
-      "SELECT * FROM chat_request WHERE sender_id = $1 AND receiver_id = $2 AND is_accepted = true",
-      [sender_id, receiver_id]
+      "SELECT * FROM chat_request WHERE (sender_id = $1 AND receiver_id = $2) OR (sender_id = $2 AND receiver_id = $1) AND is_accepted = true",
+      [receiver_id, sender_id]
     );
 
     if (existingRequest?.rows?.length > 0) {
@@ -143,7 +190,7 @@ async function startChat(req, res) {
   } catch (error) {
     const statusCode = error.statusCode || 500;
     const errorMessage = error.message || "Internal Server Error";
-    res.send({
+    res.status(statusCode).send({
       ts: new Date().toISOString(),
       params: {
         resmsgid: uuidv1(),
@@ -230,7 +277,7 @@ async function getChats(req, res) {
     const { sender_id, receiver_id, is_accepted, is_connection } = req.query;
 
     const chatRequests = await pool.query(
-      "SELECT * FROM chat_request WHERE sender_id = $1 AND receiver_id = $2  AND is_accepted = $3",
+      "SELECT * FROM chat_request WHERE (sender_id = $1 AND receiver_id = $2) OR (sender_id = $2 AND receiver_id = $1)  AND is_accepted = $3",
       [sender_id, receiver_id, is_accepted]
     );
 
@@ -263,7 +310,7 @@ async function getChats(req, res) {
       // Return chat request and chats
       if (chatRequests?.rows?.length > 0) {
         chats = await pool.query(
-          "SELECT * FROM chat WHERE sender_id = $1 AND receiver_id = $2",
+          "SELECT * FROM chat WHERE (sender_id = $1 AND receiver_id = $2) OR (sender_id = $2 AND receiver_id = $1)",
           [sender_id, receiver_id]
         );
         const chatList = [...chatRequests?.rows, ...chats?.rows];
@@ -305,7 +352,7 @@ async function getChats(req, res) {
         errmsg: null,
       },
       responseCode: "OK",
-      result: {},
+      result: [],
     });
   }
 }
@@ -502,7 +549,7 @@ async function rejectInvitation(req, res) {
       [sender_id, receiver_id]
     );
     const data = await pool.query(
-      'DELETE FROM chat_request WHERE is_accepted = false AND sender_id = $1 AND receiver_id = $2',
+      "DELETE FROM chat_request WHERE is_accepted = false AND sender_id = $1 AND receiver_id = $2",
       [sender_id, receiver_id]
     );
     if (pendingRequest?.rows?.length > 0) {
