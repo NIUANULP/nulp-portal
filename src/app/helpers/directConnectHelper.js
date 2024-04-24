@@ -255,7 +255,7 @@ async function acceptInvitation(req, res) {
   } catch (error) {
     const statusCode = error.statusCode || 500;
     const errorMessage = error.message || "Internal Server Error";
-    res.send({
+    res.status(statusCode).send({
       ts: new Date().toISOString(),
       params: {
         resmsgid: uuidv1(),
@@ -275,12 +275,19 @@ async function acceptInvitation(req, res) {
 async function getChats(req, res) {
   try {
     const { sender_id, receiver_id, is_accepted, is_connection } = req.query;
-
-    const chatRequests = await pool.query(
-      "SELECT * FROM chat_request WHERE (sender_id = $1 AND receiver_id = $2) OR (sender_id = $2 AND receiver_id = $1)  AND is_accepted = $3",
-      [sender_id, receiver_id, is_accepted]
-    );
-
+    const is_read = req.query.is_read || true;
+    let chatRequests;
+    if (is_read == "false") {
+      chatRequests = await pool.query(
+        "SELECT * FROM chat_request WHERE sender_id = $1 AND receiver_id = $2 AND is_accepted = $3 AND is_read = $4",
+        [receiver_id, sender_id, is_accepted, is_read]
+      );
+    } else {
+      chatRequests = await pool.query(
+        "SELECT * FROM chat_request WHERE (sender_id = $1 AND receiver_id = $2) OR (sender_id = $2 AND receiver_id = $1)  AND is_accepted = $3 AND is_read = $4",
+        [sender_id, receiver_id, is_accepted, is_read]
+      );
+    }
     const is_boolean = convertToBoolean(is_connection);
     let chats;
     // Return connection of sender
@@ -308,11 +315,18 @@ async function getChats(req, res) {
       });
     } else {
       // Return chat request and chats
-      if (chatRequests?.rows?.length > 0) {
-        chats = await pool.query(
-          "SELECT * FROM chat WHERE (sender_id = $1 AND receiver_id = $2) OR (sender_id = $2 AND receiver_id = $1)",
-          [sender_id, receiver_id]
-        );
+      if (chatRequests) {
+        if (is_read === "false") {
+          chats = await pool.query(
+            "SELECT * FROM chat WHERE sender_id = $1 AND receiver_id = $2 AND is_read=$3",
+            [receiver_id, sender_id, is_read]
+          );
+        } else {
+          chats = await pool.query(
+            "SELECT * FROM chat WHERE (sender_id = $1 AND receiver_id = $2) OR (sender_id = $2 AND receiver_id = $1)",
+            [sender_id, receiver_id]
+          );
+        }
         const chatList = [...chatRequests?.rows, ...chats?.rows];
         for (const item of chatList) {
           item.message = await decryptMessage(item?.message);
@@ -333,14 +347,14 @@ async function getChats(req, res) {
       } else {
         const errorMessage = `Chat not found.`;
         const error = new Error(errorMessage);
-        error.statusCode = 404;
+        error.statusCode = 200;
         throw error;
       }
     }
   } catch (error) {
     const statusCode = error.statusCode || 500;
     const errorMessage = error.message || "Internal Server Error";
-    res.send({
+    res.status(statusCode).send({
       ts: new Date().toISOString(),
       params: {
         resmsgid: uuidv1(),
@@ -400,7 +414,77 @@ async function blockUserChat(req, res) {
   } catch (error) {
     const statusCode = error.statusCode || 500;
     const errorMessage = error.message || "Internal Server Error";
-    res.send({
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
+
+async function getBlockUser(req, res) {
+  try {
+    const { sender_id, receiver_id } = req.query;
+
+    if (!sender_id) {
+      const errorMessage = `Missing sender_id`;
+      const error = new Error(errorMessage);
+      error.statusCode = 400;
+      throw error;
+    }
+    if (!receiver_id) {
+      const errorMessage = `Missing receiver_id`;
+      const error = new Error(errorMessage);
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const blockedUser = await pool.query(
+      "SELECT * FROM blocked_chat_users WHERE (sender_id = $1 AND receiver_id = $2) OR (sender_id = $2 AND receiver_id = $1)",
+      [sender_id, receiver_id]
+    );
+    if (blockedUser?.rows?.length > 0) {
+      res.send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "successful",
+          message: "User blocked. You cannot send messages.",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: blockedUser?.rows,
+      });
+    } else {
+      res.send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "successful",
+          message: "User not blocked",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: [],
+      });
+    }
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
       ts: new Date().toISOString(),
       params: {
         resmsgid: uuidv1(),
@@ -645,7 +729,115 @@ async function rejectInvitation(req, res) {
   } catch (error) {
     const statusCode = error.statusCode || 500;
     const errorMessage = error.message || "Internal Server Error";
-    res.send({
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
+
+async function updateChat(req, res) {
+  try {
+    const { sender_id, receiver_id, is_read } = req.body;
+    if (!sender_id) {
+      const errorMessage = `Missing sender_id`;
+      const error = new Error(errorMessage);
+      error.statusCode = 400;
+      throw error;
+    }
+
+    if (!receiver_id) {
+      const errorMessage = `Missing receiver_id`;
+      const error = new Error(errorMessage);
+      error.statusCode = 400;
+      throw error;
+    }
+    if (sender_id === receiver_id) {
+      const errorMessage = `You cannot update message for yourself !`;
+      const error = new Error(errorMessage);
+      error.statusCode = 400;
+      throw error;
+    }
+
+    if (!is_read) {
+      const errorMessage = `Missing is_read`;
+      const error = new Error(errorMessage);
+      error.statusCode = 400; //Bad Request
+      throw error;
+    }
+    // Check if the receiver is blocked
+    const isBlocked = await pool.query(
+      "SELECT * FROM blocked_chat_users WHERE sender_id = $1 AND receiver_id = $2",
+      [sender_id, receiver_id]
+    );
+
+    if (isBlocked?.rows?.length > 0) {
+      const errorMessage = `Blocked user. You cannot update messages.`;
+      const error = new Error(errorMessage);
+      error.statusCode = 403; // Forbidden
+      throw error;
+    }
+
+    // Check if a chat request exists
+    const existingRequest = await pool.query(
+      "SELECT * FROM chat_request WHERE (sender_id = $1 AND receiver_id = $2) OR (sender_id = $2 AND receiver_id = $1) AND is_accepted = true",
+      [receiver_id, sender_id]
+    );
+
+    if (existingRequest?.rows?.length > 0) {
+      // Send message to receiver
+      const is_boolean = convertToBoolean(is_read);
+      const data = await pool.query(
+        "UPDATE chat SET is_read = $3 WHERE sender_id = $1 AND receiver_id = $2",
+        [receiver_id, sender_id, is_boolean]
+      );
+      await pool.query(
+        "UPDATE chat_request SET is_read = $3 WHERE sender_id = $1 AND receiver_id = $2",
+        [receiver_id, sender_id, is_boolean]
+      );
+      console.log(data);
+      res.send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "successful",
+          message: "Message updated successfully",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {},
+      });
+    } else {
+      res.send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "successful",
+          message: "Chat not found",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {},
+      });
+    }
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
       ts: new Date().toISOString(),
       params: {
         resmsgid: uuidv1(),
@@ -668,4 +860,5 @@ module.exports = {
   getChats,
   blockUserChat,
   getBlockUser,
+  updateChat,
 };
