@@ -25,7 +25,7 @@
     "ignore": [
       "client"
     ],
-    "exec": "npm run server",
+    "exec": "node server.js",
     "ext": "png,jpeg,js,ts,html,json,css,scss"
   },
   "scripts": {
@@ -80,6 +80,7 @@
     "express-cassandra": "2.1.0",
     "express-http-proxy": "1.0.6",
     "express-session": "1.15.3",
+    "express-validator": "^7.0.1",
     "google-auth-library": "^7.1.0",
     "googleapis": "45.0.0",
     "helmet": "3.21.2",
