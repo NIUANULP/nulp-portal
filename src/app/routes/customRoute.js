@@ -14,14 +14,14 @@ module.exports = function (app) {
     "/custom/user/signup",
     bodyParser.json({ limit: "10mb" }),
     validateUserFields,
-    // proxyUtils.verifyToken(),
+    proxyUtils.verifyToken(),
     saveUserInfo
   );
   // Update user
   app.post(
     "/custom/user/update",
     bodyParser.json({ limit: "10mb" }),
-    // proxyUtils.verifyToken(),
+    proxyUtils.verifyToken(),
     updateUserInfo
   );
   // Read user
@@ -29,7 +29,7 @@ module.exports = function (app) {
     "/custom/user/read",
     bodyParser.json({ limit: "10mb" }),
     body("user_ids").isArray().notEmpty(),
-    // proxyUtils.verifyToken(),
+    proxyUtils.verifyToken(),
     readUserInfo
   );
 };
