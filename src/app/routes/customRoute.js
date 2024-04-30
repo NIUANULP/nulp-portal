@@ -14,7 +14,6 @@ module.exports = function (app) {
     "/custom/user/signup",
     bodyParser.json({ limit: "10mb" }),
     validateUserFields,
-    proxyUtils.verifyToken(),
     saveUserInfo
   );
   // Update user
@@ -28,7 +27,6 @@ module.exports = function (app) {
   app.post(
     "/custom/user/read",
     bodyParser.json({ limit: "10mb" }),
-    body("user_ids").isArray().notEmpty(),
     proxyUtils.verifyToken(),
     readUserInfo
   );
