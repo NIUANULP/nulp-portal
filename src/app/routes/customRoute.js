@@ -17,7 +17,7 @@ module.exports = function (app) {
     saveUserInfo
   );
   // Update user
-  app.post(
+  app.put(
     "/custom/user/update",
     bodyParser.json({ limit: "10mb" }),
     proxyUtils.verifyToken(),
