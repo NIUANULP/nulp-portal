@@ -85,25 +85,50 @@ async function updateUserInfo(req, res) {
       throw error;
     }
     const { designation, bio, updated_by } = req.body;
+    const getQuery = "Select * FROM users WHERE user_id = $1";
+    const getValues = [user_id];
 
-    const query =
-      "UPDATE users SET designation = $1, bio = $2, updated_by = $3, updated_at = NOW() WHERE user_id = $4 RETURNING *";
-    const values = [designation, bio, updated_by, user_id];
+    const getData = await pool.query(getQuery, getValues);
 
-    const { rows } = await pool.query(query, values);
-    res.send({
-      ts: new Date().toISOString(),
-      params: {
-        resmsgid: uuidv1(),
-        msgid: uuidv1(),
-        status: "successful",
-        message: "User info updated successfully",
-        err: null,
-        errmsg: null,
-      },
-      responseCode: "OK",
-      result: rows,
-    });
+    if (getData.rows?.length > 0) {
+      const query =
+        "UPDATE users SET designation = $1, bio = $2, updated_by = $3, updated_at = NOW() WHERE user_id = $4 RETURNING *";
+      const values = [designation, bio, updated_by, user_id];
+
+      const { rows } = await pool.query(query, values);
+      res.send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "successful",
+          message: "User info updated successfully",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: rows,
+      });
+    } else {
+      const query =
+        "INSERT INTO users (user_id, designation, bio, created_by) VALUES ($1, $2, $3, $4) RETURNING *";
+      const values = [user_id, designation, bio, updated_by];
+
+      const { rows } = await pool.query(query, values);
+      res.send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "successful",
+          message: "User info updated successfully",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: rows,
+      });
+    }
   } catch (err) {
     const statusCode = err.statusCode || 500;
     const errorMessage = err.message || "Internal Server Error";
