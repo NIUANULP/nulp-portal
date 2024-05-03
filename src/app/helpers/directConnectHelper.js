@@ -853,6 +853,61 @@ async function updateChat(req, res) {
     });
   }
 }
+
+async function unBlockUserChat(req, res) {
+  try {
+    const { sender_id, receiver_id } = req.body;
+
+    if (!sender_id) {
+      const errorMessage = `Missing sender_id`;
+      const error = new Error(errorMessage);
+      error.statusCode = 400;
+      throw error;
+    }
+    if (!receiver_id) {
+      const errorMessage = `Missing receiver_id`;
+      const error = new Error(errorMessage);
+      error.statusCode = 400;
+      throw error;
+    }
+
+    await pool.query(
+      "DELETE  FROM blocked_chat_users  WHERE sender_id=$1 AND receiver_id=$2 AND is_blocked =true",
+      [sender_id, receiver_id]
+    );
+    res.send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "successful",
+        message: "User unblocked!",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: "",
+    });
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
+
 module.exports = {
   startChat,
   acceptInvitation,
@@ -861,4 +916,5 @@ module.exports = {
   blockUserChat,
   getBlockUser,
   updateChat,
+  unBlockUserChat,
 };
