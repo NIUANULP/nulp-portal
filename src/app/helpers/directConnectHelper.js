@@ -279,12 +279,12 @@ async function getChats(req, res) {
     let chatRequests;
     if (is_read == "false") {
       chatRequests = await pool.query(
-        "SELECT * FROM chat_request WHERE sender_id = $1 AND receiver_id = $2 AND is_accepted = $3 AND is_read = $4",
+        "SELECT * FROM chat_request WHERE sender_id = $1 AND receiver_id = $2 AND is_accepted = $3 AND is_read = $4 ORDER BY timestamp ASC;",
         [receiver_id, sender_id, is_accepted, is_read]
       );
     } else {
       chatRequests = await pool.query(
-        "SELECT * FROM chat_request WHERE (sender_id = $1 AND receiver_id = $2) OR (sender_id = $2 AND receiver_id = $1)  AND is_accepted = $3 AND is_read = $4",
+        "SELECT * FROM chat_request WHERE (sender_id = $1 AND receiver_id = $2) OR (sender_id = $2 AND receiver_id = $1)  AND is_accepted = $3 AND is_read = $4 ORDER BY timestamp ASC;",
         [sender_id, receiver_id, is_accepted, is_read]
       );
     }
@@ -293,7 +293,7 @@ async function getChats(req, res) {
     // Return connection of sender
     if (is_boolean === true) {
       const chatRequests = await pool.query(
-        "SELECT * FROM chat_request WHERE sender_id = $1 OR receiver_id = $2 ",
+        "SELECT * FROM chat_request WHERE sender_id = $1 OR receiver_id = $2 ORDER BY timestamp ASC; ",
         [sender_id, receiver_id]
       );
       const chatList = chatRequests?.rows;
@@ -318,12 +318,12 @@ async function getChats(req, res) {
       if (chatRequests) {
         if (is_read === "false") {
           chats = await pool.query(
-            "SELECT * FROM chat WHERE sender_id = $1 AND receiver_id = $2 AND is_read=$3",
+            "SELECT * FROM chat WHERE sender_id = $1 AND receiver_id = $2 AND is_read=$3 ORDER BY timestamp ASC;",
             [receiver_id, sender_id, is_read]
           );
         } else {
           chats = await pool.query(
-            "SELECT * FROM chat WHERE (sender_id = $1 AND receiver_id = $2) OR (sender_id = $2 AND receiver_id = $1)",
+            "SELECT * FROM chat WHERE (sender_id = $1 AND receiver_id = $2) OR (sender_id = $2 AND receiver_id = $1) ORDER BY timestamp ASC;",
             [sender_id, receiver_id]
           );
         }
