@@ -154,18 +154,28 @@ async function readUserInfo(req, res) {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  try {
-    const { user_ids } = req.body;
-    if (!user_ids) {
-      const errorMessage = `Missing user_ids`;
-      const error = new Error(errorMessage);
-      error.statusCode = 400;
-      throw error;
-    }
-    const query = "SELECT * FROM users WHERE user_id = ANY($1)";
-    const values = [user_ids];
 
-    const { rows } = await pool.query(query, values);
+  try {
+    const { user_ids, designations } = req.body;
+    let queries = [];
+
+    if (user_ids) {
+      queries.push(
+        pool.query("SELECT * FROM users WHERE user_id = ANY($1)", [user_ids])
+      );
+    }
+
+    if (designations?.length > 0) {
+      queries.push(
+        pool.query("SELECT * FROM users WHERE designation = ANY($1)", [
+          designations,
+        ])
+      );
+    }
+
+    const results = await Promise.all(queries);
+    const rows = results.flatMap((result) => result.rows);
+
     res.send({
       ts: new Date().toISOString(),
       params: {
