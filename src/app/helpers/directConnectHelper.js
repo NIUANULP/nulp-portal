@@ -11,6 +11,7 @@ const uuidv1 = require("uuid/v1");
 const envHelper = require("./environmentVariablesHelper.js");
 const filter = new Filter();
 const nodemailer = require("nodemailer");
+const axios = require('axios');
 
 io.on("connection", (socket) => {
   console.log("A user connected");
@@ -54,7 +55,7 @@ io.on("connection", (socket) => {
 
 async function startChat(req, res) {
   try {
-    const { sender_id, receiver_id, message, sender_email, receiver_email } =
+    const { sender_id, receiver_id, message } =
       req.body;
     const sanitizedMessage = sanitizeHtml(message);
 
@@ -146,7 +147,7 @@ async function startChat(req, res) {
         sendEmail(
           "You have received a new chat request. Please log in to your account to view it..",
           "New Chat Request",
-          receiver_email
+          receiver_id
         );
         res.send({
           ts: new Date().toISOString(),
@@ -164,13 +165,13 @@ async function startChat(req, res) {
       } else {
         // Send chat request
         await pool.query(
-          "INSERT INTO chat_request (sender_id, receiver_id, message, is_accepted,sender_email,receiver_email) VALUES ($1, $2, $3, false,$4,$5)",
-          [sender_id, receiver_id, encryptedChat, sender_email, receiver_email]
+          "INSERT INTO chat_request (sender_id, receiver_id, message, is_accepted) VALUES ($1, $2, $3, false)",
+          [sender_id, receiver_id, encryptedChat]
         );
         sendEmail(
           "You have received a new chat request. Please log in to your account to view it..",
           "New Chat Request",
-          receiver_email
+          receiver_id
         );
         res.send({
           ts: new Date().toISOString(),
@@ -236,7 +237,7 @@ async function acceptInvitation(req, res) {
       sendEmail(
         "Your request has been accepted. Please log in to your account to view it.",
         "Chat Request Accepted",
-        pendingRequest?.rows[0]?.sender_email
+        pendingRequest?.rows[0]?.sender_id
       );
     }
     res.send({
@@ -615,42 +616,41 @@ const cronTime = envHelper.CRON_TIME || "0 0 * * *"; // Default to midnight if C
 cron.schedule(cronTime, deleteOldMessages);
 
 // Email notification
-async function sendEmail(message, title, email) {
-  try {
-    let transporter = nodemailer.createTransport({
-      host: envHelper.EMAIL_HOST,
-      port: 465,
-      secure: true, // true for 465 port, false for other ports
-      auth: {
-        user: envHelper.EMAIL_USER,
-        pass: envHelper.EMAIL_PASS,
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
-    });
+async function sendEmail(message, title, id) {
+  try { 
+let data = JSON.stringify({
+  "request": {
+    "mode": "email",
+    "body": `${message}`,
+    "fromEmail": "",
+    "emailTemplateType": "",
+    "subject": `${title}`,
+    "recipientUserIds": [
+      id
+    ]
+  }
+});
 
-    const mailOptions = {
-      from: envHelper.EMAIL_FROM,
-      to: email,
-      subject: title,
-      html: `
-    <div style="text-align: center;">
-      <p>Dear user,</p>
-      </br>
-      <p>${message}</p>
-      </br>
-      <a href="${envHelper.NAVIGATE_URL}"><button>Login</button></a>
-      </div>
-    `,
-    };
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error("Error sending email:", error);
-      } else {
-        console.log("Email sent:", info.response);
-      }
-    });
+let config = {
+  method: 'post',
+  maxBodyLength: Infinity,
+  url: `${envHelper.api_base_url}/api/user/v1/notification/email`,
+  headers: { 
+    'Accept': 'application/json', 
+    'Content-Type': 'application/json', 
+    'Authorization': `Bearer ${envHelper.PORTAL_API_AUTH_TOKEN}`
+  },
+  data : data
+};
+
+axios.request(config)
+.then((response) => {
+  console.log(JSON.stringify(response.data));
+})
+.catch((error) => {
+  console.log(error);
+});
+
   } catch (error) {
     throw error;
   }
@@ -671,7 +671,24 @@ async function notificationForPendingMessages() {
       sendEmail(
         "You have received multiple new chat requests. Please log in to your account to view it.",
         "You have pending chat requests",
-        item?.receiver_email
+        item?.receiver_id
+      );
+    }
+  } catch (error) {
+    console.error("Error while getting chat requests:", error.message);
+  }
+}
+cron.schedule(notificationCronTime, notificationForPendingUnreadMessages);
+async function notificationForPendingUnreadMessages() {
+  try {
+    const getQuery = "SELECT * FROM chat where is_read=false;";
+    const data = await pool.query(getQuery);
+    console.log("Email Notification sent for new pending messages", data.rows);
+    for (const item of data?.rows) {
+      sendEmail(
+        "You have a new direct messages in NULP connections. Please log in to your account to view it.",
+        "You have new pending messages",
+        item?.receiver_id
       );
     }
   } catch (error) {
@@ -710,7 +727,7 @@ async function rejectInvitation(req, res) {
       sendEmail(
         "Your request has been Rejected. Please log in to your account to view it.",
         "Chat Request Rejected",
-        pendingRequest?.rows[0]?.sender_email
+        pendingRequest?.rows[0]?.sender_id
       );
     }
     res.send({
