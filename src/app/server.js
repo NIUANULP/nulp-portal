@@ -296,6 +296,7 @@ require("./routes/directConnectRoute.js")(app)
 require("./routes/profileRoute.js")(app)
 
 require("./routes/customRoute.js")(app)
+require("./routes/eventRoute.js")(app)
 app.get('/getGeneralisedResourcesBundles/:lang/:fileName', proxyUtils.addCorsHeaders, getGeneralisedResourcesBundles);
 
 app.get('/v1/user/session/start/:deviceId', (req, res) => {
