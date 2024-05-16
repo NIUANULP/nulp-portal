@@ -11,20 +11,16 @@ module.exports = function (app) {
   app.post(
     "/event/gmeet/create",
     bodyParser.json({ limit: "10mb" }),
-    // proxyUtils.verifyToken(),
+    proxyUtils.verifyToken(),
     createEvent
   );
 
   app.put(
     "/event/gmeet/update",
     bodyParser.json({ limit: "10mb" }),
-    // proxyUtils.verifyToken(),
+    proxyUtils.verifyToken(),
     updateEvent
   );
 
-  app.get(
-    "/event/gmeet/get",
-    // proxyUtils.verifyToken(),
-    getEvent
-  );
+  app.get("/event/gmeet/get", proxyUtils.verifyToken(), getEvent);
 };
