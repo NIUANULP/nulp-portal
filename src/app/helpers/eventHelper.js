@@ -4,7 +4,12 @@ const process = require("process");
 const { authenticate } = require("@google-cloud/local-auth");
 const { SpacesServiceClient, ConferenceRecordsServiceClient } =
   require("@google-apps/meet").v2;
-const { auth, GoogleAuth, OAuth2Client } = require("google-auth-library");
+const {
+  auth,
+  GoogleAuth,
+  OAuth2Client,
+  AuthClient,
+} = require("google-auth-library");
 const { google } = require("googleapis");
 const uuidv1 = require("uuid/v1");
 const moment = require("moment-timezone");
@@ -85,34 +90,66 @@ async function createEvent(req, res) {
     const auth = await authorize();
     const eventData = req.body;
     const calendar = google.calendar({ version: "v3", auth });
+    if (!eventData.event_name) {
+      return res.status(400).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "failed",
+          message: "Missing event_name in request body",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "BAD_REQUEST",
+        result: null,
+      });
+    }
+
+    if (
+      !eventData.start_time ||
+      !eventData.start_date ||
+      !eventData.end_time ||
+      !eventData.end_date
+    ) {
+      return res.status(400).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "failed",
+          message:
+            "Missing start_time, start_date, end_time, or end_date in request body",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "BAD_REQUEST",
+        result: null,
+      });
+    }
+
+    let startDateTime, startTimezone, endDateTime, endTimezone;
+
+    const { timezone: startTz, formattedDateTime: startDt } = await getTimezone(
+      eventData.start_time,
+      eventData.start_date
+    );
+    startDateTime = startDt;
+    startTimezone = startTz;
+
+    const { timezone: endTz, formattedDateTime: endDt } = await getTimezone(
+      eventData.end_time,
+      eventData.end_date
+    );
+    endDateTime = endDt;
+    endTimezone = endTz;
+
     const requestId = generateRandomString(10);
 
-    let startDateTime;
-    let startTimezone;
-    let endDateTime;
-    let endTimezone;
-
-    if (eventData.start_time && eventData.start_date) {
-      const { timezone, formattedDateTime } = await getTimezone(
-        eventData.start_time,
-        eventData.start_date
-      );
-      startDateTime = formattedDateTime;
-      startTimezone = timezone;
-    }
-    if (eventData.end_time && eventData.end_date) {
-      const { timezone, formattedDateTime } = await getTimezone(
-        eventData.end_time,
-        eventData.end_date
-      );
-      endDateTime = formattedDateTime;
-      endTimezone = timezone;
-    }
-
     const event = {
-      summary: eventData.event_name,
-      location: eventData.event_type,
-      description: eventData.description,
+      summary: eventData.event_name || "",
+      location: eventData.event_type || "",
+      description: eventData.description || "",
       start: {
         dateTime: startDateTime,
         timeZone: startTimezone,
@@ -123,7 +160,7 @@ async function createEvent(req, res) {
       },
       conferenceData: {
         createRequest: {
-          requestId: requestId, // Unique id for every request
+          requestId: requestId,
         },
       },
     };
@@ -131,7 +168,7 @@ async function createEvent(req, res) {
     const response = await calendar.events.insert({
       calendarId: "primary",
       resource: event,
-      conferenceDataVersion: 1, // Version 1 for Meet
+      conferenceDataVersion: 1,
     });
 
     res.status(200).send({
@@ -175,30 +212,64 @@ async function updateEvent(req, res) {
     const eventId = req.query.eventId;
     const eventData = req.body;
 
+    if (!eventId) {
+      return res.status(400).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "failed",
+          message: "Missing eventId parameter",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "BAD_REQUEST",
+        result: null,
+      });
+    }
+
+    if (
+      !eventData.start_time ||
+      !eventData.start_date ||
+      !eventData.end_time ||
+      !eventData.end_date
+    ) {
+      return res.status(400).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "failed",
+          message:
+            "Missing start_time, start_date, end_time, or end_date in request body",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "BAD_REQUEST",
+        result: null,
+      });
+    }
+
     let startDateTime;
     let startTimezone;
     let endDateTime;
     let endTimezone;
 
-    if (eventData.start_time && eventData.start_date) {
-      const { timezone, formattedDateTime } = await getTimezone(
-        eventData.start_time,
-        eventData.start_date
-      );
-      startDateTime = formattedDateTime;
-      startTimezone = timezone;
-    }
-    if (eventData.end_time && eventData.end_date) {
-      const { timezone, formattedDateTime } = await getTimezone(
-        eventData.end_time,
-        eventData.end_date
-      );
-      endDateTime = formattedDateTime;
-      endTimezone = timezone;
-    }
+    const { timezone: startTz, formattedDateTime: startDt } = await getTimezone(
+      eventData.start_time,
+      eventData.start_date
+    );
+    startDateTime = startDt;
+    startTimezone = startTz;
+
+    const { timezone: endTz, formattedDateTime: endDt } = await getTimezone(
+      eventData.end_time,
+      eventData.end_date
+    );
+    endDateTime = endDt;
+    endTimezone = endTz;
 
     const event = {};
-
     if (eventData.event_name) {
       event.summary = eventData.event_name;
     }
@@ -265,10 +336,71 @@ async function getEvent(req, res) {
     const calendar = google.calendar({ version: "v3", auth });
     const eventId = req.query.eventId;
 
+    if (!eventId) {
+      return res.status(400).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "failed",
+          message: "Missing eventId parameter",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "BAD_REQUEST",
+        result: null,
+      });
+    }
+
     const response = await calendar.events.get({
       calendarId: "primary",
       eventId: eventId,
     });
+
+    const meetClient = new ConferenceRecordsServiceClient({ authClient: auth });
+    const spacesClient = new SpacesServiceClient({ authClient: auth });
+
+    const participantsPromises = [];
+    const recordingsPromises = [];
+
+    for await (const record of meetClient.listConferenceRecordsAsync({})) {
+      const spaceRes = await spacesClient.getSpace({ name: record.space });
+      if (
+        record.space === spaceRes[0]?.name &&
+        response.data.conferenceData.conferenceId === spaceRes[0]?.meetingCode
+      ) {
+        const parent = record.name;
+
+        // List participants
+        const participantsPromise = (async () => {
+          const participantsRequest = { parent };
+          const participants = [];
+          for await (const participant of meetClient.listParticipantsAsync(
+            participantsRequest
+          )) {
+            participants.push(participant);
+          }
+          return participants;
+        })();
+        participantsPromises.push(participantsPromise);
+
+        // List recordings
+        const recordingsPromise = (async () => {
+          const recordingsRequest = { parent };
+          const recordings = [];
+          for await (const recording of meetClient.listRecordingsAsync(
+            recordingsRequest
+          )) {
+            recordings.push(recording);
+          }
+          return recordings;
+        })();
+        recordingsPromises.push(recordingsPromise);
+      }
+    }
+
+    const participants = await Promise.all(participantsPromises);
+    const recordings = await Promise.all(recordingsPromises);
 
     res.status(200).send({
       ts: new Date().toISOString(),
@@ -281,7 +413,11 @@ async function getEvent(req, res) {
         errmsg: null,
       },
       responseCode: "OK",
-      result: response.data,
+      result: {
+        data: response.data,
+        participants,
+        recordings,
+      },
     });
   } catch (err) {
     console.error("Error fetching event:", err);
