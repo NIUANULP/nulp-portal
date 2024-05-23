@@ -247,7 +247,10 @@ let envVariables = {
   PORTAL_REDIS_CONNECTION_STRING: env.portal_redis_connection_string,
   // VDN URL
   vdnURL:env.vdnURL || '',
-
+  // Gmeet API secret
+  GOOGLE_CLIENT_ID:env.google_client_id,
+  GOOGLE_CLIENT_SECRET:env.google_client_secret,
+  GOOGLE_REFRESH_TOKEN :env.google_refresh_token,
   // Add below variable for Apple Login
   APPLE_SIGNIN_KEY_URL: "https://appleid.apple.com/auth/keys",
 

@@ -289,6 +289,7 @@ require('./routes/contentRoutes.js')(app) // content api routes
 require('./proxy/localProxy.js')(app) // Local proxy for content and learner service
 
 app.all('/v1/user/session/create', (req, res) => trampolineServiceHelper.handleRequest(req, res, keycloak))
+require("./routes/eventRoute.js")(app)
 
 app.get('/getGeneralisedResourcesBundles/:lang/:fileName', proxyUtils.addCorsHeaders, getGeneralisedResourcesBundles);
 

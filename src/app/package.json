@@ -59,6 +59,8 @@
     "npm": ">=6.14.16"
   },
   "dependencies": {
+    "@google-apps/meet": "^0.3.0",
+    "@google-cloud/local-auth": "^3.0.1",
     "@project-sunbird/discussion-service": "0.0.6",
     "@project-sunbird/ext-framework-server": "0.1.28",
     "@project-sunbird/form-service": "0.0.14",
@@ -92,6 +94,7 @@
     "lodash": "4.17.15",
     "mathjax-full": "3.2.2",
     "mobile-detect": "1.4.2",
+    "moment-timezone": "^0.5.45",
     "morgan": "^1.10.0",
     "multiparty": "^4.2.1",
     "node-rsa": "^1.1.1",
