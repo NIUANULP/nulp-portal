@@ -248,9 +248,9 @@ let envVariables = {
   // VDN URL
   vdnURL:env.vdnURL || '',
   // Gmeet API secret
-  GOOGLE_CLIENT_ID:env.google_client_id,
-  GOOGLE_CLIENT_SECRET:env.google_client_secret,
-  GOOGLE_REFRESH_TOKEN :env.google_refresh_token,
+  google_client_id:env.google_client_id,
+  google_client_secret:env.google_client_secret,
+  google_refresh_token :env.google_refresh_token,
   // Add below variable for Apple Login
   APPLE_SIGNIN_KEY_URL: "https://appleid.apple.com/auth/keys",
 

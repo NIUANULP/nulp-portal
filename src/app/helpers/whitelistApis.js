@@ -2041,6 +2041,18 @@ const API_LIST = {
       checksNeeded: ["ROLE_CHECK"],
       ROLE_CHECK: [ROLE.ORG_ADMIN],
     },
+    "/event/gmeet/create": {
+      checksNeeded: ["ROLE_CHECK"],
+      ROLE_CHECK: [ROLE.ALL, ROLE.PUBLIC],
+    },
+    "/event/gmeet/update": {
+      checksNeeded: ["ROLE_CHECK"],
+      ROLE_CHECK: [ROLE.ALL, ROLE.PUBLIC],
+    },
+    "/event/gmeet/get": {
+      checksNeeded: ["ROLE_CHECK"],
+      ROLE_CHECK: [ROLE.ALL, ROLE.PUBLIC],
+    },
   },
   URL_PATTERN: [
     "/learner/user/v1/feed/delete",
@@ -2200,6 +2212,9 @@ const API_LIST = {
     "/learner/org/v1/update",
     "/learner/user/v1/block",
     "/learner/user/v1/unblock",
+    "/event/gmeet/create",
+    "/event/gmeet/update",
+    "/event/gmeet/get",
   ],
 };
 module.exports = API_LIST;
