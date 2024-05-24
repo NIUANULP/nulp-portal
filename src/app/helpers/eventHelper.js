@@ -6,8 +6,8 @@ const uuidv1 = require("uuid/v1");
 const moment = require("moment-timezone");
 
 async function authorize() {
-  const GOOGLE_CLIENT_ID = envHelper.google_client_id;
-  const GOOGLE_CLIENT_SECRET = envHelper.google_client_secret;
+  const GOOGLE_CLIENT_ID = envHelper.event_meet_id;
+  const GOOGLE_CLIENT_SECRET = envHelper.event_meet_secret;
   const GOOGLE_REFRESH_TOKEN = envHelper.google_refresh_token;
   const auth = new google.auth.OAuth2(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET);
   if (GOOGLE_REFRESH_TOKEN) {
