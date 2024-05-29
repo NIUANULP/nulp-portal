@@ -1,11 +1,10 @@
 const bodyParser = require("body-parser");
-const proxyUtils = require("../proxy/proxyUtils.js");
-const { body, param, validationResult } = require("express-validator");
 const {
   createEvent,
   updateEvent,
   getEvent,
 } = require("../helpers/eventHelper.js");
+const proxyUtils = require("../proxy/proxyUtils.js");
 
 module.exports = function (app) {
   app.post(

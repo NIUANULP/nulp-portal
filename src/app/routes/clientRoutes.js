@@ -44,7 +44,22 @@ const setZipConfig = (req, res, type, encoding, dist = '../') => {
 module.exports = (app, keycloak) => {
 
   app.set('view engine', 'ejs')
-
+  app.set('views', path.join(__dirname, '../dist/webapp'));
+  const webapp = (req, res) => {
+    const filePath = path.join(__dirname, '../dist/webapp', 'index.ejs');
+    console.log('Checking file path:', filePath);
+    
+    if (req.path.includes('/webapp') && fs.existsSync(filePath)) {
+      console.log('File exists. Rendering file:', filePath);
+    
+      const templateVariables=getLocals(req)
+      res.render('index', templateVariables);
+    }
+    else{
+      console.log("React build folder path not exist");
+    }
+  };
+  app.get('/webapp', webapp);
   app.get(['*.js', '*.css'], (req, res, next) => {
     res.setHeader('Cache-Control', 'public, max-age=' + oneDayMS * 30)
     res.setHeader('Expires', new Date(Date.now() + oneDayMS * 30).toUTCString())
@@ -92,7 +107,7 @@ module.exports = (app, keycloak) => {
 
   app.all('/play/quiz/*', playContent);
   app.all('/manage-learn/*', MLContent);
-
+  app.all('/webapp/*', webapp);
   app.all('/get/dial/:dialCode',(req,res,next) => {
       if (_.get(req, 'query.channel')) {
           getdial(req,res);
@@ -105,7 +120,7 @@ module.exports = (app, keycloak) => {
   '/orgType', '/orgType/*', '/dashBoard', '/dashBoard/*',
   '/workspace', '/workspace/*', '/profile', '/profile/*', '/learn', '/learn/*', '/resources', '/discussion-forum/*',
   '/resources/*', '/myActivity', '/myActivity/*', '/org/*', '/manage/*', '/contribute','/contribute/*','/groups','/groups/*', '/my-groups','/my-groups/*','/certs/configure/*',
-   '/observation', '/observation/*','/solution','/solution/*','/questionnaire','/questionnaire/*', '/uci-admin', '/uci-admin/*','/program',"/all","/category/:category","/addConnections","/message","/home","/contents","/certificate","/learningHistory","/continueLearning","/help","/framework","/addConnections","/domainList","/contentList/:pageNumber","/joinCourse","/player","/pdf","/noresult","/user","/search","/view-all/:category"],
+   '/observation', '/observation/*','/solution','/solution/*','/questionnaire','/questionnaire/*', '/uci-admin', '/uci-admin/*','/program',"/all","/category/:category","/addConnections","/message","/home","/contents","/certificate","/learningHistory","/continueLearning","/help","/framework","/addConnections","/domainList","/contentList/:pageNumber","/joinCourse/*","/joinCourse/:contentId","/player","/pdf","/noresult","/user","/search","/view-all/:category","/webapp/*"],
   session({
     secret: envHelper.PORTAL_SESSION_SECRET_KEY,
     resave: false,
