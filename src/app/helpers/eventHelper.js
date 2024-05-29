@@ -1,65 +1,22 @@
-const fs = require("fs").promises;
-const path = require("path");
-const process = require("process");
-const { authenticate } = require("@google-cloud/local-auth");
 const { SpacesServiceClient, ConferenceRecordsServiceClient } =
   require("@google-apps/meet").v2;
-const {
-  auth,
-  GoogleAuth,
-  OAuth2Client,
-  AuthClient,
-} = require("google-auth-library");
+const envHelper = require("../helpers/environmentVariablesHelper.js");
 const { google } = require("googleapis");
 const uuidv1 = require("uuid/v1");
 const moment = require("moment-timezone");
-const SCOPES = [
-  "https://www.googleapis.com/auth/meetings.space.created",
-  "https://www.googleapis.com/auth/meetings.space.readonly",
-  "https://www.googleapis.com/auth/calendar",
-  "https://www.googleapis.com/auth/calendar.events",
-];
-
-const TOKEN_PATH = path.join(process.cwd(), "token.json");
-const CREDENTIALS_PATH = path.join(process.cwd(), "credentials.json");
-
-async function loadSavedCredentialsIfExist() {
-  try {
-    const content = await fs.readFile(TOKEN_PATH);
-    const credentials = JSON.parse(content);
-    return auth.fromJSON(credentials);
-  } catch (err) {
-    console.log(err);
-    return null;
-  }
-}
-
-async function saveCredentials(client) {
-  const content = await fs.readFile(CREDENTIALS_PATH);
-  const keys = JSON.parse(content);
-  const key = keys.installed || keys.web;
-  const payload = JSON.stringify({
-    type: "authorized_user",
-    client_id: key.client_id,
-    client_secret: key.client_secret,
-    refresh_token: client.credentials.refresh_token,
-  });
-  await fs.writeFile(TOKEN_PATH, payload);
-}
 
 async function authorize() {
-  let client = await loadSavedCredentialsIfExist();
-  if (client) {
-    return client;
+  const GOOGLE_CLIENT_ID = envHelper.google_client_id;
+  const GOOGLE_CLIENT_SECRET = envHelper.google_client_secret;
+  const GOOGLE_REFRESH_TOKEN = envHelper.google_refresh_token;
+  const auth = new google.auth.OAuth2(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET);
+  if (GOOGLE_REFRESH_TOKEN) {
+    auth.setCredentials({ refresh_token: GOOGLE_REFRESH_TOKEN });
+  } else {
+    throw new Error("Missing Google Refresh Token");
   }
-  client = await authenticate({
-    scopes: SCOPES,
-    keyfilePath: CREDENTIALS_PATH,
-  });
-  if (client.credentials) {
-    await saveCredentials(client);
-  }
-  return client;
+
+  return auth;
 }
 function generateRandomString(length) {
   const characters =

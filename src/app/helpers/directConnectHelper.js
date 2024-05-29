@@ -11,7 +11,7 @@ const uuidv1 = require("uuid/v1");
 const envHelper = require("./environmentVariablesHelper.js");
 const filter = new Filter();
 const nodemailer = require("nodemailer");
-const axios = require('axios');
+const axios = require("axios");
 
 io.on("connection", (socket) => {
   console.log("A user connected");
@@ -55,8 +55,7 @@ io.on("connection", (socket) => {
 
 async function startChat(req, res) {
   try {
-    const { sender_id, receiver_id, message } =
-      req.body;
+    const { sender_id, receiver_id, message } = req.body;
     const sanitizedMessage = sanitizeHtml(message);
 
     if (!sender_id) {
@@ -122,7 +121,6 @@ async function startChat(req, res) {
       io.sockets
         .to(receiver_id)
         .emit("message", { sender_id, message: sanitizedMessage });
-
       res.send({
         ts: new Date().toISOString(),
         params: {
@@ -617,40 +615,38 @@ cron.schedule(cronTime, deleteOldMessages);
 
 // Email notification
 async function sendEmail(message, title, id) {
-  try { 
-let data = JSON.stringify({
-  "request": {
-    "mode": "email",
-    "body": `${message}`,
-    "fromEmail": "",
-    "emailTemplateType": "",
-    "subject": `${title}`,
-    "recipientUserIds": [
-      id
-    ]
-  }
-});
+  try {
+    let data = JSON.stringify({
+      request: {
+        mode: "emails",
+        body: `${message}`,
+        fromEmail: "",
+        emailTemplateType: "",
+        subject: `${title}`,
+        recipientUserIds: [id],
+      },
+    });
 
-let config = {
-  method: 'post',
-  maxBodyLength: Infinity,
-  url: `${envHelper.api_base_url}/api/user/v1/notification/email`,
-  headers: { 
-    'Accept': 'application/json', 
-    'Content-Type': 'application/json', 
-    'Authorization': `Bearer ${envHelper.PORTAL_API_AUTH_TOKEN}`
-  },
-  data : data
-};
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${envHelper.api_base_url}/api/user/`,
+      headers: {
+        Accept: "application/json",
+        // "Content-Type": "application/json",
+        // Authorization: `Bearer ${envHelper.PORTAL_API_AUTH_TOKEN}`,
+      },
+      data: data,
+    };
 
-axios.request(config)
-.then((response) => {
-  console.log(JSON.stringify(response.data));
-})
-.catch((error) => {
-  console.log(error);
-});
-
+    axios
+      .request(config)
+      .then((response) => {
+        console.log(JSON.stringify(response.data));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   } catch (error) {
     throw error;
   }
