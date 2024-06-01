@@ -570,6 +570,70 @@ async function getBlockUser(req, res) {
   }
 }
 
+async function getBlockUserList(req, res) {
+  try {
+    const { sender_id } = req.query;
+
+    if (!sender_id) {
+      const errorMessage = `Missing sender_id`;
+      const error = new Error(errorMessage);
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const blockedUser = await pool.query(
+      "SELECT * FROM blocked_chat_users WHERE sender_id = $1",
+      [sender_id]
+    );
+    if (blockedUser?.rows?.length > 0) {
+      res.send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "successful",
+          message: "Blocked user list",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: blockedUser?.rows,
+      });
+    } else {
+      res.send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "successful",
+          message: "Blocked user not found",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: [],
+      });
+    }
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
+
 // Generate a secret key
 let secretKey = envHelper.CHAT_SECRET_KEY;
 // Chat encode method
@@ -930,4 +994,5 @@ module.exports = {
   getBlockUser,
   updateChat,
   unBlockUserChat,
+  getBlockUserList,
 };

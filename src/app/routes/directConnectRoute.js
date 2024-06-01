@@ -9,6 +9,7 @@ const {
   getBlockUser,
   updateChat,
   unBlockUserChat,
+  getBlockUserList,
 } = require("../helpers/directConnectHelper.js");
 
 module.exports = function (app) {
@@ -42,7 +43,7 @@ module.exports = function (app) {
     proxyUtils.verifyToken(),
     rejectInvitation
   );
-  // Get blocked user list
+  // Get blocked user
   app.get(
     "/directConnect/get-block-user",
     proxyUtils.verifyToken(),
@@ -55,11 +56,17 @@ module.exports = function (app) {
     bodyParser.json({ limit: "10mb" }),
     updateChat
   );
-  // Get blocked user list
+  // Get blocked user
   app.post(
     "/directConnect/unblock-user",
     bodyParser.json({ limit: "10mb" }),
     proxyUtils.verifyToken(),
     unBlockUserChat
+  );
+  // Get blocked user list
+  app.get(
+    "/directConnect/get-block-user-list",
+    proxyUtils.verifyToken(),
+    getBlockUserList
   );
 };
