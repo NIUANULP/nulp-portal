@@ -152,8 +152,17 @@ let envVariables = {
   // Default Language Configuration
   sunbird_default_language: env.sunbird_portal_default_language || 'en',
   sunbird_primary_bundle_language: env.sunbird_portal_primary_bundle_language || 'en',
+  // Elite DB
+  elite_system_db_username: env.elite_system_db_username ||"nulp",
+  elite_system_db_host:env.elite_system_db_host || "localhost",
+  elite_system_db_database:env.elite_system_db_database || "nulp",
+  elite_system_db_password:env.elite_system_db_password || "nulp",
+  elite_system_db_port:env.elite_system_db_port || 5433,
 
-
+  // Gmeet API secret
+  event_meet_id:env.event_meet_id,
+  event_meet_secret:env.event_meet_secret,
+  google_refresh_token :env.google_refresh_token,
   // Service(s) Base URL(s)
   learner_Service_Local_BaseUrl: env.sunbird_learner_service_local_base_url || 'http://learner-service:9000',
   content_Service_Local_BaseUrl: env.sunbird_content_service_local_base_url || 'http://content-service:5000',
