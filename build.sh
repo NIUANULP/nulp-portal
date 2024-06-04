@@ -59,7 +59,6 @@ build_client(){
     then
         echo "111111111111111111111"
         build_client_docker & # run client local build in background 
-        cp -r /var/lib/jenkins/elite-ui/nulp-elite-ui/prod-build/webapp /var/lib/jenkins/workspace/Build/Core/Player/src/app/app_dist/dist/webapp
     fi
     if [ $buildCdnAssests == true ]
     then
@@ -69,7 +68,6 @@ build_client(){
         echo "33333333333333333333333"
     wait # wait for both build to complete
     echo "completed client post_build"
-    #cp -r /var/lib/jenkins/elite-ui/nulp-elite-ui/prod-build/webapp /var/lib/jenkins/workspace/Build/Core/Player/src/app/app_dist/dist/webapp
 }
 
 
@@ -81,8 +79,8 @@ build_server(){
     cp -R libs helpers proxy resourcebundles package.json framework.config.js sunbird-plugins routes constants controllers server.js ./../../Dockerfile app_dist
     
     # Copy additional files to dist folder
-    #echo "copying additional files to dist"
-    #cp -r /var/lib/jenkins/elite-ui/nulp-elite-ui/prod-build/webapp /var/lib/jenkins/workspace/Build/Core/Player/src/app/app_dist/dist/webapp
+    echo "copying additional files to dist"
+    cp -r /var/lib/jenkins/elite-ui/nulp-elite-ui/prod-build/webapp /var/lib/jenkins/workspace/Build/Core/Player/src/app/app_dist/dist/webapp
     
     
     cd app_dist
