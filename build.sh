@@ -72,7 +72,7 @@ build_server(){
     
     # Copy additional files to dist folder
     echo "copying additional files to dist"
-    cp -r /var/lib/jenkins/elite-ui/nulp-elite-ui/prod-build/* /var/lib/jenkins/workspace/Build/Core/Player/src/app/app_dist/dist/
+    cp -r /var/lib/jenkins/elite-ui/nulp-elite-ui/prod-build/webapp /var/lib/jenkins/workspace/Build/Core/Player/src/app/app_dist/dist/webapp
     
     
     cd app_dist
