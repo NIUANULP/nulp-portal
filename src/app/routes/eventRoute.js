@@ -28,13 +28,13 @@ module.exports = function (app) {
   app.post(
     "/event/webinar/attendance-save",
     bodyParser.json({ limit: "10mb" }),
-    // proxyUtils.verifyToken(),
+    proxyUtils.verifyToken(),
     saveWebinarAttendance
   );
   app.post(
     "/event/webinar/attendance-list",
     bodyParser.json({ limit: "10mb" }),
-    // proxyUtils.verifyToken(),
+    proxyUtils.verifyToken(),
     listWebinarAttendance
   );
 };
