@@ -4,6 +4,7 @@ const envHelper = require("../helpers/environmentVariablesHelper.js");
 const { google } = require("googleapis");
 const uuidv1 = require("uuid/v1");
 const moment = require("moment-timezone");
+const { pool } = require("../helpers/postgresqlConfig");
 
 async function authorize() {
   const GOOGLE_CLIENT_ID = envHelper.google_client_id;
@@ -394,8 +395,129 @@ async function getEvent(req, res) {
   }
 }
 
+async function saveWebinarAttendance(req, res) {
+  try {
+    const { user_id, content_id, meeting_start_time, attending_via } = req.body;
+
+    if (!content_id && !user_id) {
+      return res.status(400).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "failed",
+          message: "Missing content_id in request body",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "BAD_REQUEST",
+        result: null,
+      });
+    }
+
+    const query =
+      "INSERT INTO webinar_attendance (user_id, content_id, meeting_start_time, attending_via) VALUES ($1, $2, $3, $4) RETURNING *";
+    const values = [user_id, content_id, meeting_start_time, attending_via];
+  
+      const { rows } = await pool.query(query, values);
+
+    res.status(200).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "successful",
+        message: "User webinar attendance saved successfully",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: rows,
+    });
+  } catch (error) {
+    console.log(error);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
+
+async function listWebinarAttendance(req, res) {
+  try {
+    const { user_id, content_id, attending_via } = req.body;
+
+    let query = "SELECT * FROM webinar_attendance";
+    const conditions = [];
+    const values = [];
+
+    if (user_id) {
+      conditions.push(`user_id = $${conditions.length + 1}`);
+      values.push(user_id);
+    }
+    if (content_id) {
+      conditions.push(`content_id = $${conditions.length + 1}`);
+      values.push(content_id);
+    }
+    if (attending_via) {
+      conditions.push(`attending_via = $${conditions.length + 1}`);
+      values.push(attending_via);
+    }
+
+    if (conditions.length > 0) {
+      query += ` WHERE ${conditions.join(' AND ')}`;
+    }
+
+    const { rows } = await pool.query(query, values);
+
+    res.status(200).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "successful",
+        message: "User webinar attendance fetched successfully",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: rows,
+    });
+  } catch (error) {
+    console.log(error);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }}
 module.exports = {
   createEvent,
   getEvent,
   updateEvent,
+  saveWebinarAttendance,
+  listWebinarAttendance
 };
