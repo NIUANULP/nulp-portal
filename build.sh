@@ -37,7 +37,7 @@ build_client_docker(){
     mv app_dist/dist/index.html app_dist/dist/index.ejs # rename index file
 }
 
-cp -r /var/lib/jenkins/elite-ui/nulp-elite-ui/prod-build/webapp /var/lib/jenkins/workspace/Build/Core/Player/src/app/app_dist/dist/webapp
+#cp -r /var/lib/jenkins/elite-ui/nulp-elite-ui/prod-build/webapp /var/lib/jenkins/workspace/Build/Core/Player/src/app/app_dist/dist/webapp
 
 # function to run client build for cdn
 build_client_cdn(){
@@ -68,7 +68,10 @@ build_client(){
         echo "33333333333333333333333"
     wait # wait for both build to complete
     echo "completed client post_build"
+    cp -r /var/lib/jenkins/elite-ui/nulp-elite-ui/prod-build/webapp /var/lib/jenkins/workspace/Build/Core/Player/src/app/app_dist/dist/webapp
 }
+
+
 
 # function to run server build
 build_server(){
