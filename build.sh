@@ -21,7 +21,7 @@ then
 fi
 
 commit_hash=$(git rev-parse --short HEAD)
- nvm install $NODE_VERSION # same is used in client and server
+nvm install $NODE_VERSION # same is used in client and server
 # nvm install 14.19.0
 # nvm install 16.0.0
 cd src/app
@@ -36,6 +36,9 @@ build_client_docker(){
     cd ..
     mv app_dist/dist/index.html app_dist/dist/index.ejs # rename index file
 }
+
+#cp -r /var/lib/jenkins/elite-ui/nulp-elite-ui/prod-build/webapp /var/lib/jenkins/workspace/Build/Core/Player/src/app/app_dist/dist/webapp
+
 # function to run client build for cdn
 build_client_cdn(){
     echo "starting client cdn prod build"
@@ -54,21 +57,33 @@ build_client(){
     echo "completed client yarn install"
     if [ $buildDockerImage == true ]
     then
-    build_client_docker & # run client local build in background 
+        echo "111111111111111111111"
+        build_client_docker & # run client local build in background 
     fi
     if [ $buildCdnAssests == true ]
     then
-    build_client_cdn & # run client local build in background
+        echo "22222222222222222222"
+        build_client_cdn & # run client local build in background
     fi
+        echo "33333333333333333333333"
     wait # wait for both build to complete
     echo "completed client post_build"
+    cp -r /var/lib/jenkins/elite-ui/nulp-elite-ui/prod-build/webapp /var/lib/jenkins/workspace/Build/Core/Player/src/app/app_dist/dist/webapp
 }
+
+
 
 # function to run server build
 build_server(){
     echo "Building server in background"
-    echo "copying requied files to app_dist"
+    echo "copying required files to app_dist"
     cp -R libs helpers proxy resourcebundles package.json framework.config.js sunbird-plugins routes constants controllers server.js ./../../Dockerfile app_dist
+    
+    # Copy additional files to dist folder
+    #echo "copying additional files to dist"
+    #cp -r /var/lib/jenkins/elite-ui/nulp-elite-ui/prod-build/webapp /var/lib/jenkins/workspace/Build/Core/Player/src/app/app_dist/dist/webapp
+    
+    
     cd app_dist
     nvm use $NODE_VERSION
     echo "starting server yarn install"
@@ -91,13 +106,13 @@ echo "Client and Server Build complete Took $[$BUILD_ENDTIME - $STARTTIME] secon
 
 if [ $buildDockerImage == true ]
 then
-cd app_dist
-sed -i "/version/a\  \"buildHash\": \"${commit_hash}\"," package.json
-echo "starting docker build"
-docker build --no-cache --label commitHash=$(git rev-parse --short HEAD) -t ${org}/${name}:${build_tag} .
-echo "completed docker build"
-cd ../../..
-echo {\"image_name\" : \"${name}\", \"image_tag\" : \"${build_tag}\",\"commit_hash\" : \"${commit_hash}\", \"node_name\" : \"$node\"} > metadata.json
+    cd app_dist
+    sed -i "/version/a\  \"buildHash\": \"${commit_hash}\"," package.json
+    echo "starting docker build"
+    docker build --no-cache --label commitHash=$(git rev-parse --short HEAD) -t ${org}/${name}:${build_tag} .
+    echo "completed docker build"
+    cd ../../..
+    echo {\"image_name\" : \"${name}\", \"image_tag\" : \"${build_tag}\",\"commit_hash\" : \"${commit_hash}\", \"node_name\" : \"$node\"} > metadata.json
 fi
 
 ENDTIME=$(date +%s)
