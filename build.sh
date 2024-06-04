@@ -57,12 +57,15 @@ build_client(){
     echo "completed client yarn install"
     if [ $buildDockerImage == true ]
     then
+        echo "111111111111111111111"
         build_client_docker & # run client local build in background 
     fi
     if [ $buildCdnAssests == true ]
     then
+        echo "22222222222222222222"
         build_client_cdn & # run client local build in background
     fi
+        echo "33333333333333333333333"
     wait # wait for both build to complete
     echo "completed client post_build"
 }
