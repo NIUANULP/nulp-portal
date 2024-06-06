@@ -38,6 +38,11 @@ node('') {
                     }
                     currentBuild.description = "${build_tag}"
                 }
+                if (params.buildDockerImage == 'true') {
+                    stage('Docker Build') {
+                        sh("bash ./docker_build.sh ${build_tag} ${env.NODE_NAME} ${hub_org}")
+                    }
+                }
             }
         }
     }
