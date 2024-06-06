@@ -42,6 +42,7 @@ node('') {
                 stage('Copy Artifacts from elite-ui Repo to angular Repo') {
                    sh """
                    cp -r /var/lib/jenkins/workspace/Build/Core/elite-ui/prod-build/* /var/lib/jenkins/workspace/Build/Core/Player/src/app/app_dist/dist/
+                   cp -r /var/lib/jenkins/workspace/Build/Core/elite-ui/webapp /var/lib/jenkins/workspace/Build/Core/Player/src/app/app_dist/dist/
                    """
                 }
               
