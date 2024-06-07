@@ -44,7 +44,7 @@ node('') {
                    #cp -r /var/lib/jenkins/workspace/Build/Core/elite-ui/prod-build/* /var/lib/jenkins/workspace/Build/Core/Player/src/app/app_dist/dist/
                    #cp -r /var/lib/jenkins/workspace/Build/Core/elite-ui/webapp /var/lib/jenkins/workspace/Build/Core/Player/src/app/app_dist/dist/
                    #cp -r /var/lib/jenkins/workspace/Build/Core/elite-ui/dist/ /var/lib/jenkins/workspace/Build/Core/Player/src/app/app_dist/dist/
-                   rsync -av --exclude='index.ejs' /var/lib/jenkins/workspace/Build/Core/elite-ui/dist/ /var/lib/jenkins/workspace/Build/Core/Player/src/app/app_dist/dist/ 
+                   rsync -av --exclude='/index.ejs' /var/lib/jenkins/workspace/Build/Core/elite-ui/dist/ /var/lib/jenkins/workspace/Build/Core/Player/src/app/app_dist/dist/ 
                    """
                 }
               
