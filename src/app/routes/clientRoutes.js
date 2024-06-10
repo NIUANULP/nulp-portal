@@ -51,7 +51,7 @@ module.exports = (app, keycloak) => {
     
     if (req.path.includes('/webapp') && fs.existsSync(filePath)) {
       console.log('File exists. Rendering file:', filePath);
-    
+      req.includeUserDetail = true;
       const templateVariables=getLocals(req)
       res.render('index', templateVariables);
     }
@@ -107,7 +107,20 @@ module.exports = (app, keycloak) => {
 
   app.all('/play/quiz/*', playContent);
   app.all('/manage-learn/*', MLContent);
-  app.all('/webapp/*', webapp);
+  app.all('/webapp/*', 
+  session({
+    secret: envHelper.PORTAL_SESSION_SECRET_KEY,
+    resave: false,
+    cookie: {
+      maxAge: envHelper.sunbird_session_ttl
+    },
+    saveUninitialized: false,
+    store: memoryStore
+  }), 
+  keycloak.middleware({ admin: '/callback', logout: '/logout' }), 
+  keycloak.protect(), 
+  webapp
+);
   app.all('/get/dial/:dialCode',(req,res,next) => {
       if (_.get(req, 'query.channel')) {
           getdial(req,res);
@@ -120,7 +133,7 @@ module.exports = (app, keycloak) => {
   '/orgType', '/orgType/*', '/dashBoard', '/dashBoard/*',
   '/workspace', '/workspace/*', '/profile', '/profile/*', '/learn', '/learn/*', '/resources', '/discussion-forum/*',
   '/resources/*', '/myActivity', '/myActivity/*', '/org/*', '/manage/*', '/contribute','/contribute/*','/groups','/groups/*', '/my-groups','/my-groups/*','/certs/configure/*',
-   '/observation', '/observation/*','/solution','/solution/*','/questionnaire','/questionnaire/*', '/uci-admin', '/uci-admin/*','/program',"/all","/category/:category","/addConnections","/message","/home","/contents","/certificate","/learningHistory","/continueLearning","/help","/framework","/addConnections","/domainList","/contentList/:pageNumber","/joinCourse/*","/joinCourse/:contentId","/player","/pdf","/noresult","/user","/search","/view-all/:category","/webapp/*"],
+   '/observation', '/observation/*','/solution','/solution/*','/questionnaire','/questionnaire/*', '/uci-admin', '/uci-admin/*','/program',"/webapp/all","/category/:category","/addConnections","/message","/home","/contents","/certificate","/learningHistory","/continueLearning","/help","/framework","/addConnections","/domainList","/contentList/:pageNumber","/joinCourse/*","/joinCourse/:contentId","/player","/pdf","/noresult","/user","/search","/view-all/:category"],
   session({
     secret: envHelper.PORTAL_SESSION_SECRET_KEY,
     resave: false,
