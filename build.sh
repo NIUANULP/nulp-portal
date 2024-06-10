@@ -68,7 +68,6 @@ build_client(){
         echo "33333333333333333333333"
     wait # wait for both build to complete
     echo "completed client post_build"
-    cp -r /var/lib/jenkins/elite-ui/nulp-elite-ui/prod-build/webapp /var/lib/jenkins/workspace/Build/Core/Player/src/app/app_dist/dist/webapp
 }
 
 
