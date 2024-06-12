@@ -679,38 +679,40 @@ cron.schedule(cronTime, deleteOldMessages);
 
 // Email notification
 async function sendEmail(message, title, id) {
-  try {
-    let data = JSON.stringify({
-      request: {
-        mode: "emails",
-        body: `${message}`,
-        fromEmail: "",
-        emailTemplateType: "",
-        subject: `${title}`,
-        recipientUserIds: [id],
-      },
-    });
+  try { 
+let data = JSON.stringify({
+  "request": {
+    "mode": "email",
+    "body": `${message}`,
+    "fromEmail": "",
+    "emailTemplateType": "",
+    "subject": `${title}`,
+    "recipientUserIds": [
+      id
+    ]
+  }
+});
 
-    let config = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: `${envHelper.api_base_url}/api/user/`,
-      headers: {
-        Accept: "application/json",
-        // "Content-Type": "application/json",
-        // Authorization: `Bearer ${envHelper.PORTAL_API_AUTH_TOKEN}`,
-      },
-      data: data,
-    };
+let config = {
+  method: 'post',
+  maxBodyLength: Infinity,
+  url: `${envHelper.api_base_url}/api/user/v1/notification/email`,
+  headers: { 
+    'Accept': 'application/json', 
+    'Content-Type': 'application/json', 
+    'Authorization': `Bearer ${envHelper.PORTAL_API_AUTH_TOKEN}`
+  },
+  data : data
+};
 
-    axios
-      .request(config)
-      .then((response) => {
-        console.log(JSON.stringify(response.data));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+axios.request(config)
+.then((response) => {
+  console.log(JSON.stringify(response.data));
+})
+.catch((error) => {
+  console.log(error);
+});
+
   } catch (error) {
     throw error;
   }
