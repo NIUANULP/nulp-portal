@@ -163,6 +163,11 @@ let envVariables = {
   event_meet_id:env.event_meet_id,
   event_meet_secret:env.event_meet_secret,
   google_refresh_token :env.google_refresh_token,
+  // Direct Connect 
+  CHAT_SECRET_KEY:env.CHAT_SECRET_KEY,
+  CRON_TIME:env.CRON_TIME,
+  NOTIFICATION_CRON_TIME:env.NOTIFICATION_CRON_TIME,
+  api_base_url:env.api_base_url,
   // Service(s) Base URL(s)
   learner_Service_Local_BaseUrl: env.sunbird_learner_service_local_base_url || 'http://learner-service:9000',
   content_Service_Local_BaseUrl: env.sunbird_content_service_local_base_url || 'http://content-service:5000',

@@ -70,8 +70,9 @@ const certificateCount = async (req, res) => {
       },
     });
   } catch (err) {
+    const statusCode = err.statusCode || 500;
     console.log(`Error occurred while fetching  certificate count`);
-    res.send({
+    res.status(statusCode).send({
       ts: new Date().toISOString(),
       params: {
         resmsgid: uuidv1(),
@@ -161,8 +162,9 @@ const courseCount = async (req, res) => {
       },
     });
   } catch (err) {
+    const statusCode = err.statusCode || 500;
     console.log(`Error occurred while fetching  course enrolled count`);
-    res.send({
+    res.status(statusCode).send({
       ts: new Date().toISOString(),
       params: {
         resmsgid: uuidv1(),
