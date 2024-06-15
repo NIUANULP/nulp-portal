@@ -133,7 +133,7 @@ module.exports = (app, keycloak) => {
   '/orgType', '/orgType/*', '/dashBoard', '/dashBoard/*',
   '/workspace', '/workspace/*', '/profile', '/profile/*', '/learn', '/learn/*', '/resources', '/discussion-forum/*',
   '/resources/*', '/myActivity', '/myActivity/*', '/org/*', '/manage/*', '/contribute','/contribute/*','/groups','/groups/*', '/my-groups','/my-groups/*','/certs/configure/*',
-   '/observation', '/observation/*','/solution','/solution/*','/questionnaire','/questionnaire/*', '/uci-admin', '/uci-admin/*','/program',"/all","/category/:category","/addConnections","/message","/home","/contents","/certificate","/learningHistory","/continueLearning","/help","/framework","/addConnections","/domainList","/contentList/:pageNumber","/joinCourse/*","/joinCourse/:contentId","/player","/pdf","/noresult","/user","/search","/view-all/:category"],
+   '/observation', '/observation/*','/solution','/solution/*','/questionnaire','/questionnaire/*', '/uci-admin', '/uci-admin/*','/program',"/all","/category/:category","/addConnections","/message","/home","/contents","/certificate","/learningHistory","/continueLearning","/help","/framework","/addConnections","/domainList","/contentList/:pageNumber","/joinCourse/*","/joinCourse/:contentId","/player","/pdf","/noresult","/user","/search","/view-all/:category","/nulp-chatbot"],
   session({
     secret: envHelper.PORTAL_SESSION_SECRET_KEY,
     resave: false,
@@ -149,7 +149,7 @@ module.exports = (app, keycloak) => {
     '/explore/*', '/:slug/explore', '/:slug/explore/*', '/play/*', '/:slug/play/*',  '/explore-course', '/explore-course/*',
     '/:slug/explore-course', '/:slug/explore-course/*', '/:slug/signup', '/signup', '/:slug/sign-in/*',
     '/sign-in/*', '/download/*', '/accountMerge/*','/:slug/accountMerge/*', '/:slug/download/*', '/certs/*', '/:slug/certs/*', '/recover/*', '/:slug/recover/*', '/explore-groups',
-    '/guest-profile'],
+    '/guest-profile','/chatbot'],
     session({
       secret: envHelper.PORTAL_SESSION_SECRET_KEY,
       resave: false,
