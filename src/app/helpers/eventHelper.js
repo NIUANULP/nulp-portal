@@ -7,8 +7,8 @@ const moment = require("moment-timezone");
 const { pool } = require("../helpers/postgresqlConfig");
 
 async function authorize() {
-  const GOOGLE_CLIENT_ID = envHelper.google_client_id;
-  const GOOGLE_CLIENT_SECRET = envHelper.google_client_secret;
+  const GOOGLE_CLIENT_ID = envHelper.event_meet_id;
+  const GOOGLE_CLIENT_SECRET = envHelper.event_meet_secret;
   const GOOGLE_REFRESH_TOKEN = envHelper.google_refresh_token;
   const auth = new google.auth.OAuth2(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET);
   if (GOOGLE_REFRESH_TOKEN) {
@@ -418,8 +418,8 @@ async function saveWebinarAttendance(req, res) {
     const query =
       "INSERT INTO webinar_attendance (user_id, content_id, meeting_start_time, attending_via) VALUES ($1, $2, $3, $4) RETURNING *";
     const values = [user_id, content_id, meeting_start_time, attending_via];
-  
-      const { rows } = await pool.query(query, values);
+
+    const { rows } = await pool.query(query, values);
 
     res.status(200).send({
       ts: new Date().toISOString(),
@@ -477,7 +477,7 @@ async function listWebinarAttendance(req, res) {
     }
 
     if (conditions.length > 0) {
-      query += ` WHERE ${conditions.join(' AND ')}`;
+      query += ` WHERE ${conditions.join(" AND ")}`;
     }
 
     const { rows } = await pool.query(query, values);
@@ -513,11 +513,12 @@ async function listWebinarAttendance(req, res) {
       responseCode: "OK",
       result: {},
     });
-  }}
+  }
+}
 module.exports = {
   createEvent,
   getEvent,
   updateEvent,
   saveWebinarAttendance,
-  listWebinarAttendance
+  listWebinarAttendance,
 };
