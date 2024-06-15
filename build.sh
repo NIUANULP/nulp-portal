@@ -62,6 +62,7 @@ build_client(){
     if [ $buildCdnAssests == true ]
     then
         build_client_cdn & # run client local build in background
+    fi
     wait # wait for both build to complete
     echo "completed client post_build"
 }
