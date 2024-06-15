@@ -90,10 +90,16 @@ export class WorkspacesidebarComponent implements OnInit {
   * roles for which admin to be shown
   */
  alltextbookRole: Array<string>;
-   /**
+
+  /**
    * reference of Router.
    */
   private router: Router;
+
+  /**
+   * reference of routingUrl.
+   */
+  public routingUrl: string;
 
   /**
   * Constructor to create injected service(s) object
@@ -135,5 +141,18 @@ export class WorkspacesidebarComponent implements OnInit {
       pageid: 'workspace'
     };
    }
+
+   redirectToMenu(menu){
+    console.log(menu);
+    if(menu == 'allmyevents'){
+      this.routingUrl = 'workspace/content/allmyevents';
+    }
+    this.router.navigate([this.routingUrl]);
+
+  }
+
+   redirectToCreatedEvents(){
+    this.router.navigate(['workspace/content/allmyevents']);
+  }
 
 }

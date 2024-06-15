@@ -21,6 +21,12 @@
   [matTooltipPosition]="'right'">
        {{resourceService?.frmelmnts?.snav?.allmycontents}}
   </a>
+
+  <a appTelemetryInteract [telemetryInteractEdata]="setInteractData('allmyevnts-button')"  *ngIf='permissionService.permissionAvailable' [class.active]="router.isActive('/workspace/content/allmyevents') " 
+  appPermission [permission]='allContentRole' class="item" (click)="redirectToMenu('allmyevents');" suiPopup popupText="View all your webinars in draft, review, published and more"
+  [popupPlacement]="'right'">
+       All My Webinars
+  </a>
   <a appTelemetryInteract [telemetryInteractEdata]="setInteractData('draft-button')" *ngIf='permissionService.permissionAvailable' [class.active]="router.isActive('/workspace/content/draft') " appPermission
     [permission]='draftRole' class="item" [routerLink]="['draft',1]"   matTooltip="View drafts you are working on. Submit them for review when completed"
     [matTooltipPosition]="'right'">
