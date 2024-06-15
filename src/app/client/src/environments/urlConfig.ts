@@ -9,8 +9,8 @@ export const urlConfig = {
   // search: "/content/composite/v1/search",
   // compositeSearch: "/action/composite/v3/search",
 
-  search: "assets/api/eventlist.json",
-  compositeSearch: "assets/api/eventlist.json",
+  search: "/api/composite/v1/search",
+  compositeSearch: "/api/composite/v1/search",
 
   detail: "/api/event/v4/read/",
   myEvents: "/api/course/v2/user/enrollment/list?contentType=Event",
