@@ -1,6 +1,6 @@
 #!/bin/bash
 STARTTIME=$(date +%s)
-CLIENT_NODE_VERSION=14.20.0
+# CLIENT_NODE_VERSION=14.20.0
 SERVER_NODE_VERSION=16.19.0
 echo "Starting portal build from build.sh"
 set -euo pipefail	
@@ -23,7 +23,7 @@ fi
 
 commit_hash=$(git rev-parse --short HEAD)
 # nvm install $NODE_VERSION # same is used in client and server
-nvm install $CLIENT_NODE_VERSION # used in client
+# nvm install $CLIENT_NODE_VERSION # used in client
 nvm install $SERVER_NODE_VERSION #  used in server
 cd src/app
 mkdir -p app_dist/ # this folder should be created prior server and client build
@@ -50,7 +50,7 @@ build_client_cdn(){
 # function to run client build
 build_client(){
     echo "Building client in background"
-    nvm use $CLIENT_NODE_VERSION
+    nvm use $SERVER_NODE_VERSION
     cd client
     echo "starting client yarn install"
     yarn install --no-progress --production=true
