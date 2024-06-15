@@ -1,6 +1,7 @@
 #!/bin/bash
 STARTTIME=$(date +%s)
-NODE_VERSION=16.19.0
+CLIENT_NODE_VERSION=14.19.0
+SERVER_NODE_VERSION=16.19.0
 echo "Starting portal build from build.sh"
 set -euo pipefail	
 export NVM_DIR="$HOME/.nvm"
@@ -21,7 +22,9 @@ then
 fi
 
 commit_hash=$(git rev-parse --short HEAD)
-nvm install $NODE_VERSION # same is used in client and server
+# nvm install $NODE_VERSION # same is used in client and server
+nvm install $CLIENT_NODE_VERSION # used in client
+nvm install $SERVER_NODE_VERSION #  used in server
 cd src/app
 mkdir -p app_dist/ # this folder should be created prior server and client build
 rm -rf dist-cdn # remove cdn dist folder
@@ -47,22 +50,18 @@ build_client_cdn(){
 # function to run client build
 build_client(){
     echo "Building client in background"
-    nvm use $NODE_VERSION
+    nvm use $CLIENT_NODE_VERSION
     cd client
     echo "starting client yarn install"
     yarn install --no-progress --production=true
     echo "completed client yarn install"
     if [ $buildDockerImage == true ]
     then
-        echo "111111111111111111111"
         build_client_docker & # run client local build in background 
     fi
     if [ $buildCdnAssests == true ]
     then
-        echo "22222222222222222222"
         build_client_cdn & # run client local build in background
-    fi
-    echo "33333333333333333333333"
     wait # wait for both build to complete
     echo "completed client post_build"
 }
@@ -78,7 +77,7 @@ build_server(){
     #cp -r /var/lib/jenkins/workspace/Build/Core/Player/prod-build/* /var/lib/jenkins/workspace/Build/Core/Player/src/app/app_dist/dist/
     
     cd app_dist
-    nvm use $NODE_VERSION
+    nvm use $SERVER_NODE_VERSION
     echo "starting server yarn install"
     yarn install --no-progress --production=true
     echo "completed server yarn install"
