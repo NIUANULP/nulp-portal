@@ -23,9 +23,6 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateStore } from '@ngx-translate/core';
 import { SbSearchFilterModule } from 'common-form-elements-web-v9';
-import { EventLibraryModule } from 'ngtek-event-library';
-import  * as configData from '../environments/urlConfig'; 
-
 
 @NgModule({
   declarations: [
@@ -54,8 +51,7 @@ import  * as configData from '../environments/urlConfig';
     ...PluginModules,
      // ngx-translate and the loader module
      HttpClientModule,
-    AppRoutingModule, // don't add any module below this because it contains wildcard route
-    EventLibraryModule.forChild(configData.urlConfig)
+    AppRoutingModule // don't add any module below this because it contains wildcard route
   ],
   entryComponents: [AppComponent],
   bootstrap: [AppComponent],
