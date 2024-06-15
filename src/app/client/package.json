@@ -41,6 +41,7 @@
     "@angular/localize": "10.2.5",
     "@angular/platform-browser": "^10.2.5",
     "@angular/platform-browser-dynamic": "^10.2.5",
+    "@angular/material": "10.2.7",
     "@angular/router": "^10.2.5",
     "@ngx-translate/core": "12.0.0",
     "@ngx-translate/http-loader": "^5.0.0",
