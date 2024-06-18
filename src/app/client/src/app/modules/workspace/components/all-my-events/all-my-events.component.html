@@ -6,15 +6,15 @@
         </div>
         <div [ngClass]="SECOND_TO_PANEL_LAYOUT" class="w-100">
             <div [ngClass]="layoutConfiguration ? 'sbt-page-content-area' : 'workspacesegment'">
-                <!-- <sb-event-filter
+                <sb-event-filter
                     (filterChangeEvent)="getFilteredData($event)"
                     *ngIf="filterConfig"
                     [filterConfig]="filterConfig"
                     [isSorting]="true"
                     (sortingQuery)="sortData($event)">
-                </sb-event-filter> -->
+                </sb-event-filter>
                 <!-- <div *ngIf="eventList?.length > 0 && eventList != 'undefined'"> && !showLoader && !noResult  -->
-                    <div class="sb-table-container" *ngIf="eventList.length > 0">
+                    <div class="sb-table-container" *ngIf="EventListCount > 0">
                         <table class="ui upForReviewTable table">
                             <thead>
                                 <tr>
@@ -26,7 +26,6 @@
                             </thead>
                             <tbody>
                                 <!-- <tr in-view-item class="UpForReviewListHover cursor-pointer" 
-                                    *ngFor="let content of eventList | paginate: { itemsPerPage: paginateLimit, currentPage: pageNumber };let i = index;" 
                                     [id]="i" 
                                     [data]="content"> -->
                                 <tr in-view-item class="UpForReviewListHover cursor-pointer" 
