@@ -59,11 +59,6 @@
                 "glob": "**/*.*",
                 "input": "./node_modules/@samagra-x/uci-console/assets/",
                 "output": "/assets/uci-console"
-              },
-              {
-                "glob": "**/*",
-                "input": "./node_modules/ngtek-event-library/assets/",
-                 "output": "/assets/"
               }
             ],
             "styles": [
@@ -85,10 +80,7 @@
               "node_modules/videojs-http-source-selector/dist/videojs-http-source-selector.css",
               "node_modules/primeicons/primeicons.css",
               "node_modules/primeng/resources/themes/nova-light/theme.css",
-              "node_modules/primeng/resources/primeng.min.css",
-              "./node_modules/ngtek-event-library/assets/styles/styles.scss",                         
-              "node_modules/angular-calendar/css/angular-calendar.css",
-              "node_modules/izitoast/dist/css/iziToast.min.css"
+              "node_modules/primeng/resources/primeng.min.css"
             ],
             "stylePreprocessorOptions": {
               "includePaths": [
@@ -111,8 +103,6 @@
               "node_modules/@project-sunbird/sunbird-video-player-v9/lib/assets/videojs-markers.js",
               "node_modules/videojs-contrib-quality-levels/dist/videojs-contrib-quality-levels.min.js",
               "node_modules/videojs-http-source-selector/dist/videojs-http-source-selector.min.js",
-              "src/assets/libs/semantic-ui/dimmer.min.js",
-              "src/assets/libs/semantic-ui/transition.min.js",
               {
                 "inject": false,
                 "input": "src/assets/libs/semantic-ui/transition.min.js",
