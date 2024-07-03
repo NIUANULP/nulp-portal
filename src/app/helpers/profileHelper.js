@@ -37,22 +37,16 @@ const certificateCount = async (req, res) => {
           data: data,
         };
 
-        try {
-          const getBatchList = await axios(getBatch);
-          const filteredBatchList =
-            getBatchList?.data?.result?.response?.content?.filter(
-              (batch) =>
-                batch?.cert_templates !== null &&
-                Object.keys(batch?.cert_templates).length > 0
-            );
-          if (filteredBatchList?.length > 0) {
-            arrayOfBatchList.push(filteredBatchList[0]);
-          }
-        } catch (batchError) {
-          console.error(
-            `Error fetching batch list for course ${item?.courseId}`,
-            batchError
+        const getBatchList = await axios(getBatch);
+
+        const filteredBatchList =
+          getBatchList?.data?.result?.response?.content.filter(
+            (batch) =>
+              batch.cert_templates !== null &&
+              Object.keys(batch.cert_templates).length > 0
           );
+        if (filteredBatchList?.length > 0) {
+          arrayOfBatchList.push(filteredBatchList[0]);
         }
       })
     );
@@ -81,7 +75,7 @@ const certificateCount = async (req, res) => {
     });
   } catch (err) {
     const statusCode = err.statusCode || 500;
-    console.error("Error occurred while fetching certificate count", err);
+    console.log(`Error occurred while fetching  certificate count`);
     res.status(statusCode).send({
       ts: new Date().toISOString(),
       params: {
@@ -97,12 +91,13 @@ const certificateCount = async (req, res) => {
   }
 };
 function countNonEmptyCertificates(data) {
-  return data.reduce((count, obj) => {
-    if (obj?.issuedCertificates?.length > 0) {
+  let count = 0;
+  data.forEach((obj) => {
+    if (obj?.issuedCertificates && obj?.issuedCertificates?.length > 0) {
       count++;
     }
-    return count;
-  }, 0);
+  });
+  return count;
 }
 
 const courseCount = async (req, res) => {
@@ -111,7 +106,7 @@ const courseCount = async (req, res) => {
 
     const courses = await getCourses(req);
     // Get the total course count
-    const totalCourses = courses?.length || 0;
+    const totalCourses = courses?.length;
     // Get the current date
     const currentDate = new Date();
 
@@ -131,7 +126,7 @@ const courseCount = async (req, res) => {
 
     // Filter the array to get entries enrolled this month
     const enrolledThisMonth = courses.filter(
-      (item) => new Date(item?.enrolledDate) >= firstDayOfCurrentMonth
+      (item) => new Date(item.enrolledDate) >= firstDayOfCurrentMonth
     );
 
     // Filter the array to get entries enrolled last month
@@ -142,16 +137,15 @@ const courseCount = async (req, res) => {
     );
 
     // Get the counts
-    const countThisMonth = enrolledThisMonth?.length || 0;
-    const countLastMonth = enrolledLastMonth?.length || 0;
+    const countThisMonth = enrolledThisMonth?.length;
+    const countLastMonth = enrolledLastMonth?.length;
+    // Get the count of courses with status 1
+    // Status 1 is ongoing course
+    const status1Count = courses.filter((item) => item.status === 1).length;
 
-    // Get the count of courses with status 1 (ongoing courses)
-    const status1Count =
-      courses.filter((item) => item?.status === 1).length || 0;
-
-    // Get the count of courses with status 2 (completed courses)
-    const status2Count =
-      courses.filter((item) => item?.status === 2).length || 0;
+    // Get the count of courses with status 2
+    // Status 2 is completed course
+    const status2Count = courses.filter((item) => item.status === 2).length;
 
     res.send({
       ts: new Date().toISOString(),
@@ -173,7 +167,7 @@ const courseCount = async (req, res) => {
     });
   } catch (err) {
     const statusCode = err.statusCode || 500;
-    console.error("Error occurred while fetching course enrolled count", err);
+    console.log(`Error occurred while fetching  course enrolled count`);
     res.status(statusCode).send({
       ts: new Date().toISOString(),
       params: {

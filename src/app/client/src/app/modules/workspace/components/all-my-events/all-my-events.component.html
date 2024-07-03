@@ -1,0 +1,87 @@
+<lib-event [libEventConfig]="libEventConfig"></lib-event>
+<div class="sbt-fluid-content-bg">
+    <div class="sb-g" [ngClass]="layoutConfiguration ? 'sbt-container sbt-page-content relative9' : 'stackable mt-30 mg-pad'">
+        <div class="relative9" [ngClass]="FIRST_TO_PANEL_LAYOUT">
+            <app-workspacesidebar></app-workspacesidebar>
+        </div>
+        <div [ngClass]="SECOND_TO_PANEL_LAYOUT" class="w-100">
+            <div [ngClass]="layoutConfiguration ? 'sbt-page-content-area' : 'workspacesegment'">
+                <sb-event-filter
+                    (filterChangeEvent)="getFilteredData($event)"
+                    *ngIf="filterConfig"
+                    [filterConfig]="filterConfig"
+                    [isSorting]="true"
+                    (sortingQuery)="sortData($event)">
+                </sb-event-filter>
+                <!-- <div *ngIf="eventList?.length > 0 && eventList != 'undefined'"> && !showLoader && !noResult  -->
+                    <div class="sb-table-container" *ngIf="EventListCount > 0">
+                        <table class="ui upForReviewTable table">
+                            <thead>
+                                <tr>
+                                    <th class="four wide UpReviewTableHeader">Webinar(s)</th>
+                                    <th class="four wide UpReviewTableHeader">Last Updated</th>
+                                    <th class="two wide UpReviewTableHeader">Status</th>
+                                    <th class="two wide UpReviewTableHeader"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- <tr in-view-item class="UpForReviewListHover cursor-pointer" 
+                                    [id]="i" 
+                                    [data]="content"> -->
+                                <tr in-view-item class="UpForReviewListHover cursor-pointer" 
+                                    *ngFor="let content of eventList;let i = index;" 
+                                    [id]="i" 
+                                    [data]="content">
+
+                                    <td tabindex="0" (click)="navToEventDetail(content)">
+                                        <h5 class="ui image header">
+                                            <img src="{{content.appIcon || 'assets/images/default.png' | cdnprefixurl}}" class="ui tiny image UpReviewTinyImage">
+                                            <div class="content ">
+                                                <div class="UpReviewHeader">{{content.name | slice:0:30}}
+                                                    <i *ngIf="content.name.length > 30">...</i>
+                                                </div>
+                                                <div class="UpReviewSubHeader">{{content.primaryCategory}}</div>
+                                            </div>
+                                        </h5>
+                                    </td>
+                                    <td>
+                                        <h5 class="ui image header">
+                                          <div class="content">
+                                            <div class="UpReviewSubHeader">{{content.lastUpdatedOn | fromNow }}
+                                            </div>
+                                          </div>
+                                        </h5>
+                                      </td>
+                                    <td class="UpForReviewStatusOrange">{{content.status}}</td>
+                                    <td>
+                                        <span (click)="deleteEvent(content)" tabindex="i">
+                                          <i class="trash large icon" ></i>
+                                        </span>
+                                    </td>
+                                    <!-- <td>
+                                        <i *ngIf="!(content.pkgVersion && content.pkgVersion > 0 && (content.status === 'Draft'))" 
+                                        class="trash large icon" tabindex="0" (click)="deleteConfirmModal(content.identifier, content.mimeType); $event.stopPropagation()">
+                                        </i>
+                                    </td> -->
+                                </tr>
+                            </tbody>
+                        </table>
+                        <!-- <div class="ui grid">
+                            <div class="two wide column"></div>
+                            <div class="ten wide column">
+                                <div class="pb-10">
+                                    <pagination-controls
+                                        (pageChange)="pageNumber = $event"
+                                        (pageBoundsCorrection)="onPageBoundsCorrection($event)"
+                                        *ngIf="list" class="pull-right">
+                                    </pagination-controls>
+                                </div>
+                            </div>
+                        </div> -->
+                    </div>
+
+                <!-- </div> -->
+            </div>
+        </div>
+    </div>
+</div>
