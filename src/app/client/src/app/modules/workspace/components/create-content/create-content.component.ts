@@ -1,4 +1,4 @@
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ResourceService, ConfigService, NavigationHelperService } from '@sunbird/shared';
 import { FrameworkService, PermissionService, UserService } from '@sunbird/core';
@@ -71,7 +71,6 @@ export class CreateContentComponent implements OnInit, AfterViewInit {
     frameworkService: FrameworkService, permissionService: PermissionService,
     private activatedRoute: ActivatedRoute, public userService: UserService,
     public navigationhelperService: NavigationHelperService,
-    public router: Router,
     public workSpaceService: WorkSpaceService) {
     this.resourceService = resourceService;
     this.frameworkService = frameworkService;
@@ -111,9 +110,5 @@ export class CreateContentComponent implements OnInit, AfterViewInit {
         }
       };
     });
-  }
-
-  routeToEvent(){
-    this.router.navigate(['workspace/add/event']);
   }
 }
