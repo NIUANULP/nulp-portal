@@ -59,6 +59,10 @@ const certificateCount = async (req, res) => {
 
     const totalCourses = courses?.length || 0;
     let courseWithCertificate = arrayOfBatchList?.length || 0;
+    if (totalCertificateReceived > courseWithCertificate) {
+      const temp = totalCertificateReceived - courseWithCertificate;
+      courseWithCertificate = courseWithCertificate + temp;
+    }
     res.send({
       ts: new Date().toISOString(),
       params: {
