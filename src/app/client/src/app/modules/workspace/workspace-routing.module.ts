@@ -7,7 +7,7 @@ import {
   BatchListComponent, BatchPageSectionComponent, UpdateBatchComponent,
   UpforreviewContentplayerComponent, ReviewsubmissionsContentplayerComponent,
   FlagConentplayerComponent, PublishedPopupComponent, RequestChangesPopupComponent, LimitedPublishedComponent,
-  AllContentComponent, FlagReviewerComponent, CollaboratingOnComponent, AllTextbooksComponent, NewCollectionEditorComponent } from './components';
+  AllContentComponent, FlagReviewerComponent, CollaboratingOnComponent, AllTextbooksComponent, NewCollectionEditorComponent, EventCreateComponent, AllMyEventsComponent } from './components';
 import { AuthGuard } from '../core/guard/auth-gard.service';
 const telemetryEnv = 'workspace';
 const objectType = 'workspace';
@@ -104,6 +104,16 @@ const routes: Routes = [
               }, breadcrumbs: [{ label: 'Home', url: '/home' },
               { label: 'Profile', url: '/profile' }, { label: 'My Workspace', url: '' }]
             }
+          // },
+          // {
+          //   path: 'events', component: EventCreateComponent,
+          //   data: {
+          //     telemetry: {
+          //       env: telemetryEnv, pageid: 'workspace-create-events', uri: '/workspace/content/create/events',
+          //       type: 'view', mode: 'create', object: { type: objectType, ver: '1.0' }
+          //     }, breadcrumbs: [{ label: 'Home', url: '/home' },
+          //     { label: 'Profile', url: '/profile' }, { label: 'My Workspace', url: '' }]
+          //   }
           }
         ]
       },
@@ -292,6 +302,19 @@ const routes: Routes = [
       { path: 'publish', component: PublishedPopupComponent },
       { path: 'requestchanges', component: RequestChangesPopupComponent }
     ]
+  },
+  {
+    path: 'add/event', component: EventCreateComponent, canActivate: [AuthGuard],
+    data: {
+      roles: 'workspace',
+      breadcrumbs: [{ label: 'Home', url: '/home' }, { label: 'Profile', url: '/profile' }, { label: 'My Workspace', url: '' }],
+      hideHeaderNFooter: true
+    }
+  },
+  {
+    path: 'content/allmyevents', component: AllMyEventsComponent,
+    data: {
+    }
   },
   {
     path: 'content/flagreviewer/content/:contentId', component: UpforreviewContentplayerComponent, canActivate: [AuthGuard],
