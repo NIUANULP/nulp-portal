@@ -107,20 +107,7 @@ module.exports = (app, keycloak) => {
 
   app.all('/play/quiz/*', playContent);
   app.all('/manage-learn/*', MLContent);
-  app.all('/webapp/*', 
-  session({
-    secret: envHelper.PORTAL_SESSION_SECRET_KEY,
-    resave: false,
-    cookie: {
-      maxAge: envHelper.sunbird_session_ttl
-    },
-    saveUninitialized: false,
-    store: memoryStore
-  }), 
-  keycloak.middleware({ admin: '/callback', logout: '/logout' }), 
-  keycloak.protect(), 
-  webapp
-);
+  
   app.all('/get/dial/:dialCode',(req,res,next) => {
       if (_.get(req, 'query.channel')) {
           getdial(req,res);
@@ -149,7 +136,7 @@ module.exports = (app, keycloak) => {
     '/explore/*', '/:slug/explore', '/:slug/explore/*', '/play/*', '/:slug/play/*',  '/explore-course', '/explore-course/*',
     '/:slug/explore-course', '/:slug/explore-course/*', '/:slug/signup', '/signup', '/:slug/sign-in/*',
     '/sign-in/*', '/download/*', '/accountMerge/*','/:slug/accountMerge/*', '/:slug/download/*', '/certs/*', '/:slug/certs/*', '/recover/*', '/:slug/recover/*', '/explore-groups',
-    '/guest-profile','/chatbot'],
+    '/guest-profile','/chatbot','/webapp/signup/','/webapp/otp/','/otp'],
     session({
       secret: envHelper.PORTAL_SESSION_SECRET_KEY,
       resave: false,
@@ -161,7 +148,20 @@ module.exports = (app, keycloak) => {
     }),
     keycloak.middleware({ admin: '/callback', logout: '/logout' }),
     redirectTologgedInPage, indexPage(false))
-
+    app.all('/webapp/*', 
+    session({
+      secret: envHelper.PORTAL_SESSION_SECRET_KEY,
+      resave: false,
+      cookie: {
+        maxAge: envHelper.sunbird_session_ttl
+      },
+      saveUninitialized: false,
+      store: memoryStore
+    }), 
+    keycloak.middleware({ admin: '/callback', logout: '/logout' }), 
+    keycloak.protect(), 
+    webapp
+  );
   app.all(['*/dial/:dialCode', '/dial/:dialCode'], (req, res) => {
     if (_.get(req, 'query.channel')) {
       res.redirect(`/${_.get(req, 'query.channel')}/get/dial/${req.params.dialCode}?source=scan`);
