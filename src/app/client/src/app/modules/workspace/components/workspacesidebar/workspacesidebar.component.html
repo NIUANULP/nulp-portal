@@ -1,6 +1,6 @@
 <h4 class="workspaceicon ui header sectionHeading mt-20"><i class="database icon"></i>
   <span>
-      {{resourceService?.frmelmnts?.scttl?.myworkspace}}
+      {{resourceService?.frmelmnts?.scttl?.myworkspace}} 
     </span>
 </h4>
 <div class="publicmenusection ui secondary vertical menu">
@@ -19,13 +19,13 @@
   <a appTelemetryInteract [telemetryInteractEdata]="setInteractData('allmycontents-button')"  *ngIf='permissionService.permissionAvailable' [class.active]="router.isActive('/workspace/content/allcontent') " 
   appPermission [permission]='allContentRole' class="item" [routerLink]="['allcontent',1]"  matTooltip="View all your content in draft, review, published and more"
   [matTooltipPosition]="'right'">
-       {{resourceService?.frmelmnts?.snav?.allmycontents}}
+       {{resourceService?.frmelmnts?.snav?.allmycontents}} ---
   </a>
 
   <a appTelemetryInteract [telemetryInteractEdata]="setInteractData('allmyevnts-button')"  *ngIf='permissionService.permissionAvailable' [class.active]="router.isActive('/workspace/content/allmyevents') " 
   appPermission [permission]='allContentRole' class="item" (click)="redirectToMenu('allmyevents');" suiPopup popupText="View all your webinars in draft, review, published and more"
   [popupPlacement]="'right'">
-       All My Webinars
+       All My Events
   </a>
   <a appTelemetryInteract [telemetryInteractEdata]="setInteractData('draft-button')" *ngIf='permissionService.permissionAvailable' [class.active]="router.isActive('/workspace/content/draft') " appPermission
     [permission]='draftRole' class="item" [routerLink]="['draft',1]"   matTooltip="View drafts you are working on. Submit them for review when completed"
