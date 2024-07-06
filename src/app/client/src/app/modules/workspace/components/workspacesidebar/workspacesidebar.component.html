@@ -19,7 +19,7 @@
   <a appTelemetryInteract [telemetryInteractEdata]="setInteractData('allmycontents-button')"  *ngIf='permissionService.permissionAvailable' [class.active]="router.isActive('/workspace/content/allcontent') " 
   appPermission [permission]='allContentRole' class="item" [routerLink]="['allcontent',1]"  matTooltip="View all your content in draft, review, published and more"
   [matTooltipPosition]="'right'">
-       {{resourceService?.frmelmnts?.snav?.allmycontents}} ---
+       {{resourceService?.frmelmnts?.snav?.allmycontents}} 
   </a>
 
   <a appTelemetryInteract [telemetryInteractEdata]="setInteractData('allmyevnts-button')"  *ngIf='permissionService.permissionAvailable' [class.active]="router.isActive('/workspace/content/allmyevents') " 
