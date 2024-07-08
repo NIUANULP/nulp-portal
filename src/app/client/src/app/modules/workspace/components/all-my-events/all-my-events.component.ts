@@ -1,6 +1,7 @@
 
 import { UserService } from '@sunbird/core';
 import { Component, Input, OnInit } from '@angular/core';
+// import { Router } from '@angular/router';
 import { Router } from '@angular/router';
 import { EventListService } from 'ngtek-event-library';
 import { EventFilterService, SbToastService } from 'ngtek-event-library';
@@ -11,7 +12,7 @@ import { createDirective } from '@angular/compiler/src/core';
 import { Subject } from 'rxjs';
 // import { SbToastService } from "../../services/iziToast/izitoast.service";
 import * as mappingConfig from '../../config/nameToCodeMapping.json';
-import * as staticEventList from '../../../../../assets/api/eventlist.json'
+// import * as staticEventList from '../../../../../assets/api/eventlist.json'
 const colors: any = {
   red: {
     primary: '#ad2121',
@@ -35,8 +36,7 @@ const colors: any = {
 export class AllMyEventsComponent implements OnInit {
 
   eventList: any;
-  staticEventList = (<any>staticEventList.default);
-  // private staticEventList: any;
+
   public unsubscribe$ = new Subject<void>();
   layoutConfiguration: any;
   FIRST_TO_PANEL_LAYOUT: string;
@@ -57,33 +57,39 @@ export class AllMyEventsComponent implements OnInit {
   yesterdayDate = this.today.getFullYear() + '-' + ('0' + (this.today.getMonth() + 1)).slice(-2) + '-' + ('0' + (this.today.getDate() - 1)).slice(-2);
   tommorrowDate = this.today.getFullYear() + '-' + ('0' + (this.today.getMonth() + 1)).slice(-2) + '-' + ('0' + (this.today.getDate() + 1)).slice(-2);
   
-  @Input() paginateLimit: number = 12;
+  /**
+   * To navigate to other pages
+   */
+  route: Router;
+
+   @Input() paginateLimit: number = 12;
   pageNumber: number = 1;
+  
   /**
   * To store deleting content id
   */
   // private currentContentId: ContentIDParam;
 
   constructor(
-     private eventListService:EventListService,
-    // private eventCreateService: EventCreateService,
-    // private eventDetailService: EventDetailService,
+    private eventListService:EventListService,
     private router: Router,
     public userService: UserService,
     private eventFilterService: EventFilterService,
     private toasterService: ToasterService,
     public layoutService: LayoutService,
-    private sbToastService: SbToastService
+    private sbToastService: SbToastService,
+    route: Router
   ) {
-
+    this.route = route;
   }
 
   ngOnInit() {
     this.initLayout();
-    this.showEventListPage();
-    // this.eventList = this.staticEventList.result.Event;
+
+    this.fecthAllEvents();
+
     this.showFilters();
-    // this.showMyEventListPage();
+
     console.log('Static Event List - ', this.eventList);
   }
 
@@ -116,19 +122,18 @@ export class AllMyEventsComponent implements OnInit {
   /**
    * For get List of events
    */
-  showEventListPage() {
-    
+  fecthAllEvents() {
     this.Filterdata = {
       "status": [],
       "objectType": "Event",
       "owner": this.userService.userid
     };
+
     this.eventListService.getEventList(this.Filterdata).subscribe((data: any) => {
       this.eventList = data.result?.Event;
       this.EventListCount = data.result?.count;
 
       this.eventList.forEach((item, index) => {
-
         var array = JSON.parse("[" + item.venue + "]");
         this.eventList[index].venue = array[0].name;
       });
@@ -191,99 +196,99 @@ export class AllMyEventsComponent implements OnInit {
       };
       this.query = event.target.value;
     }
-    else if ((event.filtersSelected.eventTime) && (event.filtersSelected.eventType) && (event.filtersSelected.eventStatus)) {
-      switch (event.filtersSelected.eventTime) {
-        case "Past":
-          this.dates = {
-            "max": this.todayDate
-          }
-          break;
-        case "Upcoming":
-          this.dates = {
-            "min": this.todayDate
-          }
-          break;
-        default:
-          this.dates = {
-            "max": this.todayDate
-          }
-          break;
-      }
-      this.Filterdata = {
-        "status": event.filtersSelected.eventStatus,
-        "eventType": event.filtersSelected.eventType,
-        "startDate": this.dates,
-        "objectType": "Event",
-        "owner": this.userService.userid
-      };
-    }
-    else if ((event.filtersSelected.eventTime) && (event.filtersSelected.eventType)) {
-      switch (event.filtersSelected.eventTime) {
-        case "Past":
-          this.dates = {
-            "max": this.todayDate
-          }
-          break;
-        case "Upcoming":
-          this.dates = {
-            "min": this.todayDate
-          }
-          break;
-        default:
-          this.dates = {
-            "max": this.todayDate
-          }
-          break;
-      }
-      this.Filterdata = {
-        "status": [],
-        "eventType": event.filtersSelected.eventType,
-        "startDate": this.dates,
-        "objectType": "Event",
-        "owner": this.userService.userid
-      };
-    }
-    else if ((event.filtersSelected.eventTime) && (event.filtersSelected.eventStatus)) {
-      switch (event.filtersSelected.eventTime) {
-        case "Past":
-          this.dates = {
-            "max": this.todayDate
-          }
-          break;
-        case "Upcoming":
-          this.dates = {
-            "min": this.todayDate
-          }
-          break;
-        default:
-          this.dates = {
-            "max": this.todayDate
-          }
-          break;
-      }
-      this.Filterdata = {
-        "status": event.filtersSelected.eventStatus,
-        "startDate": this.dates,
-        "objectType": "Event",
-        "owner": this.userService.userid
-      };
-    }
-    else if ((event.filtersSelected.eventType) && (event.filtersSelected.eventStatus)) {
-      this.Filterdata = {
-        "status": event.filtersSelected.eventStatus,
-        "eventType": event.filtersSelected.eventType,
-        "objectType": "Event",
-        "owner": this.userService.userid
-      };
-    }
-    else if (event.filtersSelected.eventType) {
-      this.Filterdata = {
-        "status": [],
-        "eventType": event.filtersSelected.eventType,
-        "objectType": "Event",
-        "owner": this.userService.userid
-      };
-    }
+    // else if ((event.filtersSelected.eventTime) && (event.filtersSelected.eventType) && (event.filtersSelected.eventStatus)) {
+    //   switch (event.filtersSelected.eventTime) {
+    //     case "Past":
+    //       this.dates = {
+    //         "max": this.todayDate
+    //       }
+    //       break;
+    //     case "Upcoming":
+    //       this.dates = {
+    //         "min": this.todayDate
+    //       }
+    //       break;
+    //     default:
+    //       this.dates = {
+    //         "max": this.todayDate
+    //       }
+    //       break;
+    //   }
+    //   this.Filterdata = {
+    //     "status": event.filtersSelected.eventStatus,
+    //     "eventType": event.filtersSelected.eventType,
+    //     "startDate": this.dates,
+    //     "objectType": "Event",
+    //     "owner": this.userService.userid
+    //   };
+    // }
+    // else if ((event.filtersSelected.eventTime) && (event.filtersSelected.eventType)) {
+    //   switch (event.filtersSelected.eventTime) {
+    //     case "Past":
+    //       this.dates = {
+    //         "max": this.todayDate
+    //       }
+    //       break;
+    //     case "Upcoming":
+    //       this.dates = {
+    //         "min": this.todayDate
+    //       }
+    //       break;
+    //     default:
+    //       this.dates = {
+    //         "max": this.todayDate
+    //       }
+    //       break;
+    //   }
+    //   this.Filterdata = {
+    //     "status": [],
+    //     "eventType": event.filtersSelected.eventType,
+    //     "startDate": this.dates,
+    //     "objectType": "Event",
+    //     "owner": this.userService.userid
+    //   };
+    // }
+    // else if ((event.filtersSelected.eventTime) && (event.filtersSelected.eventStatus)) {
+    //   switch (event.filtersSelected.eventTime) {
+    //     case "Past":
+    //       this.dates = {
+    //         "max": this.todayDate
+    //       }
+    //       break;
+    //     case "Upcoming":
+    //       this.dates = {
+    //         "min": this.todayDate
+    //       }
+    //       break;
+    //     default:
+    //       this.dates = {
+    //         "max": this.todayDate
+    //       }
+    //       break;
+    //   }
+    //   this.Filterdata = {
+    //     "status": event.filtersSelected.eventStatus,
+    //     "startDate": this.dates,
+    //     "objectType": "Event",
+    //     "owner": this.userService.userid
+    //   };
+    // }
+    // else if ((event.filtersSelected.eventType) && (event.filtersSelected.eventStatus)) {
+    //   this.Filterdata = {
+    //     "status": event.filtersSelected.eventStatus,
+    //     "eventType": event.filtersSelected.eventType,
+    //     "objectType": "Event",
+    //     "owner": this.userService.userid
+    //   };
+    // }
+    // else if (event.filtersSelected.eventType) {
+    //   this.Filterdata = {
+    //     "status": [],
+    //     "eventType": event.filtersSelected.eventType,
+    //     "objectType": "Event",
+    //     "owner": this.userService.userid
+    //   };
+    // }
     else if (event.filtersSelected.eventStatus) {
       this.Filterdata = {
         "status": event.filtersSelected.eventStatus,
@@ -291,31 +296,31 @@ export class AllMyEventsComponent implements OnInit {
         "owner": this.userService.userid
       };
     }
-    else if (event.filtersSelected.eventTime) {
-      switch (event.filtersSelected.eventTime) {
-        case "Past":
-          this.dates = {
-            "max": this.todayDate
-          }
-          break;
-        case "Upcoming":
-          this.dates = {
-            "min": this.todayDate
-          }
-          break;
-        default:
-          this.dates = {
-            "max": this.todayDate
-          }
-          break;
-      }
-      this.Filterdata = {
-        "status": [],
-        "startDate": this.dates,
-        "objectType": "Event",
-        "owner": this.userService.userid
-      };
-    }
+    // else if (event.filtersSelected.eventTime) {
+    //   switch (event.filtersSelected.eventTime) {
+    //     case "Past":
+    //       this.dates = {
+    //         "max": this.todayDate
+    //       }
+    //       break;
+    //     case "Upcoming":
+    //       this.dates = {
+    //         "min": this.todayDate
+    //       }
+    //       break;
+    //     default:
+    //       this.dates = {
+    //         "max": this.todayDate
+    //       }
+    //       break;
+    //   }
+    //   this.Filterdata = {
+    //     "status": [],
+    //     "startDate": this.dates,
+    //     "objectType": "Event",
+    //     "owner": this.userService.userid
+    //   };
+    // }
     else {
       this.Filterdata = {
         "status": [],

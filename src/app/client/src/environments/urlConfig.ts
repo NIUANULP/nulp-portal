@@ -4,10 +4,12 @@ export const urlConfig = {
   create: "api/event/v4/create",
   update: "api/event/v4/update",
   publish: "/api/event/v4/publish",
-  gmeetCreate: "event/gmeet/create",
+  gmeetcreate: "event/gmeet/create",
   // search: "/api/event/v1/search",
   // search: "/content/composite/v1/search",
   // compositeSearch: "/action/composite/v3/search",
+   gmeetget:
+    "event/gmeet/get?eventId=",
 
   search: "/api/composite/v1/search",
   compositeSearch: "/api/composite/v1/search",
