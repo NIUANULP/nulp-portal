@@ -39,12 +39,18 @@ const certificateCount = async (req, res) => {
 
         try {
           const getBatchList = await axios(getBatch);
+          console.log("-------------------", getBatchList);
+
           const filteredBatchList =
-            getBatchList?.data?.result?.response?.content?.filter(
-              (batch) =>
-                batch?.cert_templates !== null &&
-                Object.keys(batch?.cert_templates).length > 0
-            );
+            getBatchList?.data?.result?.response?.content?.filter((batch) => {
+              const certTemplates = batch?.cert_templates;
+              return (
+                certTemplates !== null &&
+                certTemplates !== undefined &&
+                Object.keys(certTemplates).length > 0
+              );
+            });
+
           if (filteredBatchList?.length > 0) {
             arrayOfBatchList.push(filteredBatchList[0]);
           }

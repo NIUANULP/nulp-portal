@@ -168,6 +168,7 @@ let envVariables = {
   CRON_TIME:env.CRON_TIME,
   NOTIFICATION_CRON_TIME:env.NOTIFICATION_CRON_TIME,
   api_base_url:env.api_base_url,
+  MEET_CRON_TIME:env.MEET_CRON_TIME,
   // Service(s) Base URL(s)
   learner_Service_Local_BaseUrl: env.sunbird_learner_service_local_base_url || 'http://learner-service:9000',
   content_Service_Local_BaseUrl: env.sunbird_content_service_local_base_url || 'http://content-service:5000',
