@@ -1,6 +1,8 @@
-@import './mixins/mixins';
-@import './pages/page-center-view';
-
+@import "./mixins/mixins";
+@import "./pages/page-center-view";
+.sb-btn-primary {
+  background: #065872 !important;
+}
 .sb-page-header-bar {
   display: flex;
   align-items: center;
@@ -40,8 +42,8 @@
       background: var(--sbt-badge-bg);
       color: var(--sbt-badge-text);
       text-align: center;
-      padding: 0 .75rem;
-      border-radius: .25rem;
+      padding: 0 0.75rem;
+      border-radius: 0.25rem;
       height: 1.5rem;
       line-height: 1.5rem;
       font-size: 1rem;
@@ -54,10 +56,9 @@
       }
     }
   }
-
 }
-.sb-mygroups{
-  .sb-bg-color-white{
+.sb-mygroups {
+  .sb-bg-color-white {
     background: var(--sb-mygroups-bg) !important;
   }
 }
