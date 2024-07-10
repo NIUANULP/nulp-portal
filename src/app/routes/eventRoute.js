@@ -3,8 +3,11 @@ const {
   createEvent,
   updateEvent,
   getEvent,
-  saveWebinarAttendance,
+  saveEventAttendance,
   listWebinarAttendance,
+  getGmeetAttendance,
+  insertEventRegistration,
+  getEventRegistration,
 } = require("../helpers/eventHelper.js");
 const proxyUtils = require("../proxy/proxyUtils.js");
 
@@ -23,18 +26,34 @@ module.exports = function (app) {
     updateEvent
   );
 
-  app.get("/event/gmeet/get", proxyUtils.verifyToken(), getEvent);
+  app.get("/event/gmeet/get", getEvent);
 
   app.post(
-    "/event/webinar/attendance-save",
+    "/event/attendance-save",
     bodyParser.json({ limit: "10mb" }),
     proxyUtils.verifyToken(),
-    saveWebinarAttendance
+    saveEventAttendance
   );
   app.post(
-    "/event/webinar/attendance-list",
+    "/event/list",
     bodyParser.json({ limit: "10mb" }),
     proxyUtils.verifyToken(),
     listWebinarAttendance
+  );
+  app.get(
+    "/event/gmeet/attendance",
+    proxyUtils.verifyToken(),
+    getGmeetAttendance
+  );
+  app.post(
+    "/event/registration",
+    bodyParser.json({ limit: "10mb" }),
+    proxyUtils.verifyToken(),
+    insertEventRegistration
+  );
+  app.get(
+    "/event/get_event",
+    proxyUtils.verifyToken(),
+    getEventRegistration
   );
 };
