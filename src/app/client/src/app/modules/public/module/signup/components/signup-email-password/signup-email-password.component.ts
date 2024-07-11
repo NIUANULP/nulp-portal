@@ -213,15 +213,13 @@ export class SignupEmailPasswordComponent implements OnInit, OnDestroy, AfterVie
   }
 
   vaidateUserContact(captchaResponse?) {
-    const value = this.signUpForm.controls.contactType.value === 'phone' ?
-      this.signUpForm?.controls?.phone?.value.toString() : this.signUpForm?.controls?.email?.value;
+    const value =  this.signUpForm?.controls?.email?.value;
     const uri = this.signUpForm.controls.contactType.value.toString() + '/' + value + '?captchaResponse=' + captchaResponse;
     this.signupService.checkUserExists(uri).subscribe(
       (data: ServerResponse) => {
         if (_.get(data, 'result.exists')) {
           this.signUpForm.controls['uniqueContact'].setValue('');
-          this.showUniqueError = this.signUpForm.controls.contactType.value === 'phone' ?
-            this.resourceService.frmelmnts.lbl.uniquePhone : this.resourceService.frmelmnts.lbl.uniqueEmail;
+          this.showUniqueError = this.resourceService.frmelmnts.lbl.uniqueEmail;
         } else {
           this.signUpForm.controls['uniqueContact'].setValue(true);
           this.showUniqueError = '';
@@ -262,10 +260,7 @@ export class SignupEmailPasswordComponent implements OnInit, OnDestroy, AfterVie
       if (inputType === 'email' && emailControl.status === 'VALID' && emailControl.value !== '') {
          this.signUpForm.controls['uniqueContact'].setValue('');
         this.captchaRef.execute();
-      } else if (inputType === 'phone' && phoneControl.status === 'VALID' && phoneControl.value !== '') {
-         this.signUpForm.controls['uniqueContact'].setValue('');
-        this.captchaRef.execute();
-      }
+      } 
     } else {
       this.vaidateUserContact();
     }
@@ -303,8 +298,7 @@ export class SignupEmailPasswordComponent implements OnInit, OnDestroy, AfterVie
   generateOTP(captchaResponse?) {
     const request = {
       'request': {
-        'key': this.signUpForm.controls.contactType.value === 'phone' ?
-          this.signUpForm.controls.phone.value.toString() : this.signUpForm.controls.email.value,
+        'key': this.signUpForm.controls.email.value,
         'type': this.signUpForm.controls.contactType.value.toString()
       }
     };
