@@ -8,6 +8,8 @@ const {
   getGmeetAttendance,
   insertEventRegistration,
   getEventRegistration,
+  getCountsOfEvent,
+  getTopTrending,
 } = require("../helpers/eventHelper.js");
 const proxyUtils = require("../proxy/proxyUtils.js");
 
@@ -51,9 +53,14 @@ module.exports = function (app) {
     proxyUtils.verifyToken(),
     insertEventRegistration
   );
-  app.get(
-    "/event/get_event",
+  app.get("/event/get_event", proxyUtils.verifyToken(), getEventRegistration);
+
+  app.post(
+    "/event/event_count",
+    bodyParser.json({ limit: "10mb" }),
     proxyUtils.verifyToken(),
-    getEventRegistration
+    getCountsOfEvent
   );
+
+  app.get("/event/get_top_trending", proxyUtils.verifyToken(), getTopTrending);
 };
