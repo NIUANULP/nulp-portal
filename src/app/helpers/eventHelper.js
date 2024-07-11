@@ -1228,7 +1228,101 @@ async function getEventNames(eventIds) {
   }
   return eventNames;
 }
+async function eventReports(req, res) {
+  try {
+    if (!hasRequiredRole(req?.session?.roles)) {
+      res.status(403).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          statusCode: 403,
+          status: "unsuccessful",
+          message: "You don't have privilege to fetch records",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {},
+      });
+    }
+    if (!req?.query?.event_id) {
+      res.status(404).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          statusCode: 404,
+          status: "unsuccessful",
+          message: "MIssing field event_id !",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {},
+      });
+    }
+    const eventId = req.query.event_id.trim();
+    let query =
+      "SELECT event_registration.*,event_details.start_date_time AS date FROM event_registration JOIN event_details  ON event_registration.event_id = event_details.event_id WHERE event_registration.event_id=$1";
+    const values = [eventId];
 
+    const { rows } = await pool.query(query, values);
+    if (rows?.length > 0) {
+      const eventDetail = await getEventNames([eventId]);
+      for (const item of rows) {
+        const decryptedEmail = decrypt(item.email);
+        item.email = decryptedEmail;
+        item.eventName = eventDetail[eventId];
+      }
+      res.status(200).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "successful",
+          message: "Event reports fetched successfully",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: rows || [],
+      });
+    } else {
+      res.status(200).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "successful",
+          message: "Event not found ",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: [],
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: [],
+    });
+  }
+}
 module.exports = {
   createEvent,
   getEvent,
@@ -1240,4 +1334,5 @@ module.exports = {
   getEventRegistration,
   getCountsOfEvent,
   getTopTrending,
+  eventReports,
 };
