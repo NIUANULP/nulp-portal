@@ -10,6 +10,8 @@ import { TelemetryModule } from '@sunbird/telemetry';
 import { SharedModule } from '@sunbird/shared';
 import { SharedFeatureModule } from '@sunbird/shared-feature';
 import { LocationModule } from '../../../../plugins/location';
+import { NgSelectModule } from '@ng-select/ng-select';
+
 
 @NgModule({
   imports: [
@@ -22,7 +24,8 @@ import { LocationModule } from '../../../../plugins/location';
     TelemetryModule,
     SharedModule,
     SharedFeatureModule,
-    LocationModule
+    LocationModule,
+    NgSelectModule
   ],
   declarations: [SignupComponent, OtpComponent, SignupBasicInfoComponent, SignupOnboardingInfoComponent, SignupEmailPasswordComponent],
   providers: [SignupService]
