@@ -21,7 +21,7 @@
     sans-serif;
 
   // base colors
-  --blue: #065872;
+  --blue: #065871;
   --green: #008840;
   --orange: #e55a28;
   --red: #ff4558;
@@ -31,7 +31,7 @@
   --yellow: #ffc107;
   --teal: #20c997;
   --cyan: #17a2b8;
-  --black: #000000;
+  --black: #065872;
   --white: #ffffff;
 
   // gray colors shades
@@ -39,7 +39,10 @@
   --gray: hsl(var(--gray-hs), 20%);
   --gray-0: hsl(var(--gray-hs), 95%); // place holder active bg #F2F2F2
   --gray-100: hsl(var(--gray-hs), 80%); // disable btn bg, icon color #CCCCCC
-  --gray-200: hsl(var(--gray-hs), 60%); // disable text, place holder text #999999
+  --gray-200: hsl(
+    var(--gray-hs),
+    60%
+  ); // disable text, place holder text #999999
   --gray-300: hsl(var(--gray-hs), 59%); // sub heading 2 #969696
   --gray-400: hsl(var(--gray-hs), 40%); // sub heading #666666
   --gray-800: var(--gray); // text color #333333
@@ -55,7 +58,9 @@
   --primary-200: #80a7ce; // divider
   --primary-250: #d3e7f4; //pagination bg color
   --primary-300: #7ab4ee; // outline, focus fields
-  --primary-400: var(--primary-color); // button bg, heading, table titles, links, toggles
+  --primary-400: var(
+    --primary-color
+  ); // button bg, heading, table titles, links, toggles
   --primary-600: #005391; // on press
   --primary-800: #002e50; // hover
 
@@ -95,7 +100,9 @@
 
   // fonts
   --font-default-size: 0.875rem;
-  --font-size-base: var(--font-default-size); // 14px Assumes the browser default, typically `16px`
+  --font-size-base: var(
+    --font-default-size
+  ); // 14px Assumes the browser default, typically `16px`
   --font-weight-light: 300;
   --font-weight-normal: 400;
   --font-weight-bold: 700;
@@ -125,14 +132,14 @@
   --icon-svg-xl: calc(var(--base-block-space) * 6);
 
   //random colors and backgrounds
-  --rc-96C8DA: #96C8DA;
-  --rc-0076FE: #0076FE;
-  --rc-E5EDF5: #E5EDF5;
+  --rc-96C8DA: #96c8da;
+  --rc-0076FE: #0076fe;
+  --rc-E5EDF5: #e5edf5;
   --rc-7c7b7b: #7c7b7b;
   --rc-f5f5f5: #f5f5f5;
   --rc-fdfdfd: #fdfdfd;
   --rc-dedede: #dedede;
-  --rc-F5F9FC: #F5F9FC;
+  --rc-F5F9FC: #f5f9fc;
   --rc-c4c4c4: #c4c4c4;
   --rc-d8d8d8: #d8d8d8;
   --rc-e9e5e5: #e9e5e5;
@@ -143,24 +150,24 @@
   --rc-91aecc: #91aecc;
   --rc-f9f9f9: #f9f9f9;
   --rc-d4d3d3: #d4d3d3;
-  --rc-FAFAFA: #FAFAFA;
+  --rc-FAFAFA: #fafafa;
   --rc-866A6A: #866a6a;
   --rc-979797: #979797;
   --rc-e0e1e2: #e0e1e2;
-  --rc-00BD7F: #00BD7F;
-  --rc-9F9F9F: #9F9F9F;
-  --rc-F3F8FF: #F3F8FF;
-  --rc-80A7CE: #80A7CE;
+  --rc-00BD7F: #00bd7f;
+  --rc-9F9F9F: #9f9f9f;
+  --rc-F3F8FF: #f3f8ff;
+  --rc-80A7CE: #80a7ce;
   --rc-9b9b9b: #9b9b9b;
   --rc-2ca58d: #2ca58d;
-  --rc-007AFF: #007AFF;
+  --rc-007AFF: #007aff;
   --rc-bdbdbd: #bdbdbd;
   --rc-cecece: #cecece;
   --rc-2972a4: #2972a4;
-  --rc-E0F1FD: #E0F1FD;
-  --rc-C8D6EA: #C8D6EA;
+  --rc-E0F1FD: #e0f1fd;
+  --rc-C8D6EA: #c8d6ea;
   --rc-e2e3e5: #e2e3e5;
-  --rc-BCBEC0: #BCBEC0;
+  --rc-BCBEC0: #bcbec0;
   --rc-d4d4d5: #d4d4d5;
   --rc-d4d8da: #d4d8da;
   --rc-bfe1cf: #bfe1cf;
@@ -177,52 +184,52 @@
   --rc-fcf2d6: #fcf2d6;
   --rc-add8e6: #add8e6;
   --rc-afd9e7: #afd9e7;
-  --rc-D9E4F2: #D9E4F2;
-  --rc-88B7E6: #88B7E6;
+  --rc-D9E4F2: #d9e4f2;
+  --rc-88B7E6: #88b7e6;
   --rc-4a4a4a: #4a4a4a;
   --rc-fff6f6: #fff6f6;
   --rc-f7f7f7: #f7f7f7;
   --rc-66c7f4: #66c7f4;
-  --rc-1B4785: #1B4785;
+  --rc-1B4785: #1b4785;
   --rc-a9a9a9: #a9a9a9;
   --rc-eeeeee: #eeeeee;
   --rc-1b1c1d: #1b1c1d;
   --rc-dededf: #dededf;
   --rc-aaaaaa: #aaaaaa;
-  --rc-042D55: #042D55;
+  --rc-042D55: #042d55;
   --rc-eeeeee: #eeeeee;
   --rc-bbbbbb: #bbbbbb;
-  --rc-009D53: #009D53;
-  --rc-E0EFFF: #E0EFFF;
-  --rc-196DAB: #196DAB;
+  --rc-009D53: #009d53;
+  --rc-E0EFFF: #e0efff;
+  --rc-196DAB: #196dab;
   --rc-c2c2c2: #c2c2c2;
   --rc-e5e5e5: #e5e5e5;
   --rc-c3c3c3: #c3c3c3;
-  --rc-00abc7:#00abc7;
-  --rc-FCE6E6:#FCE6E6;
-  --rc-DECACA:#DECACA;
-  --rc-424242:#424242;
-  --rc-F5D7D7:#F5D7D7;
-  --rc-F7FFF5:#F7FFF5;
-  --rc-D3DED1:#D3DED1;
-  --rc-EBF6E0:#EBF6E0;
-  --rc-F6F6F6:#F6F6F6;
-  --rc-33B6CC:#33B6CC;
-  --rc-2dadc2:#2dadc2;
-  --rc-0fbad6:#0fbad6;
-  --rc-f7ffec:#f7ffec;
-  --rc-d2ddc7:#d2ddc7;
-  --rc-ffe1e1:#ffe1e1;
-  --rc-e6c8c8:#e6c8c8;
-  --rc-f56b56:#f56b56;
-  --rc-dc523d:#dc523d;
-  --rc-e65c47:#e65c47;
-  --rc-565c70:#565c70;
-  --rc-6D7278:#6D7278;
-  --rc-E08A20:#E08A20;
-  --rc-DD680F:#DD680F;
-  --rc-dad9cb:#dad9cb;
-  --rc-FFD954:#FFD954;
+  --rc-00abc7: #00abc7;
+  --rc-FCE6E6: #fce6e6;
+  --rc-DECACA: #decaca;
+  --rc-424242: #424242;
+  --rc-F5D7D7: #f5d7d7;
+  --rc-F7FFF5: #f7fff5;
+  --rc-D3DED1: #d3ded1;
+  --rc-EBF6E0: #ebf6e0;
+  --rc-F6F6F6: #f6f6f6;
+  --rc-33B6CC: #33b6cc;
+  --rc-2dadc2: #2dadc2;
+  --rc-0fbad6: #0fbad6;
+  --rc-f7ffec: #f7ffec;
+  --rc-d2ddc7: #d2ddc7;
+  --rc-ffe1e1: #ffe1e1;
+  --rc-e6c8c8: #e6c8c8;
+  --rc-f56b56: #f56b56;
+  --rc-dc523d: #dc523d;
+  --rc-e65c47: #e65c47;
+  --rc-565c70: #565c70;
+  --rc-6D7278: #6d7278;
+  --rc-E08A20: #e08a20;
+  --rc-DD680F: #dd680f;
+  --rc-dad9cb: #dad9cb;
+  --rc-FFD954: #ffd954;
   --rc-rgba-black: 0, 0, 0; // var(--black)
   --rc-rgba-white: 255, 255, 255; // var(--white)
   --rc-rgba-gray: 51, 51, 51; // var(--gray-300)
@@ -233,7 +240,7 @@
   --rc-rgba-d0d0d0: 208, 208, 208;
   --rc-rgba-7b86f4: 123, 134, 244;
   --rc-rgba-C8D6EA: 200, 214, 234;
-  --ui-dropdown-selection-icon:#49B1F2;
+  --ui-dropdown-selection-icon: #49b1f2;
 }
 
 // Variables
@@ -276,7 +283,9 @@ $primary-100: var(--primary-100); // default button bg
 $primary-200: var(--primary-200); // divider
 $primary-250: var(--primary-250); //pagination bg color
 $primary-300: var(--primary-300); // outline, focus fields
-$primary-400: var(--primary-400); // button bg, heading, table titles, links, toggles
+$primary-400: var(
+  --primary-400
+); // button bg, heading, table titles, links, toggles
 $primary-600: var(--primary-600); // on press
 $primary-800: var(--primary-800); // hover
 
@@ -311,7 +320,9 @@ $body-color: var(--gray-800);
 
 /* Fonts */
 $font-default-size: var(--font-default-size);
-$font-size-base: var(--font-size-base); // 14px Assumes the browser default, typically `16px`
+$font-size-base: var(
+  --font-size-base
+); // 14px Assumes the browser default, typically `16px`
 $font-weight-light: var(--font-weight-light);
 $font-weight-normal: var(--font-weight-normal);
 $font-weight-bold: var(--font-weight-bold);
