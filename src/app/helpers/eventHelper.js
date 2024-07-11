@@ -494,12 +494,17 @@ async function saveEventAttendance(req, res) {
   }
 }
 
+function hasRequiredRole(roles) {
+  return (
+    roles?.includes("SYSTEM_ADMINISTRATION") ||
+    roles?.includes("ORG_ADMIN") ||
+    roles?.includes("CONTENT_CREATOR")
+  );
+}
+
 async function listWebinarAttendance(req, res) {
   try {
-    if (
-      !req?.session?.roles?.includes("CONTENT_CREATOR") &&
-      !req?.session?.roles?.includes("SYSTEM_ADMINISTRATION")
-    ) {
+    if (!hasRequiredRole(req?.session?.roles)) {
       res.status(403).send({
         ts: new Date().toISOString(),
         params: {
@@ -516,7 +521,14 @@ async function listWebinarAttendance(req, res) {
       });
     }
 
-    const requestData = req.body.request;
+    let requestData = req.body.request;
+    if (
+      req?.session?.roles?.includes("CONTENT_CREATOR") &&
+      !req?.session?.roles?.includes("SYSTEM_ADMINISTRATION") &&
+      !req?.session?.roles?.includes("ORG_ADMIN")
+    ) {
+      requestData.filters.owner = req?.session.userId;
+    }
 
     let data = JSON.stringify({
       request: requestData,
@@ -538,10 +550,10 @@ async function listWebinarAttendance(req, res) {
     };
     const response = await axios.request(config);
     if (response.status === 200) {
-      const events = response?.data?.result?.Event;
+      const events = response?.data?.result?.Event || [];
 
-      await Promise.all(
-        events.map(async (item) => {
+      await Promise?.all(
+        events?.map(async (item) => {
           let query = "SELECT * FROM event_registration WHERE event_id=$1";
           const values = [item.identifier];
 
@@ -562,8 +574,6 @@ async function listWebinarAttendance(req, res) {
         responseCode: "OK",
         result: response.data,
       });
-    } else {
-      throw Error("No data found for events");
     }
   } catch (error) {
     console.log(error);
@@ -938,6 +948,287 @@ const getEventRegistration = async (req, res) => {
   }
 };
 
+async function getCountsOfEvent(req, res) {
+  try {
+    if (!hasRequiredRole(req?.session?.roles)) {
+      res.status(403).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          statusCode: 403,
+          status: "unsuccessful",
+          message: "You don't have privilege to fetch records",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {},
+      });
+    }
+
+    let requestData = req.body.request;
+    if (
+      req?.session?.roles?.includes("CONTENT_CREATOR") &&
+      !req?.session?.roles?.includes("SYSTEM_ADMINISTRATION") &&
+      !req?.session?.roles?.includes("ORG_ADMIN")
+    ) {
+      requestData.filters.owner = req?.session.userId;
+    }
+    let data = JSON.stringify({
+      request: requestData,
+    });
+
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${envHelper.api_base_url}/api/composite/v1/search`,
+      headers: {
+        Authorization: `Bearer ${
+          envHelper.PORTAL_API_AUTH_TOKEN ||
+          envHelper.sunbird_logged_default_token
+        }`,
+        Cookie: `${req.headers.cookie}`,
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+    const response = await axios.request(config);
+    if (response.status === 200) {
+      const events = response?.data?.result?.Event || [];
+      let totalEvent = response?.data?.result?.count;
+      let totalEventInThisMonth = 0;
+      let totalParticipants = 0;
+      let totalCreators = new Set();
+      let totalCertifiedUsers = 0;
+
+      await Promise.all(
+        events.map(async (item) => {
+          // Count events in the current month
+          let eventStartDate = new Date(item.startDate);
+          let currentDate = new Date();
+          if (
+            eventStartDate.getMonth() === currentDate.getMonth() &&
+            eventStartDate.getFullYear() === currentDate.getFullYear()
+          ) {
+            totalEventInThisMonth++;
+          }
+
+          // Count unique creators
+          totalCreators.add(item.owner);
+
+          // Count participants
+          let query = "SELECT * FROM event_registration WHERE event_id=$1";
+          const values = [item.identifier];
+          const { rows } = await pool.query(query, values);
+          totalParticipants += rows.length;
+
+          if (item.IssueCerificate === "Yes") {
+            let certQuery =
+              "SELECT COUNT(*) FROM event_registration WHERE event_id=$1";
+            const certValues = [item.identifier];
+            const { rows } = await pool.query(certQuery, certValues);
+            totalCertifiedUsers = 0;
+          }
+        })
+      );
+
+      res.status(200).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "successful",
+          message: "Event counts fetched successfully",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {
+          totalEvent,
+          totalEventInThisMonth,
+          totalParticipants,
+          totalCreators: totalCreators.size, // Size of the Set for unique creators
+          totalCertifiedUsers,
+        },
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
+
+async function getTopTrending(req, res) {
+  try {
+    if (!hasRequiredRole(req?.session?.roles)) {
+      return res.status(403).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          statusCode: 403,
+          status: "unsuccessful",
+          message: "You don't have privilege to fetch records",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {},
+      });
+    }
+
+    const isContentCreatorOnly =
+      req?.session?.roles?.includes("CONTENT_CREATOR") &&
+      !req?.session?.roles?.includes("SYSTEM_ADMINISTRATION") &&
+      !req?.session?.roles?.includes("ORG_ADMIN");
+
+    const userId = isContentCreatorOnly ? req?.session.userId : null;
+
+    const queries = [];
+    if (req.query.user) {
+      queries.push(
+        getTopEvents(userId, "user_id", req.query.fromDate, req.query.toDate)
+      );
+    }
+    if (req.query.designation) {
+      queries.push(
+        getTopEvents(
+          userId,
+          "designation",
+          req.query.fromDate,
+          req.query.toDate
+        )
+      );
+    }
+
+    const results = await Promise.all(queries);
+
+    const topEvent = results[0];
+    const topDesignation = results[1];
+
+    res.status(200).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "successful",
+        message: "Top Events fetched successfully",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {
+        topEvent,
+        topDesignation,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
+
+async function getTopEvents(userId, column, fromDate, toDate) {
+  let query = `
+    SELECT er.event_id, COUNT(er.${column}) AS user_count
+    FROM event_registration er
+    JOIN event_details ed ON er.event_id = ed.event_id
+    WHERE 1 = 1
+  `;
+
+  const values = [];
+
+  if (userId) {
+    query += `AND ed.created_by = $1 `;
+    values.push(userId);
+  }
+
+  if (fromDate && toDate) {
+    query += `AND ed.start_date_time >= $${
+      values.length + 1
+    } AND ed.end_date_time <= $${values.length + 2} `;
+    values.push(fromDate, toDate);
+  } else {
+    // Default to last 30 days data if fromDate and toDate are not provided
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    query += `AND ed.start_date_time >= $${values.length + 1} `;
+    values.push(thirtyDaysAgo.toISOString());
+  }
+
+  query += `
+    GROUP BY er.event_id
+    ORDER BY user_count DESC
+    LIMIT 5;
+  `;
+
+  const { rows } = await pool.query(query, values);
+
+  const eventNames = await getEventNames(rows.map((row) => row.event_id));
+
+  return rows.map((row) => ({
+    ...row,
+    event_name: eventNames[row.event_id] || "Unknown",
+  }));
+}
+
+async function getEventNames(eventIds) {
+  const eventNames = {};
+  for (const eventId of eventIds) {
+    try {
+      const response = await axios.get(
+        `${envHelper.api_base_url}/api/event/v4/read/${eventId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              envHelper.PORTAL_API_AUTH_TOKEN ||
+              envHelper.sunbird_logged_default_token
+            }`,
+          },
+        }
+      );
+      if (response.data.result && response.data.result.event) {
+        eventNames[eventId] = response.data.result.event.name;
+      }
+    } catch (error) {
+      console.error(`Error fetching event ${eventId}: ${error.message}`);
+    }
+  }
+  return eventNames;
+}
+
 module.exports = {
   createEvent,
   getEvent,
@@ -947,4 +1238,6 @@ module.exports = {
   getGmeetAttendance,
   insertEventRegistration,
   getEventRegistration,
+  getCountsOfEvent,
+  getTopTrending,
 };
