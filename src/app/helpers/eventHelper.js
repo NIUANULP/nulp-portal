@@ -996,39 +996,54 @@ async function getCountsOfEvent(req, res) {
     const response = await axios.request(config);
     if (response.status === 200) {
       const events = response?.data?.result?.Event || [];
-      let totalEvent = response?.data?.result?.count;
+      const totalEvent = response?.data?.result?.count;
       let totalEventInThisMonth = 0;
       let totalParticipants = 0;
-      let totalCreators = new Set();
       let totalCertifiedUsers = 0;
+      let totalCreators = new Set();
+      let upComingEvent = 0;
+
+      const currentDate = new Date();
+      const currentMonth = currentDate.getMonth();
+      const currentYear = currentDate.getFullYear();
 
       await Promise.all(
         events.map(async (item) => {
+          const eventStartDate = new Date(item.startDate);
+
           // Count events in the current month
-          let eventStartDate = new Date(item.startDate);
-          let currentDate = new Date();
           if (
-            eventStartDate.getMonth() === currentDate.getMonth() &&
-            eventStartDate.getFullYear() === currentDate.getFullYear()
+            eventStartDate.getMonth() === currentMonth &&
+            eventStartDate.getFullYear() === currentYear
           ) {
             totalEventInThisMonth++;
+          }
+
+          // Count upcoming events
+          if (eventStartDate > currentDate) {
+            upComingEvent++;
           }
 
           // Count unique creators
           totalCreators.add(item.owner);
 
           // Count participants
-          let query = "SELECT * FROM event_registration WHERE event_id=$1";
+          const query =
+            "SELECT COUNT(*) AS participant_count FROM event_registration WHERE event_id=$1";
           const values = [item.identifier];
           const { rows } = await pool.query(query, values);
-          totalParticipants += rows.length;
+          totalParticipants += parseInt(rows[0].participant_count, 10);
 
+          // Count certified users
           if (item.IssueCerificate === "Yes") {
-            let certQuery =
-              "SELECT COUNT(*) FROM event_registration WHERE event_id=$1";
+            const certQuery =
+              "SELECT COUNT(*) AS certified_count FROM event_registration WHERE event_id=$1";
             const certValues = [item.identifier];
-            const { rows } = await pool.query(certQuery, certValues);
-            totalCertifiedUsers = 0;
+            const certResult = await pool.query(certQuery, certValues);
+            totalCertifiedUsers += parseInt(
+              certResult.rows[0].certified_count,
+              10
+            );
           }
         })
       );
@@ -1050,7 +1065,22 @@ async function getCountsOfEvent(req, res) {
           totalParticipants,
           totalCreators: totalCreators.size, // Size of the Set for unique creators
           totalCertifiedUsers,
+          upComingEvent,
         },
+      });
+    } else {
+      res.status(response.status).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "unsuccessful",
+          message: "Failed to fetch events",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "ERROR",
+        result: {},
       });
     }
   } catch (error) {
