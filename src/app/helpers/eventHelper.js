@@ -1037,7 +1037,7 @@ async function getCountsOfEvent(req, res) {
           // Count certified users
           if (item.IssueCerificate === "Yes") {
             const certQuery =
-              "SELECT COUNT(*) AS certified_count FROM event_registration WHERE event_id=$1"; // Assuming there's a `certified` field
+              "SELECT COUNT(*) AS certified_count FROM event_registration WHERE event_id=$1";
             const certValues = [item.identifier];
             const certResult = await pool.query(certQuery, certValues);
             totalCertifiedUsers += parseInt(
