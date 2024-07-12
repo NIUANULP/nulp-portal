@@ -1316,6 +1316,67 @@ async function eventReports(req, res) {
     });
   }
 }
+
+async function userUnregister(req, res) {
+  try {
+    const { event_id, user_id } = req.query;
+
+    if (!event_id || !user_id) {
+      return sendErrorResponse(res, 404, "Missing field event_id or user_id!");
+    }
+
+    const eventId = event_id.trim();
+    const userId = user_id.trim();
+    const query =
+      "DELETE FROM event_registration WHERE event_id=$1 AND user_id=$2";
+    const values = [eventId, userId];
+
+    const { rowCount } = await pool.query(query, values);
+
+    if (rowCount === 0) {
+      return sendErrorResponse(res, 404, "User not registered for this event.");
+    }
+
+    res.status(200).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "successful",
+        message: "User unregistered successfully",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: [],
+    });
+  } catch (error) {
+    console.error(error);
+    sendErrorResponse(
+      res,
+      error.statusCode || 500,
+      error.message || "Internal Server Error"
+    );
+  }
+}
+
+function sendErrorResponse(res, statusCode, message) {
+  res.status(statusCode).send({
+    ts: new Date().toISOString(),
+    params: {
+      resmsgid: uuidv1(),
+      msgid: uuidv1(),
+      statusCode: statusCode,
+      status: "unsuccessful",
+      message: message,
+      err: null,
+      errmsg: null,
+    },
+    responseCode: "OK",
+    result: [],
+  });
+}
+
 module.exports = {
   createEvent,
   getEvent,
@@ -1328,4 +1389,5 @@ module.exports = {
   getCountsOfEvent,
   getTopTrending,
   eventReports,
+  userUnregister,
 };
