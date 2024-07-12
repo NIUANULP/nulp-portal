@@ -1309,6 +1309,8 @@ async function eventReports(req, res) {
         delete item.user_consent;
         delete item.consent_form;
         delete item.created_at;
+        delete item.user_id;
+        delete item.event_id;
       }
       res.status(200).send({
         ts: new Date().toISOString(),
