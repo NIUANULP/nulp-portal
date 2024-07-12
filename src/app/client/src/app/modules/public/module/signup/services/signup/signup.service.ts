@@ -74,4 +74,9 @@ export class SignupService {
     };
     return this.learnerService.post(options);
   }
+
+  CreateUser(data){
+    return  this.http.post(this.configService.urlConFig.URLS.USER.COSTOMSIGNUP,data)
+  }
+
 }

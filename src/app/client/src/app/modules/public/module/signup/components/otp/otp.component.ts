@@ -226,6 +226,24 @@ export class OtpComponent implements OnInit {
     }
   }
 
+
+    customUserCreation(identifier: string) {
+    const customData = {
+      "user_id" : identifier,
+      "designation": _.trim(_.get(this.startingForm, 'basicInfo.designation')),
+      "userType" : _.trim(_.get(this.startingForm, 'basicInfo.userType')),
+      "organisation" : _.trim(_.get(this.startingForm, 'basicInfo.organisation')),
+    };
+    this.signupService.CreateUser(customData).subscribe(
+      (response) => {
+        console.log('Custom user created successfully', response);
+      },
+      (error) => {
+        console.error('Error creating custom user', error);
+      }
+    );
+  }
+
   /**
    * Redirects to sign in Page with success message
    */
