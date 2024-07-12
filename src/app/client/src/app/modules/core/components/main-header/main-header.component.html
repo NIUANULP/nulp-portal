@@ -406,12 +406,12 @@
             </app-content-type>
           </div>
 
-          <li class="list-item" tabindex="0" role="link" (click)="toggleSideMenu(false)" routerLink="profile">
+          <!-- <li class="list-item" tabindex="0" role="link" (click)="toggleSideMenu(false)" routerLink="profile">
             <i class="icon-svg icon-svg--sm icon-profileuser mr-8"><svg class="icon icon-svg--primary">
                 <use xlink:href="./assets/images/sprite.svg#profileuser"></use>
               </svg></i>
             {{resourceService.frmelmnts?.lnk?.profile}}
-          </li>
+          </li> -->
 
           <!-- <li class="list-item" role="link" *ngIf="userType=='administrator' || showReportMenu" tabindex="0" [routerLink]="['/solution/solution-listing']" (click)="toggleSideMenu(false);" >
             <i class="icon-svg icon-svg--sm icon-profileuser mr-8"><svg class="icon icon-svg--primary">
@@ -430,23 +430,23 @@
           </li> -->
 
 
-          <li class="list-item" tabindex="0" role="link" *ngIf='!isDesktopApp && permissionService.permissionAvailable'
+          <!-- <li class="list-item" tabindex="0" role="link" *ngIf='!isDesktopApp && permissionService.permissionAvailable'
             appPermission [permission]='adminDashboard' (click)="toggleSideMenu(false)"
             [routerLink]="'dashBoard/addusess'">
             <i class="icon-svg icon-svg--sm icon-dashboard mr-8"><svg class="icon icon-svg--primary">
                 <use xlink:href="./assets/images/sprite.svg#dashboard"></use>
               </svg></i>
              Admin
-          </li>
+          </li> -->
 
-          <li class="list-item" *ngIf='!isDesktopApp && permissionService.permissionAvailable' appPermission
+          <!-- <li class="list-item" *ngIf='!isDesktopApp && permissionService.permissionAvailable' appPermission
           [permission]='programDashboardRole' (click)="toggleSideMenu(false)" routerLink="program">
           <i class="icon-svg icon-svg--sm icon-dashboard mr-8"><svg class="icon icon-svg--primary">
               <use xlink:href="./assets/images/sprite.svg#dashboard"></use>
             </svg></i>
             {{resourceService.frmelmnts?.lnk?.programDashboard}}
-        </li>
-        <li  *ngIf="userService?.loggedIn" class="list-item d-block item accordion-menu item--courses ng-star-inserted" id="dropdown-menu-list-header">
+        </li> -->
+        <!-- <li  *ngIf="userService?.loggedIn" class="list-item d-block item accordion-menu item--courses ng-star-inserted" id="dropdown-menu-list-header">
 
             <sui-accordion class="styled fluid sb-accordion">
               <sui-accordion-panel>
@@ -489,15 +489,15 @@
               </sui-accordion-panel>
             </sui-accordion>
 
-          </li>
+          </li> -->
         
-          <li class="list-item" *ngIf='!isDesktopApp && permissionService.permissionAvailable' appPermission
+          <!-- <li class="list-item" *ngIf='!isDesktopApp && permissionService.permissionAvailable' appPermission
           [permission]='programDashboardRole' (click)="toggleSideMenu(false)" routerLink="program">
           <i class="icon-svg icon-svg--sm icon-dashboard mr-8"><svg class="icon icon-svg--primary">
               <use xlink:href="./assets/images/sprite.svg#dashboard"></use>
             </svg></i>
             {{resourceService.frmelmnts?.lnk?.programDashboard}}
-        </li>
+        </li> -->
 
           <!-- <li class="list-item" tabindex="0" role="link" (click)="toggleSideMenu(false)"
             *ngIf='!isDesktopApp && permissionService.permissionAvailable' appPermission [permission]='orgSetupRole'
@@ -547,13 +547,13 @@
               </svg></i>
             {{resourceService?.frmelmnts?.tab?.workspace}}
           </li>
-          <li class="list-item" role="link" tabindex="0" appTelemetryInteract [telemetryInteractEdata]="helpMenuIntractEdata"
+          <!-- <li class="list-item" role="link" tabindex="0" appTelemetryInteract [telemetryInteractEdata]="helpMenuIntractEdata"
             (click)="toggleSideMenu(false);navigate('/faq')">
             <i class="icon-svg icon-svg--sm icon-help mr-8"><svg class="icon icon-svg--primary">
                 <use xlink:href="./assets/images/sprite.svg#help"></use>
               </svg></i>
             {{resourceService?.frmelmnts?.tab?.help}}
-          </li>
+          </li> -->
           <li  *ngIf="showSwitchTheme" class="list-item" role="link" tabindex="0" (click)="toggleSideMenu(false);switchLayout()">
             <i class="icon-svg icon-svg--sm icon-login mr-8"><svg class="icon icon-svg--primary">
                 <use xlink:href="./assets/images/sprite.svg#switchlayout"></use>
@@ -606,12 +606,12 @@
               <app-content-type [layoutConfiguration]="layoutConfiguration" (closeSideMenu)="toggleSideMenu(false)">
               </app-content-type>
             </div>
-            <li class="list-item" tabindex="0" role="link" (click)="toggleSideMenu(false)" routerLink="guest-profile">
+            <!-- <li class="list-item" tabindex="0" role="link" (click)="toggleSideMenu(false)" routerLink="guest-profile">
               <i class="icon-svg icon-svg--sm icon-profileuser mr-8"><svg class="icon icon-svg--primary">
                   <use xlink:href="./assets/images/sprite.svg#profileuser"></use>
                 </svg></i>
               {{resourceService.frmelmnts?.lnk?.profile}}
-            </li>
+            </li> -->
             <li appOnlineOnly class="list-item" role="link" tabindex="0" (click)="toggleSideMenu(false)"
               [class.active]="router.isActive(routerLinks?.explore)" *ngIf="!router.isActive('', true) && !isDesktopApp"
               [routerLink]="[navigateToGroups()]" appTelemetryInteract [telemetryInteractEdata]="myGroupIntractEData">
@@ -634,13 +634,13 @@
                 </svg></i>
               <span>{{resourceService?.frmelmnts?.lbl?.desktop?.syncTelemetry}}</span>
             </li>
-            <li class="list-item" tabindex="0" role="link" appTelemetryInteract [telemetryInteractEdata]="helpMenuIntractEdata"
+            <!-- <li class="list-item" tabindex="0" role="link" appTelemetryInteract [telemetryInteractEdata]="helpMenuIntractEdata"
               (click)="toggleSideMenu(false);navigate('/faq')">
               <i class="icon-svg icon-svg--sm icon-help mr-8"><svg class="icon icon-svg--primary">
                   <use xlink:href="./assets/images/sprite.svg#help"></use>
                 </svg></i>
               {{resourceService?.frmelmnts?.tab?.help}}
-            </li>
+            </li> -->
             <li *ngIf="!isDesktopApp" tabindex="0" role="link" class="list-item hide" (click)="toggleSideMenu(false)">
               <i class="icon-svg icon-svg--sm icon-login mr-8"><svg class="icon icon-svg--primary">
                   <use xlink:href="./assets/images/sprite.svg#switchlayout"></use>
