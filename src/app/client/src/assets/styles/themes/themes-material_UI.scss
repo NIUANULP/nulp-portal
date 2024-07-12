@@ -685,7 +685,7 @@ mat-tooltip-component .mat-tooltip {
   }
 
   .mat-option {
-    color: var(--gray-800);
+    color: #000;
 
     &.mat-selected:not(.mat-option-multiple) {
       background-color: transparent;
@@ -924,7 +924,7 @@ html[data-theme="Darkmode"] {
   --mat-modal-content-txt: var(--white);
 
   // Material Dropdown
-  --mat-dropdown-form-bg: #222;
+  --mat-dropdown-form-bg: #fff;
 
   // Material Tabs
   .mat-tab__usage-report,
