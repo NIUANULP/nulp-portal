@@ -1274,6 +1274,11 @@ async function eventReports(req, res) {
         const decryptedEmail = decrypt(item.email);
         item.email = decryptedEmail;
         item.eventName = eventDetail[eventId];
+        delete item.id;
+        delete item.certificate;
+        delete item.user_consent;
+        delete item.consent_form;
+        delete item.created_at;
       }
       res.status(200).send({
         ts: new Date().toISOString(),
@@ -1289,19 +1294,7 @@ async function eventReports(req, res) {
         result: rows || [],
       });
     } else {
-      res.status(200).send({
-        ts: new Date().toISOString(),
-        params: {
-          resmsgid: uuidv1(),
-          msgid: uuidv1(),
-          status: "successful",
-          message: "Event not found ",
-          err: null,
-          errmsg: null,
-        },
-        responseCode: "OK",
-        result: [],
-      });
+      throw new Error("Event not found ");
     }
   } catch (error) {
     console.log(error);
