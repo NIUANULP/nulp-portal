@@ -76,8 +76,7 @@ async function createEvent(req, res) {
       !eventData.start_time ||
       !eventData.start_date ||
       !eventData.end_time ||
-      !eventData.end_date ||
-      !eventData.created_by
+      !eventData.end_date
     ) {
       return res.status(400).send({
         ts: new Date().toISOString(),
@@ -86,7 +85,7 @@ async function createEvent(req, res) {
           msgid: uuidv1(),
           status: "failed",
           message:
-            "Missing start_time, start_date, end_time, or end_date or created_by in request body",
+            "Missing start_time, start_date, end_time, or end_date in request body",
           err: null,
           errmsg: null,
         },
