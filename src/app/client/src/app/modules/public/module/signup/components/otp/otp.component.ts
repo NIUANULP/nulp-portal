@@ -179,7 +179,6 @@ export class OtpComponent implements OnInit {
       'request': {
         'firstName': _.trim(_.get(this.startingForm, 'basicInfo.name')),
         'password': _.trim(_.get(this.startingForm, 'emailPassInfo.password')),
-        'dob': _.get(this.startingForm, 'basicInfo.yearOfBirth').toString(),
       }
     };
     if (this.mode === 'phone') {
