@@ -76,7 +76,8 @@ async function createEvent(req, res) {
       !eventData.start_time ||
       !eventData.start_date ||
       !eventData.end_time ||
-      !eventData.end_date
+      !eventData.end_date ||
+      !eventData.created_by
     ) {
       return res.status(400).send({
         ts: new Date().toISOString(),
@@ -85,7 +86,7 @@ async function createEvent(req, res) {
           msgid: uuidv1(),
           status: "failed",
           message:
-            "Missing start_time, start_date, end_time, or end_date in request body",
+            "Missing start_time, start_date, end_time, or end_date or created_by in request body",
           err: null,
           errmsg: null,
         },
@@ -139,12 +140,13 @@ async function createEvent(req, res) {
 
     if (response?.data) {
       const query =
-        "INSERT INTO event_details ( event_id,meet_event_id,start_date_time,end_date_time) VALUES ($1, $2, $3, $4) RETURNING *";
+        "INSERT INTO event_details ( event_id,meet_event_id,start_date_time,end_date_time,created_by) VALUES ($1, $2, $3, $4,$5) RETURNING *";
       const values = [
         eventData.event_id,
         response?.data.id,
         startDateTime,
         endDateTime,
+        eventData?.created_by || req?.session.userId,
       ];
 
       await pool.query(query, values);
