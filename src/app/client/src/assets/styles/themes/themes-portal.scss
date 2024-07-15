@@ -1653,14 +1653,14 @@ html[data-theme="Darkmode"] {
   --sb-class-bar-bg: #ffffff;
   --sb-dropdown-menu-text: #484848;
   --ui-dropdown-menu-selected-item-bg: #444444;
-  --ui-dropdown-menu-selected-item: var(--white);
+  --ui-dropdown-menu-selected-item: #000;
   --sb-filter-selected-dropdown-hover: var(--black);
 
   //slick slide card
   --sb-card-bg: #ffffff;
   --sb-card-border: 0.0625rem solid transparent;
   --sb-card-text: var(--white);
-  --sb-card-slick-arrows-bg: #444444;
+  --sb-card-slick-arrows-bg: #fff;
   --sb-profile-page-container: #ffffff;
 
   //myGroups
@@ -2613,7 +2613,7 @@ html[data-theme="Darkmode"] {
 
   .ui.multiple.dropdown .label {
     background: #ffffff;
-    color: var(--white);
+    color: #000;
   }
 
   .ui.dimmer {
