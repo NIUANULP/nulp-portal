@@ -1150,8 +1150,8 @@ async function getTopTrending(req, res) {
 
     const results = await Promise.all(queries);
 
-    const topEvent = results[0];
-    const topDesignation = results[1];
+    const topEvent = results[0] || [];
+    const topDesignation = results[1] || [];
 
     res.status(200).send({
       ts: new Date().toISOString(),
@@ -1201,7 +1201,7 @@ async function getTopEvents(userId, column, fromDate, toDate) {
   const values = [];
 
   if (userId) {
-    query += `AND ed.created_by = $1 `;
+    query += `AND ed.created_by = $${values.length + 1} `;
     values.push(userId);
   }
 
