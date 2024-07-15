@@ -1040,10 +1040,11 @@ async function getCountsOfEvent(req, res) {
               "SELECT COUNT(*) AS certified_count FROM event_registration WHERE event_id=$1";
             const certValues = [item.identifier];
             const certResult = await pool.query(certQuery, certValues);
-            totalCertifiedUsers += parseInt(
-              certResult.rows[0].certified_count,
-              10
-            );
+            // totalCertifiedUsers += parseInt(
+            //   certResult.rows[0].certified_count,
+            //   10
+            // );
+            totalCertifiedUsers = 0;
           }
         })
       );
