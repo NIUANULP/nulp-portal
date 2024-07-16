@@ -139,12 +139,13 @@ async function createEvent(req, res) {
 
     if (response?.data) {
       const query =
-        "INSERT INTO event_details ( event_id,meet_event_id,start_date_time,end_date_time) VALUES ($1, $2, $3, $4) RETURNING *";
+        "INSERT INTO event_details ( event_id,meet_event_id,start_date_time,end_date_time,created_by) VALUES ($1, $2, $3, $4,$5) RETURNING *";
       const values = [
         eventData.event_id,
         response?.data.id,
         startDateTime,
         endDateTime,
+        eventData?.created_by || req?.session.userId,
       ];
 
       await pool.query(query, values);
@@ -996,38 +997,54 @@ async function getCountsOfEvent(req, res) {
     const response = await axios.request(config);
     if (response.status === 200) {
       const events = response?.data?.result?.Event || [];
-      let totalEvent = response?.data?.result?.count;
+      const totalEvent = response?.data?.result?.count;
       let totalEventInThisMonth = 0;
       let totalParticipants = 0;
-      let totalCreators = new Set();
       let totalCertifiedUsers = 0;
+      let totalCreators = new Set();
+      let upComingEvent = 0;
+
+      const currentDate = new Date();
+      const currentMonth = currentDate.getMonth();
+      const currentYear = currentDate.getFullYear();
 
       await Promise.all(
         events.map(async (item) => {
+          const eventStartDate = new Date(item.startDate);
+
           // Count events in the current month
-          let eventStartDate = new Date(item.startDate);
-          let currentDate = new Date();
           if (
-            eventStartDate.getMonth() === currentDate.getMonth() &&
-            eventStartDate.getFullYear() === currentDate.getFullYear()
+            eventStartDate.getMonth() === currentMonth &&
+            eventStartDate.getFullYear() === currentYear
           ) {
             totalEventInThisMonth++;
+          }
+
+          // Count upcoming events
+          if (eventStartDate > currentDate) {
+            upComingEvent++;
           }
 
           // Count unique creators
           totalCreators.add(item.owner);
 
           // Count participants
-          let query = "SELECT * FROM event_registration WHERE event_id=$1";
+          const query =
+            "SELECT COUNT(*) AS participant_count FROM event_registration WHERE event_id=$1";
           const values = [item.identifier];
           const { rows } = await pool.query(query, values);
-          totalParticipants += rows.length;
+          totalParticipants += parseInt(rows[0].participant_count, 10);
 
+          // Count certified users
           if (item.IssueCerificate === "Yes") {
-            let certQuery =
-              "SELECT COUNT(*) FROM event_registration WHERE event_id=$1";
+            const certQuery =
+              "SELECT COUNT(*) AS certified_count FROM event_registration WHERE event_id=$1";
             const certValues = [item.identifier];
-            const { rows } = await pool.query(certQuery, certValues);
+            const certResult = await pool.query(certQuery, certValues);
+            // totalCertifiedUsers += parseInt(
+            //   certResult.rows[0].certified_count,
+            //   10
+            // );
             totalCertifiedUsers = 0;
           }
         })
@@ -1050,7 +1067,22 @@ async function getCountsOfEvent(req, res) {
           totalParticipants,
           totalCreators: totalCreators.size, // Size of the Set for unique creators
           totalCertifiedUsers,
+          upComingEvent,
         },
+      });
+    } else {
+      res.status(response.status).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "unsuccessful",
+          message: "Failed to fetch events",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "ERROR",
+        result: {},
       });
     }
   } catch (error) {
@@ -1119,8 +1151,8 @@ async function getTopTrending(req, res) {
 
     const results = await Promise.all(queries);
 
-    const topEvent = results[0];
-    const topDesignation = results[1];
+    const topEvent = results[0] || [];
+    const topDesignation = results[1] || [];
 
     res.status(200).send({
       ts: new Date().toISOString(),
@@ -1170,7 +1202,7 @@ async function getTopEvents(userId, column, fromDate, toDate) {
   const values = [];
 
   if (userId) {
-    query += `AND ed.created_by = $1 `;
+    query += `AND ed.created_by = $${values.length + 1} `;
     values.push(userId);
   }
 
@@ -1228,6 +1260,156 @@ async function getEventNames(eventIds) {
   }
   return eventNames;
 }
+async function eventReports(req, res) {
+  try {
+    if (!hasRequiredRole(req?.session?.roles)) {
+      res.status(403).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          statusCode: 403,
+          status: "unsuccessful",
+          message: "You don't have privilege to fetch records",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {},
+      });
+    }
+    if (!req?.query?.event_id) {
+      res.status(404).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          statusCode: 404,
+          status: "unsuccessful",
+          message: "MIssing field event_id !",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {},
+      });
+    }
+    const eventId = req.query.event_id.trim();
+    let query =
+      "SELECT event_registration.*,event_details.start_date_time AS date FROM event_registration JOIN event_details  ON event_registration.event_id = event_details.event_id WHERE event_registration.event_id=$1";
+    const values = [eventId];
+
+    const { rows } = await pool.query(query, values);
+    if (rows?.length > 0) {
+      const eventDetail = await getEventNames([eventId]);
+      for (const item of rows) {
+        const decryptedEmail = decrypt(item.email);
+        item.email = decryptedEmail;
+        item.eventName = eventDetail[eventId];
+        delete item.id;
+        delete item.certificate;
+        delete item.user_consent;
+        delete item.consent_form;
+        delete item.created_at;
+        delete item.user_id;
+        delete item.event_id;
+      }
+      res.status(200).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "successful",
+          message: "Event reports fetched successfully",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: rows || [],
+      });
+    } else {
+      throw new Error("Event not found ");
+    }
+  } catch (error) {
+    console.log(error);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: [],
+    });
+  }
+}
+
+async function userUnregister(req, res) {
+  try {
+    const { event_id, user_id } = req.query;
+
+    if (!event_id || !user_id) {
+      return sendErrorResponse(res, 404, "Missing field event_id or user_id!");
+    }
+
+    const eventId = event_id.trim();
+    const userId = user_id.trim();
+    const query =
+      "DELETE FROM event_registration WHERE event_id=$1 AND user_id=$2";
+    const values = [eventId, userId];
+
+    const { rowCount } = await pool.query(query, values);
+
+    if (rowCount === 0) {
+      return sendErrorResponse(res, 404, "User not registered for this event.");
+    }
+
+    res.status(200).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "successful",
+        message: "User unregistered successfully",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: [],
+    });
+  } catch (error) {
+    console.error(error);
+    sendErrorResponse(
+      res,
+      error.statusCode || 500,
+      error.message || "Internal Server Error"
+    );
+  }
+}
+
+function sendErrorResponse(res, statusCode, message) {
+  res.status(statusCode).send({
+    ts: new Date().toISOString(),
+    params: {
+      resmsgid: uuidv1(),
+      msgid: uuidv1(),
+      statusCode: statusCode,
+      status: "unsuccessful",
+      message: message,
+      err: null,
+      errmsg: null,
+    },
+    responseCode: "OK",
+    result: [],
+  });
+}
 
 module.exports = {
   createEvent,
@@ -1240,4 +1422,6 @@ module.exports = {
   getEventRegistration,
   getCountsOfEvent,
   getTopTrending,
+  eventReports,
+  userUnregister,
 };

@@ -10,6 +10,8 @@ const {
   getEventRegistration,
   getCountsOfEvent,
   getTopTrending,
+  eventReports,
+  userUnregister,
 } = require("../helpers/eventHelper.js");
 const proxyUtils = require("../proxy/proxyUtils.js");
 
@@ -63,4 +65,6 @@ module.exports = function (app) {
   );
 
   app.get("/event/get_top_trending", proxyUtils.verifyToken(), getTopTrending);
+  app.get("/event/reports", proxyUtils.verifyToken(), eventReports);
+  app.delete("/event/unregister", proxyUtils.verifyToken(), userUnregister);
 };
