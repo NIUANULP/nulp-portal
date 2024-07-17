@@ -103,7 +103,7 @@ app.all([
   '/certreg/*', '/device/*', '/google/*', '/report/*', '/reports/*', '/v2/user/*', '/v1/sso/*', '/migrate/*', '/plugins/*', '/content-plugins/*',
   '/content-editor/telemetry','/discussion/*', '/collection-editor/telemetry', '/v1/user/*', '/sessionExpired', '/logoff', '/logout', '/assets/public/*', '/endSession',
   '/sso/sign-in/*','/v1/desktop/handleGauth', '/v1/desktop/google/auth/success', '/clearSession','/kendra/*','/dhiti/*', '/assessment/*','/cloudUpload/*', '/apple/auth/*',
-  '/uci/*','/directConnect/*','/profilePage/*','/custom/*','/event/*'
+  '/uci/*','/directConnect/*','/profilePage/*','/custom/*','/event/*','/polls/*'
 ],
   session({
     secret: envHelper.PORTAL_SESSION_SECRET_KEY,
@@ -297,6 +297,7 @@ require("./routes/profileRoute.js")(app)
 
 require("./routes/customRoute.js")(app)
 require("./routes/eventRoute.js")(app)
+require("./routes/pollsRoute.js")(app)
 app.get('/getGeneralisedResourcesBundles/:lang/:fileName', proxyUtils.addCorsHeaders, getGeneralisedResourcesBundles);
 
 app.get('/v1/user/session/start/:deviceId', (req, res) => {

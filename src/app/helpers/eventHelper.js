@@ -1154,6 +1154,22 @@ async function getTopTrending(req, res) {
     const topEvent = results[0] || [];
     const topDesignation = results[1] || [];
 
+    // Process topDesignation to get unique designations with counts
+    const designationCountMap = {};
+    topDesignation?.forEach(({ designation }) => {
+      if (designationCountMap[designation]) {
+        designationCountMap[designation]++;
+      } else {
+        designationCountMap[designation] = 1;
+      }
+    });
+
+    // Convert map to array and sort by count descending
+    const sortedDesignations = Object?.entries(designationCountMap)
+      .map(([designation, count]) => ({ designation, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+
     res.status(200).send({
       ts: new Date().toISOString(),
       params: {
@@ -1167,7 +1183,7 @@ async function getTopTrending(req, res) {
       responseCode: "OK",
       result: {
         topEvent,
-        topDesignation,
+        topDesignation: sortedDesignations,
       },
     });
   } catch (error) {
@@ -1193,7 +1209,7 @@ async function getTopTrending(req, res) {
 
 async function getTopEvents(userId, column, fromDate, toDate) {
   let query = `
-    SELECT er.event_id, COUNT(er.${column}) AS user_count
+    SELECT er.event_id, COUNT(er.${column}) AS user_count,er.designation
     FROM event_registration er
     JOIN event_details ed ON er.event_id = ed.event_id
     WHERE 1 = 1
@@ -1220,7 +1236,7 @@ async function getTopEvents(userId, column, fromDate, toDate) {
   }
 
   query += `
-    GROUP BY er.event_id
+    GROUP BY er.event_id, er.designation
     ORDER BY user_count DESC
     LIMIT 5;
   `;
