@@ -1060,7 +1060,6 @@ export class AddusersComponent implements OnInit {
           filters: {
             channel: this.userLoginDataChannel,
           },
-          limit: 100,
         },
       };
     }
