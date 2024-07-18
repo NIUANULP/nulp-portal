@@ -44,21 +44,10 @@ module.exports = function (app) {
     proxyUtils.verifyToken(),
     pollsHelper.createUserPoll
   );
-  app.post(
+  app.put(
     "/polls/user/update",
     bodyParser.json({ limit: "10mb" }),
     proxyUtils.verifyToken(),
     pollsHelper.updateUserPoll
   );
-  //   app.get(
-  //     "/polls/user/get"
-  //     // proxyUtils.verifyToken(),
-  //   );
-
-  //   app.get("/polls/user/polls_count");
-
-  //   app.delete(
-  //     "/polls/user/delete"
-  //     // proxyUtils.verifyToken(),
-  //   );
 };

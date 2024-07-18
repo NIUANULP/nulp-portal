@@ -97,7 +97,15 @@ function getPagination(limit, offset) {
   }
 }
 
-async function updateRecord(id, data, tableName, allowedColumns, column) {
+async function updateRecord(
+  id,
+  data,
+  tableName,
+  allowedColumns,
+  column,
+  secondColumn,
+  secondColumnValue
+) {
   try {
     // Check if allowedColumns is provided and is an array
     if (!Array.isArray(allowedColumns)) {
@@ -117,10 +125,18 @@ async function updateRecord(id, data, tableName, allowedColumns, column) {
       .map((key, i) => `${key} = $${i + 1}`)
       .join(", ");
     // Update data
-    const query = `UPDATE ${tableName} SET ${paramPlaceholders} WHERE ${column} = $${
+    let query = `UPDATE ${tableName} SET ${paramPlaceholders} WHERE ${column} = $${
       values.length + 1
-    }  RETURNING *`;
+    }`;
     values.push(id);
+
+    if (secondColumn && secondColumnValue) {
+      query += ` AND ${secondColumn} = $${values.length + 1}`;
+      values.push(secondColumnValue);
+    }
+
+    query += ` RETURNING *`;
+
     const response = await pool.query(query, values);
 
     return response.rows;
