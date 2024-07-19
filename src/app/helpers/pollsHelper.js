@@ -459,13 +459,12 @@ const listPolls = async (req, res) => {
     // Base query for polls
     let query = "SELECT * FROM polls WHERE 1=1";
     const values = [];
+    const countValues = [];
 
     // Apply filters for user-specific data
     if (userId) {
       values.push(userId);
       query += ` AND created_by = $${values.length}`;
-      countValues.push(organization);
-      countQuery += ` AND organization = $${countValues.length}`;
     }
     if (!isSystemAdmin && organization) {
       values.push(organization);
@@ -526,14 +525,11 @@ const listPolls = async (req, res) => {
 
     // Now, to get the count of total records matching the filters
     let countQuery = "SELECT COUNT(*) FROM polls WHERE 1=1";
-    const countValues = [];
 
     // Apply the same filters as above for the count query
     if (userId) {
       countValues.push(userId);
       countQuery += ` AND created_by = $${countValues.length}`;
-      countValues.push(organization);
-      countQuery += ` AND organization = $${countValues.length}`;
     }
     if (!isSystemAdmin && organization) {
       countValues.push(organization);
