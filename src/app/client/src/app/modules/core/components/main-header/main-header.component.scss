@@ -1,9 +1,13 @@
 @import "variables";
 @import "mixins/mixins";
 @import "layout/header";
-
-.sb-header-bg{
-  background: var(--sb-header-bg) !important;
+@import "../../../../../assets/styles/variables";
+.sb-header-bg {
+  background: #065872 !important;
+}
+:root {
+  --sbt-sidemenu-bg: #fff !important;
+  --sidebar-profil-header-bg: #edf4f9;
 }
 
 .overlay-sidebar,
@@ -29,13 +33,15 @@
     z-index: 100000;
     overflow-y: auto;
     overflow-x: hidden;
-    box-shadow: calculateRem(-6px) 0 calculateRem(10px) 0 rgba(var(--rc-rgba-black), 0.1);
+    box-shadow: calculateRem(-6px) 0 calculateRem(10px) 0
+      rgba(var(--rc-rgba-black), 0.1);
   }
 }
 
 .profile {
   &__info {
-    padding: calculateRem(40px) calculateRem(16px) calculateRem(8px) calculateRem(16px);
+    padding: calculateRem(40px) calculateRem(16px) calculateRem(8px)
+      calculateRem(16px);
     background-color: var(--sidebar-profil-header-bg);
     position: relative;
 
@@ -53,7 +59,6 @@
 
   &__actions {
     &__list {
-
       .list-item {
         margin: 0 0 0 0;
         padding: calculateRem(16px) calculateRem(20px);
@@ -84,7 +89,6 @@
     }
   }
 }
-
 
 .add-user {
   display: inline-block;
@@ -139,7 +143,6 @@
 
   &__label {
     font-size: var(--font-size-base);
-    ;
     margin-top: calculateRem(8px);
   }
 }
@@ -182,7 +185,7 @@
   }
 }
 
-//sb member card styles from CC 
+//sb member card styles from CC
 .sb-member {
   display: flex;
   align-items: center;
@@ -266,7 +269,6 @@
     font-weight: normal;
     cursor: pointer;
   }
-
 }
 
 :host ::ng-deep {
@@ -275,35 +277,34 @@
     background: var(--red-100);
     position: relative;
     height: 1.25rem;
-    padding: 0 .25rem 0 0.5rem;
+    padding: 0 0.25rem 0 0.5rem;
     color: var(--white);
-    margin-right: -.5rem;
-    font-size: .6875rem;
+    margin-right: -0.5rem;
+    font-size: 0.6875rem;
     display: flex;
     align-items: center;
     font-weight: normal;
     html[dir="rtl"] & {
-      padding: 0 .5rem 0 0.25rem;
+      padding: 0 0.5rem 0 0.25rem;
     }
   }
-  
+
   .group__type:after {
     content: "";
     width: 0;
     height: 0;
-    border-width: .625rem .3125rem;
+    border-width: 0.625rem 0.3125rem;
     border-style: solid;
     border-color: var(--red-100) transparent var(--red-100) var(--red-100);
     position: absolute;
-    right: -.625rem;
+    right: -0.625rem;
     html[dir="rtl"] & {
-      left: -.6rem;
+      left: -0.6rem;
       right: inherit;
       transform: rotate(180deg);
     }
   }
 }
-
 
 __textbooks {
   -webkit-mask-image: url(/assets/images/mask-image/textbooks.svg);
@@ -312,7 +313,7 @@ __textbooks {
 
 :host ::ng-deep {
   @include respond-below(sm) {
-    html[layout='joy'] {
+    html[layout="joy"] {
       .sbt-dropdown-profile-area,
       app-language-dropdown {
         width: 100%;
@@ -326,7 +327,7 @@ __textbooks {
 
 .sbt-logo {
   height: calculateRem(80px);
-  display:flex;
+  display: flex;
   align-items: center;
   img {
     min-height: 65%;
@@ -334,20 +335,20 @@ __textbooks {
   }
 }
 
-.sb-load-content-btn{
+.sb-load-content-btn {
   line-height: 0.5;
 }
 
-.explore-description-info{
+.explore-description-info {
   color: #333333;
-    font-family: "Noto Sans";
-    font-size: 14px;
-    letter-spacing: 0;
-    line-height: 19px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    max-width: 74vw;
+  font-family: "Noto Sans";
+  font-size: 14px;
+  letter-spacing: 0;
+  line-height: 19px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 74vw;
 }
 
 .explore-title {

@@ -53,6 +53,17 @@
             </div>
             <p class="workspaceinstuction">{{resourceService?.frmelmnts?.lbl?.collectiondescription}}</p>
           </div>
+        <div class="three wide column"  >
+            <div class="ui link card" (click)="routeToEvent();" >
+            <div class="content">
+              <div class="textcontent">
+                <i class='my-icon file text outline icon'></i>
+                <span class="my-text">Event</span>
+              </div>
+            </div>
+          </div>
+            <p class="workspaceinstuction">Create Events</p>
+        </div>
         </div>
       </div>
       <div class="twelve wide column ">
@@ -113,6 +124,7 @@
         </div>
       </div>
       <div class="twelve wide column ">
+        <div class="ui grid">
         <div class="ui grid">
           <div class="three wide column" *ngIf='permissionService.permissionAvailable && enableQuestionSetCreation === true' appPermission
             [permission]='textBookRole'>

@@ -1,0 +1,2502 @@
+html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
+  --app-primary: #ffd92a;
+  --app-primary-medium: #007aff;
+  --app-primary-light: #c6e7ff;
+  --app-primary-background: #000000;
+  --app-primary-header: #555555;
+  --app-primary-header-light: #222;
+  --app-secondary-background: #333;
+  --app-tertiary: #6236ff;
+  --app-tertiary-light: #e0e1fd;
+
+  --joyful-light-yellow: #f9ffbe; // take it out
+  --joyful-light-blue: #daecff; // take it out
+
+  --app-white: #000000;
+  --app-black: #ffffff; // remove
+  --app-dark-gray: #222222;
+  --app-gray: #fff;
+  --app-medium-gray: #666666;
+  --app-light-gray: #c6c6c6;
+  --app-lighter-gray: #cccccc;
+
+  --app-brown: #4f2c0d;
+  --app-green: #008840;
+  --app-light-green: #bfe1cf; // take it out
+  --app-pink: #ef64af;
+
+  --app-shadow: rgba(0, 0, 0, 0.1);
+  --button-style-shadow: 5px 5px 2px 0 var(--app-shadow);
+  --block-style-shadow: 0 2px 7px 0 var(--app-shadow);
+
+  //cc
+  --cc-accordion-panel-br: #333;
+  --cc-accordion-panel-bg: #222222;
+  --cc-accordion-panel-header-bg: #333333;
+  --cc-accordion-panel-header-br: #333;
+  --cc-accordion-panel-header-title: var(--app-primary);
+  --cc-progress-circle-stroke: var(--secondary-200);
+  --cc-sbcard-meta1: var(--rc-979797);
+  --cc-sbcard-metaC-data: var(--rc-FAFAFA);
+  --cc-sbcard-course-curi-title: var(--white);
+  --cc-sbcard-img-label: #284c3f;
+  --cc-sbcard-img-label-bg: #b3ebd7;
+  --cc-sbcard-img-badge-bg: var(--black);
+  --cc-sbcard-img-badge-text: var(--white);
+  --cc-sblabel-badge-br: var(--app-primary);
+  --cc-sblabel-badge-text: var(--app-primary);
+  --sb-pill-bg: #222222;
+  --cc-pill-border: #222;
+  --cc-pill-text: var(--secondary-color);
+  --cc-pill-bg-hover: var(--secondary-color);
+  --cc-pill-text-hover: var(--black);
+  --cc-grade-pill-container-bg: #333333;
+  --cc-grade-pill-text: var(--white);
+  --cc-grade-pill-bg-hover: var(--app-primary);
+  --cc-grade-pill-text-hover: #222222;
+  --cc-grade-pill-svg-fill: #222222;
+  --cc-sbcard-data1-2-text: var(--app-primary);
+  --cd-sbcard-data1-2-text: var(--app-primary); //later delete
+  --cc-sbcard-bg: #fff;
+  --cc-sbcard-img-container-bg: var(--gray-100);
+  --cc-sbcard-title: #ffffff;
+  --cc-sbcard-meta-text: #fff;
+  --cc-sbcard-dot-divider: var(--gray-200);
+  --cc-sbcard-moreinfo-bg: none;
+  --cc-sbcard-moreinfo-bordertop: #cacbce;
+  --cc-sbcard-meta2-text: #fff;
+  --cc-sbcard-org-text: var(--gray-200);
+  --cc-sbcard-type-text: var(--white);
+  --cc-sbcard-rv-img-container-bg: var(--gray-100);
+  --cc-sbcard-selected-border: var(--app-primary);
+  --cc-sbcard-selected-bg: #2d2901;
+  --cc-sbcard-img-br: var(--white);
+  --cc-sbcard-offline-bg: var(--tertiary-color);
+  --cc-sbcard-offline-img-text: var(--white);
+  --cc-sbcard-card__progressbar-bg: var(--gray-100);
+  --cc-sbcard-card__progressbar-span-bg: var(--secondary-200);
+  --cc-sbcard-type-br: var(--black);
+  --cc-sbcard-hover-text: var(--white);
+  --cc-sbcard-hover-bg: var(--primary-color);
+  --cc-sbcard-org-text: var(--balck);
+  --cc-sbcard-data1-bg: #444444;
+  --cc-sbcard-data1-bg-active: #ffeb2a;
+  --sbt-pill-hs: 212, 100%;
+  --cc-sbcard-data2-bg: #444444;
+  --cc-sbcard-data2-bg-active: #ffeb2a;
+  --cc-sbcard-data0-bg: #444444;
+  --cc-sbcard-data0-bg-active: #ffeb2a;
+  --cc-sbcard-type-bg: var(--black);
+  --cc-sbcard-type-text: var(--white);
+
+  // cc pills box
+  --cc-pills-grid-item: #333333;
+  --cc-pills-grid-item-hover: #222;
+  --cc-pills-grid-item-img-bg: #222;
+  --cc-pills-grid-icon-head-img-bg: #222;
+  --cc-viewbtn-border: #94ccf5;
+  --cc-viewbtn-text: #0076fe;
+  --cc-viewbtn-hover: var(--white);
+
+  //member card
+  --cc-members-list-item-selected: var(--black);
+  --cc-members-list-item-selected-border: var(--primary-color);
+  --cc-members-list-item-menu-text: var(--gray-200);
+  --cc-members-list-item-status-text: #000;
+  --cc-members-list-item-status-br: var(--app-primary);
+  --cc-members-list-item-status-bg: #ffd92a;
+
+  // notification
+  --cc-notification-list-bg: #222222;
+  --cc-notification-list-br: #111111;
+  --cc-notification-status-bg: var(--white);
+  --cc-notification-date-text: var(--white);
+  --cc-notification-logo-bg: var(--gray-0);
+  --cc-notification-title-text: var(--gray-400);
+  --cc-notification-title-active: var(--primary-color);
+  --cc-notification-subtitle-text: var(--white);
+
+  // toc
+  --cc-toc-card-item-bg: #333333;
+  --cc-toc-card-item-hover: var(--app-primary);
+  --cc-toc-card-item-br: #222222;
+  --cc-toc-card-item-bs: var(--rc-rgba-primary);
+  --cc-toc-card-item-img-bg: var(--rc-dddddd);
+  --cc-toc-card-item-title: #ffffff;
+  --cc-toc-card-item-title-hover: #000000;
+  --cc-toc-card-item-score-text: #000000;
+
+  //toc item
+  --cc-chapter-br: var(--gray-100);
+  --cc-chapter-bg: #222222;
+  --cc-chapter-title: var(--gray-800);
+  --cc-chapter-item-bg: varvar(--white);
+  --cc-chapter-item-bs: var(--rc-rgba-primary);
+  --cc-chapter-item-br: var(--rc-rgba-primary);
+  --cc-chapter-item-title-text: var(--primary-400);
+  --cc-chapter-item-open-br: #e0e0e0;
+  --cc-chapter-item-open-title-text: var(--primary-400);
+  --cc-chapter-item-topic-title-text: var(--primary-400);
+  --cc-chapter-item-topic-title-text-active: var(--primary-100);
+  --cc-chapter-item-topic-title-text-hover: var(--gray-0);
+
+  //toc curriculum
+  --cc-curriculum-br-bg: transparent;
+  --cc-curriculum-bg: #333;
+  --cc-curriculum-br: var(--primary-200);
+  --cc-curriculum-active-bs: var(--rc-009D53);
+  --cc-curriculum-title-text: #3a3a3a;
+
+  //faq
+  --cc-faq-yesbtn-text: var(--secondary-color);
+  --cc-faq-helpheader-text: var(--white);
+  --cc-faq-helpheader-bg: var(--primary-color);
+  --cc-faq-panel-title-text: var(--primary-color);
+  --cc-faq-info-msg-bg: var(--primary-0);
+  --cc-faq-panelheader-bg: var(--white);
+  --cc-faq-panel-body-bg: #222222;
+  --cc-faq-panel-interact-bg: #222222;
+  --cc-faq-yesbtn-bg: inherit;
+  --cc-faq-yesbtn-text: #000000;
+
+  //layout
+  --cc-lb-card-hlist-title: var(--black);
+  --cc-lb-card-grid-title: var(--white);
+  --cc-badge-bg: #222222;
+  --cc-badge-text: #ffffff;
+  --cc-lb-card-stack-title: var(--primary-color);
+  --cc-lb-card-stack-btn-bg: var(--primary-100);
+  --cc-lb-card-stack-btn-text: var(--primary-color);
+
+  // lazy loading
+  --lazyload-bg: #555;
+  --grey-nuance-lighter: #555;
+  --grey-nuance-darker: #111;
+  --fade-grey: #999;
+
+  //custom
+  --indicator-color: var(--app-primary);
+  --ripple-color: var(--color-selected);
+  --color-checked: var(--app-primary);
+
+  --cc-listView-compt-itemText: #fff;
+  --cc-listView-compt-title: #fff;
+
+  ion-tabs ion-tab-button {
+    --color-selected: var(--app-primary);
+  }
+
+  ion-header .sb-header {
+    border-bottom-left-radius: 24px;
+  }
+
+  :host {
+    --indicator-color: var(--app-primary);
+    --ripple-color: var(--color-selected);
+    --color-checked: var(--app-primary);
+
+    .checkbox-icon {
+      border-color: #666 !important;
+      background: #222 !important;
+    }
+
+    .ionicon {
+      stroke: var(--app-primary);
+    }
+  }
+
+  .segment-button-checked {
+    --color-checked: var(--app-primary) !important;
+  }
+
+  .ion-color-primary {
+    --ion-color-base: var(--app-primary) !important;
+  }
+
+  .ui-container::after,
+  ion-toolbar {
+    background-color: #333 !important;
+  }
+
+  sb-toc-curriculum .sbchapter__item {
+    box-shadow: 5px 5px 2px 0 #222;
+  }
+
+  //.sb-popover .sb-popover-footer,.ui-container::after,
+  .toolbar-background,
+  .sb-popover.sb-popover-permissions .sb-popover-items,
+  sb-form sb-multiple-dropdown .sb-modal,
+  .multi-select-container .sb-modal .footer,
+  .sb-side-menu .side-menu-footer,
+  app-guest-profile .signin-card-bg,
+  app-profile-settings.ion-page.can-go-back .ion-padding.ion-no-border,
+  div.scrollable-container,
+  main.inner-scroll.scroll-y,
+  .bottom-block,
+  .bottom-block .trainings,
+  .sb-no-search-history,
+  .search-bg .inner-scroll.scroll-y,
+  .add-to-group-btn-container,
+  add-activity-to-group .text-center,
+  app-guest-profile .ui-container main.inner-scroll.scroll-y,
+  .sb-content-info-items .sb-content-info-card,
+  .progress-outer-course {
+    background: #000000 !important;
+  }
+
+  ion-row.padding-12.md.hydrated {
+    background: #000 !important;
+    padding: 0 !important;
+  }
+
+  ion-footer.contentinfo ion-row.padding-12.md.hydrated {
+    --background: #333 !important;
+    background: var(--background) !important;
+  }
+
+  app-search-filter
+    ion-button.ion-text-capitalize.mb-16.md.button.button-block.button-solid.ion-activatable.ion-focusable.hydrated {
+    background: #000 !important;
+
+    button.button-native {
+      background: #000;
+      border: 1px solid var(--app-primary);
+      color: #fff;
+    }
+  }
+
+  app-search-filter
+    .search-filter-footer
+    ion-row
+    ion-col:first-child
+    > button.button-native {
+    background: #000;
+    border: 1px solid var(--app-primary);
+    color: #fff;
+  }
+
+  .player-endpage {
+    background-color: #333 !important;
+  }
+  .replay-section {
+    background-color: #222 !important;
+  }
+  .player-endpage__right-panel .user-options {
+    filter: invert(1);
+  }
+  //.ui-container::part(scroll),
+
+  .ion-padding.ion-no-border,
+  .footer,
+  .header-info,
+  app-profile-settings .ps-container .qr-container,
+  ion-header,
+  ion-toolbar,
+  .toolbar-background,
+  .toolbar-container,
+  .container-focus,
+  ion-tab-bar,
+  .sb-card-container .sb-card,
+  .sb-card-active,
+  ion-card,
+  app-guest-profile .details-container,
+  .profile-info,
+  .sb-label-grid.show-icon.sb-box-grid.icon-header .item,
+  .sb-popover .sb-popover-footer,
+  .sb-chapter-dd,
+  ion-card .sb-hidden-content,
+  .sb-hidden-content .alert-wrapper .alert-head.sc-ion-alert-md,
+  .alert-wrapper .alert-checkbox-group.sc-ion-alert-md,
+  .alert-wrapper .alert-button-group.sc-ion-alert-md,
+  .multi-select-container
+    .sb-modal-container
+    .sb-modal-overlay
+    .sb-modal
+    .header,
+  .multi-select-container .sb-modal-container .sb-modal-overlay .sb-modal .body,
+  .multi-select-container
+    .sb-modal-container
+    .sb-modal-overlay
+    .sb-modal
+    .footer,
+  app-my-groups-popover .main-content,
+  app-notification .sb-view-all-container .sb-view-all-items,
+  .sb-popover .sb-popover-container .sb-popover-items,
+  .location-mapping-block,
+  .framework-block,
+  app-profile .self-declare-btn,
+  .trainings .heading,
+  .trainings .content,
+  .trainings .heading,
+  .trainings .content,
+  .self-declare-teacher-details,
+  .alert-radio-group.sc-ion-alert-md,
+  .alert-checkbox-group.sc-ion-alert-md,
+  .flex-card-container,
+  ion-grid.scroll-list.md.hydrated,
+  app-my-groups-popover #main-content,
+  .gd-member-search input,
+  .au-container .au-ip input,
+  .sign-in-card-success .sign-in-block,
+  app-content-details .sb-dt-card,
+  app-chapter-details
+    .cd-header-container
+    ion-card-content
+    .sb-course-progress-container,
+  app-chapter-details .cd-header-container .cd-flex-container,
+  sb-toc-curriculum .sbchapter__item,
+  .rate-content .textarea,
+  .select-box.select-alert .alert-wrapper,
+  .showLicensce ion-list,
+  app-enrollment-details .subtitle.head,
+  app-enrollment-details ion-list,
+  app-enrollment-details .subtitle.mytitle,
+  app-enrollment-details ion-item .subtitle.title,
+  .spinner-div,
+  app-discover .sb-label-grid .item,
+  .search-bar,
+  .search-bar input,
+  .pills-filter .sb-label-grid .item,
+  app-sb-subject-list-popup .main-content,
+  app-sb-subject-list-popup .main-content .title-section,
+  .contacts .phone {
+    --app-primary-header: #333;
+    background: var(--app-primary-header) !important;
+  }
+
+  .trainings .content {
+    border: 0.5px solid #222;
+  }
+
+  .search-bar {
+    border-color: #333;
+  }
+
+  .course-modified {
+    border: 1px solid #222;
+    color: #fff;
+  }
+
+  .rating-opts .rate-content textarea {
+    background: #222;
+    border: 0px;
+    color: #fff;
+  }
+
+  .rate-content .textarea {
+    background: #222;
+    border: 1px solid #222;
+    color: #fff;
+  }
+
+  //.sb-label-grid.sb-pills-grid .item,.sb-label-grid.show-icon.sb-pills-grid.hscroll .item,
+
+  #background-content {
+    --background: #000;
+    background: var(--background) !important;
+
+    .inner-scroll.scroll-y {
+      background: var(--background) !important;
+    }
+  }
+
+  .ion-color-dark {
+    --ion-color-base: #fff !important;
+  }
+
+  .framework-block,
+  .location-mapping-block {
+    border-color: #333;
+
+    * {
+      color: #fff;
+    }
+
+    ion-button.custom-round {
+      --background: var(--app-primary) !important;
+      color: #000 !important;
+    }
+  }
+
+  ion-button.custom-round {
+    --background: var(--app-primary) !important;
+    color: #000 !important;
+  }
+
+  app-user-home,
+  app-search,
+  app-admin-home {
+    ion-content {
+      background-color: #000;
+      --background: #000;
+    }
+  }
+
+  ion-grid.scroll-list.md.hydrated ion-row ion-col ion-item {
+    --background: #222 !important;
+  }
+
+  .gd-member-search input {
+    border: 1px solid #333;
+  }
+
+  .qr-board::after,
+  .form-position ion-item,
+  .sb-switch-new-experience-popup .popover-content,
+  .preference-container,
+  .help-header,
+  .help-header-send-email,
+  .sb-view-all-container .sb-view-all-items,
+  .sb-label-grid.icon-header .item .img,
+  .sb-slider-pills-container .sb-pills-container .pill,
+  .close-icon-info,
+  ion-grid.sb-accordian-header.md.hydrated,
+  .search-filter .filter-btn button,
+  .subtitle,
+  .sb-course-end-container,
+  app-enrolled-course-details-page
+    .sb-dt-card-actions
+    .sb-course-progress-container,
+  app-enrolled-course-details-page .enrolled-course-container ion-card,
+  .certificate-container,
+  .training-2 .sb-btn-tile,
+  .card-section-danger,
+  .course-modified,
+  .sb-batch-end-container,
+  .contributions .bolder.f16,
+  .contributions .cards-container,
+  app-discover .sb-label-grid.sb-pills-grid .item .img,
+  .yes-clicked,
+  #know-more-form textarea.input-text {
+    background: #222222 !important;
+  }
+
+  ion-tabs ion-tab-button:nth-child(3) ion-icon {
+    background: var(--app-black);
+    background-image: url(/assets/imgs/ic_qr_scanner.svg);
+    background-size: 46px;
+    background-position: center center;
+    background-repeat: no-repeat;
+  }
+
+  #know-more-form textarea.input-text {
+    border: 0px;
+    color: #fff;
+  }
+
+  ion-card {
+    border: 0.5px solid #222;
+  }
+
+  ion-button.explore-more-books.md.button.button-block.button-solid.ion-activatable.ion-focusable.hydrated {
+    background: none !important;
+    border: 0px !important;
+  }
+
+  .language-card label,
+  .card-container {
+    background-color: #222222;
+    color: #fff;
+    box-shadow: 0 20px 40px -10px #000000;
+  }
+
+  ion-button.sort-by.ng-tns-c30-1.ng-star-inserted.md.button.button-block.button-solid.ion-activatable.ion-focusable.hydrated {
+    background: #333 !important;
+    border: none !important;
+    margin: 0;
+    height: 64px;
+    border-radius: 0 !important;
+    padding: 1rem !important;
+  }
+
+  .ftue-changes.select-alert .alert-wrapper,
+  app-district-mapping .footer .btn-info {
+    background-color: #333;
+  }
+
+  .contacts .phone.light,
+  .contacts .email,
+  .contacts .phone {
+    color: #9b9b9b !important;
+    background: #333 !important;
+    border: 1px solid #333 !important;
+  }
+
+  .multi-select-container
+    .sb-modal-container
+    .sb-modal-overlay
+    .sb-modal
+    .header {
+    margin: 0;
+  }
+
+  img.arrow-icon,
+  .qr-content .qr-img,
+  .loading-spinner.sc-ion-loading-md,
+  .loading-wrapper.ion-overlay-wrapper.sc-ion-loading-md,
+  .multi-select-container .caret-down svg,
+  .language-card.selected-lang img.icon-check,
+  .tool-icon,
+  .preference-data img,
+  .sb-label-grid.show-icon.sb-pills-grid.hscroll.show-bradius.two-rows-grid.column-sequence.size--md.show-ellipsis--two,
+  ion-tabs ion-tab-button.tab-selected ion-icon,
+  ion-tabs ion-tab-button:not(.tab-selected) ion-icon,
+  .sb-dt-card .sb-dt-card-actions .sb-btn-tile-group .sb-btn-tile,
+  .panel-heading .panel-title img,
+  .search-input img,
+  img[alt="sorting"],
+  .filter-icon,
+  .profile-icon img,
+  .sb-label-grid.icon-header .item .img img,
+  .icon-check.selected,
+  .back-btn-container .top-back-button,
+  .sb-label-grid.sb-pills-grid.two-rows-grid .item label,
+  ion-icon.mg-popup-btn-icon svg,
+  .main-content img.close-icon,
+  .my-cr-title img,
+  .panel-title-blue img.btn-arrow,
+  ion-button ion-icon[name="arrow-down"],
+  .sb-label-grid.sb-box-grid .item .sb-icon-img,
+  .sb-search-history-entry > div img,
+  .filter-btn button img,
+  .sb-storage-container img,
+  ion-icon.mg-popup-btn-icon.md.hydrated,
+  #main-content img.close-icon,
+  app-create-edit-group button.sb-btn-large img,
+  .my-cr-btn .sb-btn-large img,
+  .enrolled-course-card-button img.play-icon,
+  .send-email .report-button img,
+  .certificate-container .certificate-icon img.certificate-icon,
+  .cd-chapter-card-button .play-icon,
+  .pnc-profile-name img,
+  .filter-button img,
+  accessdiscussion .card-icons,
+  accessdiscussion .card-button .card-icons,
+  img.menu-icon,
+  iframe[title="terms-and-condition"],
+  button.vjs-fullscreen-control.vjs-control.vjs-button,
+  button.vjs-menu-button.vjs-menu-button-popup.vjs-icon-cog.vjs-button,
+  button.vjs-mute-control.vjs-control.vjs-button.vjs-vol-3,
+  button.vjs-play-control.vjs-control.vjs-button {
+    filter: invert(1);
+  }
+  button.vjs-fullscreen-control.vjs-control.vjs-button,
+  button.vjs-menu-button.vjs-menu-button-popup.vjs-icon-cog.vjs-button,
+  button.vjs-mute-control.vjs-control.vjs-button.vjs-vol-3,
+  button.vjs-play-control.vjs-control.vjs-button {
+    box-shadow: none !important;
+  }
+  .card-button .card-icons-red svg {
+    fill: #b30909;
+  }
+
+  sb-library-cards-stack button.sbbtn.flat.stack-btn.full-width {
+    border: 1px solid var(--app-primary) !important;
+  }
+
+  //.sb-btn-tile img[alt="delete content"],
+
+  .leave-training-popup .popover-content {
+    --box-shadow: 0px 3px 6px 5px #222;
+  }
+
+  .sb--card {
+    box-shadow: 0 0.125rem 0.4375rem rgb(255 255 255 / 16%) !important;
+  }
+
+  ion-footer {
+    border-top: 1px solid #222;
+  }
+
+  ion-tabs ion-tab-button.tab-selected ion-icon[aria-label="courses"],
+  ion-tab-button#tab-button-courses.tab-selected
+    ion-icon[aria-label="courses"] {
+    filter: none !important;
+  }
+
+  ion-button {
+    background: transparent !important;
+  }
+
+  .school-details {
+    border-bottom: 0.3px solid var(--app-primary);
+    border-top: 0.3px solid var(--app-primary);
+    border: 0px;
+  }
+
+  ion-select .select-text.select-placeholder,
+  .select-text.select-placeholder .panel-title-blue,
+  .panel-heading .panel-title-blue,
+  .sb-legal-url,
+  ion-select.ion-text-capitalize.ion-valid.ion-touched,
+  app-enrolled-course-details-page .view-credits strong,
+  .sb-progress-percent-text,
+  .storage-info,
+  .sb-info .sb-url,
+  .edit-setting,
+  .training-2 .sb-btn-tile .sb-btn-footer-text,
+  .sb-btn-tile .view-icon,
+  p.app-title.ion-text-center,
+  .title-class {
+    color: var(--app-primary) !important;
+  }
+
+  .select-icon .select-icon-inner {
+    border-color: var(--app-primary) !important;
+  }
+
+  ion-item ion-select {
+    border-bottom: 0px solid var(--app-light-gray) !important;
+  }
+
+  .sb-btn-outline-info {
+    border-color: var(--app-primary);
+  }
+
+  app-search-filter sb-form sb-multiple-dropdown .multi-select-container {
+    border: 1px solid #555;
+  }
+
+  .ar-header,
+  .framework-header {
+    background-color: var(--app-primary);
+    color: #000;
+  }
+
+  .popover-ratings ion-icon.filled {
+    color: var(--app-primary) !important;
+  }
+
+  ion-item ion-select .select-text,
+  .sb-popover .sb-popover-header .sb-popover-toolbar .sb-popover-title,
+  .sb-card-view-all-container .sb-card .sb-card-actions .action-btn.delete,
+  .sb-card-download-container .sb-card .sb-card-actions .action-btn.delete,
+  .sign-in-card-text,
+  .ion-text-center.ion-padding.ion-text-wrap,
+  .gray-color,
+  .card-title,
+  .fill-in-style .fill-in-head,
+  .fill-in-style .fill-in-content,
+  .qr-instruction-container .qr-instruction .sub-title,
+  .select-box .alert-title,
+  .alert-checkbox-label.sc-ion-alert-md,
+  [aria-checked="true"].sc-ion-alert-md .alert-radio-label.sc-ion-alert-md,
+  .sb-popover .sb-popover-title,
+  .sb-popover
+    .sb-popover-container
+    .sb-popover-items
+    .sb-popover-content-details
+    .main-title,
+  sb-multiple-dropdown .multi-select-section div span,
+  .chng-theme-text,
+  selected-lang .language-selection,
+  .select-box.select-alert .alert-wrapper,
+  .ftue-changes.select-alert .alert-wrapper,
+  .ftue-changes .alert-title,
+  .alert-radio-label.sc-ion-alert-md,
+  .multi-select-container .header,
+  sb-course-cards-hlist .title,
+  sb-library-cards-stack .title,
+  .preference-container,
+  .filter-style,
+  .container-focus h3,
+  .sb--card.sb--card--theme2 .sb--card__info .data_4,
+  .sb-label-grid .item,
+  .sb-content-info-card .sb-content-info-heading,
+  .sb-content-info-card .sb-content-title-data,
+  .sb-content-info-card .sb-info,
+  app-faq-help .info-msg,
+  .panel-heading .panel-title,
+  .panel-interact > p,
+  .setting-label,
+  .sc-ion-label-ios-s > p,
+  ion-item.ion-text-wrap.item.md.in-list.ion-focusable.hydrated.item-label *,
+  ion-item.item.ios.in-list.ion-focusable.item-label *,
+  .permission-container .item-row .title,
+  .permission-container .item-row .description,
+  .search-info .description,
+  .search-info .title,
+  .native-input.sc-ion-input-md,
+  .sb-dw-manager .selector,
+  .sb-card-container .sb-card .sb-card-details .title,
+  .sb-card-container .sb-card .sb-card-details .info,
+  .hydrated,
+  .button-clear,
+  .sb-dt-card .sb-dt-content .left .sb-dt-source .sb-by,
+  .content-header-info,
+  .section-title,
+  .details-container .text-align,
+  ion-card-header,
+  .sign-in-card-text,
+  .sb-label-grid.sb-pills-grid.two-rows-grid,
+  .sb-chapter-dd,
+  app-collection-detail-etb
+    .collection-etb-filter
+    .sb-slider-pills-container
+    .sb-pills-container
+    .pill,
+  p.information,
+  .sb-topic-text,
+  .dm-header.ion-padding span.preference-info,
+  .my-cr-subtitle,
+  .load-status,
+  .user-profile,
+  .user-container .use-app-label,
+  .sb-members-list-item--vertical .sb-member .sb-member__name,
+  .gd-header .gd-title .gd-name,
+  .gd-header .gd-title .gd-name .gd-created-by,
+  .group-option-popover .popover-content ion-item label,
+  .gd-large-text,
+  .sb-members-list-item--horizontal .sb-member .sb-member__name,
+  .sb-view-all-container .sb-view-all-items .sb-view-all-title .page-heading,
+  .sb-view-all-container .sb-view-all-items .sb-view-all-title .page-info,
+  .profile-name,
+  .app-name,
+  p.profile-head + p span,
+  .school-recent,
+  .roles-container,
+  .school-details .preference-info,
+  .trainings .heading,
+  .trainings .heading,
+  .trainings .content .training-1 .fw,
+  .trainings .content .training-1 .batch-detail,
+  .trainings .content .training-1 .lighter,
+  sb-textbox .sb-input,
+  app-admin-home ion-content div,
+  app-admin-home ion-content div.label,
+  .sb-no-search-history,
+  .sb-search-header-meta,
+  .subtitle h6,
+  ion-button.reset_button.ion-color.ion-color-dark.md.button.button-outline.ion-activatable.ion-focusable.hydrated,
+  .subtitle,
+  .sb-course-end-container .sub-heading,
+  .sb-popover
+    .sb-popover-container
+    .sb-popover-items
+    .sb-popover-content-details
+    .sb-popover-content
+    .sb-popover-download-content,
+  .sb-storage-container .sb-card-details .info,
+  .sb--card__title,
+  .gd-card-head .gd-card-titile,
+  .au-container .au-title,
+  .au-container .au-ip .au-ip-info,
+  .au-container .au-ip input,
+  .profile-info,
+  .sign-in-card-success .sign-in-block p,
+  .text-unselected,
+  .progress-label,
+  .cd-label,
+  .cd-header-container .cd-header-title,
+  .cd-container-title,
+  .cd-container .cd-container-progress,
+  .card-text,
+  .content-rating-detail,
+  .sb-popover
+    .sb-popover-container
+    .sb-popover-items
+    .sb-popover-content-details
+    .main-title
+    .meta-info,
+  .alert-title.sc-ion-alert-md,
+  .alert-head.sc-ion-alert-md + .alert-message.sc-ion-alert-md,
+  .container-focus p,
+  .sb-batch-end-container .batch-end-sub-heading,
+  .contributions .bolder.f16,
+  ion-card h6.second-line-ellipsis,
+  .contributions ion-card .author,
+  .cr-terms-checkbox-label,
+  .my-cr-bg
+    .mg-list-card-container
+    .sb--card--course--curiculum
+    .sb--card__title,
+  app-discover .sb-label-grid.show-ellipsis .item label,
+  .panel-info h6,
+  .panel-info p,
+  .search-bar,
+  .search-bar input,
+  .sb-slider-pills-container .sb-grade-pills-container .pill,
+  .multi-select-section label.input-label,
+  app-profile-name-confirmation-popover .sb-popover-content-details,
+  .enrollment-end-date,
+  app-profile .contacts .phone .value,
+  .sb-popover
+    .sb-popover-container
+    .sb-popover-items
+    .sb-popover-content-details
+    .main-title
+    .meta-info,
+  sb-course-card .sb--card--course span.data_1.sb__ellipsis.sb__ellipsis--two,
+  .content-share .share-desc,
+  .sb-popover
+    .sb-popover-container
+    .sb-popover-items
+    .sb-popover-content-details
+    .sb-popover-content,
+  app-profile .contacts .phone .value,
+  .content-share .share-desc,
+  .sb-popover
+    .sb-popover-container
+    .sb-popover-items
+    .sb-popover-content-details
+    .main-title
+    .meta-info,
+  sb-form sb-multiple-dropdown .multi-select-container ul span,
+  .sb-popover
+    .sb-popover-container
+    .sb-popover-items
+    .sb-popover-content-details
+    .main-title
+    .meta-info,
+  sb-form sb-multiple-dropdown .multi-select-container ul span,
+  .sb--card__details,
+  .sb-dt-card .sb-dt-content .left .sb-dt-class-info .sb-dt-label,
+  .sb-dt-card .sb-dt-content .left .sb-dt-source .sb-user,
+  .sb-dt-source .sb-user,
+  .player-endpage__right-panel .title-section .title,
+  .player-endpage__right-panel .title-section span,
+  .player-endpage__right-panel .next,
+  .sb-search-history-entry > div {
+    color: #ffffff !important;
+  }
+
+  .checkmark {
+    border-color: #fff;
+  }
+
+  :not(.normalize) .container .checkmark:after {
+    border-color: #000;
+  }
+
+  ion-button.md.button.button-block.button-solid.ion-activatable.ion-focusable.hydrated
+    .md.hydrated {
+    color: #000 !important;
+  }
+
+  .item-interactive-disabled.sc-ion-label-md-h:not(.item-multiple-inputs),
+  .item-interactive-disabled:not(.item-multiple-inputs) .sc-ion-label-md-h {
+    opacity: 0.5;
+  }
+
+  .sb-content__bar {
+    background: none;
+  }
+
+  .contributions {
+    background: #111;
+  }
+
+  .hr-border-bottom {
+    border: 0.5px solid #000;
+  }
+
+  ion-item .item-label div.item-inner {
+    border: 0;
+  }
+
+  ion-button.badge.md.button.button-outline.ion-activatable.ion-focusable.hydrated {
+    border-radius: 1rem;
+  }
+
+  app-sign-in-card .sign-in-block {
+    box-shadow: 0 20px 40px -10px #383838 !important;
+  }
+
+  sb-multiple-dropdown .multi-select-section div span.checkmark {
+    border: 1px solid #000;
+    background: #000;
+  }
+
+  .cr-terms-checkbox {
+    --background-checked: var(--app-primary);
+    --border-color: var(--app-primary);
+    --border-radius: 4px;
+    --border-width: 1px;
+    --border-color-checked: var(--app-primary);
+  }
+
+  .gd-member-search input {
+    border: 1px solid #333;
+    background: #333;
+    color: #fff;
+  }
+
+  .gd-add-member {
+    border-bottom: 1px solid #000;
+  }
+
+  .checkbox-checked .checkbox-icon,
+  .checkbox-indeterminate .checkbox-icon,
+  :host(.checkbox-checked) .checkbox-icon,
+  :host(.checkbox-indeterminate) .checkbox-icon,
+  ion-checkbox.checkbox-checked .checkbox-icon {
+    border-color: var(--app-primary);
+    background: var(--app-primary);
+  }
+
+  .checkbox-icon {
+    border-color: #666 !important;
+    background: #222 !important;
+  }
+
+  .checkbox-icon path {
+    stroke: var(--black);
+  }
+
+  .details-container {
+    border: 0;
+  }
+
+  .ion-toolbar.toolbar-title-default .subtitle {
+    background: #333 !important;
+  }
+
+  .container input:checked ~ .checkmark {
+    background-color: var(--app-primary) !important;
+
+    &::after {
+      border: solid var(--black);
+      border-width: 0 2px 2px 0;
+    }
+  }
+
+  .oval-wrapper .oval {
+    background: var(--app-primary);
+
+    img {
+      filter: invert(1);
+    }
+  }
+
+  .item-label-stacked.item-select-disabled ion-label {
+    opacity: 0.65;
+  }
+
+  ion-item ion-select .select-text.select-placeholder {
+    color: #cccccc !important;
+  }
+
+  .content-share .share-info {
+    background: #222;
+    color: #fff;
+  }
+
+  .preference-info,
+  ion-button,
+  ion-button.sign-in-btn.hydrated,
+  ion-button.button-block,
+  .qr-instruction-container .qr-btn-container .qr-btn span,
+  ion-button.explore-more-content.md.button.button-block.button-outline.ion-activatable.ion-focusable.hydrated,
+  ion-button.explore-more-books.md.button.button-block.button-solid.ion-activatable.ion-focusable.hydrated,
+  ion-button.MT16.md.button.button-block.button-solid.ion-activatable.ion-focusable.hydrated,
+  app-faq-help .panel .yesBtn,
+  ion-button.sign-in-btn.md.button.button-block.button-solid.ion-activatable.ion-focusable.hydrated
+    .button-native,
+  .sb--card--course--curiculum .sb--card__title {
+    color: #000000 !important;
+  }
+
+  .ion-color-primary svg.ionicon.s-ion-icon path,
+  .sbchapter__item .sbchapter__img .icon-svg svg.icon.icon-svg--primary,
+  .sbchapter__item
+    .sbchapter__img--inprogress
+    .icon-svg
+    svg.icon.icon-svg--primary,
+  .refresh-icon svg path,
+  .textbook-icon ion-icon svg path,
+  .card-button .card-icons svg,
+  .refresh-icon svg.ionicon.s-ion-icon,
+  .sb-textbook-title-container .textbook-icon svg,
+  ion-icon[name="settings"] svg,
+  .icon-svg svg.icon.icon-svg--primary,
+  icon.icon-svg--primary {
+    fill: var(--app-primary) !important;
+  }
+
+  sb-toc-curriculum
+    .sbchapter__item--active
+    .sbchapter__img
+    .icon-svg
+    svg.icon.icon-svg--primary {
+    fill: #000 !important;
+  }
+
+  .text-selected ion-icon[aria-label="checkmark"] svg {
+    stroke: var(--app-primary);
+  }
+
+  .card-container.selected {
+    border: 3px solid var(--app-primary);
+  }
+
+  app-page-filter-options
+    ion-grid.scroll-list.md.hydrated
+    ion-row
+    ion-col
+    ion-item {
+    --background: none !important;
+  }
+
+  app-page-filter-options
+    .toolbar-title-default
+    ion-title.subtitle.pull-left.md.title-default.hydrated,
+  app-page-filter-options
+    .toolbar-title-default
+    ion-title.subtitle.pull-right.md.title-default.hydrated,
+  app-page-filter-options
+    .toolbar-title-default
+    ion-title.subtitle.md.title-default.hydrated {
+    background: none !important;
+  }
+
+  .alert-radio-group.sc-ion-alert-md,
+  .alert-checkbox-group.sc-ion-alert-md {
+    border-top: 1px solid var(--ion-color-step-150, #222);
+    border-bottom: 1px solid var(--ion-color-step-150, #222);
+  }
+
+  [aria-checked="true"].sc-ion-alert-md .alert-checkbox-inner.sc-ion-alert-md {
+    border-color: #000;
+  }
+
+  .sb-popover.sb-popover-permissions .sb-popover-footer .popover-button-cancel,
+  .cancel_info,
+  .panel-interact > button.btn,
+  .sb-slider-pills-container .sb-pills-container .pill.active,
+  .sb-grade-pills-container .pill.rounded.active,
+  app-my-groups-popover .main-content .mg-popup-btn.sb-btn-large,
+  .my-cr-btn.sb-btn-large,
+  ion-footer[role="contentinfo"] ion-col:last-child .button-native,
+  .mg-popup-btn-container button,
+  .my-cr-btn .sb-btn-large,
+  app-create-edit-group button.sb-btn-large,
+  .cd-btn .sb-btn-large,
+  .add-to-group-btn-container .add-btn,
+  add-activity-to-group .add-to-group-button,
+  .au-btn .sb-btn-large,
+  .btn-info .save-changes,
+  .send-email .report-button,
+  .save-changes,
+  #know-more-form .submit-button,
+  .search-filter-footer.apply-btn button {
+    --background: var(--app-primary);
+    border: 1px solid var(--app-primary);
+    color: var(--black) !important;
+    background: var(--background) !important;
+  }
+
+  .search-filter-footer ion-button button,
+  app-district-mapping .block-button-clear {
+    background: #000 !important;
+    color: var(--app-primary) !important;
+    border: 1px solid var(--app-primary) !important;
+  }
+
+  ion-button[_ngcontent-wth-c27] {
+    --background: var(--app-primary) !important;
+    color: #000;
+    --background-hover: var(--app-primary) !important;
+    --background-activated: var(--app-primary) !important;
+  }
+
+  ion-button[fill="outline"],
+  .add-to-group-btn-container .open-btn,
+  .btn-info .cancel_info,
+  .save-changes-not-agree {
+    --background: #000 !important;
+    color: var(--app-primary) !important;
+    --border-color: var(--app-primary) !important;
+    background: var(--background) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  app-categories-edit
+    ion-button.md.button.button-block.button-solid.ion-activatable.ion-focusable.hydrated,
+  ion-button.sort-by.md.button.button-block.button-solid.ion-activatable.ion-focusable.hydrated {
+    border-radius: 0px !important;
+    background: #333 !important;
+    border: 0px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    padding: 0.75rem !important;
+    height: 4rem;
+  }
+
+  app-categories-edit ion-row.padding-12.md.hydrated {
+    --background: #333 !important;
+    background: #333 !important;
+    padding: 0 !important;
+  }
+
+  .search-filter-footer .apply-btn button,
+  .search-filter-footer button {
+    background: none !important;
+  }
+
+  app-create-edit-group form ion-item.item-label-stacked {
+    margin-top: 0;
+    padding-top: 0;
+  }
+
+  ion-button {
+    --background: var(--app-primary) !important;
+    color: #000;
+    --background-hover: var(--app-primary) !important;
+    --background-activated: var(--app-primary) !important;
+  }
+
+  .sb-popover.sb-popover-permissions .sb-popover-footer .popover-button-allow,
+  button.block-button-save.blur-save-btn,
+  .letsgo-info,
+  .block-button-save,
+  .panel-interact > button.yesBtn,
+  .sb-popover .sb-popover-footer .sb-popover-action-btn.popover-color,
+  .button-native,
+  .cd-btn .sb-btn-large,
+  button.block-button-clear.blur-clear-btn {
+    border: 1px solid var(--app-primary);
+    background-color: var(--app-primary) !important;
+    color: #000 !important;
+  }
+
+  app-faq-help .panel #btn-no {
+    color: var(--app-primary) !important;
+    background: #000 !important;
+  }
+
+  .sbchapter__item--active,
+  .sbchapter__item--active:hover,
+  .sbchapter__item:hover {
+    background: var(--cc-toc-card-item-hover) !important;
+  }
+
+  sb-toc-curriculum .sbchapter__item--active,
+  sb-toc-curriculum .sbchapter__item--active:hover,
+  sb-toc-curriculum .sbchapter__item:hover,
+  .sbchapter__item--active,
+  .sbchapter__item--active:hover,
+  .sbchapter__item:hover {
+    background: var(--app-primary) !important;
+  }
+
+  .merged-input-container {
+    border: 1px solid var(--app-primary);
+  }
+
+  .section-header-style,
+  .sb-textbook-container
+    .sb-textbook-items
+    .sb-textbook-title-container
+    .textbook-title,
+  .sb-dt-title,
+  .sb-content-info-container .sb-content-info-items .sb-content-info-title,
+  .read-more,
+  .view-credits span,
+  .sb-textbook-toc,
+  .sp-title,
+  .gd-tab-header .gd-tab.active .gd-tab-name,
+  .ongoing-status-text,
+  app-admin-home .filter-style,
+  .cr-title,
+  .cr-terms,
+  .cr-terms-checkbox-label .terms-info,
+  .text-selected,
+  ion-button.explore-more-content.md.button.button-block.button-outline.ion-activatable.ion-focusable.hydrated,
+  .app-rate-appname,
+  .app-rate-heading {
+    color: var(--app-primary) !important;
+  }
+
+  ion-item {
+    --background: #333333 !important;
+  }
+
+  ion-button.app-rate-btn-outline.md.button.button-block.button-outline.ion-activatable.ion-focusable.hydrated,
+  ion-button.app-rate-btn.md.button.button-block.button-solid.button-disabled.ion-activatable.ion-focusable.hydrated {
+    background: none !important;
+    border: none !important;
+  }
+
+  .gd-tab-header .gd-tab.active {
+    border-bottom: 2px solid var(--app-primary);
+  }
+
+  sb-pills-grid .sb-view-more-less .view-all {
+    border: 0.0625rem solid var(--app-primary);
+  }
+
+  .spinner-lines.sc-ion-loading-md,
+  .spinner-lines-small.sc-ion-loading-md,
+  .spinner-bubbles.sc-ion-loading-md,
+  .spinner-circles.sc-ion-loading-md,
+  .spinner-crescent.sc-ion-loading-md,
+  .spinner-dots.sc-ion-loading-md,
+  ç {
+    color: var(--app-primary);
+  }
+
+  .sb-slider-pills-container .sb-grade-pills-container .pill.active,
+  .ecd-header {
+    background-color: var(--app-primary) !important;
+    color: #000 !important;
+  }
+
+  ion-checkbox.checkbox-checked {
+    --border-width: 1px;
+    --border-color: var(--app-primary);
+    --background-checked: var(--app-primary);
+    --border-color-checked: var(--app-primary);
+    --border-radius: 4px;
+    --checkmark-color: black;
+  }
+
+  ion-checkbox.cr-terms-checkbox.ion-color.ion-color-secondary.md.interactive.hydrated.ng-dirty.ng-valid.ng-touched.ion-dirty.ion-valid.ion-touched {
+    border: 1px solid #fff;
+  }
+
+  ion-checkbox.cr-terms-checkbox.ion-color.ion-color-secondary.md.interactive.hydrated.ng-dirty.ng-valid.ng-touched.ion-dirty.ion-valid.ion-touched.checkbox-checked {
+    border: 1px solid var(--app-primary);
+  }
+
+  .letsgo-info,
+  .cancel_info {
+    font-size: 0.875rem;
+    padding: 12px 0;
+  }
+
+  ion-icon {
+    color: var(--app-primary);
+  }
+
+  sb-label-grid.show-icon.sb-box-grid.icon-header {
+    .item {
+      background-color: #333;
+
+      img {
+        background: #222;
+      }
+
+      label {
+        color: #fff;
+      }
+
+      sb-icon-img {
+        filter: invert(1);
+      }
+    }
+  }
+
+  .new-feature-badge .circle-badge {
+    border: 1px solid #333;
+    background-color: #333;
+  }
+
+  app-application-header .side-menu-footer {
+    border-radius: 0 0 0 0;
+    background: #222 !important;
+  }
+
+  app-application-header .sb-menu-list {
+    padding: 0;
+    margin: 0;
+    border-radius: 0 !important;
+  }
+
+  .sb-menu-list > ion-item {
+    padding: 0.03125rem 0;
+  }
+
+  .ion-page.can-go-back ion-list ion-item * {
+    color: #fff;
+  }
+
+  .panel-body {
+    background-color: #222;
+    color: #fff;
+  }
+
+  .icon-arrow-up svg.icon-svg--primary {
+    fill: var(--app-primary);
+  }
+
+  app-guest-profile .profile-info {
+    background: none !important;
+  }
+
+  ion-item.ge-item-16.item.md.ion-activatable.ion-focusable.hydrated.item-label.item-label-stacked.item-interactive.item-select.item-has-placeholder.ion-untouched.ion-pristine.ion-valid,
+  ion-item.ge-item-16.ion-untouched.ion-pristine.ion-valid.item-interactive.item-input.item-has-placeholder.item-has-value.item.md.ion-focusable.hydrated.item-label.item-label-stacked {
+    width: 100% !important;
+    margin-left: 0px !important;
+    --padding-start: 1rem;
+  }
+
+  app-collection-detail-etb .textbook-accordian .sbchapter__play__btn {
+    color: var(--app-primary) !important;
+    border-color: var(--app-primary);
+    background: #333;
+
+    .icon-svg--primary {
+      fill: var(--app-primary);
+    }
+  }
+
+  app-resources sb-library-filters .sb-medium-pills-container .pill,
+  app-resources sb-library-filters .sb-grade-pills-container .pill {
+    border-color: #222 !important;
+  }
+
+  .sbaccordion__panel-content .sbchapter {
+    background-color: transparent;
+    border-bottom-color: #000;
+
+    .sbchapter__title {
+      color: #fff;
+    }
+
+    .sbchapter__item {
+      background-color: #222;
+      border-color: #222;
+    }
+  }
+
+  .popover-content.sc-ion-popover-md app-overflow-menu ion-list ion-item {
+    --background: var(--app-primary-background) !important;
+  }
+
+  ion-tabs ion-tab-button {
+    --color-selected: var(--app-primary);
+  }
+
+  .subtitle {
+    margin-left: 0rem;
+  }
+
+  ion-toolbar h4.subtitle {
+    background: none !important;
+  }
+
+  :host(.tab-selected) {
+    color: var(--app-primary);
+  }
+
+  // discussion forum
+  .discussion-forum {
+    background: #000;
+  }
+
+  .text-content {
+    background: #222;
+    border: 1.5px solid #222;
+  }
+
+  .openbtn {
+    background: var(--white);
+  }
+
+  .df-btn-container,
+  .discuss-card-content,
+  .category-card,
+  .overlay-sidebar__menu,
+  .discussion-details,
+  .profileCard,
+  .related-discuss-card,
+  .discussion-start-modal .discussion-start-modal-content {
+    background: #333;
+  }
+
+  .df-btn-container .sb-left-icon,
+  .submit-post-btn.start-common-btn {
+    color: var(--black) !important;
+    background-color: var(--app-primary) !important;
+    border: 1px solid var(--app-primary) !important;
+  }
+
+  .start-modal-buttons .start-modal-buttons .discard-btn.start-common-btn {
+    color: var(--app-primary) !important;
+    background-color: var(--black) !important;
+    border: 1px solid var(--app-primary) !important;
+  }
+
+  .ng2-tag-input.ng2-tag-input--focused {
+    border-bottom: 2px solid var(--app-primary);
+  }
+
+  .discussion-start-modal
+    .discussion-start-modal-content
+    .discussion-start-form
+    .start-form-field
+    .start-form-field-control,
+  .ng2-tag-input__text-input {
+    background-color: #222;
+    border: 0.0625rem solid #222;
+  }
+
+  .ng2-tag-input {
+    border-bottom: 1px solid #000;
+  }
+
+  .discussion-start-modal
+    .discussion-start-modal-content
+    .discussion-start-form
+    .start-form-field
+    .start-form-field-control
+    .active,
+  .discussion-start-modal
+    .discussion-start-modal-content
+    .discussion-start-form
+    .start-form-field
+    .start-form-field-control:focus {
+    border-color: var(--app-primary) !important;
+    color: #fff !important;
+  }
+
+  //.df-btn-container .sb-left-icon img,
+
+  .category-card-img,
+  .eye-icon,
+  .category-card-img,
+  .discuss-card-label img,
+  .discuss-comments-area img,
+  .views-content img,
+  .votes-content img,
+  .icons,
+  #bookmark img,
+  .comments-area img {
+    filter: invert(1);
+  }
+
+  .separator-dot {
+    background-color: #fff;
+  }
+
+  .category-card-header-label,
+  .category-card-header-text,
+  .category-card-main-content,
+  .discuss-card-header a,
+  .discuss-card-title,
+  .discuss-card-content,
+  .flex.flex-3.flex-column.discussion-details *,
+  .filter-option,
+  .profile-label,
+  .profileCard *,
+  .sb-sidebar-menu-mob li,
+  .related-discuss-card-content,
+  .discussion-start-modal
+    .discussion-start-modal-content
+    .discussion-start-form
+    .start-form-field
+    .start-form-field-control {
+    color: #fff;
+  }
+
+  .discuss-card-label,
+  .comments-count,
+  .number,
+  .closebtn {
+    color: var(--app-primary);
+  }
+
+  .sb-btn-disabled {
+    background-color: #999;
+    border: 1px solid #999;
+  }
+
+  .post-btn,
+  .post-reply-btn {
+    background-color: var(--app-primary);
+
+    .text-white {
+      color: #000 !important;
+    }
+  }
+
+  .post-btn.cancel-update-post {
+    background-color: #000;
+
+    .text-white {
+      color: var(--app-primary) !important;
+    }
+  }
+
+  .discussion-forum .reply-btn {
+    background-color: #222;
+  }
+
+  .dot {
+    background: #fff;
+  }
+
+  .recent-tabs .filter-option:hover,
+  .tabs-active {
+    border-bottom: 3px solid var(--app-primary);
+  }
+
+  .sb-sidebar-menu-mob li.menu-active {
+    background-color: #222;
+    border-left: 3px solid #000;
+    color: var(--app-primary);
+  }
+
+  .faq-sub-title,
+  .selected-category-name,
+  app-faq-help ion-content:first-child .container-focus {
+    color: #fff;
+  }
+  app-faq-help sb-list .listView-compt section.mt-24 button {
+    background-color: var(--app-primary) !important;
+    color: var(--app-white) !important;
+  }
+
+  ::placeholder,
+  :-ms-input-placeholder,
+  ::-ms-input-placeholder,
+  ::-ms-placeholder,
+  ::-webkit-input-placeholder,
+  ::-moz-placeholder {
+    color: #555;
+  }
+  //QUML Darkmode styles
+
+  //SDK
+  --sdk-end-page-title: #fff;
+  --sdk-end-page-replay-icon: #fff;
+  --sdk-end-page-replay-section-bg: #333;
+  --sdk-end-page-replay-section-hover: #222;
+  --sdk-end-page-title-span: #fff;
+  //QUML
+  --quml-main-bg: #333;
+  --quml-color-primary-contrast: #fff;
+  --quml-scoreboard-sub-title: #f2f2f2;
+  --quml-mcq-title-txt: #fff;
+  --quml-option-card-bg: #222222;
+  --quml-btn-border: #222;
+  --quml-option-selected-checkmark: #333;
+  --quml-navigation-btns: #333;
+  --quml-question-bg: #333;
+  --quml-scoreboard-unattempted: #fff;
+  --quml-info-icon: #000 !important;
+  --quml-close-icon: #fff;
+
+  .know-more-form label {
+    color: #fff;
+  }
+  .remaining-length,
+  :not(.normalize) .multi-select-container .list-border .placeholder,
+  .select-text.select-placeholder,
+  .alert-message.sc-ion-alert-md,
+  .alert-input-group.sc-ion-alert-md,
+  .sb--card--course .sb--card__meta1,
+  .settings-item-style,
+  .sc-ion-label-ios-s > p,
+  .placeholder {
+    opacity: 1;
+    color: #fff;
+  }
+  input.native-input::placeholder,
+  input.native-input.sc-ion-input-md::placeholder,
+  textarea.native-textarea.sc-ion-textarea-md::placeholder,
+  textarea.native-textarea::placeholder,
+  .select-placeholder,
+  textarea#knowMoreMsg::placeholder,
+  textarea::placeholder,
+  .sb-textarea::placeholder,
+  .placeholder::placeholder {
+    color: #fff;
+    opacity: 0.75;
+  }
+
+  sb-form sb-multiple-dropdown .multi-select-container ul span {
+    color: #fff;
+  }
+  :not(.normalize) .checkmark {
+    border-color: #fff;
+  }
+  :not(.normalize) .container .checkmark:after {
+    border-color: #000;
+  }
+  .content-preferences-info {
+    background: #000;
+  }
+  .grid-container {
+    background: #333;
+    border: 0;
+    color: #fff;
+  }
+  .info-title {
+    color: #fff;
+  }
+}
+
+// accessbility changes
+html[device-accessable-theme="accessible"][data-theme="JOYFUL"] {
+  --app-light-gray: #595959 !important;
+  --color-checked: #104c87 !important;
+  --color-dark-grey: #515151 !important;
+  --color-red-error: #b30909 !important;
+  --color-dark-black: #000000 !important;
+  --color-panther: #424242 !important;
+  --color-gray34: #575757 !important;
+
+  --app-primary: #00458f !important;
+  --app-medium-gray: #4a4a4a;
+  --app-light-gray: #555;
+  $red: #ad0011;
+  $gray-300: lighten($gray, 12%); // sub heading 2 #969696
+  $gray-400: lighten($gray, 8%); // sub heading #666666
+
+  .sc-ion-label-ios-s > p {
+    color: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.25);
+  }
+
+  app-district-mapping .btn-info {
+    padding: 16px 8px;
+  }
+
+  .details-container {
+    .grid-item {
+      padding-top: 16px !important;
+      padding-bottom: 16px !important;
+    }
+  }
+
+  app-application-header {
+    .buttons-first-slot {
+      padding-top: 8px !important;
+      padding-bottom: 8px !important;
+    }
+
+    .sb-hamburger-menu {
+      height: 48px !important;
+    }
+
+    ion-button.button-clear {
+      height: 48px !important;
+    }
+
+    .sb-hamburger-menu.sb-hamburger-icon {
+      height: 48px !important;
+
+      .tool-icon {
+        width: 32px !important;
+      }
+    }
+
+    .ion-activatable.ion-focusable {
+      width: 48px !important;
+      height: 48px !important;
+    }
+
+    .active-download-icon {
+      height: 48px !important;
+      width: 48px !important;
+    }
+  }
+
+  app-user-home {
+    .change-btn {
+      .sb-btn-sm {
+        height: 48px !important;
+      }
+    }
+  }
+
+  app-resources {
+    sb-library-filters {
+      .pill {
+        padding-top: 16px !important;
+        padding-bottom: 16px !important;
+      }
+
+      sb-library-filters {
+        .rounded {
+          border-radius: 24px !important;
+        }
+
+        .sb-explore-container {
+          .explore-more-books,
+          .explore-more-content {
+            height: 3.5rem !important;
+          }
+        }
+      }
+
+      #mediumScroll .pill {
+        padding-top: 16px !important;
+        padding-bottom: 16px !important;
+        border-radius: 4px !important;
+      }
+
+      #gradeScroll .pill {
+        padding-top: 24px !important;
+        padding-bottom: 24px !important;
+        border-radius: 24px !important;
+      }
+    }
+
+    .scrollable-container {
+      margin-top: 155px !important;
+    }
+
+    .ui-container::after {
+      height: 210px !important;
+    }
+
+    .explore-more-books,
+    .explore-more-content {
+      height: 3.4rem !important;
+    }
+  }
+
+  .fixed-container {
+    .sb-grade-pills-container {
+      .sb-slider-pills-container .sb-grade-pills-container .pill {
+        padding-right: 2rem;
+        padding-left: 2rem;
+      }
+    }
+  }
+
+  .app-application-header {
+    .tool-icon {
+      width: 32px;
+    }
+  }
+
+  .change-role {
+    color: var(--color-checked);
+    padding-top: 16px !important;
+    padding-bottom: 16px !important;
+  }
+
+  app-profile {
+    .contacts .email.light .value {
+      color: var(--app-light-gray);
+    }
+
+    .trainings {
+      .ion-text-center {
+        .txt-capitalize {
+          height: 3.5rem !important;
+        }
+      }
+    }
+
+    .contacts .phone .value {
+      color: var(--app-light-gray);
+    }
+
+    .contacts .email {
+      padding: 9px 17px;
+    }
+  }
+
+  app-search {
+    .search-bg {
+      .sb-label-grid.sb-pills-grid .item {
+        padding: 1.7rem !important;
+      }
+    }
+
+    .search-input {
+      button {
+        width: 48px !important;
+      }
+    }
+
+    .search-container {
+      .search-input {
+        padding: 0.5rem 0.75rem !important;
+      }
+    }
+  }
+
+  app-category-list-page {
+    .filter-container {
+      .ion-text-capitalize {
+        height: 48px !important;
+        padding-top: 1rem !important;
+      }
+
+      .filter-button {
+        height: 100% !important;
+      }
+    }
+
+    .ion-activatable.ion-focusable {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  sb-pills-grid.size--sm {
+    .sb-label-grid.sb-pills-grid .item {
+      height: 3.5rem !important;
+    }
+  }
+  sb-pills-grid.size--md {
+    .sb-label-grid.sb-pills-grid .item {
+      height: 4.5rem !important;
+    }
+  }
+
+  sb-library-cards-stack {
+    button.sbbtn.flat.stack-btn.full-width {
+      line-height: 2;
+    }
+  }
+
+  ion-card-content {
+    .sign-in-btn {
+      button.button-native {
+        height: 3.4rem !important;
+      }
+    }
+
+    ion-button.badge.md.button.button-outline {
+      color: white;
+      height: 3.5rem;
+    }
+  }
+
+  app-sign-in-card {
+    .sign-in-block {
+      .button-block {
+        height: 3.5rem;
+      }
+    }
+  }
+
+  sb-dt-card-actions {
+    .card-icons-red {
+      color: var(--color-red-error) !important;
+    }
+  }
+
+  app-consent-pii-popup {
+    .btn-info button {
+      padding: 16px 16px !important;
+    }
+  }
+
+  app-downloads-tab {
+    .sb-card-download-container {
+      color: #252525 !important;
+    }
+
+    .sb-dw-manager {
+      .flex-50 {
+        padding-top: 11px !important;
+        padding-bottom: 11px !important;
+      }
+    }
+
+    .sb-card-actions .action-btn.delete {
+      color: var(--color-dark-black);
+      padding: 17px !important;
+      height: auto !important;
+      border-radius: 24px !important;
+    }
+  }
+
+  app-resources {
+    .sb-recenlty-viewed-title {
+      .view-all-p8 {
+        padding: 16px !important;
+        height: auto;
+      }
+    }
+  }
+
+  app-profile {
+    .trainings {
+      .refresh-icon {
+        height: 48px !important;
+        width: 48px !important;
+      }
+    }
+
+    .edit-options {
+      .custom-round {
+        height: 3.5rem !important;
+      }
+    }
+
+    .school-details {
+      .custom-round {
+        height: 3.5rem;
+      }
+    }
+
+    .contacts {
+      .email {
+        padding: 16px 24px !important;
+      }
+
+      .phone {
+        padding: 16px 24px !important;
+      }
+    }
+  }
+
+  .bottom-block {
+    .custom-round {
+      height: 3.5rem !important;
+    }
+  }
+
+  sb-course-cards-hlist {
+    .layout-course {
+      .sb-btn-white {
+        padding: 16px !important;
+        height: auto !important;
+      }
+    }
+  }
+
+  .menu-section {
+    .another-user-title {
+      padding: 16px 16px !important;
+    }
+  }
+
+  .sb-recently-viewed-container {
+    padding-bottom: 60px !important;
+  }
+
+  .sb-content-info-container {
+    .sb-content-info-card {
+      .read-more {
+        padding-top: 14px !important;
+        padding-bottom: 14px !important;
+      }
+    }
+  }
+
+  .content-share .share-desc {
+    color: var(--color-dark-grey);
+  }
+
+  sb-library-card {
+    .sb--card__main-area {
+      .menu::after {
+        width: 3.5rem;
+        height: 3.5rem;
+        color: var(--color-dark-black);
+      }
+    }
+  }
+
+  app-group-details {
+    .gd-member-search .gd-member-search-icon {
+      top: 14px;
+      left: 12px;
+    }
+
+    .gd-member-search input {
+      padding: 12px 0px 12px 40px !important;
+      height: auto !important;
+    }
+
+    .gd-page {
+      .gd-member-search .gd-member-search-icon {
+        top: 14px !important;
+        left: 12px !important;
+      }
+    }
+  }
+
+  app-activity-details {
+    .gd-member-search input {
+      padding: 12px 0px 12px 40px !important;
+      height: auto !important;
+    }
+
+    .gd-member-search .gd-member-search-icon {
+      top: 29px !important;
+      left: 21px !important;
+    }
+
+    .ad-member-container {
+      .ad-timestamp-container span {
+        padding: 12px;
+        height: auto;
+      }
+    }
+  }
+
+  app-enrolled-course-details-page {
+    .card-content-bottom-0 {
+      .segment-button-has-label-only {
+        color: var(--color-checked);
+      }
+    }
+  }
+
+  app-license-card-component {
+    .card-content-md {
+      .view-credits {
+        padding: 12px 0 !important;
+      }
+    }
+  }
+
+  sb-member-card {
+    .sb-members-list-item--medium .menu::after {
+      width: 3.5rem;
+      height: 3.5rem;
+    }
+
+    .sb-members-list-item .status {
+      padding: 16px !important;
+    }
+  }
+
+  app-detail-card {
+    .sb-grade-pills-container div {
+      padding: 16px !important;
+      height: 3.5rem !important;
+    }
+  }
+
+  .collection-etb-filter {
+    .sb-grade-pills-container div {
+      padding: 16px !important;
+      height: 3.5rem !important;
+    }
+  }
+
+  sb-toc-card {
+    .sbchapter__item {
+      button.sbchapter__play__btn {
+        height: 3.5rem !important;
+      }
+    }
+  }
+
+  .sb-content-info-card {
+    .read-more div {
+      padding-top: 14px !important;
+      padding-bottom: 14px !important;
+    }
+  }
+
+  .sb-popover .sb-popover-title ion-icon {
+    .sb-modal-close {
+      height: 48px !important;
+      width: 60px !important;
+    }
+  }
+
+  .sb-dt-card-actions {
+    .card-icons-red {
+      font-size: 30px;
+      color: var(--color-red-error);
+    }
+  }
+
+  .sb-popover-items {
+    .popover-ratings {
+      ion-buttons.sc-ion-buttons-md-h {
+        padding: 8px !important;
+      }
+
+      .app-rate-btn-outline {
+        height: 3.5rem !important;
+      }
+
+      .app-rate-btn {
+        height: 3.5rem !important;
+      }
+
+      .sc-ion-buttons-md-h {
+        ion-icon.md.hydrated {
+          color: var(--color-gray34);
+        }
+      }
+
+      .sc-ion-buttons-md-s .button-has-icon-only {
+        height: 3.5rem !important;
+      }
+    }
+  }
+
+  ion-footer ion-button {
+    height: 3.5rem !important;
+  }
+
+  app-content-rating-alert {
+    ion-icon.sb-modal-close {
+      height: 48px !important;
+    }
+  }
+
+  //   sb-multiple-dropdown{
+  //    .multi-select-section{
+  //      .multi-select-container .list-border{
+  //        padding: 1.7rem !important;
+  //      }
+  //    }
+  //   }
+  .footer {
+    .block-button-save,
+    .block-button-clear {
+      padding: 1rem !important;
+    }
+  }
+
+  app-about-us {
+    ion-button.md.button.button-clear.ion-activatable.ion-focusable {
+      width: 48px !important;
+      height: 48px !important;
+
+      ion-icon.md.hydrated {
+        height: 48px;
+      }
+    }
+  }
+
+  .sb-card-download-container .sb-card .img-container {
+    margin: 20px 0 !important;
+  }
+
+  app-data-sync {
+    .can-go-back {
+      ion-button {
+        height: 3.5rem !important;
+      }
+    }
+
+    ion-button.button-clear {
+      height: 3.5rem !important;
+    }
+
+    ion-button.MT16.md.button.button-block {
+      height: 3.5rem;
+    }
+  }
+
+  .changePermissionAccess {
+    .permission-container {
+      .permission-toggle {
+        padding: 0.6rem !important;
+      }
+    }
+  }
+
+  app-sb-share-popup {
+    .popover-viewport {
+      height: 48px !important;
+    }
+  }
+
+  app-about-us {
+    ion-label.sc-ion-label-md-h h2 {
+      padding-top: 5px !important;
+      padding-bottom: 5px !important;
+    }
+
+    .toolbar-title-default {
+      ion-button.button.button-clear {
+        width: 48px !important;
+        height: 48px !important;
+      }
+    }
+  }
+
+  sb-course-card {
+    .sb--card--course {
+      span.data_1.sb__ellipsis.sb__ellipsis--two {
+        color: var(--color-gray34);
+      }
+    }
+  }
+
+  app-sub-profile-edit {
+    ion-footer ion-button {
+      height: 48px !important;
+    }
+
+    input.native-input.sc-ion-input-md {
+      height: 3.5rem !important;
+    }
+  }
+
+  sb-pills-grid .sb-view-more-less .view-all {
+    height: 3rem !important;
+  }
+
+  page-language-settings {
+    .continue {
+      height: 3rem !important;
+    }
+  }
+
+  page-user-type-selection {
+    .back-btn-container .top-back-button {
+      width: 48px !important;
+      height: 3rem !important;
+      top: -14px !important;
+      left: initial !important;
+    }
+  }
+
+  app-profile-settings {
+    .back-btn-container .top-back-button {
+      width: 48px !important;
+    }
+
+    .qr-container {
+      .sb-btn {
+        height: 3rem !important;
+      }
+    }
+
+    .sb-btn {
+      height: 3rem !important;
+    }
+  }
+
+  .form-position .select-icon {
+    width: 48px !important;
+    height: 48px !important;
+  }
+
+  .form-position .item-label-stacked ion-select {
+    height: 3rem !important;
+  }
+
+  app-profile-settings .title {
+    color: var(--color-checked);
+  }
+
+  .ftue-changes .alert-button-group .alert-button {
+    height: 3rem !important;
+  }
+
+  .select-box.select-alert .alert-button-group .alert-button {
+    height: 3rem !important;
+  }
+
+  app-new-experience-popup {
+    .close-icon-info {
+      width: 3rem !important;
+      height: 3rem !important;
+      padding: 13px !important;
+    }
+
+    .cancel_info {
+      height: 3rem !important;
+    }
+  }
+
+  // .sb-switch-new-experience-popup .popover-content{
+  //   height: 31rem!important;
+  // }
+  .tutorial-popover .popover-wrapper {
+    img.close-icon {
+      width: 48px;
+      height: 48px;
+    }
+
+    .main-content {
+      .close-icon {
+        top: -23px;
+        right: -23px;
+      }
+    }
+  }
+
+  .sb-popover .sb-popover-title ion-icon {
+    height: 48px !important;
+  }
+
+  .sb-popover .sb-popover-footer .sb-popover-action-btn {
+    height: 48px !important;
+  }
+
+  // .profile-head .profile-symbol{
+  //   width: 48px;
+  //   height: 48px;
+  // }
+  // .profile-head .profile-symbol{
+  //   top: -15px !important;
+  // }
+  // .profile-head .profile-symbol .information-icon-style{
+  //   padding: 14px;
+  //   right: 32px;
+  //   top: -28px;
+  //   position: relative;
+  // }
+  ion-button.explore-more-books {
+    height: 3rem;
+  }
+
+  ion-button.explore-more-content {
+    height: 3rem;
+  }
+
+  .content-share .share-info ion-icon {
+    color: var(--color-dark-grey);
+  }
+
+  app-guest-edit ion-item ion-select {
+    height: 3rem;
+  }
+
+  app-guest-edit input.native-input.sc-ion-input-md {
+    height: 3rem;
+  }
+
+  app-guest-edit ion-label.type-label {
+    color: var(--color-dark-grey);
+  }
+
+  app-guest-edit .sb-btn {
+    height: 3rem;
+  }
+
+  app-downloads-tab .sb-dw-manager .flex-50 {
+    height: 3.5rem;
+  }
+
+  //  .school-recent span.isymbol ion-icon.information-icon-style{
+  //   padding: 14px;
+  //     left: 0px;
+  //     right: 12px;
+  //     top: auto;
+  //     position: relative;
+  // }
+  // .profile-share-icon .share-icon{
+  //   top: 18px;
+  //   margin-left: 8px;
+  //   padding: 14px;
+  // }
+  app-profile .roles-container ion-button.button-clear {
+    height: 3rem;
+  }
+
+  ion-card-content span.sb-legal-url {
+    display: block;
+    height: 48px;
+  }
+
+  app-my-groups .my-cr-title img {
+    padding: 12px;
+    top: 4px;
+  }
+
+  app-group-details .gd-tab-header .gd-tab-name {
+    padding: 12px;
+  }
+
+  app-filters .flex-card-container {
+    padding: 25px;
+  }
+
+  app-filters .filter-item {
+    color: var(--color-dark-grey);
+  }
+
+  app-filters ion-button.reset_button {
+    height: 48px;
+  }
+
+  app-sb-share-popup {
+    .content-share .share-url {
+      margin-left: 75px;
+    }
+
+    .content-share .share-desc {
+      margin-left: 75px;
+    }
+
+    ion-radio {
+      width: 48px;
+      padding: 10px;
+      height: 48px;
+      color: var(--color-panther);
+    }
+  }
+
+  app-data-sync {
+    ::slotted([slot="start"]) {
+      margin-inline-end: 10px;
+    }
+
+    ion-radio {
+      width: 48px;
+      padding: 10px;
+      height: 48px;
+      color: var(--color-panther);
+      margin-inline-end: 10px;
+    }
+  }
+
+  app-group-details {
+    .gd-opts ion-icon {
+      padding: 15px;
+    }
+
+    .gd-header .gd-title .gd-opts {
+      right: 8px;
+      top: 0px;
+    }
+  }
+
+  app-create-edit-group {
+    .char-info {
+      color: var(--color-panther);
+    }
+
+    input.native-input {
+      height: 3rem;
+    }
+
+    .cr-terms-container .cr-terms {
+      padding: 14px;
+    }
+
+    .cr-terms-container ion-checkbox {
+      --size: 48px;
+      padding: 12px;
+      color: var(--color-panther);
+      width: var(--size);
+      height: var(--size);
+    }
+
+    .cr-terms-container .cr-terms-checkbox-label {
+      margin-left: auto;
+      top: -20px;
+      position: relative;
+    }
+
+    cr-terms-container ion-checkbox {
+      border-color: var(--color-panther);
+    }
+  }
+}
+
+html[device-accessable-theme="accessible"][data-mode="DARKMODE"] {
+  --app-light-gray: #999 !important;
+  --color-checked: var(--app-primary) !important;
+  --color-dark-grey: #fff !important;
+  --color-red-error: #b30909 !important;
+  --color-dark-black: #fff !important;
+  --color-panther: #999 !important;
+  --color-gray34: #999 !important;
+  --app-primary: #ffd92a !important;
+  --app-medium-gray: #fff;
+  --app-light-gray: #fff;
+  $red: #ad0011;
+  $gray-300: #fff; // sub heading 2 #969696
+  $gray-400: #fff; // sub heading #666666
+
+  .select-text.select-placeholder,
+  .alert-message.sc-ion-alert-md,
+  .alert-input-group.sc-ion-alert-md {
+    color: #fff;
+  }
+  .sc-ion-label-ios-s > p {
+    color: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.25);
+  }
+}

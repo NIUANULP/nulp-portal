@@ -169,62 +169,93 @@ export class OtpComponent implements OnInit {
     };
   }
 
-  createUser(data?: any) {
+ createUser(data?: any) {
     let identifier = '';
     const createRequest = {
-      params: {
-        source: _.get(this.activatedRoute, 'snapshot.queryParams.client_id'),
-        signupType: 'self'
-      },
-      'request': {
-        'firstName': _.trim(_.get(this.startingForm, 'basicInfo.name')),
-        'password': _.trim(_.get(this.startingForm, 'emailPassInfo.password')),
-        'dob': _.get(this.startingForm, 'basicInfo.yearOfBirth').toString(),
-      }
-    };
-    if (this.mode === 'phone') {
-      createRequest.request['phone'] = _.get(this.startingForm, 'emailPassInfo.key').toString();
-      createRequest.request['phoneVerified'] = true;
-      identifier = _.get(this.startingForm, 'emailPassInfo.key').toString();
-    } else {
-      createRequest.request['email'] = _.get(this.startingForm, 'emailPassInfo.key');
-      createRequest.request['emailVerified'] = true;
-      identifier = _.get(this.startingForm, 'emailPassInfo.key');
-    }
-    createRequest.request['reqData'] = _.get(data, 'reqData');
-    if (this.otpForm.controls.tncAccepted.value && this.otpForm.controls.tncAccepted.status === 'VALID') {
-      this.signupService.createUserV3(createRequest).subscribe((resp: ServerResponse) => {
-        this.telemetryLogEvents('sign-up', true);
-        const tncAcceptRequestBody = {
-          request: {
-            version: this.tncLatestVersion,
-            identifier: identifier
-          }
-        };
-        this.signupService.acceptTermsAndConditions(tncAcceptRequestBody).subscribe(res => {
-          this.telemetryLogEvents('accept-tnc', true);
-          this.redirectToSignPage();
-        }, (err) => {
-          this.telemetryLogEvents('accept-tnc', false);
-          this.redirectToSignPage();
-        });
-      },
-        (err) => {
-          this.telemetryLogEvents('sign-up', false);
-          this.infoMessage = '';
-          this.errorMessage = this.resourceService.messages.fmsg.m0085;
-          this.disableSubmitBtn = false;
-          this.logCreateUserError(err.error.params.errmsg);
-          this.telemetryService.interact(this.createUserErrorInteractEdata);
-          if (err.status === 301) {
-            this.redirecterrorMessage = true;
-          } else {
-            this.redirecterrorMessage = false;
-          }
+        params: {
+            source: _.get(this.activatedRoute, 'snapshot.queryParams.client_id'),
+            signupType: 'self'
+        },
+        'request': {
+            'firstName': _.trim(_.get(this.startingForm, 'basicInfo.name')),
+            'password': _.trim(_.get(this.startingForm, 'emailPassInfo.password')),
         }
-      );
+    };
+
+    if (this.mode === 'phone') {
+        createRequest.request['phone'] = _.get(this.startingForm, 'emailPassInfo.key').toString();
+        createRequest.request['phoneVerified'] = true;
+        identifier = _.get(this.startingForm, 'emailPassInfo.key').toString();
+    } else {
+        createRequest.request['email'] = _.get(this.startingForm, 'emailPassInfo.key');
+        createRequest.request['emailVerified'] = true;
+        identifier = _.get(this.startingForm, 'emailPassInfo.key');
     }
-  }
+
+    createRequest.request['reqData'] = _.get(data, 'reqData');
+
+    if (this.otpForm.controls.tncAccepted.value && this.otpForm.controls.tncAccepted.status === 'VALID') {
+        this.signupService.createUserV3(createRequest).subscribe((resp: ServerResponse) => {
+            this.telemetryLogEvents('sign-up', true);
+
+            const tncAcceptRequestBody = {
+                request: {
+                    version: this.tncLatestVersion,
+                    identifier: identifier
+                }
+            };
+
+            this.signupService.acceptTermsAndConditions(tncAcceptRequestBody).subscribe(res => {
+                this.telemetryLogEvents('accept-tnc', true);
+
+                // Call custom user creation method after successful sign-up and TNC acceptance
+                this.customUserCreation(identifier);
+
+                this.redirectToSignPage();
+            }, (err) => {
+                this.telemetryLogEvents('accept-tnc', false);
+
+                // Call custom user creation method after successful sign-up
+                this.customUserCreation(identifier);
+
+                this.redirectToSignPage();
+            });
+        },
+        (err) => {
+            this.telemetryLogEvents('sign-up', false);
+            this.infoMessage = '';
+            this.errorMessage = this.resourceService.messages.fmsg.m0085;
+            this.disableSubmitBtn = false;
+            this.logCreateUserError(err.error.params.errmsg);
+            this.telemetryService.interact(this.createUserErrorInteractEdata);
+
+            if (err.status === 301) {
+                this.redirecterrorMessage = true;
+            } else {
+                this.redirecterrorMessage = false;
+            }
+        });
+    }
+}
+
+customUserCreation(identifier: string) {
+    const customData = {
+        "user_id": identifier,
+        "designation": _.trim(_.get(this.startingForm, 'basicInfo.designation')),
+        "userType": _.trim(_.get(this.startingForm, 'basicInfo.userType')),
+        "organisation": _.trim(_.get(this.startingForm, 'basicInfo.organisation')),
+    };
+
+    this.signupService.CreateUser(customData).subscribe(
+        (response) => {
+            console.log('Custom user created successfully', response);
+        },
+        (error) => {
+            console.error('Error creating custom user', error);
+        }
+    );
+}
+
 
   /**
    * Redirects to sign in Page with success message
