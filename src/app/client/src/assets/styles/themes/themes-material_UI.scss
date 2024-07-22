@@ -365,6 +365,7 @@ mat-tooltip-component .mat-tooltip {
     .sb-mat__modal__content {
       overflow-y: visible;
       max-height: inherit;
+      color: #000 !important;
     }
   }
 
@@ -438,7 +439,8 @@ mat-tooltip-component .mat-tooltip {
       cursor: pointer;
 
       &::after {
-        color: var(--white);
+        // color: var(--white);
+        color: #000 !important;
         content: "\2715";
         position: absolute;
         top: 50%;
@@ -937,4 +939,16 @@ html[data-theme="Darkmode"] {
   .mat-calendar-arrow {
     filter: invert(1);
   }
+}
+.cdk-overlay-pane .sb-mat__modal__content {
+  color: #000 !important;
+}
+:-ms-input-placeholder::placeholder {
+  color: #000 !important;
+}
+input::placeholder {
+  color: #000 !important;
+}
+.sb-search-input::placeholder {
+  color: #000 !important;
 }
