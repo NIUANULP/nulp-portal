@@ -16,6 +16,7 @@ const { exit } = require("process");
 global.AbortController = require("abort-controller");
 
 const { BlockBlobClient } = require("@azure/storage-blob");
+const momentTime = require("moment");
 
 async function authorize() {
   const GOOGLE_CLIENT_ID = envHelper.event_meet_id;
@@ -1355,6 +1356,29 @@ async function eventReports(req, res) {
         const decryptedEmail = decrypt(item.email);
         item.email = decryptedEmail;
         item.eventName = eventDetail[eventId];
+
+        let dateTimeString = item.date;
+
+        // Fix any invalid date formats by removing leading zeroes in the day part
+        dateTimeString = dateTimeString.replace(
+          /(\d{4}-\d{2}-)0*(\d{1,2})(T.*)/,
+          (match, p1, p2, p3) => {
+            return `${p1}${p2}${p3}`;
+          }
+        );
+
+        // Parse the date using Moment.js
+        const dateObj = moment(dateTimeString, moment.ISO_8601);
+
+        if (!dateObj.isValid()) {
+          console.error("Invalid date format:", dateTimeString);
+          continue; // Skip this item if the date is invalid
+        }
+
+        const formattedDate = dateObj.format("YYYY-MM-DD");
+        const formattedTime = dateObj.format("hh:mm A");
+        item.date = formattedDate;
+        item.time = formattedTime;
         delete item.id;
         delete item.certificate;
         delete item.user_consent;
@@ -1377,7 +1401,7 @@ async function eventReports(req, res) {
         result: rows || [],
       });
     } else {
-      throw new Error("Event not found ");
+      throw new Error("Event not found");
     }
   } catch (error) {
     console.log(error);
