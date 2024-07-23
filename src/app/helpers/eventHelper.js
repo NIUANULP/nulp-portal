@@ -794,7 +794,7 @@ async function saveParticipantsData(result, eventDetail) {
   console.log("Data saved into DB");
 }
 
-const cronTime = envHelper.MEET_CRON_TIME || "* * * * *"; // Default to every 30 minutes if MEET_CRON_TIME is not set
+const cronTime = envHelper.MEET_CRON_TIME || "0 22 * * *"; // Default to every 10 PM if MEET_CRON_TIME is not set
 
 cron.schedule(cronTime, processMeetEvent);
 
@@ -1605,5 +1605,5 @@ module.exports = {
   eventReports,
   userUnregister,
   fetchMeetRecordings,
-  fetchEventsRecording
+  fetchEventsRecording,
 };
