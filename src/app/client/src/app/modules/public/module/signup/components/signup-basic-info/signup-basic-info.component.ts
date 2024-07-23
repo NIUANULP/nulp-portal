@@ -29,34 +29,46 @@ export class SignupBasicInfoComponent implements OnInit {
     public resourceService: ResourceService, public telemetryService: TelemetryService,
     public utilService: UtilService, public configService: ConfigService, private _fb: FormBuilder) { }
 
-  ngOnInit(): void {
-    this.instance = _.upperCase(this.resourceService.instance || 'SUNBIRD');
-    this.personalInfoForm = this._fb.group({
-      name: ['', Validators.required],
-      organisation: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]*$')]],
-      userType: ['', Validators.required],
-      designation: ['', Validators.required]
-    });
-    console.log('Global Object data => ', this.startingForm); // TODO: log!
-  }
+ ngOnInit(): void {
+  this.instance = _.upperCase(this.resourceService.instance || 'SUNBIRD');
+  this.personalInfoForm = this._fb.group({
+    name: ['', Validators.required],
+    organisation: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]*$')]],
+    userType: ['', Validators.required],
+    designation: ['', Validators.required]
+  });
 
-  next() {
-    if (this.personalInfoForm.valid) {
-      let userDetails;
-      if (localStorage.getItem('guestUserDetails')) {
-        userDetails = JSON.parse(localStorage.getItem('guestUserDetails'));
-      } else {
-        userDetails = { name: this.personalInfoForm.controls.name.value };
-      }
-      userDetails.name = this.personalInfoForm.controls.name.value;
-      localStorage.setItem('guestUserDetails', JSON.stringify(userDetails));
-      const signupStage1Details = {
-        name: userDetails.name,
-      };
-      this.subformInitialized.emit(signupStage1Details);
-      this.triggerNext.emit();
-    } else {
-      console.log("Invalid form");
-    }
+  console.log('Global Object data => ', this.startingForm); 
+}
+
+
+ next() {
+  if (this.personalInfoForm.valid) {
+    let userDetails: any = localStorage.getItem('guestUserDetails') 
+      ? JSON.parse(localStorage.getItem('guestUserDetails')) 
+      : {};
+
+    userDetails.name = this.personalInfoForm.controls.name.value;
+    userDetails.organisation = this.personalInfoForm.controls.organisation.value;
+    userDetails.userType = this.personalInfoForm.controls.userType.value;
+    userDetails.designation = this.personalInfoForm.controls.designation.value;
+
+    localStorage.setItem('guestUserDetails', JSON.stringify(userDetails));
+
+    const signupStage1Details = {
+      name: userDetails.name,
+      organisation: userDetails.organisation,
+      userType: userDetails.userType,
+      designation: userDetails.designation
+    };
+
+    console.log('signupStage1Details => ', signupStage1Details); // Debugging log
+
+    this.subformInitialized.emit(signupStage1Details);
+    this.triggerNext.emit();
+  } else {
+    console.log("Invalid form");
   }
+}
+
 }

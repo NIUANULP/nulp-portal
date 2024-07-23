@@ -35,11 +35,11 @@ async function saveUserInfo(req, res) {
     });
   }
 
-  const { user_id, designation, bio, created_by } = req.body;
+  const { user_id, designation, bio, created_by,user_type,organisation } = req.body;
 
   const query =
-    "INSERT INTO users (user_id, designation, bio, created_by) VALUES ($1, $2, $3, $4) RETURNING *";
-  const values = [user_id, designation, bio, created_by];
+    "INSERT INTO users (user_id, designation, bio, created_by,user_type,organisation) VALUES ($1, $2, $3, $4,$5,$6) RETURNING *";
+  const values = [user_id, designation, bio, created_by,user_type,organisation];
 
   try {
     const { rows } = await pool.query(query, values);
