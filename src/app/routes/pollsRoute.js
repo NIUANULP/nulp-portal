@@ -50,4 +50,9 @@ module.exports = function (app) {
     proxyUtils.verifyToken(),
     pollsHelper.updateUserPoll
   );
+  app.get(
+    "/polls/user/get_user_poll",
+    proxyUtils.verifyToken(),
+    pollsHelper.getUserPoll
+  );
 };
