@@ -1569,7 +1569,7 @@ html[layout="joy"] sb-form .multi-select-container .list-border {
   }
 }
 .sb-accordion .sb-color-primary {
-  color: #fff !important;
+  color: #000 !important;
 }
 .sui-accordion-panel .active {
   .sb-color-primary {
@@ -1587,5 +1587,8 @@ input::placeholder {
   color: #000 !important;
 }
 .sb-search-input::placeholder {
+  color: #000 !important;
+}
+input.sb-search-input::placeholder {
   color: #000 !important;
 }
