@@ -83,7 +83,7 @@ const createPolls = async (req, res) => {
     data.poll_options = pollOptions;
     const response = await createRecord(data, "polls", allowedColumns);
     if (response?.length > 0) {
-      if (data?.visibility === "Private") {
+      if (data?.visibility === "private") {
         const userList = data?.user_list;
         userList?.map(async (item) => {
           const data = {
@@ -320,7 +320,7 @@ const getPoll = async (req, res) => {
       responseCode: "OK",
       result: {
         poll: pollData[0],
-        results: formattedPollResults,
+        result: formattedPollResults,
       },
     });
   } catch (error) {
@@ -462,8 +462,8 @@ const listPolls = async (req, res) => {
     const countValues = [];
 
     // Apply filters for user-specific data
-    if (userId) {
-      values.push(userId);
+    if (filters.created_by) {
+      values.push(filters.created_by);
       query += ` AND created_by = $${values.length}`;
     }
     if (!isSystemAdmin && organization) {
@@ -475,6 +475,10 @@ const listPolls = async (req, res) => {
     if (filters.poll_options) {
       values.push(filters.poll_options);
       query += ` AND poll_options @> $${values.length}`;
+    }
+    if (filters.visibility) {
+      values.push(filters.visibility);
+      query += ` AND visibility = $${values.length}`;
     }
     if (filters.poll_type) {
       values.push(filters.poll_type);
@@ -519,7 +523,7 @@ const listPolls = async (req, res) => {
     // Pagination
     query += ` LIMIT $${values.length + 1} OFFSET $${values.length + 2}`;
     values.push(parseInt(limit), parseInt(offset));
-
+    console.log(query, values);
     // Fetch the polls
     const result = await getRecords(query, values);
 
@@ -527,8 +531,8 @@ const listPolls = async (req, res) => {
     let countQuery = "SELECT COUNT(*) FROM polls WHERE 1=1";
 
     // Apply the same filters as above for the count query
-    if (userId) {
-      countValues.push(userId);
+    if (filters.created_by) {
+      countValues.push(filters.created_by);
       countQuery += ` AND created_by = $${countValues.length}`;
     }
     if (!isSystemAdmin && organization) {
@@ -538,6 +542,10 @@ const listPolls = async (req, res) => {
     if (filters.poll_options) {
       countValues.push(filters.poll_options);
       countQuery += ` AND poll_options @> $${countValues.length}`;
+    }
+    if (filters.visibility) {
+      countValues.push(filters.visibility);
+      countQuery += ` AND visibility =$${countValues.length}`;
     }
     if (filters.poll_type) {
       countValues.push(filters.poll_type);
@@ -575,7 +583,7 @@ const listPolls = async (req, res) => {
 
     // Get the total count
     const countResult = await getRecords(countQuery, countValues);
-    const totalCount = parseInt(countResult.rows[0].count, 10); // Convert to integer
+    const totalCount = parseInt(countResult?.rows[0]?.count, 10); // Convert to integer
 
     // Return response including polls and count
     return res.send({
@@ -817,6 +825,61 @@ const updateUserPoll = async (req, res) => {
   }
 };
 
+const getUserPoll = async (req, res) => {
+  try {
+    const { poll_id, user_id } = req.query;
+    if (!poll_id && !user_id) {
+      const error = new Error(`Missing required fields: poll id or user id`);
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const userPollData = await getRecord(
+      "SELECT * FROM user_poll WHERE poll_id=$1 AND user_id=$2",
+      [poll_id.trim(), user_id.trim()]
+    );
+    if (!userPollData?.length) {
+      const error = new Error("User poll not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    if (userPollData?.length > 0) {
+      res.send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "User poll fetched successfully",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: userPollData || [],
+      });
+    } else {
+      throw new Error(response);
+    }
+  } catch (error) {
+    console.log(error);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: [],
+    });
+  }
+};
 module.exports = {
   createPolls,
   updatePolls,
@@ -825,4 +888,5 @@ module.exports = {
   listPolls,
   createUserPoll,
   updateUserPoll,
+  getUserPoll,
 };
