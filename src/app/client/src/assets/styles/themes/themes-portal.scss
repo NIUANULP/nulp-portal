@@ -3281,7 +3281,7 @@ html[accessable-theme="accessible"] {
   background: #005973 !important;
 }
 .sb--card__type:before {
-  border-color: #005973 !important;
+  border-color: #005973 #005973 #005973 transparent !important;
 }
 .cdk-overlay-pane .sb-mat__modal__content {
   color: #000 !important;
@@ -3293,5 +3293,8 @@ input::placeholder {
   color: #000 !important;
 }
 .sb-search-input::placeholder {
+  color: #000 !important;
+}
+input.sb-search-input::placeholder {
   color: #000 !important;
 }
