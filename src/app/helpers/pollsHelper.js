@@ -83,7 +83,7 @@ const createPolls = async (req, res) => {
     data.poll_options = pollOptions;
     const response = await createRecord(data, "polls", allowedColumns);
     if (response?.length > 0) {
-      if (data?.visibility === "Private") {
+      if (data?.visibility === "private") {
         const userList = data?.user_list;
         userList?.map(async (item) => {
           const data = {
