@@ -783,24 +783,24 @@
             {{resourceService.frmelmnts?.lnk?.dashboard}}
           </li> -->
 
-          <!-- <li class="list-item" tabindex="0" role="link" *ngIf='!isDesktopApp && permissionService.permissionAvailable'
+
+          <li class="list-item" tabindex="0" role="link" *ngIf='!isDesktopApp && permissionService.permissionAvailable'
             appPermission [permission]='adminDashboard' (click)="toggleSideMenu(false)"
             [routerLink]="'dashBoard/addusess'">
             <i class="icon-svg icon-svg--sm icon-dashboard mr-8"><svg class="icon icon-svg--primary">
                 <use xlink:href="./assets/images/sprite.svg#dashboard"></use>
               </svg></i>
              Admin
-          </li> -->
+          </li>
 
-          <!-- <li class="list-item" *ngIf='!isDesktopApp && permissionService.permissionAvailable' appPermission
+        <li class="list-item" *ngIf='!isDesktopApp && permissionService.permissionAvailable' appPermission
           [permission]='programDashboardRole' (click)="toggleSideMenu(false)" routerLink="program">
           <i class="icon-svg icon-svg--sm icon-dashboard mr-8"><svg class="icon icon-svg--primary">
               <use xlink:href="./assets/images/sprite.svg#dashboard"></use>
             </svg></i>
             {{resourceService.frmelmnts?.lnk?.programDashboard}}
-        </li> -->
-          <!-- <li  *ngIf="userService?.loggedIn" class="list-item d-block item accordion-menu item--courses ng-star-inserted" id="dropdown-menu-list-header">
-
+        </li>
+       <li  *ngIf="userService?.loggedIn" class="list-item d-block item accordion-menu item--courses ng-star-inserted" id="dropdown-menu-list-header">
             <sui-accordion class="styled fluid sb-accordion">
               <sui-accordion-panel>
                 <div title class="sb-accordion-title sb-color-primary">
@@ -842,15 +842,15 @@
               </sui-accordion-panel>
             </sui-accordion>
 
-          </li> -->
-
-          <!-- <li class="list-item" *ngIf='!isDesktopApp && permissionService.permissionAvailable' appPermission
+          </li>
+        
+          <li class="list-item" *ngIf='!isDesktopApp && permissionService.permissionAvailable' appPermission
           [permission]='programDashboardRole' (click)="toggleSideMenu(false)" routerLink="program">
           <i class="icon-svg icon-svg--sm icon-dashboard mr-8"><svg class="icon icon-svg--primary">
               <use xlink:href="./assets/images/sprite.svg#dashboard"></use>
             </svg></i>
             {{resourceService.frmelmnts?.lnk?.programDashboard}}
-        </li> -->
+        </li>
 
           <!-- <li class="list-item" tabindex="0" role="link" (click)="toggleSideMenu(false)"
             *ngIf='!isDesktopApp && permissionService.permissionAvailable' appPermission [permission]='orgSetupRole'
