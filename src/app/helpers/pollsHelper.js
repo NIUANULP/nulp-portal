@@ -38,7 +38,7 @@ const createPolls = async (req, res) => {
       });
     }
     let data = req.body;
-    if (data?.visibility === "Private" && !data?.user_list) {
+    if (data?.visibility === "private" && !data?.user_list) {
       const error = new Error("User list not found");
       error.statusCode = 404;
       throw error;
@@ -79,6 +79,11 @@ const createPolls = async (req, res) => {
     data.poll_id = generatedId;
     data.created_by = req?.session?.userId;
     data.organization = req?.session?.rootOrgId;
+    if (data?.poll_options?.length < 2) {
+      const error = new Error(`Poll option should be more than 2`);
+      error.statusCode = 400;
+      throw error;
+    }
     const pollOptions = data?.poll_options.map((option) => `"${option}"`);
     data.poll_options = pollOptions;
     const response = await createRecord(data, "polls", allowedColumns);
