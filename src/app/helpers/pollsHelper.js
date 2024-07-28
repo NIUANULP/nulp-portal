@@ -458,62 +458,77 @@ const listPolls = async (req, res) => {
       req?.session?.roles?.includes("CONTENT_CREATOR") &&
       !req?.session?.roles?.includes("SYSTEM_ADMINISTRATION");
 
-    const userId = isContentCreatorOnly ? req?.session?.userId : null;
+    const userId = filters.user_id || req?.session?.userId;
     const organization = req?.session?.rootOrgId;
 
     // Base query for polls
-    let query = "SELECT * FROM polls WHERE 1=1";
-    const values = [];
-    const countValues = [];
+    let query = `
+      SELECT DISTINCT polls.* 
+      FROM polls 
+      LEFT JOIN user_invited ON polls.poll_id = user_invited.poll_id AND polls.visibility = 'private' AND user_invited.user_id = $1
+      WHERE 1=1
+    `;
+    const values = [userId];
+    const countValues = [userId];
 
     // Apply filters for user-specific data
     if (filters.created_by) {
       values.push(filters.created_by);
-      query += ` AND created_by = $${values.length}`;
+      query += ` AND polls.created_by = $${values.length}`;
     }
     if (!isSystemAdmin && organization) {
       values.push(organization);
-      query += ` AND organization = $${values.length}`;
+      query += ` AND polls.organization = $${values.length}`;
     }
 
     // Apply field-specific filters
     if (filters.poll_options) {
       values.push(filters.poll_options);
-      query += ` AND poll_options @> $${values.length}`;
+      query += ` AND polls.poll_options @> $${values.length}`;
     }
     if (filters.visibility) {
       values.push(filters.visibility);
-      query += ` AND visibility = $${values.length}`;
+      query += ` AND polls.visibility = $${values.length}`;
     }
     if (filters.poll_type) {
       values.push(filters.poll_type);
-      query += ` AND poll_type = $${values.length}`;
+      query += ` AND polls.poll_type = $${values.length}`;
     }
     if (filters.status) {
-      values.push(filters.status);
-      query += ` AND status = $${values.length}`;
+      filters?.status?.forEach((item) => {
+        values.push(item);
+        query += ` AND polls.status = $${values.length}`;
+      });
     }
     if (filters.is_live_poll_result !== undefined) {
       values.push(filters.is_live_poll_result);
-      query += ` AND is_live_poll_result = $${values.length}`;
+      query += ` AND polls.is_live_poll_result = $${values.length}`;
     }
     if (filters.from_date) {
       values.push(filters.from_date);
-      query += ` AND start_date >= $${values.length}`;
+      query += ` AND polls.start_date >= $${values.length}`;
     }
     if (filters.to_date) {
       values.push(filters.to_date);
-      query += ` AND end_date <= $${values.length}`;
+      query += ` AND polls.end_date <= $${values.length}`;
     }
 
     // Apply search across all relevant fields
     if (search) {
       values.push(`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`);
-      query += ` AND (title ILIKE $${values.length - 3} OR description ILIKE $${
+      query += ` AND (polls.title ILIKE $${
+        values.length - 3
+      } OR polls.description ILIKE $${
         values.length - 2
-      } OR poll_type ILIKE $${values.length - 1} OR created_by::text ILIKE $${
-        values.length
-      })`;
+      } OR polls.poll_type ILIKE $${
+        values.length - 1
+      } OR polls.created_by::text ILIKE $${values.length})`;
+    }
+
+    // Include polls where the user is invited if visibility is private
+    if (userId) {
+      values.push(userId);
+      query += ` AND (polls.visibility <> 'private' OR user_invited.user_id = $${values.length})`;
     }
 
     // Sorting
@@ -533,44 +548,51 @@ const listPolls = async (req, res) => {
     const result = await getRecords(query, values);
 
     // Now, to get the count of total records matching the filters
-    let countQuery = "SELECT COUNT(*) FROM polls WHERE 1=1";
+    let countQuery = `
+      SELECT COUNT(DISTINCT polls.poll_id) 
+      FROM polls 
+      LEFT JOIN user_invited ON polls.poll_id = user_invited.poll_id AND polls.visibility = 'private' AND user_invited.user_id = $1 
+      WHERE 1=1
+    `;
 
     // Apply the same filters as above for the count query
     if (filters.created_by) {
       countValues.push(filters.created_by);
-      countQuery += ` AND created_by = $${countValues.length}`;
+      countQuery += ` AND polls.created_by = $${countValues.length}`;
     }
     if (!isSystemAdmin && organization) {
       countValues.push(organization);
-      countQuery += ` AND organization = $${countValues.length}`;
+      countQuery += ` AND polls.organization = $${countValues.length}`;
     }
     if (filters.poll_options) {
       countValues.push(filters.poll_options);
-      countQuery += ` AND poll_options @> $${countValues.length}`;
+      countQuery += ` AND polls.poll_options @> $${countValues.length}`;
     }
     if (filters.visibility) {
       countValues.push(filters.visibility);
-      countQuery += ` AND visibility =$${countValues.length}`;
+      countQuery += ` AND polls.visibility = $${countValues.length}`;
     }
     if (filters.poll_type) {
       countValues.push(filters.poll_type);
-      countQuery += ` AND poll_type = $${countValues.length}`;
+      countQuery += ` AND polls.poll_type = $${countValues.length}`;
     }
     if (filters.status) {
-      countValues.push(filters.status);
-      countQuery += ` AND status = $${countValues.length}`;
+      filters?.status?.forEach((item) => {
+        countValues.push(item);
+        countQuery += ` AND polls.status = $${countValues.length}`;
+      });
     }
     if (filters.is_live_poll_result !== undefined) {
       countValues.push(filters.is_live_poll_result);
-      countQuery += ` AND is_live_poll_result = $${countValues.length}`;
+      countQuery += ` AND polls.is_live_poll_result = $${countValues.length}`;
     }
     if (filters.from_date) {
       countValues.push(filters.from_date);
-      countQuery += ` AND start_date >= $${countValues.length}`;
+      countQuery += ` AND polls.start_date >= $${countValues.length}`;
     }
     if (filters.to_date) {
       countValues.push(filters.to_date);
-      countQuery += ` AND end_date <= $${countValues.length}`;
+      countQuery += ` AND polls.end_date <= $${countValues.length}`;
     }
     if (search) {
       countValues.push(
@@ -579,11 +601,19 @@ const listPolls = async (req, res) => {
         `%${search}%`,
         `%${search}%`
       );
-      countQuery += ` AND (title ILIKE $${
+      countQuery += ` AND (polls.title ILIKE $${
         countValues.length - 3
-      } OR description ILIKE $${countValues.length - 2} OR poll_type ILIKE $${
+      } OR polls.description ILIKE $${
+        countValues.length - 2
+      } OR polls.poll_type ILIKE $${
         countValues.length - 1
-      } OR created_by::text ILIKE $${countValues.length})`;
+      } OR polls.created_by::text ILIKE $${countValues.length})`;
+    }
+
+    // Include polls where the user is invited if visibility is private
+    if (userId) {
+      countValues.push(userId);
+      countQuery += ` AND (polls.visibility <> 'private' OR user_invited.user_id = $${countValues.length})`;
     }
 
     // Get the total count
