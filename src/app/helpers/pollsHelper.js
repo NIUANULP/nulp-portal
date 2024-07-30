@@ -468,6 +468,9 @@ const listPolls = async (req, res) => {
       LEFT JOIN user_invited ON polls.poll_id = user_invited.poll_id AND polls.visibility = 'private' AND user_invited.user_id = $1
       WHERE 1=1
     `;
+    if (req?.query?.list_page) {
+      query += ` AND polls.created_by != $1`;
+    }
     const values = [userId];
     const countValues = [userId];
 
@@ -554,6 +557,9 @@ const listPolls = async (req, res) => {
       LEFT JOIN user_invited ON polls.poll_id = user_invited.poll_id AND polls.visibility = 'private' AND user_invited.user_id = $1 
       WHERE 1=1
     `;
+    if (req?.query?.list_page) {
+      countQuery += ` AND polls.created_by != $1`;
+    }
 
     // Apply the same filters as above for the count query
     if (filters.created_by) {
@@ -680,6 +686,11 @@ const createUserPoll = async (req, res) => {
     if (!pollData?.length) {
       const error = new Error("Poll not found");
       error.statusCode = 404;
+      throw error;
+    }
+    if (pollData[0]?.created_by === data.user_id.trim()) {
+      const error = new Error("You cannot vote own poll");
+      error.statusCode = 400;
       throw error;
     }
     if (!pollData[0]?.poll_options?.includes(`${data.poll_result}`)) {
