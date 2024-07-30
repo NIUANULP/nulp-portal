@@ -165,6 +165,10 @@ let envVariables = {
   event_meet_id:env.event_meet_id,
   event_meet_secret:env.event_meet_secret,
   google_refresh_token :env.google_refresh_token,
+
+// MS Blob storage
+  sasUrlBase : env.sasUrlBase,
+  sasUrl :env.sasUrl,
   // Direct Connect 
   CHAT_SECRET_KEY:env.CHAT_SECRET_KEY,
   CRON_TIME:env.CRON_TIME,
