@@ -141,9 +141,8 @@ export class SignupEmailPasswordComponent implements OnInit, OnDestroy, AfterVie
     this.signUpForm = this.sbFormBuilder.group({
       password: new FormControl(null, [Validators.required, Validators.minLength(8)]),
       confirmPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
-      phone: new FormControl(null, [Validators.required, Validators.pattern(/^[6-9]\d{9}$/)]),
-      email: new FormControl(null, [Validators.email]),
-      contactType: new FormControl('phone'),
+      email: new FormControl(null, [Validators.email, Validators.pattern(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)]),
+      contactType: new FormControl('email'),
       uniqueContact: new FormControl(null, [Validators.required]),
     }, {
       validator: (formControl) => {
