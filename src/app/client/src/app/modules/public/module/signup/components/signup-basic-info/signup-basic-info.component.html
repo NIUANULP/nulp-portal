@@ -32,34 +32,47 @@
   </div>
 
   <!-- User Type Dropdown -->
-  <div class="required mb-16">
-      <label for="signup-form-user-type" class="mb-8 font-weight-bold">
-          {{resourceService.frmelmnts?.lbl?.userType}}<span class="sb-color-red">*</span>
-      </label>
+<div class="required mb-16">
+    <label for="signup-form-user-type" class="mb-8 font-weight-bold">
+        {{resourceService.frmelmnts?.lbl?.userType}}<span class="sb-color-red">*</span>
+    </label>
 
-      <select id="signup-form-user-type" class="sb-form-control"
-          [ngClass]="{'orange-border': personalInfoForm.controls.userType.touched && personalInfoForm.controls['userType'].errors}"
-          formControlName="userType" aria-required="true">
-          <option value="" disabled>{{resourceService.frmelmnts?.lbl?.selectUserType}}</option>
-          <option *ngFor="let userType of userTypes" [value]="userType">{{userType}}</option>
-      </select>
+    <select id="signup-form-user-type" class="sb-form-control"
+        [ngClass]="{'orange-border': personalInfoForm.controls.userType.touched && personalInfoForm.controls['userType'].errors}"
+        formControlName="userType" aria-required="true" (change)="onUserTypeChange($event)">
+        <option value="" disabled>{{resourceService.frmelmnts?.lbl?.selectUserType}}</option>
+        <option *ngFor="let userType of userTypes" [value]="userType">{{userType}}</option>
+        <option value="other">{{resourceService.frmelmnts?.lbl?.other}}</option>
+    </select>
 
-      <div class="sb-color-red pt-0" aria-describedby="signup-form-user-type" tabindex="0" aria-label="select user type" *ngIf="personalInfoForm.controls.userType.touched && personalInfoForm.controls['userType'].errors && personalInfoForm.controls['userType'].errors.required">{{resourceService.frmelmnts?.lbl?.enterUserType}}</div>
-  </div>
+    <div class="sb-color-red pt-0" aria-describedby="signup-form-user-type" tabindex="0" aria-label="select user type" *ngIf="personalInfoForm.controls.userType.touched && personalInfoForm.controls['userType'].errors && personalInfoForm.controls['userType'].errors.required">{{resourceService.frmelmnts?.lbl?.enterUserType}}</div>
+</div>
+
+<!-- Conditional Input for "Other" User Type -->
+<div *ngIf="isOtherUserType" class="required mb-16">
+    <label for="signup-form-user-type-other" class="mb-8 font-weight-bold">
+        {{resourceService.frmelmnts?.lbl?.enterUserType}}<span class="sb-color-red">*</span>
+    </label>
+    <input id="signup-form-user-type-other" class="sb-form-control" type="text" aria-required="true"
+        (input)="updateUserType($event)">
+    <div class="sb-color-red pt-0" aria-describedby="signup-form-user-type-other" tabindex="0" aria-label="enter other user type" *ngIf="personalInfoForm.controls.userType.touched && personalInfoForm.controls.userType.errors && personalInfoForm.controls.userType.errors.required">{{resourceService.frmelmnts?.lbl?.enterUserType}}</div>
+</div>
 
   <!-- Designation Dropdown -->
   <div class="required mb-16">
-      <label for="signup-form-user-designation" class="mb-8 font-weight-bold">
-          Organisation<span class="sb-color-red">*</span>
-      </label>
+    <label for="signup-form-user-designation" class="mb-8 font-weight-bold">
+        Organisation<span class="sb-color-red">*</span>
+    </label>
 
-      <ng-select id="signup-form-user-designation" class="sb-form-control"
-          [ngClass]="{'orange-border': personalInfoForm.controls.designation.touched && personalInfoForm.controls['designation'].errors}"
-          formControlName="designation" [items]="designations" bindLabel="designation" [searchable]="true" aria-required="true">
-      </ng-select>
+    <select id="signup-form-user-designation" class="sb-form-control"
+        [ngClass]="{'orange-border': personalInfoForm.controls.designation.touched && personalInfoForm.controls['designation'].errors}"
+        formControlName="designation" aria-required="true">
+        <option value="" disabled>{{resourceService.frmelmnts?.lbl?.selectDesignation}}</option>
+        <option *ngFor="let designation of designations" [value]="designation">{{designation}}</option>
+    </select>
 
-      <div class="sb-color-red pt-0" aria-describedby="signup-form-user-designation" tabindex="0" aria-label="select designation" *ngIf="personalInfoForm.controls.designation.touched && personalInfoForm.controls['designation'].errors && personalInfoForm.controls['designation'].errors.required">{{resourceService.frmelmnts?.lbl?.enterDesignation}}</div>
-  </div>
+    <div class="sb-color-red pt-0" aria-describedby="signup-form-user-designation" tabindex="0" aria-label="select designation" *ngIf="personalInfoForm.controls.designation.touched && personalInfoForm.controls['designation'].errors && personalInfoForm.controls['designation'].errors.required">{{resourceService.frmelmnts?.lbl?.enterDesignation}}</div>
+</div>
 
   <button [attr.aria-disabled]="!personalInfoForm.valid" [disabled]="!personalInfoForm.valid" type="button" appTelemetryInteract
       [telemetryInteractEdata]="submitInteractEdata" [telemetryInteractCdata]="telemetryCdata"
