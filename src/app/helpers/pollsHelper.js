@@ -167,6 +167,12 @@ const updatePolls = async (req, res) => {
       !body?.poll_options ||
       body?.poll_options.filter((option) => option.trim() !== "").length < 2
     ) {
+      console.log("Poll options:", body?.poll_options);
+      console.log(
+        "Filtered options:",
+        body?.poll_options.filter((option) => option.trim() !== "")
+      );
+
       const error = new Error(`Poll option should be more than 2`);
       error.statusCode = 400;
       throw error;
@@ -509,12 +515,11 @@ const listPolls = async (req, res) => {
       values.push(filters.poll_type);
       query += ` AND polls.poll_type = $${values.length}`;
     }
-    if (filters.status) {
-      filters?.status?.forEach((item) => {
-        values.push(item);
-        query += ` AND polls.status = $${values.length}`;
-      });
+    if (filters.status && filters.status.length > 0) {
+      values.push(filters.status);
+      query += ` AND polls.status = ANY($${values.length}::text[])`;
     }
+
     if (filters.is_live_poll_result !== undefined) {
       values.push(filters.is_live_poll_result);
       query += ` AND polls.is_live_poll_result = $${values.length}`;
@@ -594,11 +599,9 @@ const listPolls = async (req, res) => {
       countValues.push(filters.poll_type);
       countQuery += ` AND polls.poll_type = $${countValues.length}`;
     }
-    if (filters.status) {
-      filters?.status?.forEach((item) => {
-        countValues.push(item);
-        countQuery += ` AND polls.status = $${countValues.length}`;
-      });
+    if (filters.status && filters.status.length > 0) {
+      countValues.push(filters.status);
+      countQuery += ` AND polls.status = ANY($${countValues.length}::text[])`;
     }
     if (filters.is_live_poll_result !== undefined) {
       countValues.push(filters.is_live_poll_result);
