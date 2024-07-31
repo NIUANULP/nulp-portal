@@ -167,12 +167,6 @@ const updatePolls = async (req, res) => {
       !body?.poll_options ||
       body?.poll_options.filter((option) => option.trim() !== "").length < 2
     ) {
-      console.log("Poll options:", body?.poll_options);
-      console.log(
-        "Filtered options:",
-        body?.poll_options.filter((option) => option.trim() !== "")
-      );
-
       const error = new Error(`Poll option should be more than 2`);
       error.statusCode = 400;
       throw error;
