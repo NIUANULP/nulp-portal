@@ -15,7 +15,9 @@ export const urlConfig = {
   compositeSearch: "/api/composite/v1/search",
   emailNotification :"/api/user/v1/notification/email",
   adminEnroll: "/learner/course/v1/admin/enroll",
-
+  userData:"/learner/user/v3/search",
+  costomUserEnroll:"/event/registration",
+  getProfile:"/learner/user/v5/read/",
 
 
   detail: "/api/event/v4/read/",
