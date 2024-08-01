@@ -26,7 +26,8 @@
     .image {
       width: calculateRem(124px);
       height: calculateRem(124px);
-      background: var(--signup-panel-bg);
+      // background: var(--signup-panel-bg);
+      background: #fff !important;
       display: flex;
       align-items: center;
       border-radius: 50%;
@@ -51,6 +52,7 @@
       text-align: right;
       padding:1rem 1rem 1.5rem 1rem;
       position: relative;
+      background: #fff !important;
       @include respond-below(sm) {
         text-align: center;
         &.fix-bottom {
@@ -75,7 +77,11 @@
     justify-content: center;
     flex-direction: column;    
     padding-bottom: 2rem;
+    background: #fff !important;
   }
+}
+app-signup .ng-dropdown-panel {
+  position: inherit !important;
 }
 
 /* For now commented later will remove this code block(starts)

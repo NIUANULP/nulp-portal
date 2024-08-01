@@ -4,6 +4,18 @@
     <label class="label-names fnormal font-weight-normal pr-8" role="heading">Name:</label>
     <label class="label-values fnormal font-weight-bold">{{startingForm?.basicInfo?.name}}</label>
   </div>
+   <div class="user-detail-list" role="listitem" tabindex="0" attr.aria-label="designation:{{startingForm?.basicInfo?.designation}}"  *ngIf="startingForm && startingForm?.basicInfo?.designation">
+    <label class="label-names fnormal font-weight-normal pr-8" role="heading">designation:</label>
+    <label class="label-values fnormal font-weight-bold">{{startingForm?.basicInfo?.designation}}</label>
+  </div>
+   <div class="user-detail-list" role="listitem" tabindex="0" attr.aria-label="userType:{{startingForm?.basicInfo?.userType}}"  *ngIf="startingForm && startingForm?.basicInfo?.userType">
+    <label class="label-names fnormal font-weight-normal pr-8" role="heading">userType:</label>
+    <label class="label-values fnormal font-weight-bold">{{startingForm?.basicInfo?.userType}}</label>
+  </div>
+   <div class="user-detail-list" role="listitem" tabindex="0" attr.aria-label="organisation:{{startingForm?.basicInfo?.organisation}}"  *ngIf="startingForm && startingForm?.basicInfo?.organisation">
+    <label class="label-names fnormal font-weight-normal pr-8" role="heading">organisation:</label>
+    <label class="label-values fnormal font-weight-bold">{{startingForm?.basicInfo?.organisation}}</label>
+  </div>
   <div class="user-detail-list" role="listitem" tabindex="0"  attr.aria-label="Year of Birth:{{startingForm?.basicInfo?.yearOfBirth}}" *ngIf="startingForm && startingForm?.basicInfo?.yearOfBirth">
     <label class="label-names fnormal font-weight-normal pr-8" role="heading">Year of Birth:</label>
     <label class="label-values fnormal font-weight-bold">{{startingForm?.basicInfo?.yearOfBirth}}</label>
@@ -42,7 +54,7 @@
 <!-- <div class="grey text text-center pt-16">{{resourceService.frmelmnts.lbl.OTPhasbeensent}} {{resourceService.frmelmnts.lbl.toYourEmailPhone}}</div>-->
 <div tabindex="0" class="grey text text-center otp-label">
   <span *ngIf="emailAddress">{{resourceService.frmelmnts.lbl.OTPhasbeensentToEmail}}:<br><b>{{emailAddress}}</b></span>
-  <span *ngIf="phoneNumber">{{resourceService.frmelmnts.lbl.OTPhasbeensentToPhone}}:<br><b>{{phoneNumber}}</b></span>
+  <!-- <span *ngIf="phoneNumber">{{resourceService.frmelmnts.lbl.OTPhasbeensentToPhone}}:<br><b>{{phoneNumber}}</b></span> -->
 </div>
 <div tabindex="0" class="grey text text-center mb-16 grey-text">{{resourceService.frmelmnts.lbl.OTPvalid}}</div>
 
