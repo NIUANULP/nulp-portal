@@ -73,7 +73,7 @@ module.exports = function (app) {
   app.post(
     "/event/enrollment-list",
     bodyParser.json({ limit: "10mb" }),
-    // proxyUtils.verifyToken(),
+    proxyUtils.verifyToken(),
     eventEnrollmentList
   );
 };
