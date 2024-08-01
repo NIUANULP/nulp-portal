@@ -13,6 +13,7 @@ const {
   eventReports,
   userUnregister,
   fetchEventsRecording,
+  eventEnrollmentList,
 } = require("../helpers/eventHelper.js");
 const proxyUtils = require("../proxy/proxyUtils.js");
 
@@ -69,5 +70,10 @@ module.exports = function (app) {
   app.get("/event/reports", proxyUtils.verifyToken(), eventReports);
   app.delete("/event/unregister", proxyUtils.verifyToken(), userUnregister);
   app.get("/event/fetch-recordings", fetchEventsRecording);
-
+  app.post(
+    "/event/enrollment-list",
+    bodyParser.json({ limit: "10mb" }),
+    proxyUtils.verifyToken(),
+    eventEnrollmentList
+  );
 };
