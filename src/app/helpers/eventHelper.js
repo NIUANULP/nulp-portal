@@ -1615,6 +1615,7 @@ async function fetchEventsRecording(req, res) {
     });
   }
 }
+
 async function eventEnrollmentList(req, res) {
   try {
     const {
@@ -1649,6 +1650,7 @@ async function eventEnrollmentList(req, res) {
     values.push(parseInt(limit), parseInt(offset));
     console.log(query, values);
     const result = await getRecords(query, values);
+
     // Now, to get the count of total records matching the filters
     let countQuery = `SELECT COUNT(*) FROM event_registration WHERE 1=1 `;
     let countValues = [];
@@ -1664,16 +1666,16 @@ async function eventEnrollmentList(req, res) {
     // Get the total count
     const countResult = await getRecords(countQuery, countValues);
     const totalCount = parseInt(countResult.rows[0].count, 10); // Convert to integer
+
+    let apiResponse = null;
+
     // Fetch API data based on event_id
-    if (result?.rows?.length > 0) {
+    if (filters.user_id || filters.event_id) {
       let data = {
         request: {
           filters: {
             objectType: ["Event"],
-            identifier: [
-              "do_1140752099555819521292",
-              "do_1140752099555819521292",
-            ],
+            identifier: result.rows.map((row) => row.event_id),
           },
         },
       };
@@ -1695,10 +1697,10 @@ async function eventEnrollmentList(req, res) {
       const response = await axios.request(config);
 
       if (response.status === 200) {
-        const events = response?.data?.result?.Event || [];
-        console.log("--------------------------------------", events);
+        apiResponse = response?.data?.result?.Event || [];
       }
     }
+
     return res.send({
       ts: new Date().toISOString(),
       params: {
@@ -1711,7 +1713,8 @@ async function eventEnrollmentList(req, res) {
       responseCode: "OK",
       result: {
         totalCount: totalCount,
-        data: result.rows || [],
+        userRegistration: result.rows || [],
+        event: apiResponse,
       },
     });
   } catch (error) {
