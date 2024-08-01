@@ -17,6 +17,7 @@ global.AbortController = require("abort-controller");
 
 const { BlockBlobClient } = require("@azure/storage-blob");
 const momentTime = require("moment");
+const { getRecords } = require("./dbOperationHelper.js");
 
 async function authorize() {
   const GOOGLE_CLIENT_ID = envHelper.event_meet_id;
@@ -1614,6 +1615,125 @@ async function fetchEventsRecording(req, res) {
     });
   }
 }
+async function eventEnrollmentList(req, res) {
+  try {
+    const {
+      filters = {},
+      sort_by = {},
+      limit = 10,
+      offset = 0,
+    } = req.body.request;
+
+    let query = `SELECT * FROM event_registration WHERE 1=1 `;
+    let values = [];
+    if (filters.event_id) {
+      values.push(filters.event_id);
+      query += ` AND event_id = $${values.length}`;
+    }
+    if (filters.user_id) {
+      values.push(filters.user_id);
+      query += ` AND user_id = $${values.length}`;
+    }
+
+    // Sorting
+    const sortClauses = [];
+    for (const [column, direction] of Object.entries(sort_by)) {
+      sortClauses.push(`${column} ${direction.toUpperCase()}`);
+    }
+    if (sortClauses.length > 0) {
+      query += ` ORDER BY ${sortClauses.join(", ")}`;
+    }
+
+    // Pagination
+    query += ` LIMIT $${values.length + 1} OFFSET $${values.length + 2}`;
+    values.push(parseInt(limit), parseInt(offset));
+    console.log(query, values);
+    const result = await getRecords(query, values);
+    // Now, to get the count of total records matching the filters
+    let countQuery = `SELECT COUNT(*) FROM event_registration WHERE 1=1 `;
+    let countValues = [];
+    if (filters.event_id) {
+      countValues.push(filters.event_id);
+      countQuery += ` AND event_id = $${countValues.length}`;
+    }
+    if (filters.user_id) {
+      countValues.push(filters.user_id);
+      countQuery += ` AND user_id = $${countValues.length}`;
+    }
+
+    // Get the total count
+    const countResult = await getRecords(countQuery, countValues);
+    const totalCount = parseInt(countResult.rows[0].count, 10); // Convert to integer
+    // Fetch API data based on event_id
+    if (result?.rows?.length > 0) {
+      let data = {
+        request: {
+          filters: {
+            objectType: ["Event"],
+            identifier: [
+              "do_1140752099555819521292",
+              "do_1140752099555819521292",
+            ],
+          },
+        },
+      };
+
+      let config = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: `${envHelper.api_base_url}/api/composite/v1/search`,
+        headers: {
+          Authorization: `Bearer ${
+            envHelper.PORTAL_API_AUTH_TOKEN ||
+            envHelper.sunbird_logged_default_token
+          }`,
+          Cookie: `${req.headers.cookie}`,
+          "Content-Type": "application/json",
+        },
+        data: data,
+      };
+      const response = await axios.request(config);
+
+      if (response.status === 200) {
+        const events = response?.data?.result?.Event || [];
+        console.log("--------------------------------------", events);
+      }
+    }
+    return res.send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "Enroll event fetched successfully",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {
+        totalCount: totalCount,
+        data: result.rows || [],
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    return res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
 
 module.exports = {
   createEvent,
@@ -1630,4 +1750,5 @@ module.exports = {
   userUnregister,
   fetchMeetRecordings,
   fetchEventsRecording,
+  eventEnrollmentList,
 };
