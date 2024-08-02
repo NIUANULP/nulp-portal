@@ -79,11 +79,15 @@ const createPolls = async (req, res) => {
     data.poll_id = generatedId;
     data.created_by = req?.session?.userId;
     data.organization = req?.session?.rootOrgId;
-    if (data?.poll_options?.length < 2) {
+    if (
+      !data?.poll_options ||
+      data?.poll_options.filter((option) => option.trim() !== "").length < 2
+    ) {
       const error = new Error(`Poll option should be more than 2`);
       error.statusCode = 400;
       throw error;
     }
+
     const pollOptions = data?.poll_options.map((option) => `"${option}"`);
     data.poll_options = pollOptions;
     const response = await createRecord(data, "polls", allowedColumns);
@@ -157,6 +161,14 @@ const updatePolls = async (req, res) => {
     ) {
       const error = new Error("You don't have privilege to update records");
       error.statusCode = 403;
+      throw error;
+    }
+    if (
+      !body?.poll_options ||
+      body?.poll_options.filter((option) => option.trim() !== "").length < 2
+    ) {
+      const error = new Error(`Poll option should be more than 2`);
+      error.statusCode = 400;
       throw error;
     }
 
@@ -468,6 +480,9 @@ const listPolls = async (req, res) => {
       LEFT JOIN user_invited ON polls.poll_id = user_invited.poll_id AND polls.visibility = 'private' AND user_invited.user_id = $1
       WHERE 1=1
     `;
+    if (req?.query?.list_page) {
+      query += ` AND polls.created_by != $1`;
+    }
     const values = [userId];
     const countValues = [userId];
 
@@ -494,12 +509,11 @@ const listPolls = async (req, res) => {
       values.push(filters.poll_type);
       query += ` AND polls.poll_type = $${values.length}`;
     }
-    if (filters.status) {
-      filters?.status?.forEach((item) => {
-        values.push(item);
-        query += ` AND polls.status = $${values.length}`;
-      });
+    if (filters.status && filters.status.length > 0) {
+      values.push(filters.status);
+      query += ` AND polls.status = ANY($${values.length}::text[])`;
     }
+
     if (filters.is_live_poll_result !== undefined) {
       values.push(filters.is_live_poll_result);
       query += ` AND polls.is_live_poll_result = $${values.length}`;
@@ -554,6 +568,9 @@ const listPolls = async (req, res) => {
       LEFT JOIN user_invited ON polls.poll_id = user_invited.poll_id AND polls.visibility = 'private' AND user_invited.user_id = $1 
       WHERE 1=1
     `;
+    if (req?.query?.list_page) {
+      countQuery += ` AND polls.created_by != $1`;
+    }
 
     // Apply the same filters as above for the count query
     if (filters.created_by) {
@@ -576,11 +593,9 @@ const listPolls = async (req, res) => {
       countValues.push(filters.poll_type);
       countQuery += ` AND polls.poll_type = $${countValues.length}`;
     }
-    if (filters.status) {
-      filters?.status?.forEach((item) => {
-        countValues.push(item);
-        countQuery += ` AND polls.status = $${countValues.length}`;
-      });
+    if (filters.status && filters.status.length > 0) {
+      countValues.push(filters.status);
+      countQuery += ` AND polls.status = ANY($${countValues.length}::text[])`;
     }
     if (filters.is_live_poll_result !== undefined) {
       countValues.push(filters.is_live_poll_result);
@@ -680,6 +695,11 @@ const createUserPoll = async (req, res) => {
     if (!pollData?.length) {
       const error = new Error("Poll not found");
       error.statusCode = 404;
+      throw error;
+    }
+    if (pollData[0]?.created_by === data.user_id.trim()) {
+      const error = new Error("You cannot vote own poll");
+      error.statusCode = 400;
       throw error;
     }
     if (!pollData[0]?.poll_options?.includes(`${data.poll_result}`)) {

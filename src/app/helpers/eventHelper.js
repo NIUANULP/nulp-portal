@@ -17,6 +17,11 @@ global.AbortController = require("abort-controller");
 
 const { BlockBlobClient } = require("@azure/storage-blob");
 const momentTime = require("moment");
+const {
+  getRecords,
+  getRecord,
+  updateRecord,
+} = require("./dbOperationHelper.js");
 
 async function authorize() {
   const GOOGLE_CLIENT_ID = envHelper.event_meet_id;
@@ -128,6 +133,7 @@ async function createEvent(req, res) {
         dateTime: endDateTime,
         timeZone: endTimezone,
       },
+      visibility: "public",
       conferenceData: {
         createRequest: {
           requestId: requestId,
@@ -284,7 +290,7 @@ async function updateEvent(req, res) {
     // Add the new email to the existing list of attendees
     let attendees = existingEvent.data.attendees || [];
     if (eventData.email) {
-      attendees.push({ email: eventData.email, responseStatus: "needsAction" });
+      attendees.push({ email: eventData.email });
       event.attendees = attendees;
     }
 
@@ -1615,6 +1621,208 @@ async function fetchEventsRecording(req, res) {
   }
 }
 
+async function eventEnrollmentList(req, res) {
+  try {
+    const {
+      filters = {},
+      sort_by = {},
+      limit = 10,
+      offset = 0,
+    } = req.body.request;
+
+    let query = `SELECT * FROM event_registration WHERE 1=1 `;
+    let values = [];
+    if (filters.event_id) {
+      values.push(filters.event_id);
+      query += ` AND event_id = $${values.length}`;
+    }
+    if (filters.user_id) {
+      values.push(filters.user_id);
+      query += ` AND user_id = $${values.length}`;
+    }
+
+    // Sorting
+    const sortClauses = [];
+    for (const [column, direction] of Object.entries(sort_by)) {
+      sortClauses.push(`${column} ${direction.toUpperCase()}`);
+    }
+    if (sortClauses.length > 0) {
+      query += ` ORDER BY ${sortClauses.join(", ")}`;
+    }
+
+    // Pagination
+    query += ` LIMIT $${values.length + 1} OFFSET $${values.length + 2}`;
+    values.push(parseInt(limit), parseInt(offset));
+    console.log(query, values);
+    const result = await getRecords(query, values);
+
+    // Now, to get the count of total records matching the filters
+    let countQuery = `SELECT COUNT(*) FROM event_registration WHERE 1=1 `;
+    let countValues = [];
+    if (filters.event_id) {
+      countValues.push(filters.event_id);
+      countQuery += ` AND event_id = $${countValues.length}`;
+    }
+    if (filters.user_id) {
+      countValues.push(filters.user_id);
+      countQuery += ` AND user_id = $${countValues.length}`;
+    }
+
+    // Get the total count
+    const countResult = await getRecords(countQuery, countValues);
+    const totalCount = parseInt(countResult.rows[0].count, 10); // Convert to integer
+
+    let apiResponse = null;
+
+    // Fetch API data based on event_id
+    if (filters.user_id || filters.event_id) {
+      let data = {
+        request: {
+          filters: {
+            objectType: ["Event"],
+            identifier: result.rows.map((row) => row.event_id),
+          },
+        },
+      };
+
+      let config = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: `${envHelper.api_base_url}/api/composite/v1/search`,
+        headers: {
+          Authorization: `Bearer ${
+            envHelper.PORTAL_API_AUTH_TOKEN ||
+            envHelper.sunbird_logged_default_token
+          }`,
+          Cookie: `${req.headers.cookie}`,
+          "Content-Type": "application/json",
+        },
+        data: data,
+      };
+      const response = await axios.request(config);
+
+      if (response.status === 200) {
+        apiResponse = response?.data?.result?.Event || [];
+      }
+    }
+
+    return res.send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "Enroll event fetched successfully",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {
+        totalCount: totalCount,
+        userRegistration: result.rows || [],
+        event: apiResponse,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    return res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
+
+const updateRegistrationEvent = async (req, res) => {
+  try {
+    const { event_id, user_id } = req.query;
+    const { session, body } = req;
+
+    if (!event_id || !user_id) {
+      const error = new Error("Event id or User id is missing");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const eventData = await getRecord(
+      "SELECT * FROM event_registration WHERE event_id=$1 AND user_id=$2",
+      [event_id?.trim(), user_id?.trim()]
+    );
+    if (!eventData?.length) {
+      const error = new Error("Event registration data not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const allowedColumns = [
+      "name",
+      "email",
+      "designation",
+      "organisation",
+      "certificate",
+      "user_consent",
+      "consentForm",
+    ];
+
+    const response = await updateRecord(
+      event_id?.trim(),
+      body,
+      "event_registration",
+      allowedColumns,
+      "event_id",
+      "user_id",
+      user_id?.trim()
+    );
+
+    if (response?.length) {
+      return res.send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "User event updated successfully",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {
+          data: response,
+        },
+      });
+    }
+
+    throw new Error("Update failed");
+  } catch (error) {
+    console.error(error);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+};
+
 module.exports = {
   createEvent,
   getEvent,
@@ -1630,4 +1838,6 @@ module.exports = {
   userUnregister,
   fetchMeetRecordings,
   fetchEventsRecording,
+  eventEnrollmentList,
+  updateRegistrationEvent,
 };
