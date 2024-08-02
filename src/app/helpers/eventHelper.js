@@ -17,7 +17,11 @@ global.AbortController = require("abort-controller");
 
 const { BlockBlobClient } = require("@azure/storage-blob");
 const momentTime = require("moment");
-const { getRecords } = require("./dbOperationHelper.js");
+const {
+  getRecords,
+  getRecord,
+  updateRecord,
+} = require("./dbOperationHelper.js");
 
 async function authorize() {
   const GOOGLE_CLIENT_ID = envHelper.event_meet_id;
@@ -129,6 +133,7 @@ async function createEvent(req, res) {
         dateTime: endDateTime,
         timeZone: endTimezone,
       },
+      visibility: "public",
       conferenceData: {
         createRequest: {
           requestId: requestId,
@@ -285,7 +290,7 @@ async function updateEvent(req, res) {
     // Add the new email to the existing list of attendees
     let attendees = existingEvent.data.attendees || [];
     if (eventData.email) {
-      attendees.push({ email: eventData.email, responseStatus: "needsAction" });
+      attendees.push({ email: eventData.email });
       event.attendees = attendees;
     }
 
@@ -1738,6 +1743,86 @@ async function eventEnrollmentList(req, res) {
   }
 }
 
+const updateRegistrationEvent = async (req, res) => {
+  try {
+    const { event_id, user_id } = req.query;
+    const { session, body } = req;
+
+    if (!event_id || !user_id) {
+      const error = new Error("Event id or User id is missing");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const eventData = await getRecord(
+      "SELECT * FROM event_registration WHERE event_id=$1 AND user_id=$2",
+      [event_id?.trim(), user_id?.trim()]
+    );
+    if (!eventData?.length) {
+      const error = new Error("Event registration data not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const allowedColumns = [
+      "name",
+      "email",
+      "designation",
+      "organisation",
+      "certificate",
+      "user_consent",
+      "consentForm",
+    ];
+
+    const response = await updateRecord(
+      event_id?.trim(),
+      body,
+      "event_registration",
+      allowedColumns,
+      "event_id",
+      "user_id",
+      user_id?.trim()
+    );
+
+    if (response?.length) {
+      return res.send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "User event updated successfully",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {
+          data: response,
+        },
+      });
+    }
+
+    throw new Error("Update failed");
+  } catch (error) {
+    console.error(error);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+};
+
 module.exports = {
   createEvent,
   getEvent,
@@ -1754,4 +1839,5 @@ module.exports = {
   fetchMeetRecordings,
   fetchEventsRecording,
   eventEnrollmentList,
+  updateRegistrationEvent,
 };
