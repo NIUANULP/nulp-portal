@@ -63,15 +63,45 @@
       <label for="signup-form-user-designation" class="mb-8 font-weight-bold">
           Designation<span class="sb-color-red">*</span>
       </label>
+      <!-- <ng-select id="signup-form-user-designation"
+           class="sb-form-control"
+           [ngClass]="{'orange-border': personalInfoForm.controls.designation.touched && personalInfoForm.controls['designation'].errors}"
+           [items]="designations"
+           bindLabel="designation"
+           formControlName="designation"
+           [searchable]="true"
+           (change)="onDesignationTypeChange($event)">
+  <ng-template ng-label-tmp let-item="item">
+    {{ item }}
+  </ng-template>
+  <ng-template ng-option-tmp let-item="item">
+    {{ item }}
+  </ng-template>
+  <ng-template ng-option-tmp let-item="item">
+    {{ item === 'other' ? resourceService.frmelmnts?.lbl?.other : item }}
+  </ng-template>
+</ng-select> -->
+
 
     <select id="signup-form-user-designation" class="sb-form-control"
         [ngClass]="{'orange-border': personalInfoForm.controls.designation.touched && personalInfoForm.controls['designation'].errors}"
-        formControlName="designation" aria-required="true">
+        formControlName="designation" aria-required="true" (change)="onDesignationTypeChange($event)">
         <option value="" disabled>Select designation</option>
         <option *ngFor="let designation of designations" [value]="designation">{{designation}}</option>
+        <option value="other">{{resourceService.frmelmnts?.lbl?.other}}</option>
     </select>
 
     <div class="sb-color-red pt-0" aria-describedby="signup-form-user-designation" tabindex="0" aria-label="select designation" *ngIf="personalInfoForm.controls.designation.touched && personalInfoForm.controls['designation'].errors && personalInfoForm.controls['designation'].errors.required">{{resourceService.frmelmnts?.lbl?.enterDesignation}}</div>
+</div>
+
+<!-- Conditional Input for "Other" designation Type -->
+<div *ngIf="isOtherDesignationType" class="required mb-16">
+    <label for="signup-form-user-type-other" class="mb-8 font-weight-bold">
+        Enter designation<span class="sb-color-red">*</span>
+    </label>
+    <input id="signup-form-user-type-other" class="sb-form-control" type="text" aria-required="true"
+        (input)="updateUserType($event)">
+    <div class="sb-color-red pt-0" aria-describedby="signup-form-user-type-other" tabindex="0" aria-label="enter other user type" *ngIf="personalInfoForm.controls.designation.touched && personalInfoForm.controls.designation.errors && personalInfoForm.controls.designation.errors.required">{{resourceService.frmelmnts?.lbl?.enterDesignation}}</div>
 </div>
 
   <button [attr.aria-disabled]="!personalInfoForm.valid" [disabled]="!personalInfoForm.valid" type="button" appTelemetryInteract
