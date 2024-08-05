@@ -38,7 +38,7 @@ const createPolls = async (req, res) => {
       });
     }
     let data = req.body;
-    if (data?.visibility === "private" && !data?.user_list) {
+    if (data?.visibility === "private" && !data?.user_list?.length > 0) {
       const error = new Error("User list not found");
       error.statusCode = 404;
       throw error;
@@ -49,7 +49,7 @@ const createPolls = async (req, res) => {
       "title",
       "description",
       "poll_options",
-      "poll_type",
+      "poll_keywords",
       "visibility",
       "start_date",
       "end_date",
@@ -90,6 +90,8 @@ const createPolls = async (req, res) => {
 
     const pollOptions = data?.poll_options.map((option) => `"${option}"`);
     data.poll_options = pollOptions;
+    const keywords = data?.poll_keywords?.map((item) => `"${item}"`);
+    data.poll_keywords = keywords;
     const response = await createRecord(data, "polls", allowedColumns);
     if (response?.length > 0) {
       if (data?.visibility === "private") {
@@ -205,7 +207,7 @@ const updatePolls = async (req, res) => {
       "title",
       "description",
       "poll_options",
-      "poll_type",
+      "poll_keywords",
       "visibility",
       "start_date",
       "end_date",
@@ -220,6 +222,10 @@ const updatePolls = async (req, res) => {
     body.organization = req?.session?.rootOrgId;
     if (body?.poll_options) {
       body.poll_options = body.poll_options.map((option) => `"${option}"`);
+    }
+    if (body?.poll_keywords) {
+      const keywords = body?.poll_keywords?.map((item) => `"${item}"`);
+      body.poll_keywords = keywords;
     }
 
     const response = await updateRecord(
@@ -505,9 +511,9 @@ const listPolls = async (req, res) => {
       values.push(filters.visibility);
       query += ` AND polls.visibility = $${values.length}`;
     }
-    if (filters.poll_type) {
-      values.push(filters.poll_type);
-      query += ` AND polls.poll_type = $${values.length}`;
+    if (filters.poll_keywords) {
+      values.push(filters.poll_keywords);
+      query += ` AND polls.poll_keywords = $${values.length}`;
     }
     if (filters.status && filters.status.length > 0) {
       values.push(filters.status);
@@ -534,7 +540,7 @@ const listPolls = async (req, res) => {
         values.length - 3
       } OR polls.description ILIKE $${
         values.length - 2
-      } OR polls.poll_type ILIKE $${
+      } OR polls.poll_keywords ILIKE $${
         values.length - 1
       } OR polls.created_by::text ILIKE $${values.length})`;
     }
@@ -589,9 +595,9 @@ const listPolls = async (req, res) => {
       countValues.push(filters.visibility);
       countQuery += ` AND polls.visibility = $${countValues.length}`;
     }
-    if (filters.poll_type) {
-      countValues.push(filters.poll_type);
-      countQuery += ` AND polls.poll_type = $${countValues.length}`;
+    if (filters.poll_keywords) {
+      countValues.push(filters.poll_keywords);
+      countQuery += ` AND polls.poll_keywords = $${countValues.length}`;
     }
     if (filters.status && filters.status.length > 0) {
       countValues.push(filters.status);
@@ -620,7 +626,7 @@ const listPolls = async (req, res) => {
         countValues.length - 3
       } OR polls.description ILIKE $${
         countValues.length - 2
-      } OR polls.poll_type ILIKE $${
+      } OR polls.poll_keywords ILIKE $${
         countValues.length - 1
       } OR polls.created_by::text ILIKE $${countValues.length})`;
     }
