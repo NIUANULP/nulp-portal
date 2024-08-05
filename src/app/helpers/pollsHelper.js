@@ -536,13 +536,16 @@ const listPolls = async (req, res) => {
     // Apply search across all relevant fields
     if (search) {
       values.push(`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`);
-      query += ` AND (polls.title ILIKE $${
-        values.length - 3
-      } OR polls.description ILIKE $${
-        values.length - 2
-      } OR polls.poll_keywords ILIKE $${
-        values.length - 1
-      } OR polls.created_by::text ILIKE $${values.length})`;
+      query += `
+      AND (polls.title ILIKE $${values.length - 3}
+      OR polls.description ILIKE $${values.length - 2}
+      OR EXISTS (
+        SELECT 1
+        FROM unnest(polls.poll_keywords) AS elem
+        WHERE elem::text ILIKE $${values.length - 1}
+      )
+      OR polls.created_by::text ILIKE $${values.length})
+    `;
     }
 
     // Include polls where the user is invited if visibility is private
@@ -566,7 +569,6 @@ const listPolls = async (req, res) => {
     console.log(query, values);
     // Fetch the polls
     const result = await getRecords(query, values);
-
     // Now, to get the count of total records matching the filters
     let countQuery = `
       SELECT COUNT(DISTINCT polls.poll_id) 
@@ -622,13 +624,16 @@ const listPolls = async (req, res) => {
         `%${search}%`,
         `%${search}%`
       );
-      countQuery += ` AND (polls.title ILIKE $${
-        countValues.length - 3
-      } OR polls.description ILIKE $${
-        countValues.length - 2
-      } OR polls.poll_keywords ILIKE $${
-        countValues.length - 1
-      } OR polls.created_by::text ILIKE $${countValues.length})`;
+      countQuery += `
+    AND (polls.title ILIKE $${countValues.length - 3}
+    OR polls.description ILIKE $${countValues.length - 2}
+    OR EXISTS (
+      SELECT 1
+      FROM unnest(polls.poll_keywords) AS elem
+      WHERE elem::text ILIKE $${countValues.length - 1}
+    )
+    OR polls.created_by::text ILIKE $${countValues.length})
+  `;
     }
 
     // Include polls where the user is invited if visibility is private
