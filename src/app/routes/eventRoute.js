@@ -97,10 +97,4 @@ module.exports = function (app) {
     proxyUtils.verifyToken(),
     updateRegistrationEvent
   );
-  app.put(
-    "/custom_event/registration/unenroll",
-    bodyParser.json({ limit: "10mb" }),
-    proxyUtils.verifyToken(),
-    deleteRegistrationEvent
-  );
 };
