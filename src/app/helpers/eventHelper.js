@@ -17,7 +17,11 @@ global.AbortController = require("abort-controller");
 
 const { BlockBlobClient } = require("@azure/storage-blob");
 const momentTime = require("moment");
-const { getRecords } = require("./dbOperationHelper.js");
+const {
+  getRecords,
+  getRecord,
+  updateRecord,
+} = require("./dbOperationHelper.js");
 
 async function authorize() {
   const GOOGLE_CLIENT_ID = envHelper.event_meet_id;
@@ -129,6 +133,7 @@ async function createEvent(req, res) {
         dateTime: endDateTime,
         timeZone: endTimezone,
       },
+      visibility: "public",
       conferenceData: {
         createRequest: {
           requestId: requestId,
@@ -285,7 +290,7 @@ async function updateEvent(req, res) {
     // Add the new email to the existing list of attendees
     let attendees = existingEvent.data.attendees || [];
     if (eventData.email) {
-      attendees.push({ email: eventData.email, responseStatus: "needsAction" });
+      attendees.push({ email: eventData.email });
       event.attendees = attendees;
     }
 
@@ -1353,41 +1358,44 @@ async function eventReports(req, res) {
     const { rows } = await pool.query(query, values);
     if (rows?.length > 0) {
       const eventDetail = await getEventNames([eventId]);
-      for (const item of rows) {
-        const decryptedEmail = decrypt(item.email);
-        item.email = decryptedEmail;
-        item.eventName = eventDetail[eventId];
 
-        let dateTimeString = item.date;
+      const updatedRows = rows
+        .map((item) => {
+          // Decrypt email and add event name
+          const decryptedEmail = decrypt(item.email);
+          const eventName = eventDetail[eventId];
 
-        // Fix any invalid date formats by removing leading zeroes in the day part
-        dateTimeString = dateTimeString.replace(
-          /(\d{4}-\d{2}-)0*(\d{1,2})(T.*)/,
-          (match, p1, p2, p3) => {
-            return `${p1}${p2}${p3}`;
+          // Fix any invalid date formats
+          let dateTimeString = item.date.replace(
+            /(\d{4}-\d{2}-)0*(\d{1,2})(T.*)/,
+            (_, p1, p2, p3) => `${p1}${p2}${p3}`
+          );
+
+          // Parse and format date using Moment.js
+          const dateObj = moment(dateTimeString, moment.ISO_8601);
+          if (!dateObj.isValid()) {
+            console.error("Invalid date format:", dateTimeString);
+            return null; // Skip this item if the date is invalid
           }
-        );
 
-        // Parse the date using Moment.js
-        const dateObj = moment(dateTimeString, moment.ISO_8601);
+          return {
+            ...item,
+            email: decryptedEmail,
+            eventName,
+            date: dateObj.format("YYYY-MM-DD"),
+            time: dateObj.format("hh:mm A"),
+            // Exclude unwanted fields
+            id: undefined,
+            certificate: undefined,
+            user_consent: undefined,
+            consent_form: undefined,
+            created_at: undefined,
+            user_id: undefined,
+            event_id: undefined,
+          };
+        })
+        .filter((item) => item !== null); // Remove invalid items
 
-        if (!dateObj.isValid()) {
-          console.error("Invalid date format:", dateTimeString);
-          continue; // Skip this item if the date is invalid
-        }
-
-        const formattedDate = dateObj.format("YYYY-MM-DD");
-        const formattedTime = dateObj.format("hh:mm A");
-        item.date = formattedDate;
-        item.time = formattedTime;
-        delete item.id;
-        delete item.certificate;
-        delete item.user_consent;
-        delete item.consent_form;
-        delete item.created_at;
-        delete item.user_id;
-        delete item.event_id;
-      }
       res.status(200).send({
         ts: new Date().toISOString(),
         params: {
@@ -1399,7 +1407,7 @@ async function eventReports(req, res) {
           errmsg: null,
         },
         responseCode: "OK",
-        result: rows || [],
+        result: updatedRows,
       });
     } else {
       throw new Error("Event not found");
@@ -1738,6 +1746,85 @@ async function eventEnrollmentList(req, res) {
   }
 }
 
+const updateRegistrationEvent = async (req, res) => {
+  try {
+    const { event_id, user_id } = req.query;
+    const { session, body } = req;
+
+    if (!event_id || !user_id) {
+      const error = new Error("Event id or User id is missing");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const eventData = await getRecord(
+      "SELECT * FROM event_registration WHERE event_id=$1 AND user_id=$2",
+      [event_id?.trim(), user_id?.trim()]
+    );
+    if (!eventData?.length) {
+      const error = new Error("Event registration data not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const allowedColumns = [
+      "name",
+      "email",
+      "designation",
+      "organisation",
+      "certificate",
+      "user_consent",
+      "consentForm",
+    ];
+
+    const response = await updateRecord(
+      event_id?.trim(),
+      body,
+      "event_registration",
+      allowedColumns,
+      "event_id",
+      "user_id",
+      user_id?.trim()
+    );
+
+    if (response?.length) {
+      return res.send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "User event updated successfully",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {
+          data: response,
+        },
+      });
+    }
+
+    throw new Error("Update failed");
+  } catch (error) {
+    console.error(error);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+};
 module.exports = {
   createEvent,
   getEvent,
@@ -1754,4 +1841,5 @@ module.exports = {
   fetchMeetRecordings,
   fetchEventsRecording,
   eventEnrollmentList,
+  updateRegistrationEvent,
 };
