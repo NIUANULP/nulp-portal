@@ -1842,5 +1842,4 @@ module.exports = {
   fetchEventsRecording,
   eventEnrollmentList,
   updateRegistrationEvent,
-  deleteRegistrationEvent,
 };
