@@ -4,19 +4,19 @@ export const urlConfig = {
   create: "api/event/v4/create",
   update: "api/event/v4/update",
   publish: "/api/event/v4/publish",
-  gmeetcreate: "event/gmeet/create",
+  gmeetcreate: "custom_event/gmeet/create",
   // search: "/api/event/v1/search",
   // search: "/content/composite/v1/search",
   // compositeSearch: "/action/composite/v3/search",
    gmeetget:
-    "event/gmeet/get?eventId=",
+    "custom_event/gmeet/get?eventId=",
 
   search: "/api/composite/v1/search",
   compositeSearch: "/api/composite/v1/search",
   emailNotification :"/api/user/v1/notification/email",
   adminEnroll: "/learner/course/v1/admin/enroll",
   userData:"/learner/user/v3/search",
-  costomUserEnroll:"/event/registration",
+  costomUserEnroll:"/custom_event/registration",
   getProfile:"/learner/user/v5/read/",
 
 
