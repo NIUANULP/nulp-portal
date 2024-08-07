@@ -695,19 +695,19 @@ async function processMeetEvent() {
 
 async function fetchEvents() {
   const query = `
-    SELECT * FROM event_details
-    WHERE CAST(end_date_time AS TIMESTAMP WITH TIME ZONE) <= NOW() - INTERVAL '30 minutes'
-      AND end_date_time IS NOT NULL AND fetch_meet_data=true;
+  SELECT * FROM event_details
+  WHERE fetch_meet_data = true
+    AND end_date_time::timestamp <= (CURRENT_TIMESTAMP - INTERVAL '1 hour');
   `;
+
   try {
     const res = await pool.query(query);
-    return res.rows;
+    return res.rows; // Returns the array of event details.
   } catch (error) {
     console.error("Error fetching events:", error);
-    throw error;
+    throw error; // Propagates the error to be handled by the caller.
   }
 }
-
 async function updateFetchMeetData(meet_event_id) {
   const query = `UPDATE event_details SET fetch_meet_data = $1 WHERE meet_event_id=$2`;
   const values = [false, meet_event_id];
@@ -764,7 +764,7 @@ async function saveMeetingRecordURLData(url, eventId) {
   const values = [url, eventId];
   try {
     const { rows } = await pool.query(query, values);
-    console.log("Data saved into DB");
+    console.log("Data saved into DB", rows);
 
     return rows;
   } catch (error) {
@@ -1589,6 +1589,7 @@ async function fetchEventsRecording(req, res) {
     `;
     const values = [req?.query?.event_id];
     const response = await pool.query(query, values);
+    // const videoUrl = await processRows(response);
 
     return res.status(200).send({
       ts: new Date().toISOString(),
@@ -1622,6 +1623,66 @@ async function fetchEventsRecording(req, res) {
       result: {},
     });
   }
+}
+
+// Function to get the blob size
+async function getBlobSize(blobUrl) {
+  try {
+    // Parse the URL
+    const parsedUrl = new URL(blobUrl);
+
+    // Extract the path from the URL
+    const path = parsedUrl.pathname;
+
+    // Extract the blob name from the path
+    const blobName = path.substring(1); // Remove the leading '/'
+
+    const parts = blobName.split("/");
+    const fileName = parts[parts.length - 1];
+    // Construct the full SAS URL for the BlockBlobClient
+    const fullBlobUrl = `${sasUrlBase}/${fileName}${sasUrl}`;
+
+    // Create a BlockBlobClient using the full SAS URL
+    const client = new BlockBlobClient(fullBlobUrl);
+
+    // Fetch blob properties
+    const properties = await client.getProperties();
+    return {
+      url: blobUrl,
+      size: properties.contentLength,
+    };
+  } catch (error) {
+    console.error("Error getting blob properties:", error.message);
+    return null; // Return null in case of error
+  }
+}
+
+// Function to find the largest video URL
+async function findLargestVideoUrl(urls) {
+  const results = await Promise.all(urls.map(getBlobSize));
+  // Filter out null results in case of errors
+  const validResults = results.filter((result) => result !== null);
+
+  // Find the largest video
+  const largest = validResults.reduce(
+    (max, current) => {
+      return current.size > max.size ? current : max;
+    },
+    { size: 0 }
+  ); // Initialize with a size of 0
+
+  return largest.url;
+}
+
+// Example usage with response.rows
+async function processRows(response) {
+  // Extract URLs from response rows
+  const urls = response?.rows?.map((row) => row.recording_url);
+  // Find the largest video URL
+  const largestVideoUrl = await findLargestVideoUrl(urls);
+
+  console.log("The URL of the largest video is:", largestVideoUrl);
+  return largestVideoUrl;
 }
 
 async function eventEnrollmentList(req, res) {

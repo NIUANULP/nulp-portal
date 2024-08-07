@@ -22,7 +22,7 @@ const createPolls = async (req, res) => {
       !req?.session?.roles?.includes("CONTENT_CREATOR") &&
       !req?.session?.roles?.includes("SYSTEM_ADMINISTRATION")
     ) {
-      res.status(403).send({
+      return res.status(403).send({
         ts: new Date().toISOString(),
         params: {
           resmsgid: uuidv1(),
@@ -38,6 +38,7 @@ const createPolls = async (req, res) => {
       });
     }
     let data = req.body;
+    const now = new Date();
     if (data?.visibility === "private" && !data?.user_list?.length > 0) {
       const error = new Error("User list not found");
       error.statusCode = 404;
@@ -75,6 +76,23 @@ const createPolls = async (req, res) => {
       error.statusCode = 400;
       throw error;
     }
+
+    // Convert start_date and end_date to Date objects
+    const startDate = new Date(data.start_date);
+    const endDate = new Date(data.end_date);
+
+    // Validate start_date and end_date
+    if (startDate < now) {
+      const error = new Error("Start date cannot be in the past.");
+      error.statusCode = 400;
+      throw error;
+    }
+    if (endDate <= startDate) {
+      const error = new Error("End date must be after the start date.");
+      error.statusCode = 400;
+      throw error;
+    }
+
     const generatedId = generateUniqueId();
     data.poll_id = generatedId;
     data.created_by = req?.session?.userId;
@@ -109,7 +127,7 @@ const createPolls = async (req, res) => {
           return final;
         });
       }
-      res.send({
+      return res.send({
         ts: new Date().toISOString(),
         params: {
           resmsgid: uuidv1(),
@@ -146,6 +164,7 @@ const createPolls = async (req, res) => {
     });
   }
 };
+
 const updatePolls = async (req, res) => {
   try {
     const { poll_id } = req.query;
