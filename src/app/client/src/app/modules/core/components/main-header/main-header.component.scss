@@ -5,16 +5,13 @@
 .sb-header-bg {
   background: #065872 !important;
 }
-:root {
-  --sbt-sidemenu-bg: #fff !important;
-  --sidebar-profil-header-bg: #edf4f9;
-}
 
 .overlay-sidebar,
 .overlay-sidebar__menu {
   position: fixed;
   top: 0;
   height: 100%;
+  background-color:#fff;
 }
 
 .overlay-sidebar {
@@ -24,12 +21,12 @@
   overflow: hidden;
   display: block;
   z-index: 99999;
-  background: rgba(var(--sbt-sidemenu-overlay-bg), 0.4); //--rc-rgba-black
+  background: #00000070;
+  opacity: 1;
 
   &__menu {
     width: calculateRem(400px);
     right: 0;
-    background: var(--sbt-sidemenu-bg);
     z-index: 100000;
     overflow-y: auto;
     overflow-x: hidden;

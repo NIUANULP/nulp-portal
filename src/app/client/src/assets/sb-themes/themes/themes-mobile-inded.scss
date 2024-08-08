@@ -1,0 +1,70 @@
+html[data-theme="JOYFUL"][data-color="inded"]{
+  $blue: #64273c;
+  $primary-color:#64273c;//#b2e0ff
+
+    --app-primary:#64273c !important; //material 500 value
+    --app-primary-contrast:#fff;
+    --app-primary-shade: #461b2a; // material 800
+    --app-primary-tint: #dca097; // material 100
+    --app-primary-tint-contrast: #000;
+    --app-primary-background:#efefef;
+    --app-primary-header: var(--app-primary-tint);
+    --app-primary-header-light: var(--app-primary);
+    // --app-tertiary-background:#F3F7FB;
+    // --app-secondary-background: var(--app-primary-tint);
+
+    // --cc-lb-card-stack-btn-bg: var(--app-primary-tint);
+    // --cc-sbcard-bg:var(--app-primary-tint);
+    --cc-toc-card-item-title-hover:var(--app-primary);
+    --cc-accordion-panel-header-title:var(--app-primary);
+    
+    .cr-terms-checkbox {
+      --background-checked: var(--app-primary);
+      --border-color: var(--app-primary);
+      --border-color-checked: var(--app-primary);
+    }
+.app-title, .title-class, .item-label-stacked ion-select .select-text.select-placeholder,.sb-popover .sb-popover-footer .sb-btn-outline-info, .qr-instruction-container .qr-btn-container .qr-btn, .cancel_info, .sb-view-all-items * {
+color: var(--app-primary-tint-contrast) !important;
+}
+// .qr-instruction-container .qr-btn-container .qr-btn {
+//   color: var(--app-primary-contrast);
+// }
+.sb-chapter-dd ion-icon svg, .icon-svg--primary {
+fill:var(--app-primary);
+}
+.sb-btn-secondary, .sb-popover .sb-popover-footer .sb-popover-action-btn.popover-color, .sb-card-view-all-container .sb-card .sb-card-actions .action-btn.delete, .sb-card-download-container .sb-card .sb-card-actions .action-btn.delete, app-downloads-tab .sb-card-actions .action-btn.delete{
+color: var( --app-primary-contrast) !important;
+}
+.popover-ratings ion-icon.filled, .sb-chapter-dd, .sbchapter__play__btn, .read-more, .rating-opts .rating-item .rating-label.active-label, .view-credits span, .gd-tab-header .gd-tab.active .gd-tab-name, .gd-card-head .gd-card-titile {
+color: var(--app-primary) !important;
+}
+.header-info, .sb-slider-pills-container .sb-grade-pills-container .pill:active, .sb-slider-pills-container .sb-grade-pills-container .pill.active, .sb-btn-secondary, .sb-popover .sb-popover-footer .sb-popover-action-btn.popover-color, .letsgo-info, .save-changes,.sb-btn-large, .cd-btn .sb-btn-large{
+  background-color: var( --app-primary) !important;
+}
+.sb-view-all-container .sb-view-all-items{
+  background-color: var( --app-primary-tint) !important;
+}
+.card-container.selected, .letsgo-info, .sbchapter__play__btn, .save-changes, .sb-btn-outline-info, .gd-member-search input {
+  border-color:var(--app-primary) !important;
+}
+// app-user-home app-truncated-ellipsis, app-sb-preferences-popup app-truncated-ellipsis,.preference-container, .user-profile {
+//   color:var(--app-primary-contrast);
+// }  app-application-header .ion-activatable.ion-focusable, 
+
+.page-language-settings .continue img.arrow-icon.animate,img.arrow-icon {
+  filter: invert(0);
+}
+.sb-btn-secondary img.arrow-icon, .filter-button img {
+  filter: invert(1);
+}
+.sb-menu-icon .tool-icon, ion-tab-button.tab-selected, .profile ion-tabs ion-tab-button.tab-selected ion-icon, .sb-side-menu .sb-menu-list .item ion-icon, .icon-check.selected, .filter-icon, .sb-btn-tile img, .sb-dt-card-actions button img, app-application-header .ion-activatable.ion-focusable,.card-icons{
+  filter: invert(55%) sepia(100%) saturate(1893%) hue-rotate(360deg) brightness(0%) contrast(107%);
+}
+ion-button .tool-icon, .sb-label-grid.sb-box-grid .item .sb-icon-img,.tutorial-popover .popover-wrapper img.close-icon {
+  filter: invert(0%) sepia(100%) saturate(0%) hue-rotate(21deg) brightness(97%) contrast(103%);
+} 
+.sb-label-grid.sb-box-grid .item .sb-icon-img, app-profile .bottom-block .trainings .heading .refresh-icon, app-profile .contacts .email.light .icon, app-profile .contacts .phone.light .icon, app-profile .contacts .email ion-icon{
+  filter:invert(0%) sepia(100%) saturate(0%) hue-rotate(21deg) brightness(0%) contrast(103%);
+}
+
+}

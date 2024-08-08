@@ -21,7 +21,7 @@ body {
 }
 
 body {
-  background: var(--sbt-body-bg) !important;
+  background: #ffbc0154 !important;
   position: relative;
   font-family: var(--font-stack-en) !important;
   letter-spacing: 0.2px;
@@ -127,19 +127,6 @@ body {
       padding: 0.5em 0 0 0;
     }
   }
-}
-.sb-prominent-filter {
-  background: #fff !important;
-}
-.sb-prominent-filter
-  .sb-prominent-filter-container
-  .sb-prominent-filter-field
-  .ui.selection.dropdown
-  .item {
-  color: #000 !important;
-}
-.sb-color-grey {
-  color: #000 !important;
 }
 
 // calender styles
@@ -875,16 +862,14 @@ app-landing-page {
   }
 }
 
-.sb-btn-secondary,
-.sb-btn-primary {
-  color: var(--sb-btn-default-color);
-}
 
 // .sb-btn-outline-primary,
 // .sb-btn-outline-secondary {
 // background-color: var(--sb-btn-default-color);
 // }
-
+button.view-all-info.sb-btn.sb-btn-normal.sb-btn-outline-secondary.sb-btn-white{
+  color: #000;
+}
 /* header tail black bar */
 .brand-header-tail {
   background: var(--brand-header-tail-bg);
@@ -1124,7 +1109,8 @@ a.ui.labels .label:hover {
 
 .sb-modal .ui.modal {
   .sb-modal-header {
-    color: var(--sb-modal-header-text);
+    color: #fff;
+    background-color:#065872;
   }
 
   .sb-modal-content {
@@ -1567,28 +1553,4 @@ html[layout="joy"] sb-form .multi-select-container .list-border {
       max-width: 25rem;
     }
   }
-}
-.sb-accordion .sb-color-primary {
-  color: #000 !important;
-}
-.sui-accordion-panel .active {
-  .sb-color-primary {
-    color: #000 !important;
-  }
-}
-
-.cdk-overlay-pane .sb-mat__modal__content {
-  color: #000 !important;
-}
-:-ms-input-placeholder::placeholder {
-  color: #000 !important;
-}
-input::placeholder {
-  color: #000 !important;
-}
-.sb-search-input::placeholder {
-  color: #000 !important;
-}
-input.sb-search-input::placeholder {
-  color: #000 !important;
 }
