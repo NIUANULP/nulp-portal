@@ -77,9 +77,6 @@
               "src/assets/styles/styles.scss",
               "node_modules/video.js/dist/video-js.min.css",
               "node_modules/katex/dist/katex.min.css",
-              "src/assets/styles/themes/themes-portal.scss",
-              "src/assets/styles/themes/themes-material_UI.scss",
-              "src/assets/styles/themes/themes-df.scss",
               "./node_modules/@project-sunbird/discussions-ui-v8/assets/styles/global.scss",
               "node_modules/@project-sunbird/sunbird-video-player-v9/lib/assets/videojs.markers.min.css",
               "node_modules/videojs-http-source-selector/dist/videojs-http-source-selector.css",
@@ -87,7 +84,10 @@
               "node_modules/primeng/resources/themes/nova-light/theme.css",
               "node_modules/primeng/resources/primeng.min.css",
               "node_modules/angular-calendar/css/angular-calendar.css",
-              "node_modules/izitoast/dist/css/iziToast.min.css"
+              "node_modules/izitoast/dist/css/iziToast.min.css",
+              
+              "src/assets/sb-themes/themes/themes-portal.scss",
+              "src/assets/sb-themes/themes/themes-material_UI.scss"
             ],
             "stylePreprocessorOptions": {
               "includePaths": ["src/assets/styles/"]

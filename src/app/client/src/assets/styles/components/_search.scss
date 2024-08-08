@@ -6,6 +6,7 @@
   border-radius: calculateRem(3px);
   max-width: 100%;
   width: 100%;
+  background-color: #fff;
 
   @include respond-above(sm) {
     &.large {

@@ -2,11 +2,7 @@
   "UrlLinks": {
     "downloadDikshaApp": "https://play.google.com/store/apps/details?id=in.gov.diksha.app"
   },
-  "layoutConfiguration": {
-    "source": "",
-    "name": "newLayout",
-    "options": ""
-  },
+  "layoutConfiguration": null,
   "CommonSearch": {
     "contentType": [
       "Collection",
