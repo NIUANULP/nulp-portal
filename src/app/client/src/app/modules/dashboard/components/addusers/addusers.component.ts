@@ -458,7 +458,7 @@ export class AddusersComponent implements OnInit {
                     id: this.organisationId,
                     orgName: this.subOrgName,
                     channel: this.userLoginDataChannel,
-                    isRootOrg: false,
+                    isTenant: false,
                   });
                 }
               },
@@ -742,7 +742,7 @@ export class AddusersComponent implements OnInit {
               request: {
                 orgName: this.createOrgForm.value["orgName"],
                 description: this.createOrgForm.value["description"],
-                isRootOrg: false,
+                isTenant: false,
                 rootOrgId: this.onchangeorgId,
                 channel: this.channel,
                 organisationType: "school",
@@ -1049,7 +1049,7 @@ export class AddusersComponent implements OnInit {
         request: {
           query: "",
           filters: {
-            isRootOrg: true,
+            isTenant: true,
           },
           limit: 100,
         },

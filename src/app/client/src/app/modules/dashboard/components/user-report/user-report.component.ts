@@ -123,7 +123,7 @@ export class UserReportComponent implements OnInit {
       "request": {
         "filters": {
           "rootOrgId": orgId,
-          isRootOrg: false
+          isTenant: false
         },
         "limit": 100,
         "offset": 0

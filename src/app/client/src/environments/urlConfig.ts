@@ -8,17 +8,15 @@ export const urlConfig = {
   // search: "/api/event/v1/search",
   // search: "/content/composite/v1/search",
   // compositeSearch: "/action/composite/v3/search",
-   gmeetget:
-    "custom_event/gmeet/get?eventId=",
+  gmeetget: "custom_event/gmeet/get?eventId=",
 
   search: "/api/composite/v1/search",
   compositeSearch: "/api/composite/v1/search",
-  emailNotification :"/api/user/v1/notification/email",
+  emailNotification: "/api/user/v1/notification/email",
   adminEnroll: "/learner/course/v1/admin/enroll",
-  userData:"/learner/user/v3/search",
-  costomUserEnroll:"/custom_event/registration",
-  getProfile:"/learner/user/v5/read/",
-
+  userData: "/learner/user/v3/search",
+  costomUserEnroll: "/custom_event/registration",
+  getProfile: "/learner/user/v5/read/",
 
   detail: "/api/event/v4/read/",
   myEvents: "/api/course/v2/user/enrollment/list?contentType=Event",
