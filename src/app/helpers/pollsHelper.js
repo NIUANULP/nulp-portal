@@ -185,8 +185,8 @@ const updatePolls = async (req, res) => {
       throw error;
     }
     if (
-      !body?.poll_options ||
-      body?.poll_options.filter((option) => option.trim() !== "").length < 2
+      body?.poll_options &&
+      body?.poll_options?.filter((option) => option?.trim() !== "").length < 2
     ) {
       const error = new Error(`Poll option should be more than 2`);
       error.statusCode = 400;
@@ -213,7 +213,14 @@ const updatePolls = async (req, res) => {
     const currentDateTime = new Date();
     const startDateTime = new Date(pollData[0]?.start_date);
 
-    if ((body?.start_date || body?.status) && currentDateTime > startDateTime) {
+    // Calculate the time difference in milliseconds
+    const timeDifference = currentDateTime - startDateTime;
+    const twoMinutesInMillis = 2 * 60 * 1000; // 2 minutes in milliseconds
+
+    if (
+      (body?.start_date || body?.status) &&
+      timeDifference > twoMinutesInMillis
+    ) {
       const message = body?.start_date
         ? "Cannot update start date once poll has started."
         : "Cannot update status once poll has started.";
