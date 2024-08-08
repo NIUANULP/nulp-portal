@@ -1,3 +1,24 @@
+html[data-theme="JOYFUL"] {
+  .sbt-inside-page-container.ui.container {
+    margin: 0 !important;
+    height: 100%;
+    // background: hsla(0, 0%, 7%, 0.75);
+  }
+  lib-lib-entry {
+    .df-header {
+      border-radius: 0rem;
+    }
+    .discussion-forum-content {
+      padding: 0 1rem;
+      background: transparent;
+      .discuss-right-panel {
+        background: transparent !important;
+        padding: 0 !important;
+      }
+    }
+  }
+}
+
 html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
   --app-primary: #ffd92a;
   --app-primary-medium: #007aff;
@@ -29,6 +50,8 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
   --button-style-shadow: 5px 5px 2px 0 var(--app-shadow);
   --block-style-shadow: 0 2px 7px 0 var(--app-shadow);
 
+  --app-tertiary-background: #000;
+
   //cc
   --cc-accordion-panel-br: #333;
   --cc-accordion-panel-bg: #222222;
@@ -57,7 +80,7 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
   --cc-grade-pill-svg-fill: #222222;
   --cc-sbcard-data1-2-text: var(--app-primary);
   --cd-sbcard-data1-2-text: var(--app-primary); //later delete
-  --cc-sbcard-bg: #fff;
+  --cc-sbcard-bg: #222222;
   --cc-sbcard-img-container-bg: var(--gray-100);
   --cc-sbcard-title: #ffffff;
   --cc-sbcard-meta-text: #fff;
@@ -182,6 +205,8 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
   --cc-listView-compt-itemText: #fff;
   --cc-listView-compt-title: #fff;
 
+  --sbt-theme-purple-selectbox-lbg: #333;
+
   ion-tabs ion-tab-button {
     --color-selected: var(--app-primary);
   }
@@ -240,12 +265,22 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
   add-activity-to-group .text-center,
   app-guest-profile .ui-container main.inner-scroll.scroll-y,
   .sb-content-info-items .sb-content-info-card,
-  .progress-outer-course {
+  .progress-outer-course,
+  ion-row.padding-12.md.hydrated,
+  app-search-filter
+    ion-button.ion-text-capitalize.mb-16.md.button.button-block.button-solid.ion-activatable.ion-focusable.hydrated,
+  app-search-filter
+    ion-button.ion-text-capitalize.mb-16.md.button.button-block.button-solid.ion-activatable.ion-focusable.hydrated
+    button.button-native,
+  app-search-filter
+    .search-filter-footer
+    ion-row
+    ion-col:first-child
+    > button.button-native {
     background: #000000 !important;
   }
 
   ion-row.padding-12.md.hydrated {
-    background: #000 !important;
     padding: 0 !important;
   }
 
@@ -255,22 +290,13 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
   }
 
   app-search-filter
-    ion-button.ion-text-capitalize.mb-16.md.button.button-block.button-solid.ion-activatable.ion-focusable.hydrated {
-    background: #000 !important;
-
-    button.button-native {
-      background: #000;
-      border: 1px solid var(--app-primary);
-      color: #fff;
-    }
-  }
-
+    ion-button.ion-text-capitalize.mb-16.md.button.button-block.button-solid.ion-activatable.ion-focusable.hydrated
+    button.button-native,
   app-search-filter
     .search-filter-footer
     ion-row
     ion-col:first-child
     > button.button-native {
-    background: #000;
     border: 1px solid var(--app-primary);
     color: #fff;
   }
@@ -1393,17 +1419,6 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
     background: var(--white);
   }
 
-  .df-btn-container,
-  .discuss-card-content,
-  .category-card,
-  .overlay-sidebar__menu,
-  .discussion-details,
-  .profileCard,
-  .related-discuss-card,
-  .discussion-start-modal .discussion-start-modal-content {
-    background: #fff;
-  }
-
   .df-btn-container .sb-left-icon,
   .submit-post-btn.start-common-btn {
     color: var(--black) !important;
@@ -1479,7 +1494,6 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
   .filter-option,
   .profile-label,
   .profileCard *,
-  .sb-sidebar-menu-mob li,
   .related-discuss-card-content,
   .discussion-start-modal
     .discussion-start-modal-content
@@ -1518,7 +1532,8 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
     }
   }
 
-  .discussion-forum .reply-btn {
+  .discussion-forum .reply-btn,
+  .overlay-sidebar__menu {
     background-color: #222;
   }
 
@@ -1529,12 +1544,6 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
   .recent-tabs .filter-option:hover,
   .tabs-active {
     border-bottom: 3px solid var(--app-primary);
-  }
-
-  .sb-sidebar-menu-mob li.menu-active {
-    background-color: #222;
-    border-left: 3px solid #000;
-    color: var(--app-primary);
   }
 
   .faq-sub-title,
@@ -1625,6 +1634,58 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
   .info-title {
     color: #fff;
   }
+
+  .pop-container,
+  .dark-background,
+  .alert-wrapper.sc-ion-alert-md {
+    background: var(--app-secondary-background) !important;
+    color: var(--white);
+  }
+  .background-theme-color {
+    background-color: var(--app-secondary-background) !important;
+  }
+  .message,
+  .projects-labels,
+  .clr-primary {
+    color: var(--white);
+  }
+  .attach-label,
+  .action-sheet-icon {
+    color: var(--app-primary) !important;
+  }
+  .searchbar-input {
+    background: var(--app-secondary-background) !important;
+    border: 1px solid var(--app-secondary-background);
+  }
+  .task-desc {
+    border: none;
+  }
+  .entity-block,
+  .task-list,
+  .footer-btn,
+  .learningResources,
+  .sb-popover-content-details,
+  .heading-name,
+  .color-white,
+  .task-board {
+    h4,
+    h3,
+    h5,
+    span {
+      color: var(--white);
+    }
+  }
+  .button-clr {
+    color: var(--black) !important;
+  }
+  .clr-downloaded-btn {
+    color: green !important;
+  }
+  .loading-spinner.sc-ion-loading-md,
+  .loading-wrapper.ion-overlay-wrapper.sc-ion-loading-md {
+    filter: invert(0) !important;
+    background: var(--app-secondary-background);
+  }
 }
 
 // accessbility changes
@@ -1637,7 +1698,7 @@ html[device-accessable-theme="accessible"][data-theme="JOYFUL"] {
   --color-panther: #424242 !important;
   --color-gray34: #575757 !important;
 
-  --app-primary: #00458f !important;
+  --app-primary: #00458f;
   --app-medium-gray: #4a4a4a;
   --app-light-gray: #555;
   $red: #ad0011;
@@ -2500,3 +2561,6 @@ html[device-accessable-theme="accessible"][data-mode="DARKMODE"] {
     color: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.25);
   }
 }
+
+@import './themes-mobile-aqua.scss';
+@import './themes-mobile-inded.scss';

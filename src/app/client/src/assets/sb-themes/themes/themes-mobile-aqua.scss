@@ -1,0 +1,188 @@
+html[data-theme="JOYFUL"][data-color="aqua"]{
+
+  $blue: #86d1d1;
+  $primary-color:#86d1d1;//#b2e0ff
+
+    --app-primary:#86d1d1 !important; //material 500 value
+    --app-primary-contrast:#000000;
+    --app-primary-shade: #77baba; // material 800
+    --app-primary-tint: #97e9e9; // material 100
+    --app-primary-background: var(--app-primary-tint);
+    --app-primary-header: var(--app-primary);
+    --app-primary-header-light: var(--app-primary-tint);
+    --app-tertiary-background:#F3F7FB;
+    --app-secondary-background: var(--app-primary-tint);
+
+    --cc-lb-card-stack-btn-bg: var(--app-primary-tint);
+    --cc-sbcard-bg:var(--app-primary-tint);
+
+/* overwrites */
+// .sb--card {
+//   background-color: #fff !important;
+// }
+.sb-menu-icon .tool-icon, ion-tab-button.tab-selected, .profile ion-tabs ion-tab-button.tab-selected ion-icon, .sb-side-menu .sb-menu-list .item ion-icon,img.arrow-icon.animate, .selected-lang .language-selection .icon-check,img.arrow-icon {
+  filter: invert(55%) sepia(100%) saturate(1893%) hue-rotate(360deg) brightness(0%) contrast(107%);
+}
+ion-button .tool-icon, .sb-label-grid.sb-box-grid .item .sb-icon-img,.tutorial-popover .popover-wrapper img.close-icon {
+  filter: invert(0%) sepia(100%) saturate(0%) hue-rotate(21deg) brightness(97%) contrast(103%);
+} 
+.sb-label-grid.sb-box-grid .item .sb-icon-img, app-profile .bottom-block .trainings .heading .refresh-icon, app-profile .contacts .email.light .icon, app-profile .contacts .phone.light .icon, app-profile .contacts .email ion-icon{
+  filter:invert(0%) sepia(100%) saturate(0%) hue-rotate(21deg) brightness(0%) contrast(103%);
+}
+ion-icon {
+  color: var(--app-primary) !important;
+}
+ion-icon.arrow-icon,.top-back-button,.sb--card__title,.batch-detail, .lighter, .selected-lang .label-text, span.app-name,app-profile-settings .title,app-profile-settings .board-select-dummy .ps-board .ps-board-label, .explore-more-books, ion-button, .explore-more-content, app-resources sb-library-filters .sb-medium-pills-container .pill.active, app-resources sb-library-filters .sb-grade-pills-container .pill.active {
+color: var(--app-primary-contrast) !important;
+}
+.sb-label-grid .item,app-profile .contacts,.framework-block, app-profile .self-declare-teacher-details, .trainings .content {
+  background: var(--cc-sbcard-bg) !important;
+  border-color: transparent !important;
+}
+.sb-label-grid .item {
+  border: 1px solid var(--app-primary-shade) !important;
+}
+.segment-button-checked ion-label {
+  color:var(--app-primary);
+}
+.sb-popover .sb-popover-footer .sb-popover-action-btn.popover-color,.segment-button-indicator-background,.block-button-save, app-profile .roles-container .roles, app-profile .contacts .phone, app-profile .contacts .email,.sb-btn-large, app-profile-settings div.ion-padding.ion-no-border, .header-info, .sign-in-card-success .sign-in-block, ion-card, .content-preferences-info, .grid-container, .another-user-title {
+  background: var(--app-primary) !important;
+  color: var(--app-primary-contrast) !important;
+}
+.content-preferences-info,.grid-container {
+  border-bottom: 0.3px solid transparent;
+  border-top: 0.3px solid transparent;
+  border:1px solid transparent;
+}
+ion-card {
+  box-shadow: none !important;
+}
+.stack-btn,sb-library-cards-stack .sbbtn, app-district-mapping .block-button-clear, .bottom-block {
+  background: transparent !important;
+  border: 1px solid var(--app-primary-tint) !important;
+}
+.footer, .sb-btn-tile, .sb-side-menu ion-footer.side-menu-footer, .sb-side-menu ion-header, app-application-header ion-content, app-application-header .sb-menu-list, app-application-header ion-item, .app-user-home ion-content,app-search ion-content,app-admin-home ion-content, .preference-popup .modal-wrapper,.sb-popover ion-content,.sb-popover .sb-popover-footer, .sb-slider-pills-container .sb-pills-container .pill {
+    --background: var(--app-primary-tint) !important;
+    background: var(--background) !important;
+    background-color: var(--app-primary-tint) !important;
+    color:var(--app-primary-contrast);
+}
+ .sb-slider-pills-container .sb-medium-pills-container .pill {
+  border: var(--app-primary-tint) .0625rem solid;
+}
+app-resources sb-library-filters .sb-medium-pills-container .pill.active, app-resources sb-library-filters .sb-grade-pills-container .pill.active {
+  color: var(--app-primary-contrast) !important;
+  background-color: var(--app-primary-shade) !important;
+  border-color: var(--app-primary-shade) !important;
+}
+app-admin-home ion-content,ion-content {
+  background-color: transparent !important;
+  --background: transparent !important;
+}
+.sb-side-menu ion-footer.side-menu-footer {
+  border-radius: 0;
+}
+  .sb-view-all-container .sb-view-all-items .sb-view-all-title, app-application-header .sb-menu-item, app-profile .contacts .email .value, app-profile .contacts .phone .value, .ftue-changes.select-alert .alert-button:last-child:not(:only-child), .ftue-changes.select-alert .alert-button:first-child:not(:only-child), .select-box.select-alert .alert-button:last-child:not(:only-child),.select-box.select-alert .alert-button:first-child:not(:only-child), .header-info .theme-header-info, .header-info .learning-info {
+    color: var(--app-primary-contrast) !important;
+  }
+  .sb-view-all-container .sb-view-all-items {
+    background-color: transparent;
+  }
+
+  .sb-card-container .sb-card {
+    background: var(--cc-sbcard-bg);
+    border-bottom: 1px solid var(--app-primary);
+  }
+  .sb-card-container .sb-card.sb-card-active, .trainings .heading,.qr-board::after, .alert-button-group.sc-ion-alert-md {
+    background: var(--app-primary-shade) !important;
+}
+  app-download-manager .sb-card-download-container .check-container {
+    background-color: var(--app-primary-shade);
+}
+ion-checkbox {
+  --border-color: var(--app-primary-tint);
+  --background-checked: var(--app-primary-tint);
+  --border-color-checked: var(--app-primary-tint);
+}
+
+ion-tabs ion-tab-bar,.sign-in-card-success .sign-in-block,.language-card label, .popover-wrapper .popover-content,.card-container,.sb-label-grid.icon-header .item .img {
+  background: var(--app-primary-tint);
+}
+ion-tabs ion-tab-button.qrscanner ion-icon {
+  border-color: var(--app-primary);
+}
+app-profile .school-details {
+  background-color: var(--app-primary-shade) !important;
+  border-bottom:0.3px solid var(--app-primary-shade) !important;
+  border-top:0.3px solid var(--app-primary-shade) !important;
+  .location-mapping-block {
+    background-color: var(--app-primary-tint);
+  }
+}
+
+body, .sb-members-list-item .sb-member__img {
+  background-color: var(--app-primary);
+}
+body::before {
+  content: "";
+  width: 40%;
+  height: 180px;
+  background-color: transparent !important;
+  background-repeat: no-repeat;
+  background-position: left center;
+  // background-image: url(assets/imgs/left-object.svg); // image has to passed on configuration
+  background-size: contain;
+  position: absolute;
+  left: -10%;
+  z-index: 9;
+  top: 30%;
+  filter: invert(1);
+}
+body::after {
+  content: "";
+  width: 40%;
+  height: 180px;
+  background-color: transparent !important;
+  background-repeat: no-repeat;
+  background-position: center center;
+  // background-image: url(/assets/imgs/right-object.svg); // image has to passed on configuration
+  background-size: contain;
+  position: absolute;
+  right: -20%;
+  transform: rotate(-70deg);
+  bottom: 10%;
+  filter: invert(1);
+}
+ion-app {
+  z-index: 10;
+}
+app-admin-home sb-pills-grid .sb-label-grid.show-icon.sb-box-grid div.item {
+  &:nth-child(1) {background-color: #a594d3 !important;}
+  &:nth-child(2) {background-color: #88ceeb !important;}
+  &:nth-child(3) {background-color: #d1b9e5 !important;}
+  &:nth-child(4) {background-color: #e4dc92 !important;}
+  &:nth-child(5) {background-color: #a8d386 !important;}
+  &:nth-child(6) {background-color: #eeffcb !important;}
+  &:nth-child(7) {background-color: #beb7e4 !important;}
+  &:nth-child(8) {background-color: #c9bf9d !important;}
+}
+.selected-lang .language-selection,.card-container{
+  box-shadow: 0px 5px 6px rgba(0, 0, 0, 0.3);
+}
+.container-focus {
+  filter: drop-shadow(0px 5px 6px rgba(0, 0, 0, 0.1));
+}
+.sb-btn-primary-outline, .sb-btn,.sb-btn-secondary,.qr-btn, .letsgo-info, .cancel_info {
+  color: var(--app-primary-contrast) !important;
+  background-color: var(--app-primary) !important;
+  border:0.0625rem solid var(--app-primary) !important;
+}
+
+.ftue-changes.select-alert .alert-wrapper button[aria-checked="true"] {
+  background: var(--app-primary-shade) !important;
+  border-radius: 0 !important;
+}
+ion-item.item-label-stacked {
+  --background: transparent;
+}
+}

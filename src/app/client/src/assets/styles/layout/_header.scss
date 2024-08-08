@@ -68,7 +68,7 @@
 .sbt-header-menu {
   position: relative;
   margin:0 auto;
-  @include respond-above(sm) {
+@include respond-above(sm) {
   // position: absolute;
   // left: 0px;
   // right: 0px;
@@ -81,7 +81,6 @@
   z-index: 999;
   border: 0;
   margin-bottom: calculateRem(-1px);
-  background: var(--sb-menu-bg);
   &.player-fullscreen-header{
     display: none !important;
   }
@@ -125,7 +124,6 @@
   }
 }
 .ui.button.qr-code-btn {
-  background: var(--sb-header-qrcode-btn-bg);;
   color: var(--sb-header-qrcode-btn);
   border-radius: calculateRem(4px);
   font-weight: normal;
@@ -207,10 +205,10 @@
         width: 100%;
         right: 0;
         left: inherit;
-        background: var(--sb-language-dropdown-bg);
+        background: #fff;
         & > .item {
           font-size: 0.86rem !important;
-          color: var(--sb-language-dropdown-item) !important;
+          color: #000 !important;
           &:hover{
             background: var(--sb-language-dropdown-item-active) !important;
           }

@@ -6,11 +6,11 @@
     @include margin(3.5rem auto 0 auto);
     @include position(null, 0 0 null 0); //bourbon
     @include size(100%, auto); //bourbon
-    background: none;
+    background: #fff;
 
     .sb-modal-header {
-      background-color: var(--primary-400);
-      color: var(--white);
+      background-color: #065872 !important;
+      color: #fff;
       font-weight: 700;
       font-size: calculateRem(16px);
       padding: calculateRem(8px) calculateRem(16px);
