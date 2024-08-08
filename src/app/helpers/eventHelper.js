@@ -1356,6 +1356,21 @@ async function eventReports(req, res) {
     const values = [eventId];
 
     const { rows } = await pool.query(query, values);
+    if (req?.query?.userdata) {
+      return res.status(200).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "successful",
+          message: "Event reports fetched successfully",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: rows,
+      });
+    }
     if (rows?.length > 0) {
       const eventDetail = await getEventNames([eventId]);
 
@@ -1392,6 +1407,7 @@ async function eventReports(req, res) {
             created_at: undefined,
             user_id: undefined,
             event_id: undefined,
+            batch_id: undefined,
           };
         })
         .filter((item) => item !== null); // Remove invalid items
