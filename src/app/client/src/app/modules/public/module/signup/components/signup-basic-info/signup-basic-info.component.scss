@@ -7,24 +7,31 @@
 }
 
 ::ng-deep {
-    html[layout=joy] .sb-form-control {
-        min-height: 2.5rem !important;
-        border-radius: 40px !important;
-    }
+  html[layout="joy"] .sb-form-control {
+    min-height: 2.5rem !important;
+    border-radius: 40px !important;
+  }
   html[layout="joy"] .sb-form-control:hover {
     border: 0.0625rem solid var(--gray-200);
   }
   span.arrow-icon.pl-8 {
     float: right;
   }
-  .ng-dropdown-panel{
+  .ng-dropdown-panel {
     position: inherit !important;
   }
-  .ng-select.ng-select-single .ng-select-container .ng-value-container .ng-input{
+  .ng-select.ng-select-single
+    .ng-select-container
+    .ng-value-container
+    .ng-input {
     position: inherit !important;
     padding: 5px 10px 8px 0px !important;
   }
-  .designation-select .ng-input :focus-visible{
-    border:none !important;
+  .designation-select .ng-input :focus-visible {
+    border: none !important;
   }
+}
+.sb-btn-disabled {
+  background: #cacccc70 !important;
+  border: none !important;
 }

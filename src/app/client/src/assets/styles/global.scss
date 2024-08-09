@@ -862,12 +862,11 @@ app-landing-page {
   }
 }
 
-
 // .sb-btn-outline-primary,
 // .sb-btn-outline-secondary {
 // background-color: var(--sb-btn-default-color);
 // }
-button.view-all-info.sb-btn.sb-btn-normal.sb-btn-outline-secondary.sb-btn-white{
+button.view-all-info.sb-btn.sb-btn-normal.sb-btn-outline-secondary.sb-btn-white {
   color: #000;
 }
 /* header tail black bar */
@@ -1110,7 +1109,7 @@ a.ui.labels .label:hover {
 .sb-modal .ui.modal {
   .sb-modal-header {
     color: #fff;
-    background-color:#065872;
+    background-color: #065872;
   }
 
   .sb-modal-content {
@@ -1553,4 +1552,8 @@ html[layout="joy"] sb-form .multi-select-container .list-border {
       max-width: 25rem;
     }
   }
+}
+.sb-btn-disabled {
+  background: #cacccc70 !important;
+  border: none !important;
 }

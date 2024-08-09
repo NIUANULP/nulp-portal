@@ -1,9 +1,14 @@
 @import "variables";
-@import 'mixins/mixins';
+@import "mixins/mixins";
 
-.signup-form-content,.logo-content{
-    width: 100%;
-    max-width: calculateRem(360px);
-    margin: 0 auto;
-    padding:0 1rem
-  }
+.signup-form-content,
+.logo-content {
+  width: 100%;
+  max-width: calculateRem(360px);
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+.sb-btn-disabled {
+  background: #cacccc70 !important;
+  border: none !important;
+}
