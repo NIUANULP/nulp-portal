@@ -746,7 +746,6 @@ export class AddusersComponent implements OnInit {
                 rootOrgId: this.onchangeorgId,
                 channel: this.channel,
                 organisationType: "school",
-                isTenant: false,
               },
             };
             this._httpService.createOrgDetailSave(tempArray).subscribe(
