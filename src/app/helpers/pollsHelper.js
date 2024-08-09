@@ -6,6 +6,8 @@ const {
   getRecords,
 } = require("./dbOperationHelper");
 const uuidv1 = require("uuid/v1");
+const cron = require("node-cron");
+const { pool } = require("../helpers/postgresqlConfig");
 
 function generateUniqueId() {
   const currentUnixTime = Date.now(); // Get current Unix timestamp in milliseconds
@@ -972,6 +974,46 @@ const getUserPoll = async (req, res) => {
     });
   }
 };
+// Cron job to run every minute
+cron.schedule("* * * * *", async () => {
+  console.log("Running cron job to update poll statuses");
+
+  try {
+    // Update polls to "Closed" if end_date has passed and log updated polls
+    const closedResult = await pool.query(`
+      UPDATE polls
+      SET status = 'Closed'
+      WHERE TO_TIMESTAMP(end_date, 'YYYY-MM-DD"T"HH24:MI:SS"Z"') <= NOW()
+        AND status = 'Live'
+      RETURNING id, status, end_date
+    `);
+    if (closedResult.rows.length > 0) {
+      console.log("Closed polls updated:", closedResult.rows);
+    } else {
+      console.log("No polls needed to be closed.");
+    }
+
+    // Update polls to "Live" if start_date has arrived and end_date hasn't passed, and log updated polls
+    const liveResult = await pool.query(`
+      UPDATE polls
+      SET status = 'Live'
+      WHERE TO_TIMESTAMP(start_date, 'YYYY-MM-DD"T"HH24:MI:SS"Z"') <= NOW()
+        AND TO_TIMESTAMP(end_date, 'YYYY-MM-DD"T"HH24:MI:SS"Z"') > NOW()
+        AND status = 'Draft'
+      RETURNING id, status, start_date, end_date
+    `);
+    if (liveResult.rows.length > 0) {
+      console.log("Live polls updated:", liveResult.rows);
+    } else {
+      console.log("No polls needed to be activated.");
+    }
+
+    console.log("Poll statuses updated successfully");
+  } catch (err) {
+    console.error("Error updating poll statuses:", err);
+  }
+});
+
 module.exports = {
   createPolls,
   updatePolls,
