@@ -3,7 +3,7 @@
 // Joy Theme
 html[layout="joy"] {
   --primary-hs: 210, 97%; // template primary color // #024f9d
-  --primary: hsl(var(--primary-hs), 31%);
+  --primary: hsl(var(--primary-hs), 31%);  
   --df-common-bg: var(--df-e9e8d9);
 }
 
@@ -14,9 +14,9 @@ html[data-theme="Green"] {
   --df-common-bg: var(--primary-100);
   --df-body-bg: var(--primary-0); // body bg
 
-  img {
-    filter: unset;
-  }
+    img {
+      filter: unset;
+   }
 }
 
 // Orange Theme
@@ -24,17 +24,15 @@ html[data-theme="Orange"] {
   --primary-hs: 32, 91%; // template primary color // #e57f0b
   --primary: hsl(var(--primary-hs), 47%);
   --df-common-bg: var(--primary-100);
-  --df-body-bg: var(--primary-0); // body bg
+  --df-body-bg: var(--primary-0); // body bg 
 
-  .category-card .category-card-main .eye-icon,
-  .bookmark-icon {
+  .category-card .category-card-main .eye-icon , .bookmark-icon{
     filter: invert(1);
   }
 }
 
 // Dark Mode
-html[data-theme="Darkmode"],
-html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
+html[data-theme="Darkmode"]{
   // Dark Theme color variation
   --primary-hs: 49, 100%; // template primary color // #ffd829
   --primary: hsl(var(--primary-hs), 58%);
@@ -44,55 +42,39 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
   --df-222: #222;
   --text-color: var(--white);
   --df-background: var(--df-222);
-  --df-common-bg: var(--df-222);
+  --df-common-bg: var(--df-333);
 
   //declared variables
   --df-body-bg: var(--black); // body bg
-  --df-card-bg: var(--df-333);
-  --df-related-card-bg: var(--df-333);
+  --df-card-bg: var(--black);
+  --df-related-card-bg: var(--black);
   --df-sidebar-menu-text: var(--gray-300);
   --df-sidebar-menu-active-bg: var(--df-333);
   --df-tab-text: var(--text-color);
   --df-btn-default-color: var(--black);
   --df-tag-bg: var(--black);
+}
 
-  --open-btn-bg: var(--df-222);
-  --open-btn-color: var(--white);
-
+//specific classes for dark theme
+html[data-theme="Darkmode"] {
   lib-lib-entry {
     .df-header img {
       filter: unset !important;
     }
 
-    .discussion-forum-content .discuss-right-panel {
+  .discussion-forum-content .discuss-right-panel {
       background: var(--df-common-bg);
       padding: 1rem;
     }
 
     .df-cancel-btn:hover,
     .df-cancel-btn:active {
-      color: var(--black);
-      background-color: var(--primary-800);
-    }
-
+        color: var(--black);
+        background-color: var(--primary-800);
+      }
+    
     img {
       filter: invert(1);
-    }
-
-    .tag-empty-container .tag-empty-label,
-    .tag-empty-container .tag-empty-text {
-      color: var(--white) !important;
-    }
-    .df-dimmer-alert-modal .df-alert-modal .df-alert-modal-buttons {
-      border-top: none;
-    }
-    .df-dimmer-alert-modal .df-alert-modal .df-alert-modal-header {
-      color: #000;
-    }
-    dt-app-loader-container,
-    .dt-app-loader-container .df-dimmer-alert-modal .df-alert-modal,
-    df-alert-modal-buttons {
-      background: #333;
     }
   }
 }
@@ -100,7 +82,7 @@ html[data-theme="JOYFUL"][data-mode="DARKMODE"] {
 //specific classes for joy theme
 html[layout="joy"] {
   lib-lib-entry {
-    .df-header {
+    .df-header{
       border-radius: 1.5rem;
     }
 
