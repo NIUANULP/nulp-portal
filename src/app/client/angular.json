@@ -66,6 +66,7 @@
                 "output": "/assets/"
               }
             ],
+           
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/assets/quml-styles/quml-carousel.css",
@@ -84,10 +85,7 @@
               "node_modules/primeng/resources/themes/nova-light/theme.css",
               "node_modules/primeng/resources/primeng.min.css",
               "node_modules/angular-calendar/css/angular-calendar.css",
-              "node_modules/izitoast/dist/css/iziToast.min.css",
-              
-              "src/assets/sb-themes/themes/themes-portal.scss",
-              "src/assets/sb-themes/themes/themes-material_UI.scss"
+              "node_modules/izitoast/dist/css/iziToast.min.css"
             ],
             "stylePreprocessorOptions": {
               "includePaths": ["src/assets/styles/"]
