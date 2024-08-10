@@ -1902,6 +1902,81 @@ const updateRegistrationEvent = async (req, res) => {
     });
   }
 };
+
+async function eventSearchWrapper(req, res) {
+  try {
+    const data = req.body;
+
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${envHelper.api_base_url}/api/composite/v1/search`,
+      headers: {
+        Authorization: `Bearer ${req.session.apiBearerToken} `,
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+
+    const response = await axios(config);
+    return res.send(response.data);
+  } catch (error) {
+    console.error(error);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
+
+async function eventGetByIdWrapper(req, res) {
+  try {
+    const eventId = req.query.eventId;
+
+    let config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: `${envHelper.api_base_url}/api/event/v4/read/${eventId}`,
+      headers: {
+        Authorization: `Bearer ${req.session.apiBearerToken} `,
+        "Content-Type": "application/json",
+      },
+    };
+
+    const response = await axios(config);
+    return res.send(response.data);
+  } catch (error) {
+    console.error(error);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
 module.exports = {
   createEvent,
   getEvent,
@@ -1919,4 +1994,6 @@ module.exports = {
   fetchEventsRecording,
   eventEnrollmentList,
   updateRegistrationEvent,
+  eventSearchWrapper,
+  eventGetByIdWrapper,
 };
