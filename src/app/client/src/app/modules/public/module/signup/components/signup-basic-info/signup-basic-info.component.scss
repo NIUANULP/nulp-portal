@@ -25,10 +25,12 @@
     .ng-value-container
     .ng-input {
     position: inherit !important;
-    padding: 5px 10px 8px 0px !important;
   }
   .designation-select .ng-input :focus-visible {
     border: none !important;
+  }
+  .ng-select.ng-select-single .ng-select-container .ng-value-container, .ng-select.ng-select-single .ng-select-container .ng-value-container .ng-value {
+    overflow: initial !important;
   }
 }
 .sb-btn-disabled {
