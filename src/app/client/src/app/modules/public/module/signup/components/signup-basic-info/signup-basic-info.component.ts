@@ -35,7 +35,7 @@ export class SignupBasicInfoComponent implements OnInit {
     public utilService: UtilService, public configService: ConfigService, private _fb: FormBuilder) { }
 
  ngOnInit(): void {
-  this.instance = _.upperCase(this.resourceService.instance || 'SUNBIRD');
+  this.instance = _.upperCase('NULP');
   this.personalInfoForm = this._fb.group({
     name: ['', Validators.required],
     organisation: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]*$')]],
