@@ -15,6 +15,8 @@ const {
   fetchEventsRecording,
   eventEnrollmentList,
   updateRegistrationEvent,
+  eventSearchWrapper,
+  eventGetByIdWrapper,
 } = require("../helpers/eventHelper.js");
 const proxyUtils = require("../proxy/proxyUtils.js");
 
@@ -99,5 +101,16 @@ module.exports = function (app) {
     bodyParser.json({ limit: "10mb" }),
     proxyUtils.verifyToken(),
     updateRegistrationEvent
+  );
+  app.post(
+    "/custom_event/composite/search",
+    bodyParser.json({ limit: "10mb" }),
+    proxyUtils.verifyToken(),
+    eventSearchWrapper
+  );
+  app.get(
+    "/custom_event/read/event",
+    proxyUtils.verifyToken(),
+    eventGetByIdWrapper
   );
 };
