@@ -88,7 +88,7 @@ export class UserReportComponent implements OnInit {
       { field: 'lastName', header: 'Last Name', width: '150px' },
       { field: 'email', header: 'Email', width: '150px' },
       { field: 'phone', header: 'Mobile', width: '150px' },
-      { field: 'status', header: 'Status', width: '150px' },
+      { field: 'status', header: 'Status', width: '150px' }
     ]
   }
   getAllOrgData() {
@@ -123,7 +123,7 @@ export class UserReportComponent implements OnInit {
       "request": {
         "filters": {
           "rootOrgId": orgId,
-          isRootOrg: false
+          isTenant: false
         },
         "limit": 100,
         "offset": 0
@@ -521,4 +521,5 @@ export class UserReportComponent implements OnInit {
 
     }
   }
+
 }
