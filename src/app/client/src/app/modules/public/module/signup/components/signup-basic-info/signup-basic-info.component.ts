@@ -35,7 +35,7 @@ export class SignupBasicInfoComponent implements OnInit {
     public utilService: UtilService, public configService: ConfigService, private _fb: FormBuilder) { }
 
  ngOnInit(): void {
-  this.instance = _.upperCase(this.resourceService.instance || 'SUNBIRD');
+  this.instance = _.upperCase(this.resourceService.instance || 'NULP');
   this.personalInfoForm = this._fb.group({
     name: ['', Validators.required],
     organisation: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]*$')]],
@@ -74,6 +74,7 @@ export class SignupBasicInfoComponent implements OnInit {
       this.personalInfoForm.get('userType').setValue(selectedValue);
     }
   }
+  
   onDesignationTypeChange(designation: string): void {
     this.isOtherDesignationType = designation === 'other';
     const otherDesignationControl = this.personalInfoForm.get('otherDesignation');
@@ -109,6 +110,7 @@ export class SignupBasicInfoComponent implements OnInit {
       userDetails.organisation = this.personalInfoForm.controls.organisation.value;
       userDetails.userType = this.personalInfoForm.controls.userType.value;
       userDetails.designation = this.personalInfoForm.controls.designation.value;
+      userDetails.otherDesignation = this.personalInfoForm.controls.otherDesignation.value;
 
       localStorage.setItem('guestUserDetails', JSON.stringify(userDetails));
 
@@ -116,7 +118,7 @@ export class SignupBasicInfoComponent implements OnInit {
         name: userDetails.name,
         organisation: userDetails.organisation,
         userType: userDetails.userType,
-        designation: userDetails.designation
+        designation: userDetails.designation || userDetails.otherDesignation,
       };
 
       console.log('signupStage1Details => ', signupStage1Details); // Debugging log
