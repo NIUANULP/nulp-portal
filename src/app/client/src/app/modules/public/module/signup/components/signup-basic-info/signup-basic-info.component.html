@@ -31,7 +31,7 @@
     <input id="signup-form-organization" class="sb-form-control"
       [ngClass]="{'orange-border': personalInfoForm.controls.organisation.touched && personalInfoForm.controls['organisation'].errors}"
       formControlName="organisation" type="text" name="organisation" aria-required="true"
-      placeholder="{{resourceService.frmelmnts?.intxt?.enterorganisation}}">
+      placeholder="{{resourceService.frmelmnts?.lbl?.enterorganisation}}">
 
     <div class="sb-color-red pt-0" aria-describedby="signup-form-organization" tabindex="0"
       aria-label="enter organisation"
@@ -39,8 +39,8 @@
       {{resourceService.frmelmnts?.lbl?.enterOrganisation}}</div>
     <div class="sb-color-red pt-0" aria-describedby="signup-form-organization" tabindex="0"
       aria-label="enter a valid organisation"
-      *ngIf="personalInfoForm.controls.organisation.touched && personalInfoForm.controls['organisation'].errors && personalInfoForm.controls['organisation'].errors.pattern">
-      {{resourceService.frmelmnts.lbl.enterValidOrganisation}}</div>
+      *ngIf="personalInfoForm.controls.organisation.touched && personalInfoForm.controls['organisation'].errors && personalInfoForm.controls['organisation'].errors.required">
+      {{resourceService.frmelmnts.lbl.enterorganisation}}</div>
   </div>
 
   <!-- User Type Dropdown -->
