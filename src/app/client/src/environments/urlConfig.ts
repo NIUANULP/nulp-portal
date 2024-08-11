@@ -21,7 +21,7 @@ export const urlConfig = {
   detail: "/api/event/v4/read/",
   myEvents: "/api/course/v2/user/enrollment/list?contentType=Event",
 
-  createImage: "/action//asset/v1/create",
+  createImage: "/action/content/v3/create",
   uploadImage: "/action/content/v3/upload",
 
   myEventFilterConfigApi: "api/data/v1/form/read",

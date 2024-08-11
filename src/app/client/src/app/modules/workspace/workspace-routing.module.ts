@@ -312,11 +312,8 @@ const routes: Routes = [
     }
   },
   {
-    path: 'content/allmyevents', component: AllMyEventsComponent, canActivate: [AuthGuard],
+    path: 'content/allmyevents', component: AllMyEventsComponent,
     data: {
-      roles: 'workspace',
-      breadcrumbs: [{ label: 'Home', url: '/home' }, { label: 'Profile', url: '/profile' }, { label: 'My Workspace', url: '' }],
-      hideHeaderNFooter: true
     }
   },
   {
