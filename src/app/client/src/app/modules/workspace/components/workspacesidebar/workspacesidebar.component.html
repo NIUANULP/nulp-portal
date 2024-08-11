@@ -23,7 +23,7 @@
   </a>
 
   <a appTelemetryInteract [telemetryInteractEdata]="setInteractData('allmyevnts-button')"  *ngIf='permissionService.permissionAvailable' [class.active]="router.isActive('/workspace/content/allmyevents') " 
-  appPermission [permission]='allContentRole' class="item" [routerLink]="['allmyevents',1]" suiPopup popupText="View all your webinars in draft, review, published and more"
+  appPermission [permission]='allContentRole' class="item" (click)="redirectToMenu('allmyevents');" suiPopup popupText="View all your webinars in draft, review, published and more"
   [popupPlacement]="'right'">
        All My Events
   </a>
