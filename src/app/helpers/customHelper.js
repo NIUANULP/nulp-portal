@@ -10,6 +10,8 @@ const validateUserFields = [
   body("designation").isString().notEmpty(),
   body("bio").optional().isString(),
   body("created_by").isString().notEmpty(),
+  body("user_type").optional().isString(), 
+  body("organisation").optional().isString(),
 ];
 
 // Error handler middleware
@@ -84,16 +86,36 @@ async function updateUserInfo(req, res) {
       error.statusCode = 400;
       throw error;
     }
-    const { designation, bio, updated_by } = req.body;
-    const getQuery = "Select * FROM users WHERE user_id = $1";
-    const getValues = [user_id];
 
+    const { designation, bio, updated_by, user_type, organisation } = req.body;
+
+    // Query to check if the user exists
+    const getQuery = "SELECT * FROM users WHERE user_id = $1";
+    const getValues = [user_id];
     const getData = await pool.query(getQuery, getValues);
 
     if (getData.rows?.length > 0) {
-      const query =
-        "UPDATE users SET designation = $1, bio = $2, updated_by = $3, updated_at = NOW() WHERE user_id = $4 RETURNING *";
-      const values = [designation, bio, updated_by, user_id];
+      // If user exists, perform an update
+      const query = `
+        UPDATE users 
+        SET 
+          designation = COALESCE($1, designation), 
+          bio = COALESCE($2, bio), 
+          user_type = COALESCE($3, user_type), 
+          organisation = COALESCE($4, organisation), 
+          updated_by = COALESCE($5, updated_by), 
+          updated_at = NOW() 
+        WHERE user_id = $6 
+        RETURNING *`;
+        
+      const values = [
+        designation || null,
+        bio || null,
+        user_type || null,
+        organisation || null,
+        updated_by || null,
+        user_id
+      ];
 
       const { rows } = await pool.query(query, values);
       res.send({
@@ -110,9 +132,20 @@ async function updateUserInfo(req, res) {
         result: rows,
       });
     } else {
-      const query =
-        "INSERT INTO users (user_id, designation, bio, created_by) VALUES ($1, $2, $3, $4) RETURNING *";
-      const values = [user_id, designation, bio, updated_by];
+      // If user does not exist, perform an insert
+      const query = `
+        INSERT INTO users (user_id, designation, bio, created_by, user_type, organisation) 
+        VALUES ($1, $2, $3, $4, $5, $6) 
+        RETURNING *`;
+        
+      const values = [
+        user_id,
+        designation || null,
+        bio || null,
+        updated_by,
+        user_type || null,
+        organisation || null
+      ];
 
       const { rows } = await pool.query(query, values);
       res.send({
@@ -121,7 +154,7 @@ async function updateUserInfo(req, res) {
           resmsgid: uuidv1(),
           msgid: uuidv1(),
           status: "successful",
-          message: "User info updated successfully",
+          message: "User info created successfully",
           err: null,
           errmsg: null,
         },
@@ -148,6 +181,7 @@ async function updateUserInfo(req, res) {
     });
   }
 }
+
 
 async function readUserInfo(req, res) {
   const errors = validationResult(req);
