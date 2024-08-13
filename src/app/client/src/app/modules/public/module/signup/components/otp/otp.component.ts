@@ -242,7 +242,7 @@ customUserCreation(identifier: string) {
     const customData = {
         "user_id": identifier,
         "designation": _.trim(_.get(this.startingForm, 'basicInfo.designation')),
-        "userType": _.trim(_.get(this.startingForm, 'basicInfo.userType')),
+        "user_type": _.trim(_.get(this.startingForm, 'basicInfo.userType')),
         "organisation": _.trim(_.get(this.startingForm, 'basicInfo.organisation')),
         "created_by":identifier,
     };
