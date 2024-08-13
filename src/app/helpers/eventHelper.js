@@ -1380,11 +1380,14 @@ async function eventReports(req, res) {
           const decryptedEmail = decrypt(item.email);
           const eventName = eventDetail[eventId];
 
-          // Fix any invalid date formats
-          let dateTimeString = item.date.replace(
-            /(\d{4}-\d{2}-)0*(\d{1,2})(T.*)/,
-            (_, p1, p2, p3) => `${p1}${p2}${p3}`
-          );
+          // Check and fix date format
+          let dateTimeString = item.date;
+
+          // If dateTimeString is not in valid ISO format, attempt to correct it
+          if (!moment(dateTimeString, moment.ISO_8601, true).isValid()) {
+            console.error("Invalid date format:", dateTimeString);
+            return null; // Skip this item if the date is invalid
+          }
 
           // Parse and format date using Moment.js
           const dateObj = moment(dateTimeString, moment.ISO_8601);
