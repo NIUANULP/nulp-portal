@@ -175,6 +175,14 @@ module.exports = (app, keycloak) => {
   app.all('/:tenantName', renderTenantPage)
 
   app.all('/redirect/login', redirectToLogin)
+
+  // ####################### Testing Re direction####################
+  app.use((req, res, next) => {
+    if (req.path.includes('/resources')) {
+      return res.redirect(301, "/webapp/domainList");
+    }
+    next();
+  });
 }
 
 function getLocals(req) {
