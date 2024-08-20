@@ -17,6 +17,9 @@ const {
   updateRegistrationEvent,
   eventSearchWrapper,
   eventGetByIdWrapper,
+  eventCreateWrapper,
+  eventUpdateWrapper,
+  eventPublishWrapper
 } = require("../helpers/eventHelper.js");
 const proxyUtils = require("../proxy/proxyUtils.js");
 
@@ -113,4 +116,23 @@ module.exports = function (app) {
     proxyUtils.verifyToken(),
     eventGetByIdWrapper
   );
+   app.patch(
+    "/custom_event/update/event",
+    bodyParser.json({ limit: "10mb" }),
+    proxyUtils.verifyToken(),
+    eventUpdateWrapper
+  );
+  app.post(
+    "/custom_event/publish/event",
+    bodyParser.json({ limit: "10mb" }),
+    proxyUtils.verifyToken(),
+    eventPublishWrapper
+  );
+    app.post(
+    "/custom_event/create/event",
+    bodyParser.json({ limit: "10mb" }),
+    proxyUtils.verifyToken(),
+    eventCreateWrapper
+  );
+ 
 };
