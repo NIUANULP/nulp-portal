@@ -8,6 +8,8 @@ const {
 const uuidv1 = require("uuid/v1");
 const cron = require("node-cron");
 const { pool } = require("../helpers/postgresqlConfig");
+const envHelper = require("./environmentVariablesHelper.js");
+const axios = require("axios");
 
 function generateUniqueId() {
   const currentUnixTime = Date.now(); // Get current Unix timestamp in milliseconds
@@ -117,12 +119,13 @@ const createPolls = async (req, res) => {
       if (data?.visibility === "private") {
         const userList = data?.user_list;
         userList?.map(async (item) => {
-          const data = {
+          await emailSend(data, userList);
+          const pollData = {
             poll_id: generatedId,
             user_id: item,
           };
 
-          const final = await createRecord(data, "user_invited", [
+          const final = await createRecord(pollData, "user_invited", [
             "poll_id",
             "user_id",
           ]);
@@ -166,7 +169,60 @@ const createPolls = async (req, res) => {
     });
   }
 };
+const emailSend = async (poll, userList) => {
+  try {
+    const message = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; background-color: #f9f9f9; padding: 20px;">
+    <div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+        <p style="color: #555;">We want your input! Participate in our latest poll on <strong>${poll.title}</strong> on NULP.</p>
+        <p style="text-align: center;">
+            <a href="${envHelper.api_base_url}/webapp/pollDetails?${poll.poll_id}" style="background-color: #007BFF; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Click here to participate</a>
+        </p>
+        
+    </div>
+</body>
+</html>`;
+    console.log("message", message);
+    let data = JSON.stringify({
+      request: {
+        mode: "email",
+        body: `${message}`,
+        fromEmail: "",
+        emailTemplateType: "",
+        subject: `Share Your Opinion in Our Poll ${poll.title} on NULP`,
+        recipientUserIds: userList,
+      },
+    });
 
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${envHelper.api_base_url}/api/user/v1/notification/email`,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${envHelper.PORTAL_API_AUTH_TOKEN}`,
+      },
+      data: data,
+    };
+
+    axios
+      .request(config)
+      .then((response) => {
+        console.log(JSON.stringify(response.data));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  } catch (error) {
+    throw error;
+  }
+};
 const updatePolls = async (req, res) => {
   try {
     const { poll_id } = req.query;
