@@ -29,7 +29,6 @@ import { EXPLORE_GROUPS, MY_GROUPS } from '../../../public/module/group/componen
 declare var jQuery: any;
 type reportsListVersionType = 'v1' | 'v2';
 
-
 @Component({
   selector: 'app-header',
   templateUrl: './main-header.component.html',
