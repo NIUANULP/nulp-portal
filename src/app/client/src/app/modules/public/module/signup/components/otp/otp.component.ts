@@ -216,7 +216,7 @@ export class OtpComponent implements OnInit {
                 this.telemetryLogEvents('accept-tnc', false);
 
                 // Call custom user creation method after successful sign-up
-                this.customUserCreation(identifier);
+                this.customUserCreation(resp.result.userId);
 
                 this.redirectToSignPage();
             });
@@ -242,8 +242,9 @@ customUserCreation(identifier: string) {
     const customData = {
         "user_id": identifier,
         "designation": _.trim(_.get(this.startingForm, 'basicInfo.designation')),
-        "userType": _.trim(_.get(this.startingForm, 'basicInfo.userType')),
+        "user_type": _.trim(_.get(this.startingForm, 'basicInfo.userType')),
         "organisation": _.trim(_.get(this.startingForm, 'basicInfo.organisation')),
+        "created_by":identifier,
     };
 
     this.signupService.CreateUser(customData).subscribe(
