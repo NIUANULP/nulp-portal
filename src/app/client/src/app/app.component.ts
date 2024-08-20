@@ -764,6 +764,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.zone.run(() => {
       const frameWorkPopUp: boolean =
         this.cacheService.get("showFrameWorkPopUp");
+        console.log("user pref--------",_.get(this.userProfile, "framework"))
       if (frameWorkPopUp) {
         this.showFrameWorkPopUp = false;
         !this.isGuestUser ? this.checkLocationStatus() : null;
@@ -772,6 +773,10 @@ export class AppComponent implements OnInit, OnDestroy {
           this.userService.loggedIn &&
           _.isEmpty(_.get(this.userProfile, "framework"))
         ) {
+          this.showFrameWorkPopUp = true;
+        }
+        else if((_.get(this.userProfile, "framework").id) == "nulp") {
+
           this.showFrameWorkPopUp = true;
         } else if (this.isGuestUser) {
           if (!this.guestUserDetails) {
