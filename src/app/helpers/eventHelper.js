@@ -1941,6 +1941,124 @@ async function eventSearchWrapper(req, res) {
   }
 }
 
+async function eventCreateWrapper(req, res) {
+  try {
+    const data = req.body;
+
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${envHelper.api_base_url}/api/event/v4/create`,
+      headers: {
+        Authorization: `Bearer ${req.session.apiBearerToken} `,
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+console.log(config,"-----------");
+    const response = await axios(config);
+    return res.send(response.data);
+  } catch (error) {
+    console.error(error.data);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
+
+async function eventUpdateWrapper(req, res) {
+  try {
+    const data = req.body;
+const eventId=req.query.eventId;
+
+    let config = {
+      method: "patch",
+      maxBodyLength: Infinity,
+      url: `${envHelper.api_base_url}/api/event/v4/update/${eventId}`,
+      headers: {
+        Authorization: `Bearer ${req.session.apiBearerToken} `,
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+console.log(config,"-----------");
+    const response = await axios(config);
+    return res.send(response.data);
+  } catch (error) {
+    console.error(error.response,"$$$$$$$$$$$$$444");
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
+
+async function eventPublishWrapper(req, res) {
+  try {
+    const data = req.body;
+const eventId=req.query.eventId;
+console.log(req,"-----------------");
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${envHelper.api_base_url}/api/event/v4/publish/${eventId}`,
+      headers: {
+        Authorization: `Bearer ${req.session.apiBearerToken} `,
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+console.log(config,"-----------");
+    const response = await axios(config);
+    return res.send(response.data);
+  } catch (error) {
+    console.error(error.data);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
+
+
+
 async function eventGetByIdWrapper(req, res) {
   try {
     const eventId = req.query.eventId;
@@ -1996,4 +2114,8 @@ module.exports = {
   updateRegistrationEvent,
   eventSearchWrapper,
   eventGetByIdWrapper,
+  eventCreateWrapper,
+  eventUpdateWrapper,
+  eventPublishWrapper,
+  
 };
