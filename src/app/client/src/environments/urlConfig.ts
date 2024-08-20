@@ -1,9 +1,9 @@
 export const urlConfig = {
   baseUrl: "https://dev.sunbirdsaas.com/",
 
-  create: "api/event/v4/create",
-  update: "api/event/v4/update",
-  publish: "/api/event/v4/publish",
+  create: "/custom_event/create/event",
+  update: "/custom_event/update/event",
+  publish: "/custom_event/publish/event",
   gmeetcreate: "custom_event/gmeet/create",
   // search: "/api/event/v1/search",
   // search: "/content/composite/v1/search",
@@ -18,7 +18,7 @@ export const urlConfig = {
   costomUserEnroll: "/custom_event/registration",
   getProfile: "/learner/user/v5/read/",
 
-  detail: "/api/event/v4/read/",
+  detail: "/custom_event/read/event",
   myEvents: "/api/course/v2/user/enrollment/list?contentType=Event",
 
   createImage: "/action//asset/v1/create",
