@@ -37,6 +37,7 @@ type reportsListVersionType = 'v1' | 'v2';
 export class MainHeaderComponent implements OnInit, OnDestroy {
   @Input() routerEvents;
   @Input() layoutConfiguration;
+  
   nulp_logo = '../../../../../assets/images/nulp_logo.png';
 
   languageFormQuery = {
