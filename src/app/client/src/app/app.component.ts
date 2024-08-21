@@ -332,10 +332,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.formService
       .getFormConfig(formReadInputParams)
       .subscribe((formResponsedata) => {
-
-
-        console.log(formResponsedata)
-        const routesArray = formResponsedata;
+      const routesArray = formResponsedata;
         const url = location.href;
         routesArray.forEach((element) => {
           if (_.includes(url, element)) {
@@ -463,7 +460,7 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     };
 
-    this.checkFrameworkSelected();
+    
   }
 
   onCloseJoyThemePopup() {
@@ -677,6 +674,7 @@ export class AppComponent implements OnInit, OnDestroy {
    * checks if user has accepted the tnc and show tnc popup.
    */
   public checkTncAndFrameWorkSelected() {
+    this.checkFrameworkSelected();
     if (
       _.has(this.userService.userProfile, "promptTnC") &&
       _.has(this.userService.userProfile, "tncLatestVersion") &&
@@ -749,11 +747,7 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   public checkFrameworkSelected() {
     this.userService.initialize(this.userService.loggedIn);
-     console.log("user pref--------",this.userService.userid)
-    
-     console.log("user pref--------",this.userService.loggedIn)
-     console.log("user pref--------",this.userService.userProfile)
- 
+
     // should not show framework popup for sign up and recover route
     if (this.isLocationStatusRequired()) {
       return;
@@ -761,9 +755,8 @@ export class AppComponent implements OnInit, OnDestroy {
     this.zone.run(() => {
       const frameWorkPopUp: boolean =
         this.cacheService.get("showFrameWorkPopUp");
-        console.log("user pref--------",frameWorkPopUp)
       if (frameWorkPopUp) {
-        alert("here")
+      
         this.showFrameWorkPopUp = false;
         !this.isGuestUser ? this.checkLocationStatus() : null;
       } else {
@@ -774,7 +767,6 @@ export class AppComponent implements OnInit, OnDestroy {
           this.showFrameWorkPopUp = true;
         }
         else if((_.get(this.userProfile, "framework").id) == "nulp") {
-
           this.showFrameWorkPopUp = true;
         } else if (this.isGuestUser) {
           if (!this.guestUserDetails) {
@@ -1101,6 +1093,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.orgDetailsService
       .getCustodianOrgDetails()
       .subscribe((custodianOrg) => {
+
         if (
           this.userService.loggedIn &&
           !this.userService.userProfile.managedBy &&
