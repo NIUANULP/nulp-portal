@@ -281,7 +281,12 @@ const routes: Routes = [
           }, roles: 'collaboratingRole',
           breadcrumbs: [{ label: 'Home', url: '/home' }, { label: 'Profile', url: '/profile' }, { label: 'My Workspace', url: '' }]
         }
-      }
+      },
+  {
+    path: 'allmyevents', component: AllMyEventsComponent,
+    data: {
+         }
+  }
     ]
   },
   {
@@ -309,11 +314,6 @@ const routes: Routes = [
       roles: 'workspace',
       breadcrumbs: [{ label: 'Home', url: '/home' }, { label: 'Profile', url: '/profile' }, { label: 'My Workspace', url: '' }],
       hideHeaderNFooter: true
-    }
-  },
-  {
-    path: 'content/allmyevents', component: AllMyEventsComponent,
-    data: {
     }
   },
   {
