@@ -246,20 +246,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   handleHeaderNFooter() {
-    console.log(
-      "111=====",
-      _.get(
-        this.activatedRoute,
-        "snapshot.firstChild.firstChild.data.hideHeaderNFooter"
-      )
-    );
-    console.log(
-      "222=====",
-      _.get(
-        this.activatedRoute,
-        "snapshot.firstChild.firstChild.firstChild.data.hideHeaderNFooter"
-      )
-    );
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationEnd),
@@ -346,6 +332,9 @@ export class AppComponent implements OnInit, OnDestroy {
     this.formService
       .getFormConfig(formReadInputParams)
       .subscribe((formResponsedata) => {
+
+
+        console.log(formResponsedata)
         const routesArray = formResponsedata;
         const url = location.href;
         routesArray.forEach((element) => {
@@ -473,6 +462,8 @@ export class AppComponent implements OnInit, OnDestroy {
         (document.activeElement as HTMLElement).click();
       }
     };
+
+    this.checkFrameworkSelected();
   }
 
   onCloseJoyThemePopup() {
@@ -757,6 +748,12 @@ export class AppComponent implements OnInit, OnDestroy {
    * checks if user has selected the framework and shows popup if not selected.
    */
   public checkFrameworkSelected() {
+    this.userService.initialize(this.userService.loggedIn);
+     console.log("user pref--------",this.userService.userid)
+    
+     console.log("user pref--------",this.userService.loggedIn)
+     console.log("user pref--------",this.userService.userProfile)
+ 
     // should not show framework popup for sign up and recover route
     if (this.isLocationStatusRequired()) {
       return;
@@ -764,8 +761,9 @@ export class AppComponent implements OnInit, OnDestroy {
     this.zone.run(() => {
       const frameWorkPopUp: boolean =
         this.cacheService.get("showFrameWorkPopUp");
-        console.log("user pref--------",_.get(this.userProfile, "framework"))
+        console.log("user pref--------",frameWorkPopUp)
       if (frameWorkPopUp) {
+        alert("here")
         this.showFrameWorkPopUp = false;
         !this.isGuestUser ? this.checkLocationStatus() : null;
       } else {
@@ -1046,10 +1044,10 @@ export class AppComponent implements OnInit, OnDestroy {
   viewInBrowser() {
     // no action required
   }
-  closeIcon() {
-    this.showFrameWorkPopUp = false;
-    this.cacheService.set("showFrameWorkPopUp", "installApp");
-  }
+  // closeIcon() {
+  //   this.showFrameWorkPopUp = false;
+  //   this.cacheService.set("showFrameWorkPopUp", "installApp");
+  // }
   changeLanguageAttribute() {
     this.resourceDataSubscription =
       this.resourceService.languageSelected$.subscribe((item) => {
