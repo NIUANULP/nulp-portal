@@ -6,7 +6,7 @@
 
   @include respond-above(xs) {
     max-width: calculateRem(320px);
-    min-height: calculateRem(540px);
+    // min-height: calculateRem(540px);
   }
   .sb-account-recoverpage-logo {
     height: calculateRem(56px);
