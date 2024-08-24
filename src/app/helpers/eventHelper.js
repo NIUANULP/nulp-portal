@@ -908,7 +908,10 @@ const insertEventRegistration = async (req, res) => {
     consentForm,
     user_consent,
   } = req.body;
-  const encryptedData = encrypt(email);
+  let encryptedData;
+  if (email) {
+    encryptedData = encrypt(email);
+  }
   const query = `
     INSERT INTO event_registration (event_id,name, email, designation, organisation, certificate,user_consent, consent_form,user_id)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8,$9) RETURNING *
