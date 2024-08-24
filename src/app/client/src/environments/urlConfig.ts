@@ -12,7 +12,7 @@ export const urlConfig = {
 
   search: "/api/composite/v1/search",
   compositeSearch: "/api/composite/v1/search",
-  emailNotification: "/api/user/v1/notification/email",
+  emailNotification: "/learner/user/v1/notification/email",
   adminEnroll: "/learner/course/v1/admin/enroll",
   userData: "/learner/user/v3/search",
   costomUserEnroll: "/custom_event/registration",
