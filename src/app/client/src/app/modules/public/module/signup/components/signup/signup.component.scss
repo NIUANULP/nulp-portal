@@ -103,14 +103,7 @@ app-signup .ng-dropdown-panel {
   min-height: 90vh;
 }
 
-@media only screen and (min-width: 1024px) {
-  .ui.raised.shadow.container.segment {
-    margin: calculateRem(35px) auto !important;
-    width: calculateRem(944px) !important;
-    padding: calculateRem(20px);
-    box-shadow: 0 calculateRem(2px) calculateRem(16px) 0 rgba(var(--rc-rgba-black), 0.2);
-  }
-}
+
 
 @media only screen and (max-width: 767px) {
   .ui.form .fields {
@@ -396,3 +389,9 @@ form.On {
 }
 
 For now commented later will remove this code block(ends) */
+
+@media only screen and (max-width: 1024px) {
+  .layout .content-center-container{
+    width:96%;
+  }
+}
