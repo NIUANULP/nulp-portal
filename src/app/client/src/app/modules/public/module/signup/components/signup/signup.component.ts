@@ -164,7 +164,7 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
   redirectToLogin () {
     // this.router.navigate(['/resources/play/content']);
     // this.router.navigate(['/resources']);
-    window.location.href = '/webapp/domainList';
+    window.location.href = '/resources';
   }
   
 }
