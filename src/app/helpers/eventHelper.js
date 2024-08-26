@@ -966,13 +966,13 @@ const insertEventRegistration = async (req, res) => {
 };
 
 const decrypt = (encryptedData) => {
-  const textParts = encryptedData.split(":");
-  const iv = Buffer.from(textParts.shift(), "hex");
-  const encryptedText = Buffer.from(textParts.join(":"), "hex");
-  let decipher = crypto.createDecipheriv("aes-256-cbc", key, iv);
-  let decrypted = decipher.update(encryptedText);
-  decrypted = Buffer.concat([decrypted, decipher.final()]);
-  return decrypted.toString();
+  const textParts = encryptedData?.split(":");
+  const iv = Buffer?.from(textParts?.shift(), "hex");
+  const encryptedText = Buffer.from(textParts?.join(":"), "hex");
+  let decipher = crypto?.createDecipheriv("aes-256-cbc", key, iv);
+  let decrypted = decipher?.update(encryptedText);
+  decrypted = Buffer?.concat([decrypted, decipher?.final()]);
+  return decrypted?.toString();
 };
 const getEventRegistration = async (req, res) => {
   const event_id = req.query.event_id;
@@ -1383,7 +1383,7 @@ async function eventReports(req, res) {
           const decryptedEmail = decrypt(item.email);
           const eventName = eventDetail[eventId];
 
-         // Check and fix date format
+          // Check and fix date format
           let dateTimeString = item.created_at;
 
           // If dateTimeString is not in valid ISO format, attempt to correct it
@@ -1398,8 +1398,8 @@ async function eventReports(req, res) {
             console.error("Invalid date format:", dateTimeString);
             return null; // Skip this item if the date is invalid
           }
-          
-                    return {
+
+          return {
             ...item,
             email: decryptedEmail,
             eventName,
@@ -1961,7 +1961,7 @@ async function eventCreateWrapper(req, res) {
       },
       data: data,
     };
-console.log(config,"-----------");
+    console.log(config, "-----------");
     const response = await axios(config);
     return res.send(response.data);
   } catch (error) {
@@ -1988,7 +1988,7 @@ console.log(config,"-----------");
 async function eventUpdateWrapper(req, res) {
   try {
     const data = req.body;
-const eventId=req.query.eventId;
+    const eventId = req.query.eventId;
 
     let config = {
       method: "patch",
@@ -2000,11 +2000,11 @@ const eventId=req.query.eventId;
       },
       data: data,
     };
-console.log(config,"-----------");
+    console.log(config, "-----------");
     const response = await axios(config);
     return res.send(response.data);
   } catch (error) {
-    console.error(error.response,"$$$$$$$$$$$$$444");
+    console.error(error.response, "$$$$$$$$$$$$$444");
     const statusCode = error.statusCode || 500;
     const errorMessage = error.message || "Internal Server Error";
     res.status(statusCode).send({
@@ -2027,8 +2027,8 @@ console.log(config,"-----------");
 async function eventPublishWrapper(req, res) {
   try {
     const data = req.body;
-const eventId=req.query.eventId;
-console.log(req,"-----------------");
+    const eventId = req.query.eventId;
+    console.log(req, "-----------------");
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -2039,7 +2039,7 @@ console.log(req,"-----------------");
       },
       data: data,
     };
-console.log(config,"-----------");
+    console.log(config, "-----------");
     const response = await axios(config);
     return res.send(response.data);
   } catch (error) {
@@ -2062,8 +2062,6 @@ console.log(config,"-----------");
     });
   }
 }
-
-
 
 async function eventGetByIdWrapper(req, res) {
   try {
@@ -2123,5 +2121,4 @@ module.exports = {
   eventCreateWrapper,
   eventUpdateWrapper,
   eventPublishWrapper,
-  
 };
