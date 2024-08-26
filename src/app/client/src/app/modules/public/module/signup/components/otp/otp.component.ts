@@ -208,14 +208,12 @@ export class OtpComponent implements OnInit {
             this.signupService.acceptTermsAndConditions(tncAcceptRequestBody).subscribe(res => {
                 this.telemetryLogEvents('accept-tnc', true);
 
-                // Call custom user creation method after successful sign-up and TNC acceptance
-                this.customUserCreation(identifier);
+                this.customUserCreation(resp.result.userId);
 
                 this.redirectToSignPage();
             }, (err) => {
                 this.telemetryLogEvents('accept-tnc', false);
 
-                // Call custom user creation method after successful sign-up
                 this.customUserCreation(resp.result.userId);
 
                 this.redirectToSignPage();
