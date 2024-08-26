@@ -1384,7 +1384,7 @@ async function eventReports(req, res) {
           const eventName = eventDetail[eventId];
 
          // Check and fix date format
-          let dateTimeString = item.date;
+          let dateTimeString = item.created_at;
 
           // If dateTimeString is not in valid ISO format, attempt to correct it
           if (!moment(dateTimeString, moment.ISO_8601, true).isValid()) {
@@ -1398,8 +1398,8 @@ async function eventReports(req, res) {
             console.error("Invalid date format:", dateTimeString);
             return null; // Skip this item if the date is invalid
           }
-
-          return {
+          
+                    return {
             ...item,
             email: decryptedEmail,
             eventName,
