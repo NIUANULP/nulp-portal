@@ -966,13 +966,13 @@ const insertEventRegistration = async (req, res) => {
 };
 
 const decrypt = (encryptedData) => {
-  const textParts = encryptedData.split(":");
-  const iv = Buffer.from(textParts.shift(), "hex");
-  const encryptedText = Buffer.from(textParts.join(":"), "hex");
-  let decipher = crypto.createDecipheriv("aes-256-cbc", key, iv);
-  let decrypted = decipher.update(encryptedText);
-  decrypted = Buffer.concat([decrypted, decipher.final()]);
-  return decrypted.toString();
+  const textParts = encryptedData?.split(":");
+  const iv = Buffer?.from(textParts?.shift(), "hex");
+  const encryptedText = Buffer.from(textParts?.join(":"), "hex");
+  let decipher = crypto?.createDecipheriv("aes-256-cbc", key, iv);
+  let decrypted = decipher?.update(encryptedText);
+  decrypted = Buffer?.concat([decrypted, decipher?.final()]);
+  return decrypted?.toString();
 };
 const getEventRegistration = async (req, res) => {
   const event_id = req.query.event_id;
@@ -1383,8 +1383,8 @@ async function eventReports(req, res) {
           const decryptedEmail = decrypt(item.email);
           const eventName = eventDetail[eventId];
 
-         // Check and fix date format
-          let dateTimeString = item.date;
+          // Check and fix date format
+          let dateTimeString = item.created_at;
 
           // If dateTimeString is not in valid ISO format, attempt to correct it
           if (!moment(dateTimeString, moment.ISO_8601, true).isValid()) {
@@ -1961,7 +1961,7 @@ async function eventCreateWrapper(req, res) {
       },
       data: data,
     };
-console.log(config,"-----------");
+    console.log(config, "-----------");
     const response = await axios(config);
     return res.send(response.data);
   } catch (error) {
@@ -1988,7 +1988,7 @@ console.log(config,"-----------");
 async function eventUpdateWrapper(req, res) {
   try {
     const data = req.body;
-const eventId=req.query.eventId;
+    const eventId = req.query.eventId;
 
     let config = {
       method: "patch",
@@ -2000,11 +2000,11 @@ const eventId=req.query.eventId;
       },
       data: data,
     };
-console.log(config,"-----------");
+    console.log(config, "-----------");
     const response = await axios(config);
     return res.send(response.data);
   } catch (error) {
-    console.error(error.response,"$$$$$$$$$$$$$444");
+    console.error(error.response, "$$$$$$$$$$$$$444");
     const statusCode = error.statusCode || 500;
     const errorMessage = error.message || "Internal Server Error";
     res.status(statusCode).send({
@@ -2027,8 +2027,8 @@ console.log(config,"-----------");
 async function eventPublishWrapper(req, res) {
   try {
     const data = req.body;
-const eventId=req.query.eventId;
-console.log(req,"-----------------");
+    const eventId = req.query.eventId;
+    console.log(req, "-----------------");
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -2039,7 +2039,7 @@ console.log(req,"-----------------");
       },
       data: data,
     };
-console.log(config,"-----------");
+    console.log(config, "-----------");
     const response = await axios(config);
     return res.send(response.data);
   } catch (error) {
@@ -2063,8 +2063,6 @@ console.log(config,"-----------");
   }
 }
 
-
-
 async function eventGetByIdWrapper(req, res) {
   try {
     const eventId = req.query.eventId;
@@ -2077,6 +2075,50 @@ async function eventGetByIdWrapper(req, res) {
         Authorization: `Bearer ${req.session.apiBearerToken} `,
         "Content-Type": "application/json",
       },
+    };
+
+    const response = await axios(config);
+    return res.send(response.data);
+  } catch (error) {
+    console.error(error);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
+
+async function eventRetire(req, res) {
+  try {
+    const eventId = req.query.eventId;
+    let data = JSON.stringify({
+      request: {
+        content: {
+          status: "Retired",
+        },
+      },
+    });
+
+    let config = {
+      method: "patch",
+      maxBodyLength: Infinity,
+      url: `http://content-service:9000/content/v4/system/update/${eventId}`,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: data,
     };
 
     const response = await axios(config);
@@ -2123,5 +2165,5 @@ module.exports = {
   eventCreateWrapper,
   eventUpdateWrapper,
   eventPublishWrapper,
-  
+  eventRetire,
 };

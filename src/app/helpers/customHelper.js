@@ -3,6 +3,8 @@ const { pool } = require("../helpers/postgresqlConfig");
 const uuidv1 = require("uuid/v1");
 const express = require("express");
 const app = express();
+const envHelper = require("../helpers/environmentVariablesHelper.js");
+const axios = require("axios");
 
 // Validation middleware for user_id, designation, bio, and created_by fields
 const validateUserFields = [
@@ -10,7 +12,7 @@ const validateUserFields = [
   body("designation").isString().notEmpty(),
   body("bio").optional().isString(),
   body("created_by").isString().notEmpty(),
-  body("user_type").optional().isString(), 
+  body("user_type").optional().isString(),
   body("organisation").optional().isString(),
 ];
 
@@ -37,11 +39,19 @@ async function saveUserInfo(req, res) {
     });
   }
 
-  const { user_id, designation, bio, created_by,user_type,organisation } = req.body;
+  const { user_id, designation, bio, created_by, user_type, organisation } =
+    req.body;
 
   const query =
     "INSERT INTO users (user_id, designation, bio, created_by,user_type,organisation) VALUES ($1, $2, $3, $4,$5,$6) RETURNING *";
-  const values = [user_id, designation, bio, created_by,user_type,organisation];
+  const values = [
+    user_id,
+    designation,
+    bio,
+    created_by,
+    user_type,
+    organisation,
+  ];
 
   try {
     const { rows } = await pool.query(query, values);
@@ -107,14 +117,14 @@ async function updateUserInfo(req, res) {
           updated_at = NOW() 
         WHERE user_id = $6 
         RETURNING *`;
-        
+
       const values = [
         designation || null,
         bio || null,
         user_type || null,
         organisation || null,
         updated_by || null,
-        user_id
+        user_id,
       ];
 
       const { rows } = await pool.query(query, values);
@@ -137,14 +147,14 @@ async function updateUserInfo(req, res) {
         INSERT INTO users (user_id, designation, bio, created_by, user_type, organisation) 
         VALUES ($1, $2, $3, $4, $5, $6) 
         RETURNING *`;
-        
+
       const values = [
         user_id,
         designation || null,
         bio || null,
         updated_by,
         user_type || null,
-        organisation || null
+        organisation || null,
       ];
 
       const { rows } = await pool.query(query, values);
@@ -181,7 +191,6 @@ async function updateUserInfo(req, res) {
     });
   }
 }
-
 
 async function readUserInfo(req, res) {
   const errors = validationResult(req);
@@ -243,9 +252,46 @@ async function readUserInfo(req, res) {
   }
 }
 
+async function emailNotification(req, res) {
+  try {
+    const data = req.body;
+
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${envHelper.api_base_url}/api/user/v1/notification/email`,
+      headers: {
+        Authorization: `Bearer ${req.session.apiBearerToken} `,
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+    const response = await axios(config);
+    return res.send(response.data);
+  } catch (err) {
+    const statusCode = err.statusCode || 500;
+    const errorMessage = err.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
+
 module.exports = {
   saveUserInfo,
   updateUserInfo,
   readUserInfo,
   validateUserFields,
+  emailNotification,
 };

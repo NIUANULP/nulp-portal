@@ -19,7 +19,8 @@ const {
   eventGetByIdWrapper,
   eventCreateWrapper,
   eventUpdateWrapper,
-  eventPublishWrapper
+  eventPublishWrapper,
+  eventRetire,
 } = require("../helpers/eventHelper.js");
 const proxyUtils = require("../proxy/proxyUtils.js");
 
@@ -116,7 +117,7 @@ module.exports = function (app) {
     proxyUtils.verifyToken(),
     eventGetByIdWrapper
   );
-   app.patch(
+  app.patch(
     "/custom_event/update/event",
     bodyParser.json({ limit: "10mb" }),
     proxyUtils.verifyToken(),
@@ -128,11 +129,11 @@ module.exports = function (app) {
     proxyUtils.verifyToken(),
     eventPublishWrapper
   );
-    app.post(
+  app.post(
     "/custom_event/create/event",
     bodyParser.json({ limit: "10mb" }),
     proxyUtils.verifyToken(),
     eventCreateWrapper
   );
- 
+  app.get("/custom_event/event/retire", proxyUtils.verifyToken(), eventRetire);
 };
