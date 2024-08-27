@@ -2099,6 +2099,50 @@ async function eventGetByIdWrapper(req, res) {
     });
   }
 }
+
+async function eventRetire(req, res) {
+  try {
+    const eventId = req.query.eventId;
+    let data = JSON.stringify({
+      request: {
+        content: {
+          status: "Retired",
+        },
+      },
+    });
+
+    let config = {
+      method: "patch",
+      maxBodyLength: Infinity,
+      url: `http://content-service:9000/content/v4/system/update/${eventId}`,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+
+    const response = await axios(config);
+    return res.send(response.data);
+  } catch (error) {
+    console.error(error);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
 module.exports = {
   createEvent,
   getEvent,
@@ -2121,4 +2165,5 @@ module.exports = {
   eventCreateWrapper,
   eventUpdateWrapper,
   eventPublishWrapper,
+  eventRetire,
 };
