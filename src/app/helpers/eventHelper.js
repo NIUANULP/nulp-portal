@@ -1255,7 +1255,7 @@ async function getTopEvents(userId, column, fromDate, toDate) {
     SELECT er.event_id, COUNT(er.${column}) AS user_count,er.designation
     FROM event_registration er
     JOIN event_details ed ON er.event_id = ed.event_id
-    WHERE 1 = 1
+    WHERE 1 = 1 AND ed.status = 'Live'
   `;
 
   const values = [];
@@ -2122,6 +2122,12 @@ async function eventRetire(req, res) {
     };
 
     const response = await axios(config);
+    if (response?.status === 200) {
+      const query = `UPDATE event_details SET status = $1 WHERE event_id=$2`;
+      const values = ["Retired", eventId];
+      const result = await pool.query(query, values);
+      console.log("Update successful:", result?.rowCount, "rows affected.");
+    }
     return res.send(response.data);
   } catch (error) {
     console.error(error);
