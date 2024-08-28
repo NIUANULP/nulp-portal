@@ -8,7 +8,7 @@ import * as _ from 'lodash-es';
   styleUrls: ['./install-app.component.scss']
 })
 export class InstallAppComponent implements OnInit {
-  showPopUp = true;
+  showPopUp = false; // We've decided to set the display to false as we no longer want this element to be visible.
   @Output() viewInBrowser = new EventEmitter<any>();
   instance: string;
   /**
