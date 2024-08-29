@@ -797,6 +797,11 @@ const createUserPoll = async (req, res) => {
       error.statusCode = 400;
       throw error;
     }
+    if (pollData[0]?.status != "Live") {
+      const error = new Error("Poll is not live");
+      error.statusCode = 400;
+      throw error;
+    }
     if (!pollData[0]?.poll_options?.includes(`${data.poll_result}`)) {
       const error = new Error("You selection not matched with poll options");
       error.statusCode = 404;
@@ -904,6 +909,11 @@ const updateUserPoll = async (req, res) => {
     if (!pollData?.length) {
       const error = new Error("Poll not found");
       error.statusCode = 404;
+      throw error;
+    }
+    if (pollData[0]?.status != "Live") {
+      const error = new Error("Poll is not live");
+      error.statusCode = 400;
       throw error;
     }
     if (!pollData[0]?.poll_options?.includes(`${data.poll_result}`)) {
