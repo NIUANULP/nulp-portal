@@ -181,7 +181,7 @@ const emailSend = async (poll, userList) => {
     <div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
         <p style="color: #555;">We want your input! Participate in our latest poll on <strong>${poll.title}</strong> on NULP.</p>
         <p style="text-align: center;">
-            <a href="${envHelper.api_base_url}/webapp/pollDetails?${poll.poll_id}" style="background-color: #007BFF; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Click here to participate</a>
+            <a clicktracking=off href="${envHelper.api_base_url}/webapp/pollDetails?${poll.poll_id}" style="background-color: #007BFF; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Click here to participate</a>
         </p>
         
     </div>
