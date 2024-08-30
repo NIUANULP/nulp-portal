@@ -633,7 +633,7 @@ const listPolls = async (req, res) => {
     }
 
     // Include polls where the user is invited if visibility is private
-    if (userId) {
+    if (!req?.query?.dashboard && userId) {
       values.push(userId);
       query += ` AND (polls.visibility <> 'private' OR user_invited.user_id = $${values.length})`;
     }
@@ -721,7 +721,7 @@ const listPolls = async (req, res) => {
     }
 
     // Include polls where the user is invited if visibility is private
-    if (userId) {
+    if (!req?.query?.dashboard && userId) {
       countValues.push(userId);
       countQuery += ` AND (polls.visibility <> 'private' OR user_invited.user_id = $${countValues.length})`;
     }
