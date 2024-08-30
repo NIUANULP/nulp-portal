@@ -45,36 +45,37 @@
 
   <!-- User Type Dropdown -->
   <div class="required mb-16">
-    <label for="signup-form-user-type" class="mb-8 font-weight-bold">
+    <label for="signup-form-user-type" class="font-weight-bold">
       {{resourceService.frmelmnts?.lbl?.userType}}<span class="sb-color-red">*</span>
     </label>
-
+    
     <select id="signup-form-user-type" class="sb-form-control"
       [ngClass]="{'orange-border': personalInfoForm.controls.userType.touched && personalInfoForm.controls['userType'].errors}"
       formControlName="userType" aria-required="true" (change)="onUserTypeChange($event)">
       <option value="" disabled>{{resourceService.frmelmnts?.lbl?.selectUserType}}</option>
       <option *ngFor="let userType of userTypes" [value]="userType">{{userType}}</option>
-      <option value="other">{{resourceService.frmelmnts?.lbl?.other}}</option>
     </select>
-
-        <div class="sb-color-red pt-0" aria-describedby="signup-form-user-type" tabindex="0"
-            aria-label="select user type"
-      *ngIf="personalInfoForm.controls.userType.touched && personalInfoForm.controls['userType'].errors && personalInfoForm.controls['userType'].errors.required">
-      {{resourceService.frmelmnts?.lbl?.enterOtherUserType}}</div>
+    
+    <!-- Input field for 'other' user type -->
+    <div *ngIf="isOtherUserType1" class="mt-16">
+      <label for="other-user-type">{{resourceService.frmelmnts?.lbl?.enterOtherUserType}}<span class="sb-color-red">*</span></label>
+      <input id="other-user-type" type="text" class="sb-form-control" formControlName="otherUserType" placeholder="{{resourceService.frmelmnts?.lbl?.enterOtherUserType}}">
+      <!-- Error message for 'otherUserType' if it is required and not filled -->
+      <div *ngIf="personalInfoForm.get('otherUserType').touched && personalInfoForm.get('otherUserType').hasError('required')" class="sb-color-red">
+        {{resourceService.frmelmnts?.lbl?.enterOtherUserType}}
+      </div>
+    </div>
+    
+    <!-- Error message for 'userType' selection -->
+    <div class="sb-color-red pt-0" aria-describedby="signup-form-user-type" tabindex="0"
+      aria-label="select user type"
+      *ngIf="personalInfoForm.controls.userType.touched && personalInfoForm.controls['userType'].errors?.required">
+      {{resourceService.frmelmnts?.lbl?.selectUserType}}
+    </div>
   </div>
+  
+  
 
-  <!-- Conditional Input for "Other" User Type -->
-  <div *ngIf="isOtherUserType" class="required mb-16">
-    <label for="signup-form-user-type-other" class="mb-8 font-weight-bold">
-    {{resourceService.frmelmnts?.lbl?.enterOtherUserType}} <span class="sb-color-red">*</span>
-    </label>
-        <input id="signup-form-user-type-other" class="sb-form-control" type="text" aria-required="true"
-            (input)="updateUserType($event)">
-    <div class="sb-color-red pt-0" aria-describedby="signup-form-user-type-other" tabindex="0"
-      aria-label="enter other user type"
-      *ngIf="personalInfoForm.controls.userType.touched && personalInfoForm.controls.userType.errors && personalInfoForm.controls.userType.errors.required">
-      {{resourceService.frmelmnts?.lbl?.enterUserType}}</div>
-  </div>
   <div class="required mb-16">
     <label for="signup-form-user-designation" class="mb-8 font-weight-bold">
       {{resourceService.frmelmnts?.lbl?.enterDesignation}}<span class="sb-color-red">*</span>
