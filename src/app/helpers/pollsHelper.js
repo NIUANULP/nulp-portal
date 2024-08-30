@@ -181,7 +181,7 @@ const emailSend = async (poll, userList) => {
     <div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
         <p style="color: #555;">We want your input! Participate in our latest poll on <strong>${poll.title}</strong> on NULP.</p>
         <p style="text-align: center;">
-            <a href="${envHelper.api_base_url}/webapp/pollDetails?${poll.poll_id}" style="background-color: #007BFF; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Click here to participate</a>
+            <a clicktracking=off href="${envHelper.api_base_url}/webapp/pollDetails?${poll.poll_id}" style="background-color: #007BFF; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Click here to participate</a>
         </p>
         
     </div>
@@ -633,7 +633,7 @@ const listPolls = async (req, res) => {
     }
 
     // Include polls where the user is invited if visibility is private
-    if (userId) {
+    if (!req?.query?.dashboard && userId) {
       values.push(userId);
       query += ` AND (polls.visibility <> 'private' OR user_invited.user_id = $${values.length})`;
     }
@@ -721,7 +721,7 @@ const listPolls = async (req, res) => {
     }
 
     // Include polls where the user is invited if visibility is private
-    if (userId) {
+    if (!req?.query?.dashboard && userId) {
       countValues.push(userId);
       countQuery += ` AND (polls.visibility <> 'private' OR user_invited.user_id = $${countValues.length})`;
     }
@@ -794,6 +794,11 @@ const createUserPoll = async (req, res) => {
     }
     if (pollData[0]?.created_by === data.user_id.trim()) {
       const error = new Error("You cannot vote own poll");
+      error.statusCode = 400;
+      throw error;
+    }
+    if (pollData[0]?.status != "Live") {
+      const error = new Error("Poll is not live");
       error.statusCode = 400;
       throw error;
     }
@@ -904,6 +909,11 @@ const updateUserPoll = async (req, res) => {
     if (!pollData?.length) {
       const error = new Error("Poll not found");
       error.statusCode = 404;
+      throw error;
+    }
+    if (pollData[0]?.status != "Live") {
+      const error = new Error("Poll is not live");
+      error.statusCode = 400;
       throw error;
     }
     if (!pollData[0]?.poll_options?.includes(`${data.poll_result}`)) {

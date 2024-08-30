@@ -17,6 +17,7 @@ global.AbortController = require("abort-controller");
 
 const { BlockBlobClient } = require("@azure/storage-blob");
 const momentTime = require("moment");
+
 const {
   getRecords,
   getRecord,
@@ -1392,8 +1393,10 @@ async function eventReports(req, res) {
             return null; // Skip this item if the date is invalid
           }
 
-          // Parse and format date using Moment.js
-          const dateObj = moment(dateTimeString, moment.ISO_8601);
+          // Parse and format date using Moment.js with timezone conversion
+          const dateObj = moment(dateTimeString, moment.ISO_8601).tz(
+            moment.tz.guess()
+          );
           if (!dateObj.isValid()) {
             console.error("Invalid date format:", dateTimeString);
             return null; // Skip this item if the date is invalid
