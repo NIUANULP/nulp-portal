@@ -84,30 +84,26 @@ export class SignupBasicInfoComponent implements OnInit {
   onDesignationTypeChange(designation: string): void {
     this.isOtherDesignationType = designation === 'other';
     const otherDesignationControl = this.personalInfoForm.get('otherDesignation');
-
+  
     if (this.isOtherDesignationType) {
       otherDesignationControl?.setValidators([Validators.required]);
-      this.personalInfoForm.get('designation')?.setValue('');
     } else {
       otherDesignationControl?.clearValidators();
+      this.personalInfoForm.get('otherDesignation')?.setValue('');
     }
-
+  
     otherDesignationControl?.updateValueAndValidity();
-    this.personalInfoForm.get('designation')?.updateValueAndValidity();
   }
 
   updateUserType(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
     this.personalInfoForm.get('userType').setValue(inputElement.value);
   }
-  onUserInput(event){
-    console.log(event,'event');
 
-  }
-  updateDesignation(event: Event): void {
-    const inputElement = event.target as HTMLInputElement;
-    this.personalInfoForm.get('designation').setValue(inputElement.value);
-  }
+  // updateDesignation(event: Event): void {
+  //   const inputElement = event.target as HTMLInputElement;
+  //   this.personalInfoForm.get('designation').setValue(inputElement.value);
+  // }
 
   next() {
     if (this.personalInfoForm.valid) {
@@ -125,8 +121,12 @@ export class SignupBasicInfoComponent implements OnInit {
         userDetails.userType = this.personalInfoForm.controls.userType.value; // Use selected value from dropdown
       }
   
-      userDetails.designation = this.personalInfoForm.controls.designation.value;
-      userDetails.otherDesignation = this.personalInfoForm.controls.otherDesignation.value;
+      // Handle designation selection, including 'other' case
+      if (this.isOtherDesignationType) {
+        userDetails.designation = this.personalInfoForm.controls.otherDesignation.value; // Use input value for 'other'
+      } else {
+        userDetails.designation = this.personalInfoForm.controls.designation.value; // Use selected value from dropdown
+      }
   
       localStorage.setItem('guestUserDetails', JSON.stringify(userDetails));
   
@@ -134,7 +134,7 @@ export class SignupBasicInfoComponent implements OnInit {
         name: userDetails.name,
         organisation: userDetails.organisation,
         userType: userDetails.userType,
-        designation: userDetails.designation || userDetails.otherDesignation,
+        designation: userDetails.designation, // Ensures that the correct designation is used
       };
   
       console.log('signupStage1Details => ', signupStage1Details); // Debugging log
@@ -145,6 +145,7 @@ export class SignupBasicInfoComponent implements OnInit {
       console.log("Invalid form");
     }
   }
+  
   
   
 }
