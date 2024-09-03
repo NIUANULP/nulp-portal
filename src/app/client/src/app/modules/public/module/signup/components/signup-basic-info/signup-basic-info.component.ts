@@ -39,7 +39,7 @@ export class SignupBasicInfoComponent implements OnInit {
       this.instance = _.upperCase(this.resourceService.instance || 'NULP');
       this.personalInfoForm = this._fb.group({
         name: ['', Validators.required],
-        organisation: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]*$')]],
+        organisation: ['', Validators.required],
         userType: ['', Validators.required],
         otherUserType: [''],  // Initialize without validators; they'll be added conditionally
         designation: ['', Validators.required],
