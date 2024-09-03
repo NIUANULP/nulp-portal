@@ -37,10 +37,6 @@
       aria-label="enter organisation"
       *ngIf="personalInfoForm.controls.organisation.touched && personalInfoForm.controls['organisation'].errors && personalInfoForm.controls['organisation'].errors.required">
       {{resourceService.frmelmnts?.lbl?.enterOrganisation}}</div>
-    <div class="sb-color-red pt-0" aria-describedby="signup-form-organization" tabindex="0"
-      aria-label="enter a valid organisation"
-      *ngIf="personalInfoForm.controls.organisation.touched && personalInfoForm.controls['organisation'].errors && personalInfoForm.controls['organisation'].errors.required">
-      {{resourceService.frmelmnts.lbl.enterorganisation}}</div>
   </div>
 
   <!-- User Type Dropdown -->
