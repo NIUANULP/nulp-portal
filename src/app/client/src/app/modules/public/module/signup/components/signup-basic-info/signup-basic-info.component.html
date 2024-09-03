@@ -79,7 +79,7 @@
     <ng-select id="signup-form-user-designation" class="sb-form-control designation-select"
       [ngClass]="{'orange-border': personalInfoForm.controls.designation.touched && personalInfoForm.controls['designation'].errors}"
       [items]="designations" bindLabel="designation" formControlName="designation" [searchable]="true"
-    (change)="onDesignationTypeChange($event)">
+      (change)="onDesignationTypeChange($event)">
       <ng-template ng-label-tmp let-item="item">
         {{ item }}
       </ng-template>
@@ -93,7 +93,7 @@
       {{resourceService.frmelmnts?.lbl?.enterDesignation}}
     </div>
   </div>
-
+  
   <div *ngIf="isOtherDesignationType" class="required mb-16">
     <label for="signup-form-user-type-other" class="mb-8 font-weight-bold">
       {{resourceService.frmelmnts?.lbl?.enterDesignation}}<span class="sb-color-red">*</span>
@@ -106,7 +106,7 @@
       {{resourceService.frmelmnts?.lbl?.enterDesignation}}
     </div>
   </div>
-
+  
 
   <button [attr.aria-disabled]="!personalInfoForm.valid" [disabled]="!personalInfoForm.valid" type="button"
     appTelemetryInteract [telemetryInteractEdata]="submitInteractEdata" [telemetryInteractCdata]="telemetryCdata"
