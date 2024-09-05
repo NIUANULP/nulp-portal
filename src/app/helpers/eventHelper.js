@@ -1768,9 +1768,13 @@ async function eventEnrollmentList(req, res) {
       let data = {
         request: {
           filters: {
+            board:req.body.request.filters.board,
             objectType: ["Event"],
+            gradeLevel :req.body.request.filters.gradeLevel,
+            startDate : req.body.request.filters.startDate,
             identifier: result.rows.map((row) => row.event_id),
           },
+          query : req.body.request.query,
         },
       };
 
