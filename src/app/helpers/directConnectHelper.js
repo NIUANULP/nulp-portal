@@ -665,9 +665,9 @@ async function decryptMessage(encryptedData) {
 async function deleteOldMessages() {
   try {
     const deleteQuery =
-      "DELETE FROM chat WHERE timestamp < NOW() - INTERVAL '7 days'";
-    const data = await pool.query(deleteQuery);
-    console.log("Deleted old messages", data?.rowCount);
+      "DELETE FROM chat WHERE timestamp < NOW() - INTERVAL '1 year'";
+    const result = await pool.query(deleteQuery);
+    console.log("Deleted old messages", result?.rowCount);
   } catch (error) {
     console.error("Error deleting old messages:", error.message);
   }
