@@ -17,6 +17,7 @@ global.AbortController = require("abort-controller");
 
 const { BlockBlobClient } = require("@azure/storage-blob");
 const momentTime = require("moment");
+
 const {
   getRecords,
   getRecord,
@@ -1255,7 +1256,7 @@ async function getTopEvents(userId, column, fromDate, toDate) {
     SELECT er.event_id, COUNT(er.${column}) AS user_count,er.designation
     FROM event_registration er
     JOIN event_details ed ON er.event_id = ed.event_id
-    WHERE 1 = 1
+    WHERE 1 = 1 AND ed.status = 'Live'
   `;
 
   const values = [];
@@ -1392,8 +1393,10 @@ async function eventReports(req, res) {
             return null; // Skip this item if the date is invalid
           }
 
-          // Parse and format date using Moment.js
-          const dateObj = moment(dateTimeString, moment.ISO_8601);
+          // Parse and format date using Moment.js with timezone conversion
+          const dateObj = moment(dateTimeString, moment.ISO_8601).tz(
+            moment.tz.guess()
+          );
           if (!dateObj.isValid()) {
             console.error("Invalid date format:", dateTimeString);
             return null; // Skip this item if the date is invalid
@@ -1765,9 +1768,13 @@ async function eventEnrollmentList(req, res) {
       let data = {
         request: {
           filters: {
+            board:req.body.request.filters.board,
             objectType: ["Event"],
+            gradeLevel :req.body.request.filters.gradeLevel,
+            startDate : req.body.request.filters.startDate,
             identifier: result.rows.map((row) => row.event_id),
           },
+          query : req.body.request.query,
         },
       };
 
@@ -2122,6 +2129,12 @@ async function eventRetire(req, res) {
     };
 
     const response = await axios(config);
+    if (response?.status === 200) {
+      const query = `UPDATE event_details SET status = $1 WHERE event_id=$2`;
+      const values = ["Retired", eventId];
+      const result = await pool.query(query, values);
+      console.log("Update successful:", result?.rowCount, "rows affected.");
+    }
     return res.send(response.data);
   } catch (error) {
     console.error(error);
