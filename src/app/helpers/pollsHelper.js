@@ -118,8 +118,8 @@ const createPolls = async (req, res) => {
     if (response?.length > 0) {
       if (data?.visibility === "private") {
         const userList = data?.user_list;
+        await emailSend(data, userList);
         userList?.map(async (item) => {
-          await emailSend(data, userList);
           const pollData = {
             poll_id: generatedId,
             user_id: item,
