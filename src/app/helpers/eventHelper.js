@@ -1384,22 +1384,17 @@ async function eventReports(req, res) {
           const decryptedEmail = decrypt(item.email);
           const eventName = eventDetail[eventId];
 
-          // Check and fix date format
-          let dateTimeString = item.created_at;
+          // Validate and format date
+          const dateTimeString = item.created_at;
 
-          // If dateTimeString is not in valid ISO format, attempt to correct it
-          if (!moment(dateTimeString, moment.ISO_8601, true).isValid()) {
-            console.error("Invalid date format:", dateTimeString);
-            return null; // Skip this item if the date is invalid
-          }
+          // Parse the UTC time and convert to IST
+          const dateObj = moment
+            .utc(dateTimeString, moment.ISO_8601)
+            .tz("Asia/Kolkata");
 
-          // Parse and format date using Moment.js with timezone conversion
-          const dateObj = moment(dateTimeString, moment.ISO_8601).tz(
-            moment.tz.guess()
-          );
           if (!dateObj.isValid()) {
             console.error("Invalid date format:", dateTimeString);
-            return null; // Skip this item if the date is invalid
+            return null; // Skip invalid date entries
           }
 
           return {
@@ -1419,7 +1414,7 @@ async function eventReports(req, res) {
             batch_id: undefined,
           };
         })
-        .filter((item) => item !== null); // Remove invalid items
+        .filter((item) => item !== null); // Filter out null values (invalid entries)
 
       res.status(200).send({
         ts: new Date().toISOString(),
@@ -1768,13 +1763,13 @@ async function eventEnrollmentList(req, res) {
       let data = {
         request: {
           filters: {
-            board:req.body.request.filters.board,
+            board: req.body.request.filters.board,
             objectType: ["Event"],
-            gradeLevel :req.body.request.filters.gradeLevel,
-            startDate : req.body.request.filters.startDate,
+            gradeLevel: req.body.request.filters.gradeLevel,
+            startDate: req.body.request.filters.startDate,
             identifier: result.rows.map((row) => row.event_id),
           },
-          query : req.body.request.query,
+          query: req.body.request.query,
         },
       };
 
