@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import {  UserService } from '@sunbird/core';
+import {  UserService ,PublicDataService} from '@sunbird/core';
 import * as _ from 'lodash-es';
 import { EventCreateService } from 'ngtek-event-library';
 import { Location } from '@angular/common';
-import { NavigationHelperService } from '@sunbird/shared';
+import { NavigationHelperService, ConfigService, ToasterService, ResourceService, ServerResponse, Framework, FrameworkData,
+  BrowserCacheTtlService } from '@sunbird/shared';
+
 @Component({
   selector: 'app-event-create',
   templateUrl: './event-create.component.html',
@@ -16,6 +18,7 @@ export class EventCreateComponent implements OnInit {
   isLoading: boolean =  true;
   libEventConfig:any;
   eventId:any;
+  channelFramework: any;
 
   constructor( 
     public location:Location,
@@ -23,29 +26,28 @@ export class EventCreateComponent implements OnInit {
     private router: Router, 
     private userService:UserService,
     private activatedRoute: ActivatedRoute,
-    public navigationhelperService: NavigationHelperService
+    public navigationhelperService: NavigationHelperService,
+    private configService: ConfigService,
+    private publicDataService: PublicDataService
+
  ) { }
 
   ngOnInit() {
     this.setEventConfig();
     
     this.showEventCreatePage();
-    console.log('libEventConfig - ', this.libEventConfig);
 
     this.activatedRoute.queryParams.subscribe(queryParams => {
       this.eventId = _.get(queryParams, 'identifier');
     });
 
-    console.log('identifier - ', this.eventId);
   }
 
   showEventCreatePage() {
     this.eventCreateService.getEventFormConfig().subscribe((data: any) => {
-      console.log('getEventFormConfig - ', data);
       this.formFieldProperties = data.result['form'].data.properties;
       this.isLoading = false;
-      console.log('formFieldProperties = ',data.result['form'].data.properties);
-    },err=>{console.error("hi", err);}
+    },err=>{console.error("error", err);}
     )
   }
 
@@ -58,6 +60,13 @@ export class EventCreateComponent implements OnInit {
   }
 
   setEventConfig() {
+    // this.readUserChannel();
+    const channelOptions = {
+      url: this.configService.urlConFig.URLS.CHANNEL.READ + '/' + this.userService.rootOrgId
+    };
+   this.publicDataService.get(channelOptions).subscribe((data) => {
+    this.channelFramework = data.result.channel.defaultFramework
+
     this.libEventConfig = {
       context: {
         user:this.userService.userProfile,
@@ -67,12 +76,15 @@ export class EventCreateComponent implements OnInit {
         sid: this.userService.sessionId,
         uid: this.userService.userid,
         additionalCategories: 'additionalCategories',
+        framework:  this.channelFramework
       },
       config: {
         mode: 'list'
       }
-    };
-  }
+    };    
+  });
+}
+  
 
   cancel(event) {
     this.navigationhelperService.goBack();

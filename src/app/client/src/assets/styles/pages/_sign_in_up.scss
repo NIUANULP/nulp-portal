@@ -1,11 +1,9 @@
 
 // new signup changes
 .signup-background {
-  background: url('/assets/images/bg.svg') no-repeat center center fixed;
   background-size: cover;
   width: 100%;
   position: relative;
-  height:100vh;
   display: flex;
     align-items: center;
     left: 0;
@@ -22,12 +20,11 @@
 }
 .fullpage-background-image {
   max-width: calculateRem(1008px);
-  width: 100%;
+  width: 400px;
   padding: calculateRem(40px);
-  box-shadow: 0 calculateRem(2px) calculateRem(16px) 0 rgba(var(--rc-rgba-black), 0.2);
   border-radius: calculateRem(8px);
-  min-height: calculateRem(600px);
-  background: var(--primary-100);
+  min-height: calculateRem(400px);
+  background: #fff;
   margin: 0 auto ;
   display: flex;
   align-items: center;

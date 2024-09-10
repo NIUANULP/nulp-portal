@@ -73,7 +73,6 @@ export class CsLibInitializerService {
         getItem(key: string): Promise<string | undefined> {
           return new Promise(resolve => {
             const value = localStorage.getItem(key);
-            console.log('localStorage.getItem(key)', value);
             resolve(value);
           });
         }

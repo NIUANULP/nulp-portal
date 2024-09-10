@@ -6,6 +6,7 @@ const {
   updateUserInfo,
   readUserInfo,
   validateUserFields,
+  emailNotification,
 } = require("../helpers/customHelper.js");
 
 module.exports = function (app) {
@@ -29,5 +30,11 @@ module.exports = function (app) {
     bodyParser.json({ limit: "10mb" }),
     proxyUtils.verifyToken(),
     readUserInfo
+  );
+  app.post(
+    "/custom/user/notification/email",
+    bodyParser.json({ limit: "10mb" }),
+    proxyUtils.verifyToken(),
+    emailNotification
   );
 };

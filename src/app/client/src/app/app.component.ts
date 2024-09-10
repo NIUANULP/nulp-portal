@@ -246,20 +246,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   handleHeaderNFooter() {
-    console.log(
-      "111=====",
-      _.get(
-        this.activatedRoute,
-        "snapshot.firstChild.firstChild.data.hideHeaderNFooter"
-      )
-    );
-    console.log(
-      "222=====",
-      _.get(
-        this.activatedRoute,
-        "snapshot.firstChild.firstChild.firstChild.data.hideHeaderNFooter"
-      )
-    );
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationEnd),
@@ -346,7 +332,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.formService
       .getFormConfig(formReadInputParams)
       .subscribe((formResponsedata) => {
-        const routesArray = formResponsedata;
+      const routesArray = formResponsedata;
         const url = location.href;
         routesArray.forEach((element) => {
           if (_.includes(url, element)) {
@@ -473,6 +459,8 @@ export class AppComponent implements OnInit, OnDestroy {
         (document.activeElement as HTMLElement).click();
       }
     };
+
+    
   }
 
   onCloseJoyThemePopup() {
@@ -686,6 +674,7 @@ export class AppComponent implements OnInit, OnDestroy {
    * checks if user has accepted the tnc and show tnc popup.
    */
   public checkTncAndFrameWorkSelected() {
+    this.checkFrameworkSelected();
     if (
       _.has(this.userService.userProfile, "promptTnC") &&
       _.has(this.userService.userProfile, "tncLatestVersion") &&
@@ -757,6 +746,8 @@ export class AppComponent implements OnInit, OnDestroy {
    * checks if user has selected the framework and shows popup if not selected.
    */
   public checkFrameworkSelected() {
+    this.userService.initialize(this.userService.loggedIn);
+
     // should not show framework popup for sign up and recover route
     if (this.isLocationStatusRequired()) {
       return;
@@ -765,6 +756,7 @@ export class AppComponent implements OnInit, OnDestroy {
       const frameWorkPopUp: boolean =
         this.cacheService.get("showFrameWorkPopUp");
       if (frameWorkPopUp) {
+      
         this.showFrameWorkPopUp = false;
         !this.isGuestUser ? this.checkLocationStatus() : null;
       } else {
@@ -772,6 +764,9 @@ export class AppComponent implements OnInit, OnDestroy {
           this.userService.loggedIn &&
           _.isEmpty(_.get(this.userProfile, "framework"))
         ) {
+          this.showFrameWorkPopUp = true;
+        }
+        else if((_.get(this.userProfile, "framework").id) == "nulp") {
           this.showFrameWorkPopUp = true;
         } else if (this.isGuestUser) {
           if (!this.guestUserDetails) {
@@ -1041,10 +1036,10 @@ export class AppComponent implements OnInit, OnDestroy {
   viewInBrowser() {
     // no action required
   }
-  closeIcon() {
-    this.showFrameWorkPopUp = false;
-    this.cacheService.set("showFrameWorkPopUp", "installApp");
-  }
+  // closeIcon() {
+  //   this.showFrameWorkPopUp = false;
+  //   this.cacheService.set("showFrameWorkPopUp", "installApp");
+  // }
   changeLanguageAttribute() {
     this.resourceDataSubscription =
       this.resourceService.languageSelected$.subscribe((item) => {
@@ -1098,6 +1093,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.orgDetailsService
       .getCustodianOrgDetails()
       .subscribe((custodianOrg) => {
+
         if (
           this.userService.loggedIn &&
           !this.userService.userProfile.managedBy &&

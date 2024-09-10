@@ -10,9 +10,9 @@ export const urlConfig = {
   // compositeSearch: "/action/composite/v3/search",
   gmeetget: "custom_event/gmeet/get?eventId=",
 
-  search: "/api/composite/v1/search",
-  compositeSearch: "/api/composite/v1/search",
-  emailNotification: "/api/user/v1/notification/email",
+  search: "/custom_event/composite/search",
+  compositeSearch: "/custom_event/composite/search",
+  emailNotification: "/custom/user/notification/email",
   adminEnroll: "/learner/course/v1/admin/enroll",
   userData: "/learner/user/v3/search",
   costomUserEnroll: "/custom_event/registration",

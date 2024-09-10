@@ -8,6 +8,8 @@ const {
 const uuidv1 = require("uuid/v1");
 const cron = require("node-cron");
 const { pool } = require("../helpers/postgresqlConfig");
+const envHelper = require("./environmentVariablesHelper.js");
+const axios = require("axios");
 
 function generateUniqueId() {
   const currentUnixTime = Date.now(); // Get current Unix timestamp in milliseconds
@@ -116,13 +118,14 @@ const createPolls = async (req, res) => {
     if (response?.length > 0) {
       if (data?.visibility === "private") {
         const userList = data?.user_list;
+        await emailSend(data, userList);
         userList?.map(async (item) => {
-          const data = {
+          const pollData = {
             poll_id: generatedId,
             user_id: item,
           };
 
-          const final = await createRecord(data, "user_invited", [
+          const final = await createRecord(pollData, "user_invited", [
             "poll_id",
             "user_id",
           ]);
@@ -166,7 +169,60 @@ const createPolls = async (req, res) => {
     });
   }
 };
+const emailSend = async (poll, userList) => {
+  try {
+    const message = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; background-color: #f9f9f9; padding: 20px;">
+    <div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+        <p style="color: #555;">We want your input! Participate in our latest poll on <strong>${poll.title}</strong> on NULP.</p>
+        <p style="text-align: center;">
+            <a clicktracking=off href="${envHelper.api_base_url}/webapp/pollDetails?${poll.poll_id}" style="background-color: #007BFF; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Click here to participate</a>
+        </p>
+        
+    </div>
+</body>
+</html>`;
+    console.log("message", message);
+    let data = JSON.stringify({
+      request: {
+        mode: "email",
+        body: `${message}`,
+        fromEmail: "",
+        emailTemplateType: "",
+        subject: `Share Your Opinion in Our Poll ${poll.title} on NULP`,
+        recipientUserIds: userList,
+      },
+    });
 
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${envHelper.api_base_url}/api/user/v1/notification/email`,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${envHelper.PORTAL_API_AUTH_TOKEN}`,
+      },
+      data: data,
+    };
+
+    axios
+      .request(config)
+      .then((response) => {
+        console.log(JSON.stringify(response.data));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  } catch (error) {
+    throw error;
+  }
+};
 const updatePolls = async (req, res) => {
   try {
     const { poll_id } = req.query;
@@ -319,12 +375,9 @@ const getPoll = async (req, res) => {
     const pollDataQuery = `
         SELECT *
         FROM polls
-        WHERE poll_id = $1 AND organization = $2
+        WHERE poll_id = $1
       `;
-    const pollData = await getRecord(pollDataQuery, [
-      poll_id.trim(),
-      organization,
-    ]);
+    const pollData = await getRecord(pollDataQuery, [poll_id.trim()]);
 
     if (!pollData?.length) {
       const error = new Error("Poll not found");
@@ -525,10 +578,10 @@ const listPolls = async (req, res) => {
       values.push(filters.created_by);
       query += ` AND polls.created_by = $${values.length}`;
     }
-    if (!isSystemAdmin && organization) {
-      values.push(organization);
-      query += ` AND polls.organization = $${values.length}`;
-    }
+    // if (!isSystemAdmin && organization) {
+    //   values.push(organization);
+    //   query += ` AND polls.organization = $${values.length}`;
+    // }
 
     // Apply field-specific filters
     if (filters.poll_options) {
@@ -577,7 +630,7 @@ const listPolls = async (req, res) => {
     }
 
     // Include polls where the user is invited if visibility is private
-    if (userId) {
+    if (!req?.query?.dashboard && userId) {
       values.push(userId);
       query += ` AND (polls.visibility <> 'private' OR user_invited.user_id = $${values.length})`;
     }
@@ -613,10 +666,10 @@ const listPolls = async (req, res) => {
       countValues.push(filters.created_by);
       countQuery += ` AND polls.created_by = $${countValues.length}`;
     }
-    if (!isSystemAdmin && organization) {
-      countValues.push(organization);
-      countQuery += ` AND polls.organization = $${countValues.length}`;
-    }
+    // if (!isSystemAdmin && organization) {
+    //   countValues.push(organization);
+    //   countQuery += ` AND polls.organization = $${countValues.length}`;
+    // }
     if (filters.poll_options) {
       countValues.push(filters.poll_options);
       countQuery += ` AND polls.poll_options @> $${countValues.length}`;
@@ -665,7 +718,7 @@ const listPolls = async (req, res) => {
     }
 
     // Include polls where the user is invited if visibility is private
-    if (userId) {
+    if (!req?.query?.dashboard && userId) {
       countValues.push(userId);
       countQuery += ` AND (polls.visibility <> 'private' OR user_invited.user_id = $${countValues.length})`;
     }
@@ -738,6 +791,11 @@ const createUserPoll = async (req, res) => {
     }
     if (pollData[0]?.created_by === data.user_id.trim()) {
       const error = new Error("You cannot vote own poll");
+      error.statusCode = 400;
+      throw error;
+    }
+    if (pollData[0]?.status != "Live") {
+      const error = new Error("Poll is not live");
       error.statusCode = 400;
       throw error;
     }
@@ -848,6 +906,11 @@ const updateUserPoll = async (req, res) => {
     if (!pollData?.length) {
       const error = new Error("Poll not found");
       error.statusCode = 404;
+      throw error;
+    }
+    if (pollData[0]?.status != "Live") {
+      const error = new Error("Poll is not live");
+      error.statusCode = 400;
       throw error;
     }
     if (!pollData[0]?.poll_options?.includes(`${data.poll_result}`)) {

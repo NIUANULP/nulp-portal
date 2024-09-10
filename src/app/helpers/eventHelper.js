@@ -17,6 +17,7 @@ global.AbortController = require("abort-controller");
 
 const { BlockBlobClient } = require("@azure/storage-blob");
 const momentTime = require("moment");
+
 const {
   getRecords,
   getRecord,
@@ -908,7 +909,10 @@ const insertEventRegistration = async (req, res) => {
     consentForm,
     user_consent,
   } = req.body;
-  const encryptedData = encrypt(email);
+  let encryptedData;
+  if (email) {
+    encryptedData = encrypt(email);
+  }
   const query = `
     INSERT INTO event_registration (event_id,name, email, designation, organisation, certificate,user_consent, consent_form,user_id)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8,$9) RETURNING *
@@ -963,13 +967,13 @@ const insertEventRegistration = async (req, res) => {
 };
 
 const decrypt = (encryptedData) => {
-  const textParts = encryptedData.split(":");
-  const iv = Buffer.from(textParts.shift(), "hex");
-  const encryptedText = Buffer.from(textParts.join(":"), "hex");
-  let decipher = crypto.createDecipheriv("aes-256-cbc", key, iv);
-  let decrypted = decipher.update(encryptedText);
-  decrypted = Buffer.concat([decrypted, decipher.final()]);
-  return decrypted.toString();
+  const textParts = encryptedData?.split(":");
+  const iv = Buffer?.from(textParts?.shift(), "hex");
+  const encryptedText = Buffer.from(textParts?.join(":"), "hex");
+  let decipher = crypto?.createDecipheriv("aes-256-cbc", key, iv);
+  let decrypted = decipher?.update(encryptedText);
+  decrypted = Buffer?.concat([decrypted, decipher?.final()]);
+  return decrypted?.toString();
 };
 const getEventRegistration = async (req, res) => {
   const event_id = req.query.event_id;
@@ -1252,7 +1256,7 @@ async function getTopEvents(userId, column, fromDate, toDate) {
     SELECT er.event_id, COUNT(er.${column}) AS user_count,er.designation
     FROM event_registration er
     JOIN event_details ed ON er.event_id = ed.event_id
-    WHERE 1 = 1
+    WHERE 1 = 1 AND ed.status = 'Live'
   `;
 
   const values = [];
@@ -1380,17 +1384,17 @@ async function eventReports(req, res) {
           const decryptedEmail = decrypt(item.email);
           const eventName = eventDetail[eventId];
 
-          // Fix any invalid date formats
-          let dateTimeString = item.date.replace(
-            /(\d{4}-\d{2}-)0*(\d{1,2})(T.*)/,
-            (_, p1, p2, p3) => `${p1}${p2}${p3}`
-          );
+          // Validate and format date
+          const dateTimeString = item.created_at;
 
-          // Parse and format date using Moment.js
-          const dateObj = moment(dateTimeString, moment.ISO_8601);
+          // Parse the UTC time and convert to IST
+          const dateObj = moment
+            .utc(dateTimeString, moment.ISO_8601)
+            .tz("Asia/Kolkata");
+
           if (!dateObj.isValid()) {
             console.error("Invalid date format:", dateTimeString);
-            return null; // Skip this item if the date is invalid
+            return null; // Skip invalid date entries
           }
 
           return {
@@ -1410,7 +1414,7 @@ async function eventReports(req, res) {
             batch_id: undefined,
           };
         })
-        .filter((item) => item !== null); // Remove invalid items
+        .filter((item) => item !== null); // Filter out null values (invalid entries)
 
       res.status(200).send({
         ts: new Date().toISOString(),
@@ -1759,9 +1763,13 @@ async function eventEnrollmentList(req, res) {
       let data = {
         request: {
           filters: {
+            board: req.body.request.filters.board,
             objectType: ["Event"],
+            gradeLevel: req.body.request.filters.gradeLevel,
+            startDate: req.body.request.filters.startDate,
             identifier: result.rows.map((row) => row.event_id),
           },
+          query: req.body.request.query,
         },
       };
 
@@ -1955,7 +1963,7 @@ async function eventCreateWrapper(req, res) {
       },
       data: data,
     };
-console.log(config,"-----------");
+    console.log(config, "-----------");
     const response = await axios(config);
     return res.send(response.data);
   } catch (error) {
@@ -1982,7 +1990,7 @@ console.log(config,"-----------");
 async function eventUpdateWrapper(req, res) {
   try {
     const data = req.body;
-const eventId=req.query.eventId;
+    const eventId = req.query.eventId;
 
     let config = {
       method: "patch",
@@ -1994,11 +2002,11 @@ const eventId=req.query.eventId;
       },
       data: data,
     };
-console.log(config,"-----------");
+    console.log(config, "-----------");
     const response = await axios(config);
     return res.send(response.data);
   } catch (error) {
-    console.error(error.response,"$$$$$$$$$$$$$444");
+    console.error(error.response, "$$$$$$$$$$$$$444");
     const statusCode = error.statusCode || 500;
     const errorMessage = error.message || "Internal Server Error";
     res.status(statusCode).send({
@@ -2021,8 +2029,8 @@ console.log(config,"-----------");
 async function eventPublishWrapper(req, res) {
   try {
     const data = req.body;
-const eventId=req.query.eventId;
-console.log(req,"-----------------");
+    const eventId = req.query.eventId;
+    console.log(req, "-----------------");
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -2033,7 +2041,7 @@ console.log(req,"-----------------");
       },
       data: data,
     };
-console.log(config,"-----------");
+    console.log(config, "-----------");
     const response = await axios(config);
     return res.send(response.data);
   } catch (error) {
@@ -2057,8 +2065,6 @@ console.log(config,"-----------");
   }
 }
 
-
-
 async function eventGetByIdWrapper(req, res) {
   try {
     const eventId = req.query.eventId;
@@ -2074,6 +2080,56 @@ async function eventGetByIdWrapper(req, res) {
     };
 
     const response = await axios(config);
+    return res.send(response.data);
+  } catch (error) {
+    console.error(error);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
+
+async function eventRetire(req, res) {
+  try {
+    const eventId = req.query.eventId;
+    let data = JSON.stringify({
+      request: {
+        content: {
+          status: "Retired",
+        },
+      },
+    });
+
+    let config = {
+      method: "patch",
+      maxBodyLength: Infinity,
+      url: `http://content-service:9000/content/v4/system/update/${eventId}`,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+
+    const response = await axios(config);
+    if (response?.status === 200) {
+      const query = `UPDATE event_details SET status = $1 WHERE event_id=$2`;
+      const values = ["Retired", eventId];
+      const result = await pool.query(query, values);
+      console.log("Update successful:", result?.rowCount, "rows affected.");
+    }
     return res.send(response.data);
   } catch (error) {
     console.error(error);
@@ -2117,5 +2173,5 @@ module.exports = {
   eventCreateWrapper,
   eventUpdateWrapper,
   eventPublishWrapper,
-  
+  eventRetire,
 };
