@@ -375,12 +375,9 @@ const getPoll = async (req, res) => {
     const pollDataQuery = `
         SELECT *
         FROM polls
-        WHERE poll_id = $1 AND organization = $2
+        WHERE poll_id = $1
       `;
-    const pollData = await getRecord(pollDataQuery, [
-      poll_id.trim(),
-      organization,
-    ]);
+    const pollData = await getRecord(pollDataQuery, [poll_id.trim()]);
 
     if (!pollData?.length) {
       const error = new Error("Poll not found");
@@ -581,10 +578,10 @@ const listPolls = async (req, res) => {
       values.push(filters.created_by);
       query += ` AND polls.created_by = $${values.length}`;
     }
-    if (!isSystemAdmin && organization) {
-      values.push(organization);
-      query += ` AND polls.organization = $${values.length}`;
-    }
+    // if (!isSystemAdmin && organization) {
+    //   values.push(organization);
+    //   query += ` AND polls.organization = $${values.length}`;
+    // }
 
     // Apply field-specific filters
     if (filters.poll_options) {
@@ -669,10 +666,10 @@ const listPolls = async (req, res) => {
       countValues.push(filters.created_by);
       countQuery += ` AND polls.created_by = $${countValues.length}`;
     }
-    if (!isSystemAdmin && organization) {
-      countValues.push(organization);
-      countQuery += ` AND polls.organization = $${countValues.length}`;
-    }
+    // if (!isSystemAdmin && organization) {
+    //   countValues.push(organization);
+    //   countQuery += ` AND polls.organization = $${countValues.length}`;
+    // }
     if (filters.poll_options) {
       countValues.push(filters.poll_options);
       countQuery += ` AND polls.poll_options @> $${countValues.length}`;
