@@ -1,17 +1,24 @@
 
-import { UserService } from '@sunbird/core';
-import { Component, Input, OnInit } from '@angular/core';
+import { UserService,SearchService,DataService } from '@sunbird/core';
+import { combineLatest as observableCombineLatest, forkJoin ,Observable, throwError} from 'rxjs';
+import { Component, Input, OnInit,ViewChild } from '@angular/core';
 // import { Router } from '@angular/router';
 import { Router } from '@angular/router';
 import { EventListService } from 'ngtek-event-library';
 import { EventFilterService, SbToastService } from 'ngtek-event-library';
 import { from } from 'rxjs';
-import { LayoutService, COLUMN_TYPE, ToasterService } from '@sunbird/shared';
-import { takeUntil } from 'rxjs/operators';
+import { LayoutService, COLUMN_TYPE,ServerResponse, PaginationService, ConfigService, ToasterService, IPagination,
+  ResourceService, ILoaderMessage, INoResultMessage, IContents, NavigationHelperService } from '@sunbird/shared';
+import { takeUntil,tap, catchError  } from 'rxjs/operators';
 import { createDirective } from '@angular/compiler/src/core';
+import { WorkSpaceService } from '../../services';
+import { SuiModalService, TemplateModalConfig, ModalTemplate } from 'ng2-semantic-ui-v9';
+import { ContentIDParam } from '../../interfaces/delteparam';
+import * as _ from 'lodash-es';
 import { Subject } from 'rxjs';
 // import { SbToastService } from "../../services/iziToast/izitoast.service";
 import * as mappingConfig from '../../config/nameToCodeMapping.json';
+import { WorkSpace } from '../../classes/workspace';
 // import * as staticEventList from '../../../../../assets/api/eventlist.json'
 const colors: any = {
   red: {
@@ -33,7 +40,9 @@ const colors: any = {
   templateUrl: './all-my-events.component.html',
   styleUrls: ['./all-my-events.component.scss']
 })
-export class AllMyEventsComponent implements OnInit {
+export class AllMyEventsComponent extends WorkSpace implements OnInit {
+  @ViewChild('modalTemplate')
+  public modalTemplate: ModalTemplate<{ data: string }, string, string>;
 
   eventList: any;
 
@@ -56,7 +65,18 @@ export class AllMyEventsComponent implements OnInit {
   todayDate = this.today.getFullYear() + '-' + ('0' + (this.today.getMonth() + 1)).slice(-2) + '-' + ('0' + (this.today.getDate())).slice(-2);
   yesterdayDate = this.today.getFullYear() + '-' + ('0' + (this.today.getMonth() + 1)).slice(-2) + '-' + ('0' + (this.today.getDate() - 1)).slice(-2);
   tommorrowDate = this.today.getFullYear() + '-' + ('0' + (this.today.getMonth() + 1)).slice(-2) + '-' + ('0' + (this.today.getDate() + 1)).slice(-2);
-  
+  private currentContentId: ContentIDParam;
+  private contentMimeType: string;
+  private showCollectionLoader: boolean;
+  private deleteModal: any;
+  showLoader = true;
+  loaderMessage: ILoaderMessage;
+  public resourceService: ResourceService;  
+  private headers: any;
+  public collectionData: Array<any>;
+  public collectionListModal = false;
+  tempEventList: Array<IContents> = [];
+  currentEvent: any;
   /**
    * To navigate to other pages
    */
@@ -64,6 +84,16 @@ export class AllMyEventsComponent implements OnInit {
 
    @Input() paginateLimit: number = 12;
   pageNumber: number = 1;
+  /**
+    * Constructor to create injected service(s) object
+    Default method of Draft Component class
+    * @param {SearchService} SearchService Reference of SearchService
+    * @param {UserService} UserService Reference of UserService
+    * @param {Router} route Reference of Router
+    * @param {PaginationService} paginationService Reference of PaginationService
+    * @param {ActivatedRoute} activatedRoute Reference of ActivatedRoute
+    * @param {ConfigService} config Reference of ConfigService
+  */
   
   /**
   * To store deleting content id
@@ -71,17 +101,22 @@ export class AllMyEventsComponent implements OnInit {
   // private currentContentId: ContentIDParam;
 
   constructor(
+    public searchService: SearchService,
     private eventListService:EventListService,
     private router: Router,
     public userService: UserService,
     private eventFilterService: EventFilterService,
-    private toasterService: ToasterService,
+    private toasterService: ToasterService,resourceService: ResourceService,
     public layoutService: LayoutService,
     private sbToastService: SbToastService,
-    route: Router
-  ) {
-    this.route = route;
-  }
+    public workSpaceService: WorkSpaceService,
+    route: Router,
+    config: ConfigService, public modalService: SuiModalService) {
+        super(searchService, workSpaceService, userService);
+          this.route = route;
+        this.resourceService = resourceService;
+      }
+           
 
   ngOnInit() {
     this.initLayout();
@@ -124,7 +159,7 @@ export class AllMyEventsComponent implements OnInit {
    */
   fecthAllEvents() {
     this.Filterdata = {
-      "status": [],
+      "status": ["Live","Draft"],
       "objectType": "Event",
       "owner": this.userService.userid
     };
@@ -143,9 +178,53 @@ export class AllMyEventsComponent implements OnInit {
     )
   }
 
-  public deleteEvent(contentIds) {
-    this.sbToastService.showIziToastMsg("Delete functionality is a work in progress.", "warning");
+
+   removeAllMyContent(contentList, requestData) {
+    return contentList.filter((content) => {
+      return requestData.indexOf(content.identifier) === -1;
+    });
   }
+
+confirmDeleteEvent(event) {
+  console.log(event,"Clicked event");
+  
+  this.currentEvent = event; 
+  this.showCollectionLoader = false;
+
+  const config = new TemplateModalConfig<{ data: string }, string, string>(this.modalTemplate);
+  config.isClosable = false;
+  config.size = 'small';
+  config.transitionDuration = 0;
+  config.mustScroll = true;
+
+  this.modalService.open(config);
+
+  setTimeout(() => {
+    let element = document.getElementsByTagName('sui-modal');
+    if (element && element.length > 0) {
+      element[0].className = 'sb-modal';
+    }
+  }, 10);
+}
+
+deleteEvent() {
+  console.log(this.currentEvent,"Delete Event Function");
+  
+  this.delete(this.currentEvent).subscribe(
+    (response) => {
+      console.log('Event deleted successfully', response);
+    },
+    (error) => {
+      console.error('Error deleting event', error);
+    }
+  );
+}
+
+  delete(contentIds: any): Observable<ServerResponse> {
+    const DeleteParam = this.currentEvent.identifier
+    return this.workSpaceService.deleteEvent(DeleteParam);
+  }
+
 
   /**
    * For subscibe click action on event card
@@ -190,7 +269,7 @@ export class AllMyEventsComponent implements OnInit {
   getFilteredData(event) {
     if (event.search) {
       this.Filterdata = {
-        "status": [],
+        "status": ["Live","Draft"],
         "objectType": "Event",
         "owner":this.userService.userid
       };
@@ -323,7 +402,7 @@ export class AllMyEventsComponent implements OnInit {
     // }
     else {
       this.Filterdata = {
-        "status": [],
+        "status": ["Live","Draft"],
         "objectType": "Event",
         "owner": this.userService.userid
       };

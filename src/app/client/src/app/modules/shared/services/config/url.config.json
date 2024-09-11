@@ -388,6 +388,9 @@
       "FORMCREATEORG":"data/v1/form/create",
       "MEMBERREMOVE":"org/v1/member/remove",
       "PREFERENCES_CREATE" : "org/v2/preferences/create"
+    },
+    "EVENT":{
+      "RETIRE":"custom_event/event/retire?eventId="
     }
 
   }
