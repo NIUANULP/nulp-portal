@@ -72,7 +72,7 @@
 			<div class="item active">
 				<i class="close link icon" (click)="showSideBar()" tabindex="0"
 					title="{{resourceService?.frmelmnts?.btn?.close}}"></i>
-				<a href="/resources">
+				<a href="/webapp/domainList">
 					{{resourceService.frmelmnts?.btn?.signin}}
 				</a>
 			</div>
@@ -127,7 +127,7 @@
 			<div class="ui divider mt-0"></div>
 			<a class="item" [class.active]="router.isActive('/search/Library') || router.isActive('/resources')"
 				(click)="showSideBar()" tabindex="0" appTelemetryInteract [telemetryInteractEdata]="libraryMenuIntractEdata"
-				routerLink="/resources">
+				routerLink="/webapp/domainList">
 				{{resourceService?.frmelmnts?.tab?.resources}}
 			</a>
 			<a class="item" [class.active]="router.isActive('/search/Courses') || router.isActive('/learn')"
@@ -155,7 +155,7 @@
       <div class="item active">
 				<i class="close link icon" (click)="showSideBar()" tabindex="0"
 					title="{{resourceService?.frmelmnts?.btn?.close}}"></i>
-				<a href="/resources">
+				<a href="/webapp/domainList">
 					{{resourceService.frmelmnts?.btn?.signin}}
 				</a>
 			</div>

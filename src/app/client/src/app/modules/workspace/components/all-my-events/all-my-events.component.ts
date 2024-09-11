@@ -208,14 +208,15 @@ confirmDeleteEvent(event) {
 }
 
 deleteEvent() {
-  console.log(this.currentEvent,"Delete Event Function");
   
   this.delete(this.currentEvent).subscribe(
     (response) => {
-      console.log('Event deleted successfully', response);
+       this.toasterService.success('Event deleted successfully')
     },
     (error) => {
-      console.error('Error deleting event', error);
+      this.toasterService.error(
+            'Error deleting event'
+          );
     }
   );
 }

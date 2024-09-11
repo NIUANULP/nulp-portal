@@ -69,7 +69,7 @@ export class WorkSpaceService {
 
     deleteEvent(requestParam: IDeleteParam): Observable<ServerResponse> {
     const option = {
-      url: this.config.urlConFig.URLS.EVENT.RETIRE + requestParam,
+      url: this.config.urlConFig.URLS.EVENT.RETIRE +"?eventId="+ requestParam,
     };
     return this.dataService.get(option);
   }
