@@ -4,7 +4,7 @@ import { map, skipWhile } from 'rxjs/operators';
 import {
   ConfigService, ServerResponse, ICard, NavigationHelperService, ResourceService, BrowserCacheTtlService
 } from '@sunbird/shared';
-import { ContentService, PublicDataService, UserService, ActionService } from '@sunbird/core';
+import { ContentService, PublicDataService, UserService, ActionService,DataService } from '@sunbird/core';
 import { IDeleteParam, ContentIDParam } from '../../interfaces/delteparam';
 import { Router } from '@angular/router';
 import * as _ from 'lodash-es';
@@ -39,7 +39,7 @@ export class WorkSpaceService {
     * @param {UserService} userService userService reference
     * @param {HttpClient} http HttpClient reference
   */
-  constructor(config: ConfigService, content: ContentService,
+  constructor(config: ConfigService, content: ContentService,public dataService: DataService,
     route: Router, public navigationHelperService: NavigationHelperService,
     private cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService,
     private resourceService: ResourceService, public publicDataService: PublicDataService,
@@ -65,6 +65,13 @@ export class WorkSpaceService {
       }
     };
     return this.content.delete(option);
+  }
+
+    deleteEvent(requestParam: IDeleteParam): Observable<ServerResponse> {
+    const option = {
+      url: this.config.urlConFig.URLS.EVENT.RETIRE +"?eventId="+ requestParam,
+    };
+    return this.dataService.get(option);
   }
 
 
