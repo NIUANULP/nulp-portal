@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormService, UserService } from '@sunbird/core';
 import * as _ from 'lodash-es';
-import { LayoutService, ResourceService, UtilService, IUserData, NavigationHelperService} from '@sunbird/shared';
+import { LayoutService, ResourceService, UtilService, IUserData, NavigationHelperService,ConfigService} from '@sunbird/shared';
 import { Router, ActivatedRoute } from '@angular/router';
 import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -24,6 +24,15 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
   subscription: any;
   userType: any;
   returnTo: string;
+   /**
+   * Workspace access roles
+   */
+  workSpaceRole: Array<string>;
+  /**
+   * reference of config service.
+   */
+  public config: ConfigService;
+
   constructor(
     public formService: FormService,
     public resourceService: ResourceService,
@@ -34,7 +43,13 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
     public layoutService: LayoutService,
     private utilService: UtilService,
     public navigationhelperService: NavigationHelperService,
-  ) {}
+    config: ConfigService
+    
+  ) {
+    this.config = config;
+    this.workSpaceRole = this.config.rolesConfig.headerDropdownRoles.workSpaceRole;
+
+  }
 
 
   ngOnInit() {
