@@ -56,10 +56,10 @@
 			*ngIf="!router.isActive('', true) && !isDesktopApp" (click)="showSideBar()" tabindex="0" appTelemetryInteract [telemetryInteractEdata]="groupsMenuIntractEdata"
 			[routerLink]="[navigateToGroups()]"> {{resourceService?.frmelmnts?.tab?.mygroups}}  <span class="group__type mx-8">New</span> </a>	
 
-			<a class="item" [class.active]="router.isActive('/search/profile') || router.isActive('/profile')"
+			<!-- <a class="item" [class.active]="router.isActive('/search/profile') || router.isActive('/profile')"
 				(click)="showSideBar()" tabindex="0" routerLink="/profile">
 				{{resourceService.frmelmnts?.lnk?.profile}}
-			</a>
+			</a> -->
 			<a class="item logout-btn" appOnlineOnly appTelemetryInteract [telemetryInteractEdata]="getLogoutInteractEdata()"
 				(click)="logout()" tabindex="0">
 				{{resourceService.frmelmnts?.lnk?.logout}}
@@ -72,7 +72,7 @@
 			<div class="item active">
 				<i class="close link icon" (click)="showSideBar()" tabindex="0"
 					title="{{resourceService?.frmelmnts?.btn?.close}}"></i>
-				<a href="/resources">
+				<a href="/webapp/domainList">
 					{{resourceService.frmelmnts?.btn?.signin}}
 				</a>
 			</div>
@@ -127,7 +127,7 @@
 			<div class="ui divider mt-0"></div>
 			<a class="item" [class.active]="router.isActive('/search/Library') || router.isActive('/resources')"
 				(click)="showSideBar()" tabindex="0" appTelemetryInteract [telemetryInteractEdata]="libraryMenuIntractEdata"
-				routerLink="/resources">
+				routerLink="/webapp/domainList">
 				{{resourceService?.frmelmnts?.tab?.resources}}
 			</a>
 			<a class="item" [class.active]="router.isActive('/search/Courses') || router.isActive('/learn')"
@@ -139,10 +139,10 @@
 		[telemetryInteractEdata]="groupsMenuIntractEdata" [routerLink]="[navigateToGroups()]" *ngIf="!isDesktopApp">
 		{{resourceService?.frmelmnts?.tab?.mygroups}} <span class="group__type mx-8">New</span>
 			</a>
-			<a class="item" [class.active]="router.isActive('/search/profile') || router.isActive('/profile')"
+			<!-- <a class="item" [class.active]="router.isActive('/search/profile') || router.isActive('/profile')"
 				(click)="showSideBar()" tabindex="0" routerLink="/profile">
 				{{resourceService.frmelmnts?.lnk?.profile}}
-			</a>
+			</a> -->
 			<a class="item logout-btn" appOnlineOnly appTelemetryInteract [telemetryInteractEdata]="getLogoutInteractEdata()"
 				(click)="logout()" tabindex="0">
 				{{resourceService.frmelmnts?.lnk?.logout}}
@@ -155,7 +155,7 @@
       <div class="item active">
 				<i class="close link icon" (click)="showSideBar()" tabindex="0"
 					title="{{resourceService?.frmelmnts?.btn?.close}}"></i>
-				<a href="/resources">
+				<a href="/webapp/domainList">
 					{{resourceService.frmelmnts?.btn?.signin}}
 				</a>
 			</div>

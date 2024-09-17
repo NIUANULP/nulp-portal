@@ -1,17 +1,31 @@
 <ng-container *ngIf="!isLayoutAvailable()">
   <div class="item py-8 pr-8 computer only">
     <ng-container *ngFor="let contentType of contentTypes">
-      <a aria-current="page" [attr.aria-selected]="selectedContentType === contentType.contentType ? true : false" *ngIf="contentType.isEnabled && contentType?.isOnlineOnly" tabindex="0" (click)="showContentType(contentType)" appOnlineOnly
-         [ngClass]="{'active': selectedContentType === contentType.contentType}"
-         class="item {{'item--' + getIcon(contentType)}}">
-        {{getTitle(contentType)}}
-      </a>
-      <a aria-current="page" [attr.aria-selected]="selectedContentType === contentType.contentType ? true : false" *ngIf="contentType.isEnabled && !contentType?.isOnlineOnly && isDesktopApp" tabindex="0" (click)="showContentType(contentType)"
-         [ngClass]="{'active': selectedContentType === contentType.contentType}"
-         class="item {{'item--' + getIcon(contentType)}}">
-        {{getTitle(contentType)}}
-      </a>
-    </ng-container>
+  <a aria-current="page" [attr.aria-selected]="selectedContentType === contentType.contentType ? true : false" 
+     *ngIf="contentType.isEnabled && contentType?.isOnlineOnly && ['home', 'course', 'explore', 'all'].includes(contentType.contentType)" 
+     tabindex="0" (click)="showContentType(contentType)" appOnlineOnly appPermission [permission]='workSpaceRole'
+     [ngClass]="{'active': selectedContentType === contentType.contentType}"
+     class="item {{'item--' + getIcon(contentType)}}">
+    {{getTitle(contentType)}}
+  </a>
+
+  <a aria-current="page" [attr.aria-selected]="selectedContentType === contentType.contentType ? true : false" 
+     *ngIf="contentType.isEnabled && contentType?.isOnlineOnly && !['home', 'course', 'explore', 'all'].includes(contentType.contentType)" 
+     tabindex="0" (click)="showContentType(contentType)" appOnlineOnly
+     [ngClass]="{'active': selectedContentType === contentType.contentType}"
+     class="item {{'item--' + getIcon(contentType)}}">
+    {{getTitle(contentType)}}
+  </a>
+
+  <a aria-current="page" [attr.aria-selected]="selectedContentType === contentType.contentType ? true : false" 
+     *ngIf="contentType.isEnabled && !contentType?.isOnlineOnly && isDesktopApp" 
+     tabindex="0" (click)="showContentType(contentType)"
+     [ngClass]="{'active': selectedContentType === contentType.contentType}"
+     class="item {{'item--' + getIcon(contentType)}}">
+    {{getTitle(contentType)}}
+  </a>
+</ng-container>
+
   </div>
   <div class="item mobile only">
     <ng-container *ngFor="let contentType of contentTypes">
