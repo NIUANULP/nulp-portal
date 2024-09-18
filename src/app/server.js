@@ -53,7 +53,6 @@ const { loadTokenPublicKeys } = require('sb_api_interceptor');
 const { getGeneralisedResourcesBundles } = require('./helpers/resourceBundleHelper.js')
 const { apiWhiteListLogger, isAllowed } = require('./helpers/apiWhiteList');
 const { registerDeviceWithKong } = require('./helpers/kongTokenHelper');
-const { pool } = require('./helpers/postgresqlConfig.js');
 
 let keycloak = getKeyCloakClient({
   'realm': envHelper.PORTAL_REALM,
@@ -345,18 +344,6 @@ if (!process.env.sunbird_environment || !process.env.sunbird_instance) {
   start service Eg: sunbird_environment = dev, sunbird_instance = sunbird`})
   process.exit(1)
 }
-// Test database connection
-let isPostgresqlConnected;
-pool.query("SELECT NOW()", (err, res) => {
-  if (err) {
-    isPostgresqlConnected = false;
-    console.error("Error executing query", err);
-    console.error("Failed to connect to the PostgreSQL database");
-  } else {
-    console.log("Connected to the PostgreSQL database");
-    isPostgresqlConnected = true;
-  }
-});
 async function runApp() {
   await loadTokenPublicKeys(path.join(__dirname, kidTokenPublicKeyBasePath));
   app.all('*', (req, res) => res.redirect('/')) // redirect to home if nothing found
@@ -370,9 +357,6 @@ async function runApp() {
       logger.info({ msg: `✅ Portal global Session storage is set to                  - ${envHelper.PORTAL_SESSION_STORE_TYPE}` })
       logger.info({ msg: `✅ Portal global Kong anonymous device register is set to   - ${envHelper.KONG_DEVICE_REGISTER_ANONYMOUS_TOKEN}` })
       logger.info({ msg: `✅ Portal global Kong admin util is set to                  - ${envHelper.KONG_DEVICE_REGISTER_TOKEN}` })
-      logger.info({
-        msg: `✅ Connected to the PostgreSQL database  - ${isPostgresqlConnected}`,
-      });
     })
     handleShutDowns();
     portal.server.keepAliveTimeout = 60000 * 5;

@@ -742,7 +742,6 @@ export class AddusersComponent implements OnInit {
               request: {
                 orgName: this.createOrgForm.value["orgName"],
                 description: this.createOrgForm.value["description"],
-                isTenant: false,
                 rootOrgId: this.onchangeorgId,
                 channel: this.channel,
                 organisationType: "school",
@@ -1050,7 +1049,6 @@ export class AddusersComponent implements OnInit {
           filters: {
             isTenant: true,
           },
-          limit: 100,
         },
       };
     } else {
@@ -1060,12 +1058,12 @@ export class AddusersComponent implements OnInit {
           filters: {
             channel: this.userLoginDataChannel,
           },
-          limit: 100,
         },
       };
     }
     this._httpService.getOrgDetail(tempArray).subscribe(
       (res) => {
+        console.log("1111111111----", res);
         this.orgListArr = res.result.response.content;
         if (systemVar == "present") {
           this.mentorList = this.orgListArr.sort((a, b) => {
@@ -4364,7 +4362,6 @@ export class AddusersComponent implements OnInit {
         filters: {
           channel: userChannel,
         },
-        limit: 100,
       },
     };
     this._httpService.getOrgDetail(tempArray).subscribe(
@@ -4686,7 +4683,6 @@ export class AddusersComponent implements OnInit {
             isTenant: false,
             channel: channel,
           },
-          limit: 100,
           offset: 0,
         },
       };

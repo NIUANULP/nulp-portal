@@ -87,9 +87,11 @@
         tabindex="0"
         (click)="showCreateFormModal(); addTelemetry('create-group-btn')"
       >
-        <i class="icon-svg icon-svg--xs icon-groups mr-4"
+        <!-- <i class="icon-svg icon-svg--xs icon-groups mr-4"
           ><svg class="icon icon-svg--white">
             <use xlink:href="./assets/images/sprite.svg#groups"></use></svg
+        ></i> -->
+        <i class="icon-svg icon-svg--xs icon-groups mr-4"
         ></i>
         {{ resourceService?.frmelmnts?.lbl?.createGroup }}
       </button>

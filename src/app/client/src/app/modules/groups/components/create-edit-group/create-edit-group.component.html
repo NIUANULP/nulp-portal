@@ -1,14 +1,17 @@
-<app-modal-wrapper [config]="{disableClose: true, size: 'small', panelClass: 'material-modal'}"
+<app-modal-wrapper [config]="{disableClose: true}"
   (dismiss)="closeModal({modalId: ''});addTelemetry('close-group-form', '', { type: SELECT_CLOSE, subtype: CLOSE_ICON })">
   <ng-template sbModalContent let-data>
     <!-- add create group form -->
     <div class="sb-mat__modal">
-      <div mat-dialog-title>
+      <div class="mat-dialog-title">
+        <div class="modal-title">
         <div class="sb-modal-header title" *ngIf="groupId">{{resourceService?.frmelmnts?.lbl?.editGroup}}</div>
         <h3 class="sb-modal-header title" *ngIf="!groupId">{{ resourceService?.frmelmnts?.lbl?.createGroup }}</h3>
-        <button aria-label="close dialog" mat-dialog-close class="close-btn"></button>
+        </div>
+        <div class="dismiss-modal">
+        <button aria-label="close dialog" mat-dialog-close class="close-btn"><i class="fa fa-close"></i></button>
+        </div>
       </div>
-
       <mat-dialog-content>
         <div class="sb-mat__modal__content">
           <form class="sb-form" [formGroup]="groupForm">
@@ -56,7 +59,6 @@
           </form>
         </div>
       </mat-dialog-content>
-
       <mat-dialog-actions class="sb-mat__modal__actions">
         <button *ngIf="!groupId" class="sb-btn sb-btn-primary sb-btn-normal flex-ai-jc-center mb-8" type="button"
           [disabled]="!groupForm.valid || disableBtn" [ngClass]="{'sb-btn-disabled': !groupForm.valid || disableBtn}"
