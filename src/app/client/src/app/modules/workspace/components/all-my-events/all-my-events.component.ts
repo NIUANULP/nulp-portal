@@ -77,6 +77,11 @@ export class AllMyEventsComponent extends WorkSpace implements OnInit {
   public collectionListModal = false;
   tempEventList: Array<IContents> = [];
   currentEvent: any;
+     public config: ConfigService;
+     paginatedEventList = [];
+ itemsPerPage = 10;
+  pager: any = {};
+  page = 1;
   /**
    * To navigate to other pages
    */
@@ -115,6 +120,8 @@ export class AllMyEventsComponent extends WorkSpace implements OnInit {
         super(searchService, workSpaceService, userService);
           this.route = route;
         this.resourceService = resourceService;
+            this.config = config;
+
       }
            
 
@@ -167,7 +174,7 @@ export class AllMyEventsComponent extends WorkSpace implements OnInit {
     this.eventListService.getEventList(this.Filterdata).subscribe((data: any) => {
       this.eventList = data.result?.Event;
       this.EventListCount = data.result?.count;
-
+      this.setPage(1);
       this.eventList.forEach((item, index) => {
         var array = JSON.parse("[" + item.venue + "]");
         this.eventList[index].venue = array[0].name;
@@ -458,6 +465,7 @@ deleteEvent() {
         }
 
         this.EventListCount = data.result?.count;
+        this.setPage(1); 
         this.eventList = tempEventListData;
         this.eventList.forEach((item, index) => {
 
@@ -472,6 +480,59 @@ deleteEvent() {
       this.toasterService.error(err.error.result.messages[0]);
 
     });
+  }
+
+   setPage(page: number) {
+  this.page = page;
+  const startIndex = (page - 1) * this.itemsPerPage;
+  const endIndex = startIndex + this.itemsPerPage;
+  this.paginatedEventList = this.eventList.slice(startIndex, endIndex);
+  this.pager = this.getPager(this.EventListCount, this.page, this.itemsPerPage);
+}
+
+
+    getPager(totalItems: number, currentPage: number = 1, pageSize: number = 5) {
+    const totalPages = Math.ceil(totalItems / pageSize);
+    let startPage: number, endPage: number;
+
+    if (totalPages <= 10) {
+      startPage = 1;
+      endPage = totalPages;
+    } else {
+      if (currentPage <= 6) {
+        startPage = 1;
+        endPage = 10;
+      } else if (currentPage + 4 >= totalPages) {
+        startPage = totalPages - 9;
+        endPage = totalPages;
+      } else {
+        startPage = currentPage - 5;
+        endPage = currentPage + 4;
+      }
+    }
+
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = Math.min(startIndex + pageSize - 1, totalItems - 1);
+
+    const pages = Array.from(Array((endPage + 1) - startPage).keys()).map(i => startPage + i);
+
+    return {
+      totalItems,
+      currentPage,
+      pageSize,
+      totalPages,
+      startPage,
+      endPage,
+      startIndex,
+      endIndex,
+      pages
+    };
+  }
+
+  navigateToPage(page: number) {
+    if (page >= 1 && page <= this.pager.totalPages) {
+      this.setPage(page);
+    }
   }
 
   sortData(event) {
