@@ -77,14 +77,17 @@
 
                 <!-- Modal Actions -->
                 <div class="sb-modal-actions flex-jc-space-between">
-                  <button class="sb-btn sb-btn-normal sb-btn-outline-error mr-10" tabindex="0"
-                    (click)="modal.deny('denied')" [disabled]="showCollectionLoader">
+                  <div>
+                    <button class="sb-btn sb-btn-normal sb-btn-outline-error mr-10" tabindex="0"
+                    (click)="modal.deny('denied')" [class.fadInButton]="showCollectionLoader">
                     {{ resourceService?.frmelmnts?.btn?.no }}
                   </button>
-                  <button class="sb-btn sb-btn-normal sb-btn-error" tabindex="0"
-                    (click)="deleteEvent()" [disabled]="showCollectionLoader">
+                    <button class="sb-btn sb-btn-normal sb-btn-error ui disabled" tabindex="0"
+                    (click)="deleteEvent()" [class.fadInButton]="showCollectionLoader">
                     {{ resourceService?.frmelmnts?.btn?.yes }}
                   </button>
+                  </div>
+                  
                 </div>
               </div>
             </div>
