@@ -22,18 +22,15 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let content of eventList" class="cursor-pointer">
+            <!-- Use slice to show only paginated items -->
+              <tr *ngFor="let content of paginatedEventList" class="cursor-pointer">
                 <td (click)="navToEventDetail(content)">
                   <h5 class="ui image header">
-                    <img
-                      src="{{ content.appIcon || 'assets/images/default.png' | cdnprefixurl }}"
-                      class="ui tiny image UpReviewTinyImage">
-                    <div class="content">
-                      <div class="UpReviewHeader">
-                        {{ content.name | slice: 0: 30 }} <i *ngIf="content.name.length > 30">...</i>
+                    <img src="{{ content.appIcon || 'assets/images/default.png' | cdnprefixurl }}" class="ui tiny image UpReviewTinyImage">
+                      <div class="content">
+                        <div class="UpReviewHeader">{{ content.name | slice: 0: 30 }} <i *ngIf="content.name.length > 30">...</i></div>
+                        <div class="UpReviewSubHeader">{{ content.primaryCategory }}</div>
                       </div>
-                      <div class="UpReviewSubHeader">{{ content.primaryCategory }}</div>
-                    </div>
                   </h5>
                 </td>
                 <td>
@@ -44,16 +41,33 @@
                   </h5>
                 </td>
                 <td class="UpForReviewStatusOrange">{{ content.status }}</td>
-                <td>
-                  <i *ngIf="!(content.pkgVersion && content.pkgVersion > 0 && (content.status === 'Review' || content.status === 'Draft'))"
-                    class="trash large icon"
-                    tabindex="0"
-                    (click)="confirmDeleteEvent(content)">
-                  </i>
-                </td>
+                  <td>
+                    <i *ngIf="!(content.pkgVersion && content.pkgVersion > 0 && (content.status === 'Review' || content.status === 'Draft'))"
+                      class="trash large icon"
+                      tabindex="0"
+                      (click)="confirmDeleteEvent(content)">
+                    </i>
+                  </td>
               </tr>
             </tbody>
           </table>
+
+          <!-- Pagination controls -->
+          <div class="ui grid">
+            <div class="two wide column"></div>
+              <div class="ten wide column">
+                <div class="pb-10" *ngIf="eventList && EventListCount > itemsPerPage">
+                  <div class="ui pagination menu mt-10 right-floated p-0">
+                    <a [ngClass]="{disabled:pager.currentPage===1 }" class="item " tabindex="0" (click)="navigateToPage(1)">First</a>
+                    <a [ngClass]="{disabled:pager.currentPage===1 }" class="item " tabindex="0" (click)="navigateToPage(pager.currentPage - 1)">Previous</a>
+                    <a *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage===page}" tabindex="0" (click)="navigateToPage(page)" class="item">{{page}}</a>
+                    <a [ngClass]="{disabled:pager.currentPage===pager.totalPages}" tabindex="0" (click)="navigateToPage(pager.currentPage + 1)" class="item">Next</a>
+                    <a [ngClass]="{disabled:pager.currentPage===pager.totalPages}" tabindex="0" (click)="navigateToPage(pager.totalPages)" class="item">Last</a>
+                  </div>
+                </div>
+            </div>
+          </div>
+
 
           <ng-template let-modal="modal" #modalTemplate>
             <div class="sb-modal sb-error">
@@ -77,14 +91,17 @@
 
                 <!-- Modal Actions -->
                 <div class="sb-modal-actions flex-jc-space-between">
-                  <button class="sb-btn sb-btn-normal sb-btn-outline-error mr-10" tabindex="0"
-                    (click)="modal.deny('denied')" [disabled]="showCollectionLoader">
+                  <div>
+                    <button class="sb-btn sb-btn-normal sb-btn-outline-error mr-10" tabindex="0"
+                    (click)="modal.deny('denied')" [class.fadInButton]="showCollectionLoader">
                     {{ resourceService?.frmelmnts?.btn?.no }}
                   </button>
-                  <button class="sb-btn sb-btn-normal sb-btn-error" tabindex="0"
-                    (click)="deleteEvent()" [disabled]="showCollectionLoader">
+                    <button class="sb-btn sb-btn-normal sb-btn-error ui disabled" tabindex="0"
+                    (click)="deleteEvent()" [class.fadInButton]="showCollectionLoader">
                     {{ resourceService?.frmelmnts?.btn?.yes }}
                   </button>
+                  </div>
+                  
                 </div>
               </div>
             </div>
