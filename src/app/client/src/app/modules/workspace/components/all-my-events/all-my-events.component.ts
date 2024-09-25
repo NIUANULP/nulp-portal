@@ -214,7 +214,7 @@ confirmDeleteEvent(event) {
   }, 10);
 }
 
-deleteEvent() {
+deleteEvent(modal) {
   
   this.delete(this.currentEvent).subscribe(
     (response) => {
@@ -226,6 +226,7 @@ deleteEvent() {
           );
     }
   );
+  modal.deny();
 }
 
   delete(contentIds: any): Observable<ServerResponse> {
