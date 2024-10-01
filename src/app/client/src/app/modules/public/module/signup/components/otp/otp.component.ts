@@ -178,10 +178,12 @@ export class OtpComponent implements OnInit {
         },
         'request': {
             'firstName': _.trim(_.get(this.startingForm, 'basicInfo.name')),
-            'password': _.trim(_.get(this.startingForm, 'emailPassInfo.password')),
+            'password': _.trim(_.get(this.startingForm, 'emailPassInfo.password')), 
         }
     };
-
+    if (window.location.href.includes("learnathon")) {
+      createRequest.request['channel'] = "nulp-lern";
+    }
     if (this.mode === 'phone') {
         createRequest.request['phone'] = _.get(this.startingForm, 'emailPassInfo.key').toString();
         createRequest.request['phoneVerified'] = true;
