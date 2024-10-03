@@ -1710,9 +1710,10 @@ async function eventEnrollmentList(req, res) {
     const {
       filters = {},
       sort_by = {},
-      limit = 10,
-      offset = 0,
+      
     } = req.body.request;
+    const limit = 100;
+     const offset = 0;
 
     let query = `SELECT * FROM event_registration WHERE 1=1 `;
     let values = [];
@@ -1735,9 +1736,9 @@ async function eventEnrollmentList(req, res) {
     }
 
     // Pagination
-    query += ` LIMIT $${values.length + 1} OFFSET $${values.length + 2}`;
-    values.push(parseInt(limit), parseInt(offset));
-    console.log(query, values);
+    // query += ` LIMIT $${values.length + 1} OFFSET $${values.length + 2}`;
+    // values.push(parseInt(limit), parseInt(offset));
+    // console.log(query, values);
     const result = await getRecords(query, values);
 
     // Now, to get the count of total records matching the filters
@@ -1754,7 +1755,7 @@ async function eventEnrollmentList(req, res) {
 
     // Get the total count
     const countResult = await getRecords(countQuery, countValues);
-    const totalCount = parseInt(countResult.rows[0].count, 10); // Convert to integer
+    let totalCount = parseInt(countResult.rows[0].count, 10); // Convert to integer
 
     let apiResponse = null;
 
@@ -1769,7 +1770,10 @@ async function eventEnrollmentList(req, res) {
             startDate: req.body.request.filters.startDate,
             identifier: result.rows.map((row) => row.event_id),
           },
+          limit : req.body.request.limit,
+          offset : req.body.request.offset,
           query: req.body.request.query,
+          sort_by : {lastPublishedOn: "desc", startDate: "desc"}
         },
       };
 
@@ -1791,6 +1795,7 @@ async function eventEnrollmentList(req, res) {
 
       if (response.status === 200) {
         apiResponse = response?.data?.result?.Event || [];
+        totalCount = response?.data?.result?.count;
       }
     }
 
