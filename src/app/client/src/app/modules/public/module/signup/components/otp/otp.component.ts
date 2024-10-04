@@ -182,7 +182,7 @@ export class OtpComponent implements OnInit {
         }
     };
     if (window.location.href.includes("learnathon")) {
-      createRequest.request['channel'] = "nulp-lern";
+      createRequest.request['channel'] = "nulp-learn";
     }
     if (this.mode === 'phone') {
         createRequest.request['phone'] = _.get(this.startingForm, 'emailPassInfo.key').toString();
