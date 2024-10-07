@@ -1252,14 +1252,24 @@ async function getTopTrending(req, res) {
 }
 
 async function getTopEvents(userId, column, fromDate, toDate) {
-  let query = `
-    SELECT er.event_id, COUNT(er.${column}) AS user_count,er.designation
-    FROM event_registration er
-    JOIN event_details ed ON er.event_id = ed.event_id
-    WHERE 1 = 1 AND ed.status = 'Live'
-  `;
-
+  let query = '';
   const values = [];
+
+  if (column === 'user_id') {
+    query = `
+      SELECT er.event_id, COUNT(er.user_id) AS user_count
+      FROM event_registration er
+      JOIN event_details ed ON er.event_id = ed.event_id
+      WHERE ed.status = 'Live'
+    `;
+  } else if (column === 'designation') {
+    query = `
+      SELECT er.event_id, COUNT(er.designation) AS user_count, er.designation
+      FROM event_registration er
+      JOIN event_details ed ON er.event_id = ed.event_id
+      WHERE ed.status = 'Live'
+    `;
+  }
 
   if (userId) {
     query += `AND ed.created_by = $${values.length + 1} `;
@@ -1279,11 +1289,19 @@ async function getTopEvents(userId, column, fromDate, toDate) {
     values.push(thirtyDaysAgo.toISOString());
   }
 
-  query += `
-    GROUP BY er.event_id, er.designation
-    ORDER BY user_count DESC
-    LIMIT 5;
-  `;
+  if (column === 'user_id') {
+    query += `
+      GROUP BY er.event_id
+      ORDER BY user_count DESC
+      LIMIT 5;
+    `;
+  } else if (column === 'designation') {
+    query += `
+      GROUP BY er.event_id, er.designation
+      ORDER BY user_count DESC
+      LIMIT 5;
+    `;
+  }
 
   const { rows } = await pool.query(query, values);
 
