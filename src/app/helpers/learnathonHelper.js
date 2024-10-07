@@ -383,7 +383,8 @@ const updateLearnathonContent = async (req, res) => {
       "consent_checkbox",
       "updated_on",
       "is_published",
-      "poll_id"
+      "poll_id",
+      "icon"
       ], // allowed columns
   "content_id", // column for the WHERE clause
   "updated_by", // optional second column
