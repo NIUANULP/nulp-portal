@@ -73,6 +73,7 @@ const createLearnathonContent = async (req, res) => {
       "consent_checkbox",
       "created_by",
       "icon",
+      "is_published"
     ];
 
     const requiredFields = [
@@ -121,6 +122,7 @@ const createLearnathonContent = async (req, res) => {
       poll_id: null,
       is_published: data.is_published || false,
       icon : data.icon,
+      is_published : data.is_published
     };
 
     const response = await createRecord(newRecord, "learnathon_contents",allowedColumns);
@@ -203,9 +205,9 @@ const listLearnathonContents = async (req, res) => {
       values.push(filters.category_of_participation);
       query += ` AND category_of_participation ILIKE $${values.length}`;
     }
-    if (filters.isPublished !== undefined) {
-      values.push(filters.isPublished);
-      query += ` AND isPublished = $${values.length}`;
+    if (filters.is_published !== undefined) {
+      values.push(filters.is_published);
+      query += ` AND is_published = $${values.length}`;
     }
     if (filters.from_date) {
       values.push(filters.from_date);
@@ -263,9 +265,9 @@ const listLearnathonContents = async (req, res) => {
       countValues.push(filters.category_of_participation);
       countQuery += ` AND category_of_participation ILIKE $${countValues.length}`;
     }
-    if (filters.isPublished !== undefined) {
-      countValues.push(filters.isPublished);
-      countQuery += ` AND isPublished = $${countValues.length}`;
+    if (filters.is_published !== undefined) {
+      countValues.push(filters.is_published);
+      countQuery += ` AND is_published = $${countValues.length}`;
     }
     if (filters.from_date) {
       countValues.push(filters.from_date);
