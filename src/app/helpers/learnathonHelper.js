@@ -72,6 +72,7 @@ const createLearnathonContent = async (req, res) => {
       "content_id",
       "consent_checkbox",
       "created_by",
+      "icon",
     ];
 
     const requiredFields = [
@@ -119,6 +120,7 @@ const createLearnathonContent = async (req, res) => {
       created_by: req?.session?.userId || data.created_by,
       poll_id: null,
       is_published: data.is_published || false,
+      icon : data.icon,
     };
 
     const response = await createRecord(newRecord, "learnathon_contents",allowedColumns);
