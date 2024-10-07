@@ -71,3 +71,17 @@
 .hideActivityType {
   display: none;
 }
+.mat-dialog-title {
+  background: #065872 !important;
+  color:#fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+}
+.sb-mat__modal{
+  width:600px;
+}
+button.close-btn {
+  cursor: pointer;
+}

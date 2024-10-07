@@ -41,11 +41,14 @@
 <app-modal-wrapper *ngIf="showModal" #modal [config]="{disableClose: true, size: 'small', panelClass: 'material-modal'}">
   <ng-template sbModalContent let-data>
     <div class="sb-mat__modal">
-      <div mat-dialog-title>
-        <div class="title" tabindex="0">{{resourceService?.frmelmnts?.lbl?.removeActivity}}</div>
-        <button type="button" aria-label="close dialog" class="close-btn" (click)="toggleModal()" mat-dialog-close
-          tabindex="0"></button>
-      </div>
+      <div class="mat-dialog-title">
+        <div class="modal-title">
+        <div class="sb-modal-header title">{{resourceService?.frmelmnts?.lbl?.removeActivity}}</div>
+        </div>
+        <div class="dismiss-modal">
+        <button aria-label="close dialog" mat-dialog-close class="close-btn" (dismiss)="toggleModal()"><i class="fa fa-close"></i></button>
+        </div>
+        </div>
       <mat-dialog-content>
         <div class="sb-mat__modal__content">
           <p tabindex="0"> {{resourceService?.messages?.imsg?.removeActivityWarning}}</p>
