@@ -11,6 +11,7 @@ const { pool } = require("./postgresqlConfig.js");
 const envHelper = require("./environmentVariablesHelper.js");
 const axios = require("axios");
 const crypto = require("crypto");
+const qs = require('qs');
 
 
 function generateUniqueId() {
@@ -532,8 +533,158 @@ const deleteLearnathonContent = async (req, res) => {
   }
 };
 
+const provideCreatorAccess = async (req, res) => {
+  try {
+     const data = {
+        client_id: envHelper.client_id,
+        client_secret: envHelper.client_secret,
+        grant_type: envHelper.grant_type
+      };
+
+    const formattedData = qs.stringify(data);
+
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${envHelper.api_base_url}/auth/realms/sunbird/protocol/openid-connect/token`,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      data: formattedData, 
+    };
+
+    const response = await axios(config);
+    let apiresponse;
+    if(response.data.access_token){
+      let config = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: `${envHelper.api_base_url}/api/user/v1/role/assign`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization : `Bearer ${
+            envHelper.PORTAL_API_AUTH_TOKEN ||
+            envHelper.sunbird_logged_default_token
+          }`,
+          "x-authenticated-user-token" : response.data.access_token
+        },
+        data: req.body, 
+      };
+      apiresponse = await axios(config);
+      let query;
+      let values;
+      if(apiresponse.data.result.response === "SUCCESS"){
+        query = "INSERT INTO user_rolles (user_id , creator_access) VALUES ($1,$2) RETURNING *";
+        values = [
+          req.body.request.userId,
+          true
+        ]
+      }else{
+        query = "INSERT INTO user_rolles (user_id) VALUES ($1) RETURNING *";
+        values = [
+          req.body.request.userId
+        ]
+      }
+      await pool.query(query, values);
+    }
+
+    return res.send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "Fetched successfully",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {
+        data: apiresponse.data,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "Failed",
+      result: {},
+    });
+  }
+};
 
 
+const listLearnathonCreators = async (req, res) => {
+  try {
+    const query = "SELECT * FROM user_rolles";
+
+    const result = await getRecords(query);
+
+    const totalCount = result?.rowCount || 0; 
+
+    if (totalCount === 0) {
+      return res.status(200).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "successful",
+          message: "No learnathon creators found",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {
+          totalCount,
+          data: [],
+        },
+      });
+    }
+
+    return res.status(200).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "successful",
+        message: "Learnathon creators fetched successfully",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {
+        totalCount,
+        data: result.rows,
+      },
+    });
+
+  } catch (error) {
+    console.error("Error fetching learnathon creators:", error);
+    return res.status(500).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "unsuccessful",
+        message: "Error fetching learnathon creators",
+        err: null,
+        errmsg: error.message,
+      },
+      responseCode: "SERVER_ERROR",
+      result: {},
+    });
+  }
+};
 
 
 
@@ -546,4 +697,6 @@ module.exports = {
   listLearnathonContents,
   updateLearnathonContent,
   deleteLearnathonContent,
+  provideCreatorAccess,
+  listLearnathonCreators
 };
