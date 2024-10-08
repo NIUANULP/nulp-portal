@@ -491,31 +491,75 @@ const deleteLearnathonContent = async (req, res) => {
 
     // Check if the deletion was successful
     if (contentData <= 0) {
-      const error = new Error("Unable to delete");
+      const error = new Error("Unable to delete content");
       error.statusCode = 500;
       throw error;
     }
 
-    // Send success response
-    return res.send({
-      ts: new Date().toISOString(),
-      params: {
-        resmsgid: uuidv1(),
-        msgid: uuidv1(),
-        status: "Content deleted successfully",
-        err: null,
-        errmsg: null,
-      },
-      responseCode: "OK",
-      result: {
-        data: contentData,
-      },
-    });
+    // Call the content/retire API after successful deletion
+    try {
+      let config = {
+        method: "delete",
+        maxBodyLength: Infinity,
+        url: `${envHelper.api_base_url}/content/content/v1/retire`,
+        headers: {
+          Cookie: `${req.headers.cookie}`,
+          "Content-Type": "application/json",
+        },
+        data: {
+          request: {
+            contentIds: [id],
+          },
+        },
+      };
 
+      let retireResponse = await axios.request(config);
+
+
+      // Send success response after content is deleted and retired
+      return res.send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "Content deleted and retired successfully",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {
+          data: contentData,
+          retireResponse: retireResponse.data,
+        },
+      });
+
+    } catch (retireError) {
+      // Handle errors from the retire API
+      console.error(retireError.response?.data || retireError.message, "Retire API error");
+
+      // Return a specific error if the retire API fails, but content is deleted
+      return res.status(500).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "Content deletion successful but retire failed",
+          err: null,
+          errmsg: "Failed to retire content",
+        },
+        responseCode: "ERROR",
+        result: {
+          data: contentData, // Deletion succeeded, returning this data
+          retireError: retireError.response?.data || retireError.message,
+        },
+      });
+    }
   } catch (error) {
     console.error(error);
     const statusCode = error.statusCode || 500;
     const errorMessage = error.message || "Internal Server Error";
+
+    // Send error response if deletion or any other error occurs
     res.status(statusCode).send({
       ts: new Date().toISOString(),
       params: {
@@ -532,6 +576,7 @@ const deleteLearnathonContent = async (req, res) => {
     });
   }
 };
+
 
 const provideCreatorAccess = async (req, res) => {
   try {
