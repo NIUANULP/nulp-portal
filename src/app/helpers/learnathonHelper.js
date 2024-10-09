@@ -75,7 +75,9 @@ const createLearnathonContent = async (req, res) => {
       "consent_checkbox",
       "created_by",
       "icon",
-      "status"
+      "status",
+      "description",
+      "other_indicative_themes"
     ];
 
 let requiredFields = [];
@@ -137,7 +139,9 @@ if (missingFields.length > 0) {
       created_by: req?.session?.userId || data.created_by,
       poll_id: null,
       icon : data.icon,
-      status : data.status
+      status : data.status,
+      other_indicative_themes : data.other_indicative_themes,
+      description : data.description
     };
 
     const response = await createRecord(newRecord, "learnathon_contents",allowedColumns);
@@ -425,7 +429,9 @@ if (missingFields.length > 0) {
       "updated_on",
       "status",
       "poll_id",
-      "icon"
+      "icon",
+      "description",
+      "other_indicative_themes"
       ], // allowed columns
   "learnathon_content_id", // column for the WHERE clause
   "updated_by", // optional second column
