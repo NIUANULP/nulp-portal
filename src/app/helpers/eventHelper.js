@@ -1252,14 +1252,24 @@ async function getTopTrending(req, res) {
 }
 
 async function getTopEvents(userId, column, fromDate, toDate) {
-  let query = `
-    SELECT er.event_id, COUNT(er.${column}) AS user_count,er.designation
-    FROM event_registration er
-    JOIN event_details ed ON er.event_id = ed.event_id
-    WHERE 1 = 1 AND ed.status = 'Live'
-  `;
-
+  let query = '';
   const values = [];
+
+  if (column === 'user_id') {
+    query = `
+      SELECT er.event_id, COUNT(er.user_id) AS user_count
+      FROM event_registration er
+      JOIN event_details ed ON er.event_id = ed.event_id
+      WHERE ed.status = 'Live'
+    `;
+  } else if (column === 'designation') {
+    query = `
+      SELECT er.event_id, COUNT(er.designation) AS user_count, er.designation
+      FROM event_registration er
+      JOIN event_details ed ON er.event_id = ed.event_id
+      WHERE ed.status = 'Live'
+    `;
+  }
 
   if (userId) {
     query += `AND ed.created_by = $${values.length + 1} `;
@@ -1279,11 +1289,19 @@ async function getTopEvents(userId, column, fromDate, toDate) {
     values.push(thirtyDaysAgo.toISOString());
   }
 
-  query += `
-    GROUP BY er.event_id, er.designation
-    ORDER BY user_count DESC
-    LIMIT 5;
-  `;
+  if (column === 'user_id') {
+    query += `
+      GROUP BY er.event_id
+      ORDER BY user_count DESC
+      LIMIT 5;
+    `;
+  } else if (column === 'designation') {
+    query += `
+      GROUP BY er.event_id, er.designation
+      ORDER BY user_count DESC
+      LIMIT 5;
+    `;
+  }
 
   const { rows } = await pool.query(query, values);
 
@@ -2156,6 +2174,49 @@ async function eventRetire(req, res) {
     });
   }
 }
+
+async function createCertificate(req, res) {
+  try {
+    const eventId = req.query.eventId;
+    const data = req.body
+
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${envHelper.api_base_url}/api/rc/certificate/v1/create`,
+      headers: {
+        Authorization: `Bearer ${
+            envHelper.PORTAL_API_AUTH_TOKEN ||
+            envHelper.sunbird_logged_default_token
+          }`,        
+          "Content-Type": "application/json",
+      },
+      data: data,
+    };
+
+    const response = await axios(config);
+    return res.send(response.data);
+  } catch (error) {
+    console.error(error);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
+
 module.exports = {
   createEvent,
   getEvent,
@@ -2179,4 +2240,5 @@ module.exports = {
   eventUpdateWrapper,
   eventPublishWrapper,
   eventRetire,
+  createCertificate,
 };

@@ -103,8 +103,8 @@ async function updateRecord(
   tableName,
   allowedColumns,
   column,
-  secondColumn,
-  secondColumnValue
+  secondColumn = null, // Make this optional
+  secondColumnValue = null // Make this optional
 ) {
   try {
     // Check if allowedColumns is provided and is an array
@@ -124,6 +124,12 @@ async function updateRecord(
     const paramPlaceholders = Object.keys(validData)
       .map((key, i) => `${key} = $${i + 1}`)
       .join(", ");
+
+    // Ensure there's at least one field to update
+    if (values.length === 0) {
+      throw new Error("No valid fields to update.");
+    }
+
     // Update data
     let query = `UPDATE ${tableName} SET ${paramPlaceholders} WHERE ${column} = $${
       values.length + 1
