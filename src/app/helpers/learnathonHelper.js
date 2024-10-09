@@ -59,6 +59,7 @@ const createLearnathonContent = async (req, res) => {
     }
 
     let data = req.body;
+
     const allowedColumns = [
       "learnathon_content_id",
       "user_name",
@@ -74,32 +75,48 @@ const createLearnathonContent = async (req, res) => {
       "consent_checkbox",
       "created_by",
       "icon",
-      "status"
+      "status",
+      "description",
+      "other_indicative_themes"
     ];
 
-    const requiredFields = [
-      "user_name",
-      "email",
-      "mobile_number",
-      "category_of_participation",
-      "name_of_organisation",
-      "indicative_theme",
-      "title_of_submission",
-      "created_by"
-    ];
+let requiredFields = [];
 
-    const missingFields = requiredFields.filter((column) => !data[column]);
+if (data.status === "review") {
+  requiredFields = [
+    "user_name",
+    "email",
+    "mobile_number",
+    "category_of_participation",
+    "name_of_organisation",
+    "indicative_theme",
+    "title_of_submission",
+    "created_by"
+  ];
+} else {
+  requiredFields = ["title_of_submission","status","created_by"];
+}
 
-    if (missingFields.length > 0) {
-      const error = new Error(
-        `Missing required fields: ${missingFields.join(", ")}`
-      );
-      error.statusCode = 400;
-      throw error;
-    }
+const missingFields = requiredFields.filter((column) => !data[column]);
+
+if (missingFields.length > 0) {
+  const error = new Error(
+    `Missing required fields: ${missingFields.join(", ")}`
+  );
+  error.statusCode = 400;
+  throw error;
+}
+
     const generatedId = generateUniqueId();
-    const encryptedEmail = encrypt(data.email);
-    const encryptedMobile = encrypt(data.mobile_number);
+    let encryptedEmail;
+    let encryptedMobile;
+    if(data.email){
+       encryptedEmail = encrypt(data.email);
+    }
+    if(data.mobile_number){
+       encryptedMobile = encrypt(data.mobile_number);
+    }
+    
     // data.poll_id = generatedId;
 
     const now = new Date();
@@ -107,8 +124,8 @@ const createLearnathonContent = async (req, res) => {
     const newRecord = {
       learnathon_content_id : generatedId,
       user_name: data.user_name,
-      email: encryptedEmail,
-      mobile_number: encryptedMobile,
+      email: encryptedEmail || null,
+      mobile_number: encryptedMobile || null,
       category_of_participation: data.category_of_participation,
       link_to_guidelines: data.link_to_guidelines || null, 
       name_of_organisation: data.name_of_organisation,
@@ -122,7 +139,9 @@ const createLearnathonContent = async (req, res) => {
       created_by: req?.session?.userId || data.created_by,
       poll_id: null,
       icon : data.icon,
-      status : data.status
+      status : data.status,
+      other_indicative_themes : data.other_indicative_themes,
+      description : data.description
     };
 
     const response = await createRecord(newRecord, "learnathon_contents",allowedColumns);
@@ -344,6 +363,32 @@ const updateLearnathonContent = async (req, res) => {
       throw error;
     }
 
+    let requiredFields = [];
+
+if (body.status === "review") {
+  requiredFields = [
+    "user_name",
+    "email",
+    "mobile_number",
+    "category_of_participation",
+    "name_of_organisation",
+    "indicative_theme",
+    "title_of_submission",
+    "created_by"
+  ];
+} else {
+  requiredFields = ["title_of_submission","status","created_by"];
+}
+
+const missingFields = requiredFields.filter((column) => !body[column]);
+
+if (missingFields.length > 0) {
+  const error = new Error(
+    `Missing required fields: ${missingFields.join(", ")}`
+  );
+  error.statusCode = 400;
+  throw error;
+}
     // Allowed fields for updating
     const allowedColumns = [
       "title_of_submission",
@@ -384,9 +429,11 @@ const updateLearnathonContent = async (req, res) => {
       "updated_on",
       "status",
       "poll_id",
-      "icon"
+      "icon",
+      "description",
+      "other_indicative_themes"
       ], // allowed columns
-  "content_id", // column for the WHERE clause
+  "learnathon_content_id", // column for the WHERE clause
   "updated_by", // optional second column
   // session.userId // value for the optional second column
 );
