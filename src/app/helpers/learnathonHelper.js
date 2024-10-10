@@ -654,7 +654,7 @@ const provideCreatorAccess = async (req, res) => {
 
     const response = await axios(config);
     let apiresponse;
-    if(response.data.access_token){
+    if(response?.data?.access_token){
       let config = {
         method: "post",
         maxBodyLength: Infinity,
@@ -669,10 +669,13 @@ const provideCreatorAccess = async (req, res) => {
         },
         data: req.body, 
       };
-      apiresponse = await axios(config);
+      if(req?.body?.iscreator !== true){
+        apiresponse = await axios(config);
+      }
+      
       let query;
       let values;
-      if(apiresponse.data.result.response === "SUCCESS"){
+      if(apiresponse?.data?.result?.response === "SUCCESS"){
         query = "INSERT INTO user_rolles (user_id , creator_access) VALUES ($1,$2) RETURNING *";
         values = [
           req.body.request.userId,
@@ -698,7 +701,7 @@ const provideCreatorAccess = async (req, res) => {
       },
       responseCode: "OK",
       result: {
-        data: apiresponse.data,
+        data: apiresponse?.data,
       },
     });
   } catch (error) {
