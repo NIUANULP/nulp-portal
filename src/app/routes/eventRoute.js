@@ -21,7 +21,6 @@ const {
   eventUpdateWrapper,
   eventPublishWrapper,
   eventRetire,
-  createCertificate,
 } = require("../helpers/eventHelper.js");
 const proxyUtils = require("../proxy/proxyUtils.js");
 
@@ -129,12 +128,6 @@ module.exports = function (app) {
     bodyParser.json({ limit: "10mb" }),
     proxyUtils.verifyToken(),
     eventPublishWrapper
-  );
-  app.post(
-    "/custom_event/certificate/create",
-    bodyParser.json({ limit: "10mb" }),
-    proxyUtils.verifyToken(),
-    createCertificate
   );
   app.post(
     "/custom_event/create/event",
