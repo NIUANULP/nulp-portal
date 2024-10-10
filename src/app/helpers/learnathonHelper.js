@@ -210,7 +210,7 @@ const listLearnathonContents = async (req, res) => {
     }
      if (filters.learnathon_content_id) {
       values.push(filters.learnathon_content_id);
-      query += ` AND learnathon_content_id ILIKE $${values.length}`;
+      query += ` AND learnathon_content_id = $${values.length}`;
     }
     if (filters.created_by) {
       values.push(filters.created_by);
@@ -274,7 +274,7 @@ const listLearnathonContents = async (req, res) => {
     }
     if (filters.learnathon_content_id) {
       countValues.push(filters.learnathon_content_id);
-      countQuery += ` AND learnathon_content_id ILIKE $${countValues.length}`;
+      countQuery += ` AND learnathon_content_id = $${countValues.length}`;
     }
     if (filters.created_by) {
       countValues.push(filters.created_by);
