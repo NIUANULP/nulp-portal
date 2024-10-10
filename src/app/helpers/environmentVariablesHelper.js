@@ -166,6 +166,11 @@ let envVariables = {
   event_meet_secret:env.event_meet_secret,
   google_refresh_token :env.google_refresh_token,
 
+  // Auth tokens
+  client_id :env.client_id,
+  client_secret : env.client_secret,
+  grant_type : env.grant_type,
+
 // MS Blob storage
   sasUrlBase : env.sasUrlBase,
   sasUrl :env.sasUrl,
