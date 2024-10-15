@@ -11,8 +11,7 @@ const { pool } = require("./postgresqlConfig.js");
 const envHelper = require("./environmentVariablesHelper.js");
 const axios = require("axios");
 const crypto = require("crypto");
-const qs = require('qs');
-
+const qs = require("qs");
 
 function generateUniqueId() {
   const currentUnixTime = Date.now(); // Get current Unix timestamp in milliseconds
@@ -38,10 +37,7 @@ const encrypt = (text) => {
 const createLearnathonContent = async (req, res) => {
   try {
     // Role-based authorization (comment if required)
-    if (
-      !req?.session?.roles?.includes("CONTENT_CREATOR") &&
-      !req?.session?.roles?.includes("SYSTEM_ADMINISTRATION")
-    ) {
+    if (!req?.session?.roles?.includes("CONTENT_CREATOR")) {
       return res.status(403).send({
         ts: new Date().toISOString(),
         params: {
@@ -77,74 +73,78 @@ const createLearnathonContent = async (req, res) => {
       "icon",
       "status",
       "description",
-      "other_indicative_themes"
+      "other_indicative_themes",
     ];
 
-let requiredFields = [];
+    let requiredFields = [];
 
-if (data.status === "review") {
-  requiredFields = [
-    "user_name",
-    "email",
-    "mobile_number",
-    "category_of_participation",
-    "name_of_organisation",
-    "indicative_theme",
-    "title_of_submission",
-    "created_by"
-  ];
-} else {
-  requiredFields = ["title_of_submission","status","created_by"];
-}
+    if (data.status === "review") {
+      requiredFields = [
+        "user_name",
+        "email",
+        "mobile_number",
+        "category_of_participation",
+        "name_of_organisation",
+        "indicative_theme",
+        "title_of_submission",
+        "created_by",
+      ];
+    } else {
+      requiredFields = ["title_of_submission", "status", "created_by"];
+    }
 
-const missingFields = requiredFields.filter((column) => !data[column]);
+    const missingFields = requiredFields.filter((column) => !data[column]);
 
-if (missingFields.length > 0) {
-  const error = new Error(
-    `Missing required fields: ${missingFields.join(", ")}`
-  );
-  error.statusCode = 400;
-  throw error;
-}
+    if (missingFields.length > 0) {
+      const error = new Error(
+        `Missing required fields: ${missingFields.join(", ")}`
+      );
+      error.statusCode = 400;
+      throw error;
+    }
 
     const generatedId = generateUniqueId();
     let encryptedEmail;
     let encryptedMobile;
-    if(data.email){
-       encryptedEmail = encrypt(data.email);
+    if (data.email) {
+      encryptedEmail = encrypt(data.email);
     }
-    if(data.mobile_number){
-       encryptedMobile = encrypt(data.mobile_number);
+    if (data.mobile_number) {
+      encryptedMobile = encrypt(data.mobile_number);
     }
-    
+
     // data.poll_id = generatedId;
 
     const now = new Date();
-    
+
     const newRecord = {
-      learnathon_content_id : generatedId,
+      learnathon_content_id: generatedId,
       user_name: data.user_name,
       email: encryptedEmail || null,
       mobile_number: encryptedMobile || null,
       category_of_participation: data.category_of_participation,
-      link_to_guidelines: data.link_to_guidelines || null, 
+      link_to_guidelines: data.link_to_guidelines || null,
       name_of_organisation: data.name_of_organisation,
-      name_of_department_group: data.name_of_department_group || null, 
+      name_of_department_group: data.name_of_department_group || null,
       indicative_theme: data.indicative_theme,
       title_of_submission: data.title_of_submission,
-      content_id: data.content_id || null, 
+      content_id: data.content_id || null,
       consent_checkbox: data.consent_checkbox || false,
       created_on: now,
       updated_on: now,
       created_by: req?.session?.userId || data.created_by,
       poll_id: null,
-      icon : data.icon,
-      status : data.status,
-      other_indicative_themes : data.other_indicative_themes,
-      description : data.description
+      icon: data.icon,
+      status: data.status,
+      other_indicative_themes: data.other_indicative_themes,
+      description: data.description,
     };
 
-    const response = await createRecord(newRecord, "learnathon_contents",allowedColumns);
+    const response = await createRecord(
+      newRecord,
+      "learnathon_contents",
+      allowedColumns
+    );
 
     if (response?.length > 0) {
       return res.send({
@@ -202,13 +202,13 @@ const listLearnathonContents = async (req, res) => {
       FROM learnathon_contents 
       WHERE 1=1
     `;
-    let values = []; 
+    let values = [];
 
     if (filters.name_of_organisation) {
       values.push(filters.name_of_organisation);
       query += ` AND name_of_organisation ILIKE $${values.length}`;
     }
-     if (filters.learnathon_content_id) {
+    if (filters.learnathon_content_id) {
       values.push(filters.learnathon_content_id);
       query += ` AND learnathon_content_id = $${values.length}`;
     }
@@ -312,7 +312,7 @@ const listLearnathonContents = async (req, res) => {
     }
 
     const countResult = await getRecords(countQuery, countValues);
-    const totalCount = parseInt(countResult?.rows[0]?.count, 10); 
+    const totalCount = parseInt(countResult?.rows[0]?.count, 10);
 
     return res.send({
       ts: new Date().toISOString(),
@@ -352,7 +352,7 @@ const listLearnathonContents = async (req, res) => {
 
 const updateLearnathonContent = async (req, res) => {
   try {
-    const  content_id  = req.query.id;
+    const content_id = req.query.id;
     const { session, body } = req;
 
     if (!content_id) {
@@ -362,10 +362,7 @@ const updateLearnathonContent = async (req, res) => {
     }
 
     // Check user roles
-    if (
-      !session?.roles?.includes("CONTENT_CREATOR") &&
-      !session?.roles?.includes("SYSTEM_ADMINISTRATION")
-    ) {
+    if (!session?.roles?.includes("CONTENT_CREATOR")) {
       const error = new Error("You don't have privilege to update records");
       error.statusCode = 403;
       throw error;
@@ -373,30 +370,30 @@ const updateLearnathonContent = async (req, res) => {
 
     let requiredFields = [];
 
-if (body.status === "review") {
-  requiredFields = [
-    "user_name",
-    "email",
-    "mobile_number",
-    "category_of_participation",
-    "name_of_organisation",
-    "indicative_theme",
-    "title_of_submission",
-    "created_by"
-  ];
-} else {
-  requiredFields = ["title_of_submission","status","created_by"];
-}
+    if (body.status === "review") {
+      requiredFields = [
+        "user_name",
+        "email",
+        "mobile_number",
+        "category_of_participation",
+        "name_of_organisation",
+        "indicative_theme",
+        "title_of_submission",
+        "created_by",
+      ];
+    } else {
+      requiredFields = ["title_of_submission", "status", "created_by"];
+    }
 
-const missingFields = requiredFields.filter((column) => !body[column]);
+    const missingFields = requiredFields.filter((column) => !body[column]);
 
-if (missingFields.length > 0) {
-  const error = new Error(
-    `Missing required fields: ${missingFields.join(", ")}`
-  );
-  error.statusCode = 400;
-  throw error;
-}
+    if (missingFields.length > 0) {
+      const error = new Error(
+        `Missing required fields: ${missingFields.join(", ")}`
+      );
+      error.statusCode = 400;
+      throw error;
+    }
     // Allowed fields for updating
     const allowedColumns = [
       "title_of_submission",
@@ -413,39 +410,39 @@ if (missingFields.length > 0) {
       body.email = encrypt(body.email);
     }
     if (body.mobile_number) {
-      body.mobile_number = encrypt(body.mobile_number); 
+      body.mobile_number = encrypt(body.mobile_number);
     }
 
     // Validate update logic here if necessary
 
     // Call your method to update record
-   const response = await updateRecord(
-  content_id, // id
-  body, // data to update
-  "learnathon_contents", // table name
-  ["user_name",
-      "email",
-      "mobile_number",
-      "category_of_participation",
-      "link_to_guidelines",
-      "name_of_organisation",
-      "name_of_department_group",
-      "indicative_theme",
-      "title_of_submission",
-      "content_id",
-      "consent_checkbox",
-      "updated_on",
-      "status",
-      "poll_id",
-      "icon",
-      "description",
-      "other_indicative_themes"
+    const response = await updateRecord(
+      content_id, // id
+      body, // data to update
+      "learnathon_contents", // table name
+      [
+        "user_name",
+        "email",
+        "mobile_number",
+        "category_of_participation",
+        "link_to_guidelines",
+        "name_of_organisation",
+        "name_of_department_group",
+        "indicative_theme",
+        "title_of_submission",
+        "content_id",
+        "consent_checkbox",
+        "updated_on",
+        "status",
+        "poll_id",
+        "icon",
+        "description",
+        "other_indicative_themes",
       ], // allowed columns
-  "learnathon_content_id", // column for the WHERE clause
-  "updated_by", // optional second column
-  // session.userId // value for the optional second column
-);
-
+      "learnathon_content_id", // column for the WHERE clause
+      "updated_by" // optional second column
+      // session.userId // value for the optional second column
+    );
 
     if (response?.length) {
       return res.send({
@@ -498,10 +495,7 @@ const deleteLearnathonContent = async (req, res) => {
     }
 
     // Check user privileges
-    if (
-      !req?.session?.roles?.includes("CONTENT_CREATOR") &&
-      !req?.session?.roles?.includes("SYSTEM_ADMINISTRATION")
-    ) {
+    if (!req?.session?.roles?.includes("CONTENT_CREATOR")) {
       return res.status(403).send({
         ts: new Date().toISOString(),
         params: {
@@ -519,15 +513,13 @@ const deleteLearnathonContent = async (req, res) => {
     }
 
     const isContentCreatorOnly =
-      req?.session?.roles?.includes("CONTENT_CREATOR") &&
-      !req?.session?.roles?.includes("SYSTEM_ADMINISTRATION");
-
+      req?.session?.roles?.includes("CONTENT_CREATOR");
     const userId = isContentCreatorOnly ? req?.session.userId : null;
 
-    let contentData= await deleteRecord(
-        "DELETE FROM learnathon_contents WHERE content_id=$1",
-        [id.trim()]
-      );
+    let contentData = await deleteRecord(
+      "DELETE FROM learnathon_contents WHERE content_id=$1",
+      [id.trim()]
+    );
     // if (isContentCreatorOnly) {
     //   contentData = await deleteRecord(
     //     "DELETE FROM learnathon_contents WHERE content_id=$1 AND created_by=$2",
@@ -569,7 +561,6 @@ const deleteLearnathonContent = async (req, res) => {
 
       let retireResponse = await axios.request(config);
 
-
       // Send success response after content is deleted and retired
       return res.send({
         ts: new Date().toISOString(),
@@ -586,10 +577,12 @@ const deleteLearnathonContent = async (req, res) => {
           retireResponse: retireResponse.data,
         },
       });
-
     } catch (retireError) {
       // Handle errors from the retire API
-      console.error(retireError.response?.data || retireError.message, "Retire API error");
+      console.error(
+        retireError.response?.data || retireError.message,
+        "Retire API error"
+      );
 
       // Return a specific error if the retire API fails, but content is deleted
       return res.status(500).send({
@@ -631,58 +624,56 @@ const deleteLearnathonContent = async (req, res) => {
   }
 };
 
-
 const provideCreatorAccess = async (req, res) => {
   try {
-     const data = {
-        client_id: envHelper.client_id,
-        client_secret: envHelper.client_secret,
-        grant_type: envHelper.grant_type
-      };
+    const data = {
+      client_id: envHelper.client_id,
+      client_secret: envHelper.client_secret,
+      grant_type: envHelper.grant_type,
+    };
 
     const formattedData = qs.stringify(data);
 
     let config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: `${envHelper.api_base_url}/auth/realms/sunbird/protocol/openid-connect/token`,
+      url: `https://devnulp.niua.org/auth/realms/sunbird/protocol/openid-connect/token`,
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      data: formattedData, 
+      data: formattedData,
     };
 
     const response = await axios(config);
     let apiresponse;
-    if(response.data.access_token){
+    if (response?.data?.access_token) {
       let config = {
         method: "post",
         maxBodyLength: Infinity,
         url: `${envHelper.api_base_url}/api/user/v1/role/assign`,
         headers: {
           "Content-Type": "application/json",
-          Authorization : `Bearer ${
+          Authorization: `Bearer ${
             envHelper.PORTAL_API_AUTH_TOKEN ||
             envHelper.sunbird_logged_default_token
           }`,
-          "x-authenticated-user-token" : response.data.access_token
+          "x-authenticated-user-token": response.data.access_token,
         },
-        data: req.body, 
+        data: req.body,
       };
-      apiresponse = await axios(config);
+      if (req?.body?.iscreator !== true) {
+        apiresponse = await axios(config);
+      }
+
       let query;
       let values;
-      if(apiresponse.data.result.response === "SUCCESS"){
-        query = "INSERT INTO user_rolles (user_id , creator_access) VALUES ($1,$2) RETURNING *";
-        values = [
-          req.body.request.userId,
-          true
-        ]
-      }else{
+      if (apiresponse?.data?.result?.response === "SUCCESS") {
+        query =
+          "INSERT INTO user_rolles (user_id , creator_access) VALUES ($1,$2) RETURNING *";
+        values = [req.body.request.userId, true];
+      } else {
         query = "INSERT INTO user_rolles (user_id) VALUES ($1) RETURNING *";
-        values = [
-          req.body.request.userId
-        ]
+        values = [req.body.request.userId];
       }
       await pool.query(query, values);
     }
@@ -698,7 +689,7 @@ const provideCreatorAccess = async (req, res) => {
       },
       responseCode: "OK",
       result: {
-        data: apiresponse.data,
+        data: apiresponse?.data,
       },
     });
   } catch (error) {
@@ -722,14 +713,13 @@ const provideCreatorAccess = async (req, res) => {
   }
 };
 
-
 const listLearnathonCreators = async (req, res) => {
   try {
     const query = "SELECT * FROM user_rolles";
 
     const result = await getRecords(query);
 
-    const totalCount = result?.rowCount || 0; 
+    const totalCount = result?.rowCount || 0;
 
     if (totalCount === 0) {
       return res.status(200).send({
@@ -766,7 +756,6 @@ const listLearnathonCreators = async (req, res) => {
         data: result.rows,
       },
     });
-
   } catch (error) {
     console.error("Error fetching learnathon creators:", error);
     return res.status(500).send({
@@ -785,17 +774,11 @@ const listLearnathonCreators = async (req, res) => {
   }
 };
 
-
-
-
-
-
-
 module.exports = {
   createLearnathonContent,
   listLearnathonContents,
   updateLearnathonContent,
   deleteLearnathonContent,
   provideCreatorAccess,
-  listLearnathonCreators
+  listLearnathonCreators,
 };
