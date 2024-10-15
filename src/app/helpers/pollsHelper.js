@@ -63,6 +63,8 @@ const createPolls = async (req, res) => {
       "image",
       "is_live_poll_result",
       "created_by",
+      "content_id",
+      "category",
     ];
     const requiredFields = [
       "title",
@@ -100,7 +102,11 @@ const createPolls = async (req, res) => {
     const generatedId = generateUniqueId();
     data.poll_id = generatedId;
     data.created_by = req?.session?.userId;
-    data.organization = req?.session?.rootOrgId;
+    if (data.visibility != "PublicToAll") {
+      console.log("visibility is not PublicToAll");
+      data.organization = req?.session?.rootOrgId;
+    }
+
     if (
       !data?.poll_options ||
       data?.poll_options.filter((option) => option.trim() !== "").length < 2
@@ -303,7 +309,11 @@ const updatePolls = async (req, res) => {
     ];
 
     body.updated_by = session?.userId;
-    body.organization = req?.session?.rootOrgId;
+    if (body.visibility != "PublicToAll") {
+      console.log("visibility is not PublicToAll");
+      body.organization = req?.session?.rootOrgId;
+    }
+
     if (body?.poll_options) {
       body.poll_options = body.poll_options.map((option) => `"${option}"`);
     }
@@ -425,6 +435,107 @@ const getPoll = async (req, res) => {
       result: {
         poll: pollData[0],
         result: formattedPollResults,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+};
+
+const getPollsAndVotes = async (req, res) => {
+  try {
+    const poll_ids = req.body.poll_ids; // Accept multiple poll_ids
+
+    if (!poll_ids || !Array.isArray(poll_ids) || poll_ids.length === 0) {
+      const error = new Error("Poll IDs are missing or invalid");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const organization = req?.session?.rootOrgId;
+    const pollsData = [];
+    const formattedPollResultsList = [];
+
+    // Iterate over each poll_id to fetch poll data and results
+    for (const poll_id of poll_ids) {
+      // Fetch poll data for each poll_id
+      const pollDataQuery = `
+          SELECT *
+          FROM polls
+          WHERE poll_id = $1
+        `;
+      const pollData = await getRecord(pollDataQuery, [poll_id.trim()]);
+
+      if (pollData?.length) {
+        pollsData.push(pollData[0]);
+
+        // Fetch poll options
+        const pollOptions = pollData[0]?.poll_options;
+
+        // Fetch poll results for the current poll
+        const pollResultsQuery = `
+            SELECT poll_result, COUNT(*) as count
+            FROM user_poll
+            WHERE poll_id = $1
+            GROUP BY poll_result
+          `;
+        const pollResults = await getRecord(pollResultsQuery, [poll_id.trim()]);
+
+        // Format the results for the current poll
+        const formattedPollResults = pollOptions?.map((option) => ({
+          poll_option: option,
+          count: 0,
+        }));
+
+        pollResults?.forEach((result) => {
+          const option = formattedPollResults?.find(
+            (opt) => opt.poll_option === result.poll_result
+          );
+          if (option) {
+            option.count = parseInt(result.count, 10);
+          }
+        });
+
+        // Sort results by count in descending order
+        formattedPollResults.sort((a, b) => b.count - a.count);
+
+        // Add the results for the current poll to the overall list
+        formattedPollResultsList.push({
+          poll_id,
+          poll: pollData[0],
+          result: formattedPollResults,
+        });
+      }
+    }
+
+    return res.send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "Polls fetched successfully",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {
+        polls: formattedPollResultsList, // Return results for all polls
       },
     });
   } catch (error) {
@@ -592,6 +703,10 @@ const listPolls = async (req, res) => {
       values.push(filters.visibility);
       query += ` AND polls.visibility = $${values.length}`;
     }
+    if (filters.category) {
+      values.push(filters.category);
+      query += ` AND polls.category = $${values.length}`;
+    }
     if (filters.poll_keywords) {
       values.push(filters.poll_keywords);
       query += ` AND polls.poll_keywords = $${values.length}`;
@@ -677,6 +792,10 @@ const listPolls = async (req, res) => {
     if (filters.visibility) {
       countValues.push(filters.visibility);
       countQuery += ` AND polls.visibility = $${countValues.length}`;
+    }
+    if (filters.category) {
+      countValues.push(filters.category);
+      countQuery += ` AND polls.category = $${countValues.length}`;
     }
     if (filters.poll_keywords) {
       countValues.push(filters.poll_keywords);
@@ -766,6 +885,11 @@ const listPolls = async (req, res) => {
 
 const createUserPoll = async (req, res) => {
   try {
+    if (req?.session?.userId !== req.body.user_id) {
+      const error = new Error("User Not Found!");
+      error.statusCode = 400;
+      throw error;
+    }
     let data = req.body;
     const requiredFields = [
       "poll_id",
@@ -784,12 +908,16 @@ const createUserPoll = async (req, res) => {
     const pollData = await getRecord("SELECT * FROM polls WHERE poll_id=$1", [
       data.poll_id.trim(),
     ]);
+    console.log(pollData, "pollData");
     if (!pollData?.length) {
       const error = new Error("Poll not found");
       error.statusCode = 404;
       throw error;
     }
-    if (pollData[0]?.created_by === data.user_id.trim()) {
+    if (
+      pollData[0]?.category !== "Learnathon" &&
+      pollData[0]?.created_by === data.user_id.trim()
+    ) {
       const error = new Error("You cannot vote own poll");
       error.statusCode = 400;
       throw error;
@@ -818,6 +946,7 @@ const createUserPoll = async (req, res) => {
       "poll_submitted",
       "poll_result",
       "poll_date",
+      "remark",
     ];
     data.poll_date = currentDateTime;
     const response = await createRecord(data, "user_poll", allowedColumns);
@@ -854,7 +983,7 @@ const createUserPoll = async (req, res) => {
         err: null,
         errmsg: null,
       },
-      responseCode: "OK",
+      responseCode: "ERROR",
       result: {},
     });
   }
@@ -1086,4 +1215,5 @@ module.exports = {
   createUserPoll,
   updateUserPoll,
   getUserPoll,
+  getPollsAndVotes,
 };
