@@ -106,8 +106,9 @@ const createPolls = async (req, res) => {
       console.log("visibility is not PublicToAll");
       data.organization = req?.session?.rootOrgId;
     }
-
-    if (
+// Hack - This change is for Learnathon to accept one option in poll
+    if(data.category != "Learnathon"){
+      if (
       !data?.poll_options ||
       data?.poll_options.filter((option) => option.trim() !== "").length < 2
     ) {
@@ -115,6 +116,9 @@ const createPolls = async (req, res) => {
       error.statusCode = 400;
       throw error;
     }
+
+    }
+    
 
     const pollOptions = data?.poll_options.map((option) => `"${option}"`);
     data.poll_options = pollOptions;
@@ -248,7 +252,10 @@ const updatePolls = async (req, res) => {
       error.statusCode = 403;
       throw error;
     }
-    if (
+    // Hack - This change is for Learnathon to accept one option in poll
+
+    if(body.category != "Learnathon"){
+      if (
       body?.poll_options &&
       body?.poll_options?.filter((option) => option?.trim() !== "").length < 2
     ) {
@@ -256,6 +263,7 @@ const updatePolls = async (req, res) => {
       error.statusCode = 400;
       throw error;
     }
+  }
 
     if (body.visibility || body.organization || body.poll_id) {
       const error = new Error(
