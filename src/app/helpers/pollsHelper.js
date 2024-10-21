@@ -107,7 +107,8 @@ const createPolls = async (req, res) => {
       data.organization = req?.session?.rootOrgId;
     }
 
-    if (
+    if(data.category != "Learnathon"){
+      if (
       !data?.poll_options ||
       data?.poll_options.filter((option) => option.trim() !== "").length < 2
     ) {
@@ -115,6 +116,9 @@ const createPolls = async (req, res) => {
       error.statusCode = 400;
       throw error;
     }
+
+    }
+    
 
     const pollOptions = data?.poll_options.map((option) => `"${option}"`);
     data.poll_options = pollOptions;
