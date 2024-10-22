@@ -48,6 +48,7 @@ export class OtpComponent implements OnInit {
   termsAndConditionLink: string;
   tncLatestVersion: string;
   showTncPopup = false;
+  isLearnathonUser : boolean =false;
   @Output() subformInitialized: EventEmitter<{}> = new EventEmitter<{}>();
   @Output() triggerNext: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Input() startingForm: any;
@@ -185,6 +186,7 @@ export class OtpComponent implements OnInit {
     };
 
     if (window.location.href.includes("learnathon")) { 
+      this.isLearnathonUser = true;
       console.log('Learnathon URL Detected');
       createRequest.request['channel'] = "nulp-learn";
       createRequest.request['organisationId'] = "0137506576041902087";
@@ -204,7 +206,7 @@ export class OtpComponent implements OnInit {
     createRequest.request['reqData'] = _.get(data, 'reqData');
 
     if (this.otpForm.controls.tncAccepted.value && this.otpForm.controls.tncAccepted.status === 'VALID') {
-        this.signupService.createUserV3(createRequest).subscribe((resp: ServerResponse) => {
+        this.signupService.createUserV3(createRequest,this.isLearnathonUser).subscribe((resp: ServerResponse) => {
             this.telemetryLogEvents('sign-up', true);
 
             const tncAcceptRequestBody = {
