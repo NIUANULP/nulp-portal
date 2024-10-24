@@ -74,6 +74,9 @@ const createLearnathonContent = async (req, res) => {
       "status",
       "description",
       "other_indicative_themes",
+      "indicative_sub_theme",
+      "state",
+      "city",
     ];
 
     let requiredFields = [];
@@ -138,6 +141,9 @@ const createLearnathonContent = async (req, res) => {
       status: data.status,
       other_indicative_themes: data.other_indicative_themes,
       description: data.description,
+      indicative_sub_theme: data.indicative_sub_theme,
+      state:data.state,
+      city:data.city
     };
 
     const response = await createRecord(
@@ -438,6 +444,10 @@ const updateLearnathonContent = async (req, res) => {
         "icon",
         "description",
         "other_indicative_themes",
+        "other_indicative_themes",
+        "indicative_sub_theme",
+        "state",
+        "city",
       ], // allowed columns
       "learnathon_content_id", // column for the WHERE clause
       "updated_by" // optional second column
