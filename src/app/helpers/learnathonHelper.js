@@ -636,28 +636,6 @@ const deleteLearnathonContent = async (req, res) => {
 
 const provideCreatorAccess = async (req, res) => {
   try {
-    // Check if user_id already exists in user_rolles
-    const userCheckQuery = "SELECT * FROM user_rolles WHERE user_id = $1";
-    const userCheckValues = [req.body.request.userId];
-    const existingUser = await pool.query(userCheckQuery, userCheckValues);
-
-    // If user_id exists and creator_access is true, return an error
-    if (existingUser.rows.length > 0 && existingUser.rows[0].creator_access) {
-      return res.status(400).send({
-        ts: new Date().toISOString(),
-        params: {
-          resmsgid: uuidv1(),
-          msgid: uuidv1(),
-          status: "unsuccessful",
-          err: null,
-          errmsg: "User is already a creator.",
-        },
-        responseCode: "Failed",
-        result: {},
-      });
-    }
-
-    // Proceed with token generation and API call for role assignment
     const data = {
       client_id: envHelper.client_id,
       client_secret: envHelper.client_secret,
@@ -701,11 +679,10 @@ const provideCreatorAccess = async (req, res) => {
       let values;
       if (apiresponse?.data?.result?.response === "SUCCESS") {
         query =
-          "INSERT INTO user_rolles (user_id , creator_access) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET creator_access = $2 RETURNING *";
+          "INSERT INTO user_rolles (user_id , creator_access) VALUES ($1,$2) RETURNING *";
         values = [req.body.request.userId, true];
       } else {
-        query =
-          "INSERT INTO user_rolles (user_id) VALUES ($1) ON CONFLICT (user_id) DO NOTHING RETURNING *";
+        query = "INSERT INTO user_rolles (user_id) VALUES ($1) RETURNING *";
         values = [req.body.request.userId];
       }
       await pool.query(query, values);
