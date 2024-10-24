@@ -555,6 +555,10 @@ const API_LIST = {
       checksNeeded: ["ROLE_CHECK"],
       ROLE_CHECK: [ROLE.PUBLIC],
     },
+    "/learner/user/v1/signup": {
+      checksNeeded: ["ROLE_CHECK"],
+      ROLE_CHECK: [ROLE.PUBLIC],
+    },
     "/learner/user/v1/feed/:userId": {
       checksNeeded: ["ROLE_CHECK", "OWNER_CHECK"],
       ROLE_CHECK: [ROLE.PUBLIC],
