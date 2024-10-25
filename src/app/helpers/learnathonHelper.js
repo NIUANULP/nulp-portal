@@ -142,8 +142,8 @@ const createLearnathonContent = async (req, res) => {
       other_indicative_themes: data.other_indicative_themes,
       description: data.description,
       indicative_sub_theme: data.indicative_sub_theme,
-      state:data.state,
-      city:data.city
+      state: data.state,
+      city: data.city,
     };
 
     const response = await createRecord(
@@ -368,7 +368,11 @@ const updateLearnathonContent = async (req, res) => {
     }
 
     // Check user roles
-    if (!session?.roles?.includes("CONTENT_CREATOR") || !session?.roles?.includes("SYSTEM_ADMINISTRATION")) {
+
+    if (
+      !session?.roles?.includes("CONTENT_CREATOR") &&
+      !session?.roles?.includes("SYSTEM_ADMINISTRATION")
+    ) {
       const error = new Error("You don't have privilege to update records");
       error.statusCode = 403;
       throw error;
