@@ -368,7 +368,7 @@ const updateLearnathonContent = async (req, res) => {
     }
 
     // Check user roles
-    if (!session?.roles?.includes("CONTENT_CREATOR")) {
+    if (!session?.roles?.includes("CONTENT_CREATOR") || !session?.roles?.includes("SYSTEM_ADMINISTRATION")) {
       const error = new Error("You don't have privilege to update records");
       error.statusCode = 403;
       throw error;
