@@ -67,20 +67,12 @@ export class SignupService {
     return this.http.post(url, data);
   }
 
- createUserV3(data,islearn?) {
-    var options
-    if(islearn){
-      options = {
-        url: this.configService.urlConFig.URLS.USER.SIGN_UP_V1_LERN,
-        data: data
-      };
-    }
-    else{
-      options = {
-        url: this.configService.urlConFig.URLS.USER.SIGN_UP_V1,
-        data: data
-      };
-    }
+ createUserV3(data) {
+    const options = {
+      url: this.configService.urlConFig.URLS.USER.SIGN_UP_V1,
+      data: data
+    };
+    
     return this.learnerService.post(options);
   }
 
