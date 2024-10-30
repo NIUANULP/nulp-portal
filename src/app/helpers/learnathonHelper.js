@@ -495,13 +495,24 @@ const updateLearnathonContent = async (req, res) => {
 
 const deleteLearnathonContent = async (req, res) => {
   try {
-    const { id } = req.query; // Get the content ID from the query parameters
+    const { id } = req.query; // Get the learnathon_content_id from the query parameters
 
     // Check if the content ID is provided
     if (!id) {
-      const error = new Error("Content ID is missing");
-      error.statusCode = 404;
-      throw error;
+      return res.status(404).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          statusCode: 404,
+          status: "unsuccessful",
+          message: "Content ID is missing",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "ERROR",
+        result: {},
+      });
     }
 
     // Check user privileges
@@ -517,43 +528,53 @@ const deleteLearnathonContent = async (req, res) => {
           err: null,
           errmsg: null,
         },
-        responseCode: "OK",
+        responseCode: "ERROR",
         result: {},
       });
     }
 
-    const isContentCreatorOnly =
-      req?.session?.roles?.includes("CONTENT_CREATOR");
+    const isContentCreatorOnly = req?.session?.roles?.includes("CONTENT_CREATOR");
     const userId = isContentCreatorOnly ? req?.session.userId : null;
 
-    let contentData = await deleteRecord(
-      "DELETE FROM learnathon_contents WHERE content_id=$1",
-      [id.trim()]
-    );
-    // if (isContentCreatorOnly) {
-    //   contentData = await deleteRecord(
-    //     "DELETE FROM learnathon_contents WHERE content_id=$1 AND created_by=$2",
-    //     [id.trim(), userId]
-    //   );
-    // } else if (req?.session?.roles?.includes("SYSTEM_ADMINISTRATION")) {
-    //   contentData = await deleteRecord("DELETE FROM learnathon_contents WHERE content_id=$1", [
-    //     id.trim(),
-    //   ]);
-    // } else {
-    //   const error = new Error("Unauthorized");
-    //   error.statusCode = 401;
-    //   throw error;
-    // }
+    // Retrieve content_id from the learnathon_contents table
+    const query = "SELECT content_id FROM learnathon_contents WHERE learnathon_content_id=$1";
+    const result = await getRecords(query, [id.trim()]);
+    
+    // If content_id is null, directly delete the record without retiring
+    if (!result || result.length === 0 || result.rows[0].content_id === null) {
+      let contentData = await deleteRecord(
+        "DELETE FROM learnathon_contents WHERE learnathon_content_id=$1",
+        [id.trim()]
+      );
 
-    // Check if the deletion was successful
-    if (contentData <= 0) {
-      const error = new Error("Unable to delete content");
-      error.statusCode = 500;
-      throw error;
+      if (contentData <= 0) {
+        const error = new Error("Unable to delete content");
+        error.statusCode = 500;
+        throw error;
+      }
+
+      // Send success response for direct deletion
+      return res.send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "Content deleted successfully",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {
+          data: contentData,
+        },
+      });
     }
 
-    // Call the content/retire API after successful deletion
+    // Extract content_id from the result if it exists
+    const contentId = result.rows[0].content_id;
+
     try {
+      // Retire the content using the content_id
       let config = {
         method: "delete",
         maxBodyLength: Infinity,
@@ -564,31 +585,43 @@ const deleteLearnathonContent = async (req, res) => {
         },
         data: {
           request: {
-            contentIds: [id],
+            contentIds: [contentId], // Use contentId retrieved from the database
           },
         },
       };
 
       let retireResponse = await axios.request(config);
 
-      // Send success response after content is deleted and retired
-      return res.send({
-        ts: new Date().toISOString(),
-        params: {
-          resmsgid: uuidv1(),
-          msgid: uuidv1(),
-          status: "Content deleted and retired successfully",
-          err: null,
-          errmsg: null,
-        },
-        responseCode: "OK",
-        result: {
-          data: contentData,
-          retireResponse: retireResponse.data,
-        },
-      });
+      if (retireResponse.data.responseCode === "OK") {
+        let contentData = await deleteRecord(
+          "DELETE FROM learnathon_contents WHERE learnathon_content_id=$1",
+          [id.trim()]
+        );
+
+        if (contentData <= 0) {
+          const error = new Error("Unable to delete content");
+          error.statusCode = 500;
+          throw error;
+        }
+
+        // Send success response after content is deleted and retired
+        return res.send({
+          ts: new Date().toISOString(),
+          params: {
+            resmsgid: uuidv1(),
+            msgid: uuidv1(),
+            status: "Content deleted and retired successfully",
+            err: null,
+            errmsg: null,
+          },
+          responseCode: "OK",
+          result: {
+            data: contentData,
+            retireResponse: retireResponse.data,
+          },
+        });
+      }
     } catch (retireError) {
-      // Handle errors from the retire API
       console.error(
         retireError.response?.data || retireError.message,
         "Retire API error"
@@ -606,7 +639,6 @@ const deleteLearnathonContent = async (req, res) => {
         },
         responseCode: "ERROR",
         result: {
-          data: contentData, // Deletion succeeded, returning this data
           retireError: retireError.response?.data || retireError.message,
         },
       });
@@ -616,7 +648,6 @@ const deleteLearnathonContent = async (req, res) => {
     const statusCode = error.statusCode || 500;
     const errorMessage = error.message || "Internal Server Error";
 
-    // Send error response if deletion or any other error occurs
     res.status(statusCode).send({
       ts: new Date().toISOString(),
       params: {
@@ -628,11 +659,12 @@ const deleteLearnathonContent = async (req, res) => {
         err: null,
         errmsg: null,
       },
-      responseCode: "OK",
+      responseCode: "ERROR",
       result: {},
     });
   }
 };
+
 
 const provideCreatorAccess = async (req, res) => {
   try {
