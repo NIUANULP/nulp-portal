@@ -714,7 +714,9 @@ const provideCreatorAccess = async (req, res) => {
 
     const response = await axios(config);
     let apiresponse;
+
     if (response?.data?.access_token) {
+
       let config = {
         method: "post",
         maxBodyLength: Infinity,
@@ -729,6 +731,7 @@ const provideCreatorAccess = async (req, res) => {
         },
         data: req.body,
       };
+
       if (req?.body?.iscreator !== true) {
         apiresponse = await axios(config);
       }
@@ -743,6 +746,7 @@ const provideCreatorAccess = async (req, res) => {
         query =
           "INSERT INTO user_rolles (user_id) VALUES ($1) ON CONFLICT (user_id) DO NOTHING RETURNING *";
         values = [req.body.request.userId];
+
       }
       await pool.query(query, values);
     }
