@@ -12,6 +12,13 @@ module.exports = function (app) {
     proxyUtils.verifyToken(),
     pollsHelper.createPolls
   );
+
+  app.post(
+    "/polls/all/get_poll",
+    bodyParser.json({ limit: "10mb" }),
+    proxyUtils.verifyToken(),
+    pollsHelper.getPollsAndVotes
+  );
   //   Get poll
   app.get("/polls/get_poll", proxyUtils.verifyToken(), pollsHelper.getPoll);
   // Update polls

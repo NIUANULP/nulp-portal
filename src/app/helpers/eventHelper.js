@@ -1809,9 +1809,14 @@ async function eventEnrollmentList(req, res) {
         },
         data: data,
       };
-      const response = await axios.request(config);
+      let response;
+      if(totalCount>0)
+      {
+        response = await axios.request(config);
+      }
+      
 
-      if (response.status === 200) {
+      if (response?.status === 200) {
         apiResponse = response?.data?.result?.Event || [];
         totalCount = response?.data?.result?.count;
       }
