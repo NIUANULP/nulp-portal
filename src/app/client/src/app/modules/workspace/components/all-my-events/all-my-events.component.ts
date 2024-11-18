@@ -219,7 +219,7 @@ deleteEvent(modal) {
   this.delete(this.currentEvent).subscribe(
     (response) => {
        this.toasterService.success('Event deleted successfully')
-      this.ngOnInit()
+      window.location.reload();
     },
     (error) => {
       this.toasterService.error(
