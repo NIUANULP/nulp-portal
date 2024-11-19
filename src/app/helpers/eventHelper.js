@@ -1809,9 +1809,14 @@ async function eventEnrollmentList(req, res) {
         },
         data: data,
       };
-      const response = await axios.request(config);
+      let response;
+      if(totalCount>0)
+      {
+        response = await axios.request(config);
+      }
+      
 
-      if (response.status === 200) {
+      if (response?.status === 200) {
         apiResponse = response?.data?.result?.Event || [];
         totalCount = response?.data?.result?.count;
       }
@@ -2174,6 +2179,49 @@ async function eventRetire(req, res) {
     });
   }
 }
+
+async function createCertificate(req, res) {
+  try {
+    const eventId = req.query.eventId;
+    const data = req.body
+
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${envHelper.api_base_url}/api/rc/certificate/v1/create`,
+      headers: {
+        Authorization: `Bearer ${
+            envHelper.PORTAL_API_AUTH_TOKEN ||
+            envHelper.sunbird_logged_default_token
+          }`,        
+          "Content-Type": "application/json",
+      },
+      data: data,
+    };
+
+    const response = await axios(config);
+    return res.send(response.data);
+  } catch (error) {
+    console.error(error);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
+
 module.exports = {
   createEvent,
   getEvent,
@@ -2197,4 +2245,5 @@ module.exports = {
   eventUpdateWrapper,
   eventPublishWrapper,
   eventRetire,
+  createCertificate,
 };
