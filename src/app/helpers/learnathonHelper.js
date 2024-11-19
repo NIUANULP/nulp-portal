@@ -246,6 +246,14 @@ const listLearnathonContents = async (req, res) => {
       values.push(filters.to_date);
       query += ` AND created_on <= $${values.length}`;
     }
+    if (filters.indicative_theme) {
+      values.push(filters.indicative_theme);
+      query += ` AND indicative_theme ILIKE $${values.length}`;
+    }
+    if (filters.state) {
+      values.push(filters.state);
+      query += ` AND state ILIKE $${values.length}`;
+    }
 
     if (search) {
       values.push(`%${search}%`);
@@ -315,6 +323,14 @@ const listLearnathonContents = async (req, res) => {
       countQuery += `
       AND (title_of_submission ILIKE $${countValues.length} OR content_id ILIKE $${countValues.length})
     `;
+    }
+    if (filters.indicative_theme) {
+      countValues.push(filters.indicative_theme);
+      countQuery += ` AND indicative_theme ILIKE $${countValues.length}`;
+    }
+    if (filters.state) {
+      countValues.push(filters.state);
+      countQuery += ` AND state ILIKE $${countValues.length}`;
     }
 
     const countResult = await getRecords(countQuery, countValues);
@@ -537,13 +553,15 @@ const deleteLearnathonContent = async (req, res) => {
       });
     }
 
-    const isContentCreatorOnly = req?.session?.roles?.includes("CONTENT_CREATOR");
+    const isContentCreatorOnly =
+      req?.session?.roles?.includes("CONTENT_CREATOR");
     const userId = isContentCreatorOnly ? req?.session.userId : null;
 
     // Retrieve content_id from the learnathon_contents table
-    const query = "SELECT content_id FROM learnathon_contents WHERE learnathon_content_id=$1";
+    const query =
+      "SELECT content_id FROM learnathon_contents WHERE learnathon_content_id=$1";
     const result = await getRecords(query, [id.trim()]);
-    
+
     // If content_id is null, directly delete the record without retiring
     if (!result || result.length === 0 || result.rows[0].content_id === null) {
       let contentData = await deleteRecord(
@@ -669,7 +687,6 @@ const deleteLearnathonContent = async (req, res) => {
   }
 };
 
-
 const provideCreatorAccess = async (req, res) => {
   try {
     // Check if user_id already exists in user_rolles
@@ -716,7 +733,6 @@ const provideCreatorAccess = async (req, res) => {
     let apiresponse;
 
     if (response?.data?.access_token) {
-
       let config = {
         method: "post",
         maxBodyLength: Infinity,
@@ -746,7 +762,6 @@ const provideCreatorAccess = async (req, res) => {
         query =
           "INSERT INTO user_rolles (user_id) VALUES ($1) ON CONFLICT (user_id) DO NOTHING RETURNING *";
         values = [req.body.request.userId];
-
       }
       await pool.query(query, values);
     }
