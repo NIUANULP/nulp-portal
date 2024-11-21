@@ -688,6 +688,8 @@ const deleteLearnathonContent = async (req, res) => {
 };
 
 const provideCreatorAccess = async (req, res) => {
+  console.log("ffffffff-----------", req.body.request);
+
   try {
     // Check if user_id already exists in user_rolles
     const userCheckQuery = "SELECT * FROM user_rolles WHERE user_id = $1";
@@ -757,7 +759,7 @@ const provideCreatorAccess = async (req, res) => {
       if (apiresponse?.data?.result?.response === "SUCCESS") {
         query =
           "INSERT INTO user_rolles (user_id , creator_access) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET creator_access = $2 RETURNING *";
-        values = [req.body.request.userId, true];
+        values = [req.body.request.userId, req.body.isCreator];
       } else {
         query =
           "INSERT INTO user_rolles (user_id) VALUES ($1) ON CONFLICT (user_id) DO NOTHING RETURNING *";
