@@ -67,13 +67,15 @@ export class SignupService {
     return this.http.post(url, data);
   }
 
-  createUserV3(data) {
+ createUserV3(data) {
     const options = {
       url: this.configService.urlConFig.URLS.USER.SIGN_UP_V1,
       data: data
     };
+    
     return this.learnerService.post(options);
   }
+
 
   CreateUser(data){
     return  this.http.post(this.configService.urlConFig.URLS.USER.COSTOMSIGNUP,data)

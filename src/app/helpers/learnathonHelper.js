@@ -11,8 +11,7 @@ const { pool } = require("./postgresqlConfig.js");
 const envHelper = require("./environmentVariablesHelper.js");
 const axios = require("axios");
 const crypto = require("crypto");
-const qs = require('qs');
-
+const qs = require("qs");
 
 function generateUniqueId() {
   const currentUnixTime = Date.now(); // Get current Unix timestamp in milliseconds
@@ -38,10 +37,7 @@ const encrypt = (text) => {
 const createLearnathonContent = async (req, res) => {
   try {
     // Role-based authorization (comment if required)
-    if (
-      !req?.session?.roles?.includes("CONTENT_CREATOR") &&
-      !req?.session?.roles?.includes("SYSTEM_ADMINISTRATION")
-    ) {
+    if (!req?.session?.roles?.includes("CONTENT_CREATOR")) {
       return res.status(403).send({
         ts: new Date().toISOString(),
         params: {
@@ -77,74 +73,84 @@ const createLearnathonContent = async (req, res) => {
       "icon",
       "status",
       "description",
-      "other_indicative_themes"
+      "other_indicative_themes",
+      "indicative_sub_theme",
+      "state",
+      "city",
     ];
 
-let requiredFields = [];
+    let requiredFields = [];
 
-if (data.status === "review") {
-  requiredFields = [
-    "user_name",
-    "email",
-    "mobile_number",
-    "category_of_participation",
-    "name_of_organisation",
-    "indicative_theme",
-    "title_of_submission",
-    "created_by"
-  ];
-} else {
-  requiredFields = ["title_of_submission","status","created_by"];
-}
+    if (data.status === "review") {
+      requiredFields = [
+        "user_name",
+        "email",
+        "mobile_number",
+        "category_of_participation",
+        "name_of_organisation",
+        "indicative_theme",
+        "title_of_submission",
+        "created_by",
+      ];
+    } else {
+      requiredFields = ["title_of_submission", "status", "created_by"];
+    }
 
-const missingFields = requiredFields.filter((column) => !data[column]);
+    const missingFields = requiredFields.filter((column) => !data[column]);
 
-if (missingFields.length > 0) {
-  const error = new Error(
-    `Missing required fields: ${missingFields.join(", ")}`
-  );
-  error.statusCode = 400;
-  throw error;
-}
+    if (missingFields.length > 0) {
+      const error = new Error(
+        `Missing required fields: ${missingFields.join(", ")}`
+      );
+      error.statusCode = 400;
+      throw error;
+    }
 
     const generatedId = generateUniqueId();
     let encryptedEmail;
     let encryptedMobile;
-    if(data.email){
-       encryptedEmail = encrypt(data.email);
+    if (data.email) {
+      encryptedEmail = encrypt(data.email);
     }
-    if(data.mobile_number){
-       encryptedMobile = encrypt(data.mobile_number);
+    if (data.mobile_number) {
+      encryptedMobile = encrypt(data.mobile_number);
     }
-    
+
     // data.poll_id = generatedId;
 
     const now = new Date();
-    
+
     const newRecord = {
-      learnathon_content_id : generatedId,
+      learnathon_content_id: generatedId,
       user_name: data.user_name,
       email: encryptedEmail || null,
       mobile_number: encryptedMobile || null,
       category_of_participation: data.category_of_participation,
-      link_to_guidelines: data.link_to_guidelines || null, 
+      link_to_guidelines: data.link_to_guidelines || null,
       name_of_organisation: data.name_of_organisation,
-      name_of_department_group: data.name_of_department_group || null, 
+      name_of_department_group: data.name_of_department_group || null,
       indicative_theme: data.indicative_theme,
       title_of_submission: data.title_of_submission,
-      content_id: data.content_id || null, 
+      content_id: data.content_id || null,
       consent_checkbox: data.consent_checkbox || false,
       created_on: now,
       updated_on: now,
       created_by: req?.session?.userId || data.created_by,
       poll_id: null,
-      icon : data.icon,
-      status : data.status,
-      other_indicative_themes : data.other_indicative_themes,
-      description : data.description
+      icon: data.icon,
+      status: data.status,
+      other_indicative_themes: data.other_indicative_themes,
+      description: data.description,
+      indicative_sub_theme: data.indicative_sub_theme,
+      state: data.state,
+      city: data.city,
     };
 
-    const response = await createRecord(newRecord, "learnathon_contents",allowedColumns);
+    const response = await createRecord(
+      newRecord,
+      "learnathon_contents",
+      allowedColumns
+    );
 
     if (response?.length > 0) {
       return res.send({
@@ -202,13 +208,13 @@ const listLearnathonContents = async (req, res) => {
       FROM learnathon_contents 
       WHERE 1=1
     `;
-    let values = []; 
+    let values = [];
 
     if (filters.name_of_organisation) {
       values.push(filters.name_of_organisation);
       query += ` AND name_of_organisation ILIKE $${values.length}`;
     }
-     if (filters.learnathon_content_id) {
+    if (filters.learnathon_content_id) {
       values.push(filters.learnathon_content_id);
       query += ` AND learnathon_content_id = $${values.length}`;
     }
@@ -312,7 +318,7 @@ const listLearnathonContents = async (req, res) => {
     }
 
     const countResult = await getRecords(countQuery, countValues);
-    const totalCount = parseInt(countResult?.rows[0]?.count, 10); 
+    const totalCount = parseInt(countResult?.rows[0]?.count, 10);
 
     return res.send({
       ts: new Date().toISOString(),
@@ -352,7 +358,7 @@ const listLearnathonContents = async (req, res) => {
 
 const updateLearnathonContent = async (req, res) => {
   try {
-    const  content_id  = req.query.id;
+    const content_id = req.query.id;
     const { session, body } = req;
 
     if (!content_id) {
@@ -362,6 +368,7 @@ const updateLearnathonContent = async (req, res) => {
     }
 
     // Check user roles
+
     if (
       !session?.roles?.includes("CONTENT_CREATOR") &&
       !session?.roles?.includes("SYSTEM_ADMINISTRATION")
@@ -373,30 +380,30 @@ const updateLearnathonContent = async (req, res) => {
 
     let requiredFields = [];
 
-if (body.status === "review") {
-  requiredFields = [
-    "user_name",
-    "email",
-    "mobile_number",
-    "category_of_participation",
-    "name_of_organisation",
-    "indicative_theme",
-    "title_of_submission",
-    "created_by"
-  ];
-} else {
-  requiredFields = ["title_of_submission","status","created_by"];
-}
+    if (body.status === "review") {
+      requiredFields = [
+        "user_name",
+        "email",
+        "mobile_number",
+        "category_of_participation",
+        "name_of_organisation",
+        "indicative_theme",
+        "title_of_submission",
+        "created_by",
+      ];
+    } else {
+      requiredFields = ["title_of_submission", "status", "created_by"];
+    }
 
-const missingFields = requiredFields.filter((column) => !body[column]);
+    const missingFields = requiredFields.filter((column) => !body[column]);
 
-if (missingFields.length > 0) {
-  const error = new Error(
-    `Missing required fields: ${missingFields.join(", ")}`
-  );
-  error.statusCode = 400;
-  throw error;
-}
+    if (missingFields.length > 0) {
+      const error = new Error(
+        `Missing required fields: ${missingFields.join(", ")}`
+      );
+      error.statusCode = 400;
+      throw error;
+    }
     // Allowed fields for updating
     const allowedColumns = [
       "title_of_submission",
@@ -413,39 +420,43 @@ if (missingFields.length > 0) {
       body.email = encrypt(body.email);
     }
     if (body.mobile_number) {
-      body.mobile_number = encrypt(body.mobile_number); 
+      body.mobile_number = encrypt(body.mobile_number);
     }
 
     // Validate update logic here if necessary
 
     // Call your method to update record
-   const response = await updateRecord(
-  content_id, // id
-  body, // data to update
-  "learnathon_contents", // table name
-  ["user_name",
-      "email",
-      "mobile_number",
-      "category_of_participation",
-      "link_to_guidelines",
-      "name_of_organisation",
-      "name_of_department_group",
-      "indicative_theme",
-      "title_of_submission",
-      "content_id",
-      "consent_checkbox",
-      "updated_on",
-      "status",
-      "poll_id",
-      "icon",
-      "description",
-      "other_indicative_themes"
+    const response = await updateRecord(
+      content_id, // id
+      body, // data to update
+      "learnathon_contents", // table name
+      [
+        "user_name",
+        "email",
+        "mobile_number",
+        "category_of_participation",
+        "link_to_guidelines",
+        "name_of_organisation",
+        "name_of_department_group",
+        "indicative_theme",
+        "title_of_submission",
+        "content_id",
+        "consent_checkbox",
+        "updated_on",
+        "status",
+        "poll_id",
+        "icon",
+        "description",
+        "other_indicative_themes",
+        "other_indicative_themes",
+        "indicative_sub_theme",
+        "state",
+        "city",
       ], // allowed columns
-  "learnathon_content_id", // column for the WHERE clause
-  "updated_by", // optional second column
-  // session.userId // value for the optional second column
-);
-
+      "learnathon_content_id", // column for the WHERE clause
+      "updated_by" // optional second column
+      // session.userId // value for the optional second column
+    );
 
     if (response?.length) {
       return res.send({
@@ -488,20 +499,28 @@ if (missingFields.length > 0) {
 
 const deleteLearnathonContent = async (req, res) => {
   try {
-    const { id } = req.query; // Get the content ID from the query parameters
+    const { id } = req.query; // Get the learnathon_content_id from the query parameters
 
     // Check if the content ID is provided
     if (!id) {
-      const error = new Error("Content ID is missing");
-      error.statusCode = 404;
-      throw error;
+      return res.status(404).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          statusCode: 404,
+          status: "unsuccessful",
+          message: "Content ID is missing",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "ERROR",
+        result: {},
+      });
     }
 
     // Check user privileges
-    if (
-      !req?.session?.roles?.includes("CONTENT_CREATOR") &&
-      !req?.session?.roles?.includes("SYSTEM_ADMINISTRATION")
-    ) {
+    if (!req?.session?.roles?.includes("CONTENT_CREATOR")) {
       return res.status(403).send({
         ts: new Date().toISOString(),
         params: {
@@ -513,45 +532,53 @@ const deleteLearnathonContent = async (req, res) => {
           err: null,
           errmsg: null,
         },
-        responseCode: "OK",
+        responseCode: "ERROR",
         result: {},
       });
     }
 
-    const isContentCreatorOnly =
-      req?.session?.roles?.includes("CONTENT_CREATOR") &&
-      !req?.session?.roles?.includes("SYSTEM_ADMINISTRATION");
-
+    const isContentCreatorOnly = req?.session?.roles?.includes("CONTENT_CREATOR");
     const userId = isContentCreatorOnly ? req?.session.userId : null;
 
-    let contentData= await deleteRecord(
-        "DELETE FROM learnathon_contents WHERE content_id=$1",
+    // Retrieve content_id from the learnathon_contents table
+    const query = "SELECT content_id FROM learnathon_contents WHERE learnathon_content_id=$1";
+    const result = await getRecords(query, [id.trim()]);
+    
+    // If content_id is null, directly delete the record without retiring
+    if (!result || result.length === 0 || result.rows[0].content_id === null) {
+      let contentData = await deleteRecord(
+        "DELETE FROM learnathon_contents WHERE learnathon_content_id=$1",
         [id.trim()]
       );
-    // if (isContentCreatorOnly) {
-    //   contentData = await deleteRecord(
-    //     "DELETE FROM learnathon_contents WHERE content_id=$1 AND created_by=$2",
-    //     [id.trim(), userId]
-    //   );
-    // } else if (req?.session?.roles?.includes("SYSTEM_ADMINISTRATION")) {
-    //   contentData = await deleteRecord("DELETE FROM learnathon_contents WHERE content_id=$1", [
-    //     id.trim(),
-    //   ]);
-    // } else {
-    //   const error = new Error("Unauthorized");
-    //   error.statusCode = 401;
-    //   throw error;
-    // }
 
-    // Check if the deletion was successful
-    if (contentData <= 0) {
-      const error = new Error("Unable to delete content");
-      error.statusCode = 500;
-      throw error;
+      if (contentData <= 0) {
+        const error = new Error("Unable to delete content");
+        error.statusCode = 500;
+        throw error;
+      }
+
+      // Send success response for direct deletion
+      return res.send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "Content deleted successfully",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {
+          data: contentData,
+        },
+      });
     }
 
-    // Call the content/retire API after successful deletion
+    // Extract content_id from the result if it exists
+    const contentId = result.rows[0].content_id;
+
     try {
+      // Retire the content using the content_id
       let config = {
         method: "delete",
         maxBodyLength: Infinity,
@@ -562,34 +589,47 @@ const deleteLearnathonContent = async (req, res) => {
         },
         data: {
           request: {
-            contentIds: [id],
+            contentIds: [contentId], // Use contentId retrieved from the database
           },
         },
       };
 
       let retireResponse = await axios.request(config);
 
+      if (retireResponse.data.responseCode === "OK") {
+        let contentData = await deleteRecord(
+          "DELETE FROM learnathon_contents WHERE learnathon_content_id=$1",
+          [id.trim()]
+        );
 
-      // Send success response after content is deleted and retired
-      return res.send({
-        ts: new Date().toISOString(),
-        params: {
-          resmsgid: uuidv1(),
-          msgid: uuidv1(),
-          status: "Content deleted and retired successfully",
-          err: null,
-          errmsg: null,
-        },
-        responseCode: "OK",
-        result: {
-          data: contentData,
-          retireResponse: retireResponse.data,
-        },
-      });
+        if (contentData <= 0) {
+          const error = new Error("Unable to delete content");
+          error.statusCode = 500;
+          throw error;
+        }
 
+        // Send success response after content is deleted and retired
+        return res.send({
+          ts: new Date().toISOString(),
+          params: {
+            resmsgid: uuidv1(),
+            msgid: uuidv1(),
+            status: "Content deleted and retired successfully",
+            err: null,
+            errmsg: null,
+          },
+          responseCode: "OK",
+          result: {
+            data: contentData,
+            retireResponse: retireResponse.data,
+          },
+        });
+      }
     } catch (retireError) {
-      // Handle errors from the retire API
-      console.error(retireError.response?.data || retireError.message, "Retire API error");
+      console.error(
+        retireError.response?.data || retireError.message,
+        "Retire API error"
+      );
 
       // Return a specific error if the retire API fails, but content is deleted
       return res.status(500).send({
@@ -603,7 +643,6 @@ const deleteLearnathonContent = async (req, res) => {
         },
         responseCode: "ERROR",
         result: {
-          data: contentData, // Deletion succeeded, returning this data
           retireError: retireError.response?.data || retireError.message,
         },
       });
@@ -613,7 +652,6 @@ const deleteLearnathonContent = async (req, res) => {
     const statusCode = error.statusCode || 500;
     const errorMessage = error.message || "Internal Server Error";
 
-    // Send error response if deletion or any other error occurs
     res.status(statusCode).send({
       ts: new Date().toISOString(),
       params: {
@@ -625,7 +663,7 @@ const deleteLearnathonContent = async (req, res) => {
         err: null,
         errmsg: null,
       },
-      responseCode: "OK",
+      responseCode: "ERROR",
       result: {},
     });
   }
@@ -634,58 +672,81 @@ const deleteLearnathonContent = async (req, res) => {
 
 const provideCreatorAccess = async (req, res) => {
   try {
-     const data = {
-        client_id: envHelper.client_id,
-        client_secret: envHelper.client_secret,
-        grant_type: envHelper.grant_type
-      };
+    // Check if user_id already exists in user_rolles
+    const userCheckQuery = "SELECT * FROM user_rolles WHERE user_id = $1";
+    const userCheckValues = [req.body.request.userId];
+    const existingUser = await pool.query(userCheckQuery, userCheckValues);
+
+    // If user_id exists and creator_access is true, return an error
+    if (existingUser.rows.length > 0 && existingUser.rows[0].creator_access) {
+      return res.status(400).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "unsuccessful",
+          err: null,
+          errmsg: "User is already a creator.",
+        },
+        responseCode: "Failed",
+        result: {},
+      });
+    }
+
+    // Proceed with token generation and API call for role assignment
+    const data = {
+      client_id: envHelper.client_id,
+      client_secret: envHelper.client_secret,
+      grant_type: envHelper.grant_type,
+    };
 
     const formattedData = qs.stringify(data);
 
     let config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: `${envHelper.api_base_url}/auth/realms/sunbird/protocol/openid-connect/token`,
+      url: `https://devnulp.niua.org/auth/realms/sunbird/protocol/openid-connect/token`,
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      data: formattedData, 
+      data: formattedData,
     };
 
     const response = await axios(config);
     let apiresponse;
-    if(response?.data?.access_token){
+
+    if (response?.data?.access_token) {
+
       let config = {
         method: "post",
         maxBodyLength: Infinity,
         url: `${envHelper.api_base_url}/api/user/v1/role/assign`,
         headers: {
           "Content-Type": "application/json",
-          Authorization : `Bearer ${
+          Authorization: `Bearer ${
             envHelper.PORTAL_API_AUTH_TOKEN ||
             envHelper.sunbird_logged_default_token
           }`,
-          "x-authenticated-user-token" : response.data.access_token
+          "x-authenticated-user-token": response.data.access_token,
         },
-        data: req.body, 
+        data: req.body,
       };
-      if(req?.body?.iscreator !== true){
+
+      if (req?.body?.iscreator !== true) {
         apiresponse = await axios(config);
       }
-      
+
       let query;
       let values;
-      if(apiresponse?.data?.result?.response === "SUCCESS"){
-        query = "INSERT INTO user_rolles (user_id , creator_access) VALUES ($1,$2) RETURNING *";
-        values = [
-          req.body.request.userId,
-          true
-        ]
-      }else{
-        query = "INSERT INTO user_rolles (user_id) VALUES ($1) RETURNING *";
-        values = [
-          req.body.request.userId
-        ]
+      if (apiresponse?.data?.result?.response === "SUCCESS") {
+        query =
+          "INSERT INTO user_rolles (user_id , creator_access) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET creator_access = $2 RETURNING *";
+        values = [req.body.request.userId, true];
+      } else {
+        query =
+          "INSERT INTO user_rolles (user_id) VALUES ($1) ON CONFLICT (user_id) DO NOTHING RETURNING *";
+        values = [req.body.request.userId];
+
       }
       await pool.query(query, values);
     }
@@ -725,14 +786,13 @@ const provideCreatorAccess = async (req, res) => {
   }
 };
 
-
 const listLearnathonCreators = async (req, res) => {
   try {
     const query = "SELECT * FROM user_rolles";
 
     const result = await getRecords(query);
 
-    const totalCount = result?.rowCount || 0; 
+    const totalCount = result?.rowCount || 0;
 
     if (totalCount === 0) {
       return res.status(200).send({
@@ -769,7 +829,6 @@ const listLearnathonCreators = async (req, res) => {
         data: result.rows,
       },
     });
-
   } catch (error) {
     console.error("Error fetching learnathon creators:", error);
     return res.status(500).send({
@@ -788,17 +847,11 @@ const listLearnathonCreators = async (req, res) => {
   }
 };
 
-
-
-
-
-
-
 module.exports = {
   createLearnathonContent,
   listLearnathonContents,
   updateLearnathonContent,
   deleteLearnathonContent,
   provideCreatorAccess,
-  listLearnathonCreators
+  listLearnathonCreators,
 };
