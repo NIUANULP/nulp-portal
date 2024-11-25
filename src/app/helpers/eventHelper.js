@@ -104,21 +104,10 @@ async function createEvent(req, res) {
       });
     }
 
-    let startDateTime, startTimezone, endDateTime, endTimezone;
-
-    const { timezone: startTz, formattedDateTime: startDt } = await getTimezone(
-      eventData.start_time,
-      eventData.start_date
-    );
-    startDateTime = startDt;
-    startTimezone = startTz;
-
-    const { timezone: endTz, formattedDateTime: endDt } = await getTimezone(
-      eventData.end_time,
-      eventData.end_date
-    );
-    endDateTime = endDt;
-    endTimezone = endTz;
+    // Directly use the date and time values from the frontend
+    const startDateTime = `${eventData.start_date}T${eventData.start_time}`;
+    const endDateTime = `${eventData.end_date}T${eventData.end_time}`;
+    const timezone = eventData.timezone || "UTC"; // Optional: Accept timezone from the frontend or default to UTC
 
     const requestId = generateRandomString(10);
 
@@ -128,11 +117,11 @@ async function createEvent(req, res) {
       description: eventData.description || "",
       start: {
         dateTime: startDateTime,
-        timeZone: startTimezone,
+        timeZone: timezone, // Use the timezone provided by the frontend
       },
       end: {
         dateTime: endDateTime,
-        timeZone: endTimezone,
+        timeZone: timezone, // Use the timezone provided by the frontend
       },
       visibility: "public",
       conferenceData: {
@@ -240,24 +229,10 @@ async function updateEvent(req, res) {
       });
     }
 
-    let startDateTime;
-    let startTimezone;
-    let endDateTime;
-    let endTimezone;
-
-    const { timezone: startTz, formattedDateTime: startDt } = await getTimezone(
-      eventData.start_time,
-      eventData.start_date
-    );
-    startDateTime = startDt;
-    startTimezone = startTz;
-
-    const { timezone: endTz, formattedDateTime: endDt } = await getTimezone(
-      eventData.end_time,
-      eventData.end_date
-    );
-    endDateTime = endDt;
-    endTimezone = endTz;
+    // Directly use the date and time values from the frontend
+    const startDateTime = `${eventData.start_date}T${eventData.start_time}`;
+    const endDateTime = `${eventData.end_date}T${eventData.end_time}`;
+    const timezone = eventData.timezone || "UTC"; // Optional: Accept timezone from the frontend or default to UTC
 
     // Fetch the existing event to get current attendees
     const existingEvent = await calendar.events.get({
@@ -275,18 +250,14 @@ async function updateEvent(req, res) {
     if (eventData.description) {
       event.description = eventData.description;
     }
-    if (startDateTime && startTimezone) {
-      event.start = {
-        dateTime: startDateTime,
-        timeZone: startTimezone,
-      };
-    }
-    if (endDateTime && endTimezone) {
-      event.end = {
-        dateTime: endDateTime,
-        timeZone: endTimezone,
-      };
-    }
+    event.start = {
+      dateTime: startDateTime,
+      timeZone: timezone,
+    };
+    event.end = {
+      dateTime: endDateTime,
+      timeZone: timezone,
+    };
 
     // Add the new email to the existing list of attendees
     let attendees = existingEvent.data.attendees || [];
@@ -332,6 +303,7 @@ async function updateEvent(req, res) {
     });
   }
 }
+
 
 async function getEvent(req, res) {
   try {

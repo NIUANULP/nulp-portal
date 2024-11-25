@@ -192,6 +192,7 @@ export class OtpComponent implements OnInit {
     //   createRequest.request['roles'] = [ "PUBLIC","CONTENT_CREATOR"];
     //   createRequest.request['id'] = "nulp-learn"; 
     // }
+
     if (this.mode === 'phone') {
         createRequest.request['phone'] = _.get(this.startingForm, 'emailPassInfo.key').toString();
         createRequest.request['phoneVerified'] = true;
