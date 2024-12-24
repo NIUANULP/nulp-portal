@@ -36,8 +36,15 @@ const encrypt = (text) => {
 
 const createLearnathonContent = async (req, res) => {
   try {
-    // Role-based authorization (comment if required)
-    if (!req?.session?.roles?.includes("CONTENT_CREATOR")) {
+    const url = `${envHelper.api_base_url}/learner/user/v5/read/${req?.session?.userId}?fields=organisations,roles,locations,declarations,externalIds`
+    const rollcheck = await axios.get(url, {
+    headers: {
+        Cookie: `${req.headers.cookie}`,
+        "Content-Type": "application/json",
+    },
+});
+
+    if (!rollcheck?.data?.result?.response?.roles?.some(role => role.role === "CONTENT_CREATOR")) {
       return res.status(403).send({
         ts: new Date().toISOString(),
         params: {
