@@ -12,6 +12,8 @@ const envHelper = require("./environmentVariablesHelper.js");
 const axios = require("axios");
 const crypto = require("crypto");
 const qs = require("qs");
+const dayjs = require('dayjs');
+
 
 function generateUniqueId() {
   const currentUnixTime = Date.now(); // Get current Unix timestamp in milliseconds
@@ -36,8 +38,15 @@ const encrypt = (text) => {
 
 const createLearnathonContent = async (req, res) => {
   try {
-    // Role-based authorization (comment if required)
-    if (!req?.session?.roles?.includes("CONTENT_CREATOR")) {
+    const url = `${envHelper.api_base_url}/learner/user/v5/read/${req?.session?.userId}?fields=organisations,roles,locations,declarations,externalIds`
+    const rollcheck = await axios.get(url, {
+    headers: {
+        Cookie: `${req.headers.cookie}`,
+        "Content-Type": "application/json",
+    },
+});
+
+    if (!rollcheck?.data?.result?.response?.roles?.some(role => role.role === "CONTENT_CREATOR")) {
       return res.status(403).send({
         ts: new Date().toISOString(),
         params: {
@@ -46,6 +55,23 @@ const createLearnathonContent = async (req, res) => {
           statusCode: 403,
           status: "unsuccessful",
           message: "You don't have the privilege to create records",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {},
+      });
+    }
+const today = dayjs();
+    if (today.isAfter("2025-02-10 18:29:00")) {
+      return res.status(403).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          statusCode: 403,
+          status: "unsuccessful",
+          message: "Submission date is exceeded",
           err: null,
           errmsg: null,
         },
@@ -394,6 +420,24 @@ const updateLearnathonContent = async (req, res) => {
       throw error;
     }
 
+    const today = dayjs();
+    if (today.isAfter("2025-02-10 18:29:00")) {
+      return res.status(403).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          statusCode: 403,
+          status: "unsuccessful",
+          message: "Submission date is exceeded",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {},
+      });
+    }
+
     let requiredFields = [];
 
     if (body.status === "review") {
@@ -724,7 +768,7 @@ const provideCreatorAccess = async (req, res) => {
     let config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: `https://devnulp.niua.org/auth/realms/sunbird/protocol/openid-connect/token`,
+      url: `${envHelper.api_base_url}/auth/realms/sunbird/protocol/openid-connect/token`,
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },

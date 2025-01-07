@@ -122,16 +122,27 @@ async function createEvent(req, res) {
 
     const requestId = generateRandomString(10);
 
+    const startdate = new Date(startDateTime);
+    startdate.setHours(startdate.getHours() - 5);
+    startdate.setMinutes(startdate.getMinutes() - 30);
+    const updatedStartDateTime = startdate.toISOString();
+
+     const endtdate = new Date(endDateTime);
+    endtdate.setHours(endtdate.getHours() - 5);
+    endtdate.setMinutes(endtdate.getMinutes() - 30);
+    const updatedEndDateTime = endtdate.toISOString();
+
     const event = {
       summary: eventData.event_name || "",
       location: eventData.event_type || "",
       description: eventData.description || "",
       start: {
-        dateTime: startDateTime,
+
+        dateTime: updatedStartDateTime,
         timeZone: startTimezone,
       },
       end: {
-        dateTime: endDateTime,
+        dateTime: updatedEndDateTime,
         timeZone: endTimezone,
       },
       visibility: "public",
@@ -1814,7 +1825,7 @@ async function eventEnrollmentList(req, res) {
       {
         response = await axios.request(config);
       }
-      
+
 
       if (response?.status === 200) {
         apiResponse = response?.data?.result?.Event || [];
