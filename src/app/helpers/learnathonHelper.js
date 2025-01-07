@@ -12,6 +12,8 @@ const envHelper = require("./environmentVariablesHelper.js");
 const axios = require("axios");
 const crypto = require("crypto");
 const qs = require("qs");
+const dayjs = require('dayjs');
+
 
 function generateUniqueId() {
   const currentUnixTime = Date.now(); // Get current Unix timestamp in milliseconds
@@ -53,6 +55,23 @@ const createLearnathonContent = async (req, res) => {
           statusCode: 403,
           status: "unsuccessful",
           message: "You don't have the privilege to create records",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {},
+      });
+    }
+const today = dayjs();
+    if (today.isAfter("2025-02-10 18:29:00")) {
+      return res.status(403).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          statusCode: 403,
+          status: "unsuccessful",
+          message: "Submission date is exceeded",
           err: null,
           errmsg: null,
         },
@@ -399,6 +418,24 @@ const updateLearnathonContent = async (req, res) => {
       const error = new Error("You don't have privilege to update records");
       error.statusCode = 403;
       throw error;
+    }
+
+    const today = dayjs();
+    if (today.isAfter("2025-02-10 18:29:00")) {
+      return res.status(403).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          statusCode: 403,
+          status: "unsuccessful",
+          message: "Submission date is exceeded",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {},
+      });
     }
 
     let requiredFields = [];
