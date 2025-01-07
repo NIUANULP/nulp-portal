@@ -137,6 +137,7 @@ async function createEvent(req, res) {
       location: eventData.event_type || "",
       description: eventData.description || "",
       start: {
+
         dateTime: updatedStartDateTime,
         timeZone: startTimezone,
       },
