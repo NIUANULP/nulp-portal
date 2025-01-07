@@ -724,7 +724,7 @@ const provideCreatorAccess = async (req, res) => {
     let config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: `https://devnulp.niua.org/auth/realms/sunbird/protocol/openid-connect/token`,
+      url: `${envHelper.api_base_url}/auth/realms/sunbird/protocol/openid-connect/token`,
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
