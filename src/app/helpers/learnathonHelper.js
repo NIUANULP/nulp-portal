@@ -7,13 +7,12 @@ const {
 } = require("./dbOperationHelper.js");
 const uuidv1 = require("uuid/v1");
 const cron = require("node-cron");
-const { pool } = require("./postgresqlConfig.js");
+const {pool} = require("./postgresqlConfig.js");
 const envHelper = require("./environmentVariablesHelper.js");
 const axios = require("axios");
 const crypto = require("crypto");
 const qs = require("qs");
-const dayjs = require('dayjs');
-
+const dayjs = require("dayjs");
 
 function generateUniqueId() {
   const currentUnixTime = Date.now(); // Get current Unix timestamp in milliseconds
@@ -38,15 +37,19 @@ const encrypt = (text) => {
 
 const createLearnathonContent = async (req, res) => {
   try {
-    const url = `${envHelper.api_base_url}/learner/user/v5/read/${req?.session?.userId}?fields=organisations,roles,locations,declarations,externalIds`
+    const url = `${envHelper.api_base_url}/learner/user/v5/read/${req?.session?.userId}?fields=organisations,roles,locations,declarations,externalIds`;
     const rollcheck = await axios.get(url, {
-    headers: {
+      headers: {
         Cookie: `${req.headers.cookie}`,
         "Content-Type": "application/json",
-    },
-});
+      },
+    });
 
-    if (!rollcheck?.data?.result?.response?.roles?.some(role => role.role === "CONTENT_CREATOR")) {
+    if (
+      !rollcheck?.data?.result?.response?.roles?.some(
+        (role) => role.role === "CONTENT_CREATOR"
+      )
+    ) {
       return res.status(403).send({
         ts: new Date().toISOString(),
         params: {
@@ -62,7 +65,7 @@ const createLearnathonContent = async (req, res) => {
         result: {},
       });
     }
-const today = dayjs();
+    const today = dayjs();
     if (today.isAfter("2025-02-10 18:29:00")) {
       return res.status(403).send({
         ts: new Date().toISOString(),
@@ -401,7 +404,7 @@ const listLearnathonContents = async (req, res) => {
 const updateLearnathonContent = async (req, res) => {
   try {
     const content_id = req.query.id;
-    const { session, body } = req;
+    const {session, body} = req;
 
     if (!content_id) {
       const error = new Error("Content id is missing");
@@ -559,7 +562,7 @@ const updateLearnathonContent = async (req, res) => {
 
 const deleteLearnathonContent = async (req, res) => {
   try {
-    const { id } = req.query; // Get the learnathon_content_id from the query parameters
+    const {id} = req.query; // Get the learnathon_content_id from the query parameters
 
     // Check if the content ID is provided
     if (!id) {
@@ -908,6 +911,41 @@ const listLearnathonCreators = async (req, res) => {
   }
 };
 
+const getLearnathonUserDetails = async (req, res) => {
+  const getUserIds = await listLearnathonCreators(req, res);
+  if (getUserIds?.result?.data?.length > 0) {
+    const userIds = getUserIds.result.data.map((user) => user.user_id);
+    try {
+      const userDetails = await axios.post(
+        `${envHelper.api_base_url}/custom/user/read`,
+        {user_ids: userIds},
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return userDetails;
+    } catch (error) {
+      console.error("Error fetching learnathon creators details:", error);
+      return res.status(500).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "unsuccessful",
+          message: "Error fetching learnathon creators details",
+          err: null,
+          errmsg: error.message,
+        },
+        responseCode: "SERVER_ERROR",
+        result: {},
+      });
+    }
+  }
+};
+
 module.exports = {
   createLearnathonContent,
   listLearnathonContents,
@@ -915,4 +953,5 @@ module.exports = {
   deleteLearnathonContent,
   provideCreatorAccess,
   listLearnathonCreators,
+  getLearnathonUserDetails,
 };
