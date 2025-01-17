@@ -943,6 +943,23 @@ const getLearnathonUserDetails = async (req, res) => {
         result: {},
       });
     }
+  } else {
+    return res.status(200).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "successful",
+        message: "No learnathon creators found",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {
+        totalCount: 0,
+        data: [],
+      },
+    });
   }
 };
 
