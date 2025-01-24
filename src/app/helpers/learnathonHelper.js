@@ -912,53 +912,64 @@ const listLearnathonCreators = async (req, res) => {
 };
 
 const getLearnathonUserDetails = async (req, res) => {
-  const getUserIds = await listLearnathonCreators(req, res);
-  if (getUserIds?.result?.data?.length > 0) {
-    const userIds = getUserIds.result.data.map((user) => user.user_id);
-    try {
-      const userDetails = await axios.post(
-        `${envHelper.api_base_url}/custom/user/read`,
-        {user_ids: userIds},
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      return userDetails;
-    } catch (error) {
-      console.error("Error fetching learnathon creators details:", error);
-      return res.status(500).send({
+  try {
+    const query =
+      "SELECT ur.user_id ,u.designation,u.user_type,u.organisation FROM user_rolles ur INNER JOIN users u ON ur.user_id=u.user_id";
+
+    const result = await getRecords(query);
+    console.log("result", result);
+
+    const totalCount = result?.rowCount || 0;
+
+    if (totalCount === 0) {
+      return res.status(200).send({
         ts: new Date().toISOString(),
         params: {
           resmsgid: uuidv1(),
           msgid: uuidv1(),
-          status: "unsuccessful",
-          message: "Error fetching learnathon creators details",
+          status: "successful",
+          message: "No learnathon creators found",
           err: null,
-          errmsg: error.message,
+          errmsg: null,
         },
-        responseCode: "SERVER_ERROR",
-        result: {},
+        responseCode: "OK",
+        result: {
+          totalCount,
+          data: [],
+        },
       });
     }
-  } else {
+
     return res.status(200).send({
       ts: new Date().toISOString(),
       params: {
         resmsgid: uuidv1(),
         msgid: uuidv1(),
         status: "successful",
-        message: "No learnathon creators found",
+        message: "Learnathon creators fetched successfully",
         err: null,
         errmsg: null,
       },
       responseCode: "OK",
       result: {
-        totalCount: 0,
-        data: [],
+        totalCount,
+        data: result.rows,
       },
+    });
+  } catch (error) {
+    console.error("Error fetching learnathon creators:", error);
+    return res.status(500).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "unsuccessful",
+        message: "Error fetching learnathon creators",
+        err: null,
+        errmsg: error.message,
+      },
+      responseCode: "SERVER_ERROR",
+      result: {},
     });
   }
 };
