@@ -136,6 +136,7 @@ export class CertificateTemplateUploadComponent implements OnInit {
     this.uploadCertificateService.getCertificates(request).subscribe(
       (certTemplateData: any) => {
         const templateList = _.get(certTemplateData, 'result.content', []);
+        console.log('templateList', templateList);
         
         this.certTemplateList = templateList.map((template: any) => {
           if (template.artifactUrl) {
