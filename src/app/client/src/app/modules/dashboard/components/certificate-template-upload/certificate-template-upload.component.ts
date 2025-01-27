@@ -133,12 +133,24 @@ export class CertificateTemplateUploadComponent implements OnInit {
       }
     };
 
-    this.uploadCertificateService.getCertificates(request).subscribe((certTemplateData:any)=>{
-      const templatList = _.get(certTemplateData, 'result.content');
-
-      this.certTemplateList = templatList;
-
-    });
+    this.uploadCertificateService.getCertificates(request).subscribe(
+      (certTemplateData: any) => {
+        const templateList = _.get(certTemplateData, 'result.content', []);
+        
+        this.certTemplateList = templateList.map((template: any) => {
+          if (template.artifactUrl) {
+            template.artifactUrl = template.artifactUrl.replace(
+              'https://devnulpstorage1.blob.core.windows.net',
+              'https://devnulpstorage.blob.core.windows.net'
+            );
+          }
+          return template;
+        });
+      },
+      (error) => {
+        console.error('Error fetching template list:', error);
+      }
+    );
   }
 
   // handleCertificateEvent(event, template: {}) {
