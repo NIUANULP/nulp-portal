@@ -135,14 +135,16 @@ export class CertificateTemplateUploadComponent implements OnInit {
 
     this.uploadCertificateService.getCertificates(request).subscribe(
       (certTemplateData: any) => {
-        const templateList = _.get(certTemplateData, 'result.content', []);
-        console.log('templateList', templateList);
-        
+        const templateList = _.get(certTemplateData, 'result.content', []);        
         this.certTemplateList = templateList.map((template: any) => {
           if (template.artifactUrl) {
             template.artifactUrl = template.artifactUrl.replace(
-              'https://devnulpstorage1.blob.core.windows.net',
-              'https://devnulpstorage.blob.core.windows.net'
+              'https://devnewnulp.blob.core.windows.net',
+              'https://devnewnulpblob.blob.core.windows.net'
+            );
+            template.artifactUrl = template.artifactUrl.replace(
+              'https://nulpstorage1.blob.core.window',
+              'https://nulpstorage.blob.core.window'
             );
           }
           return template;
