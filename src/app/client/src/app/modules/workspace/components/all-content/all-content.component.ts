@@ -292,12 +292,32 @@ export class AllContentComponent extends WorkSpace implements OnInit, AfterViewI
     }
     this.searchContentWithLockStatus(searchParams).subscribe(
       (data: ServerResponse) => {
-        if (data.result.count && (!_.isEmpty(data.result.content) ||
-        (!_.isEmpty(data.result.QuestionSet)))) {
+        if (data.result.count && (!_.isEmpty(data.result.content) || !_.isEmpty(data.result.QuestionSet))) {
           if (this.isQuestionSetFilterEnabled === true && data.result.QuestionSet) {
             data.result.content = _.concat(data.result.content, data.result.QuestionSet);
           }
-          this.allContent = data.result.content;
+    
+          // Replace old domain with new domain in content
+          const oldDomains = [
+            "https://nulpstorage1.blob.core.windows.net/",
+            "https://devnewnulp.blob.core.windows.net/"
+          ];
+          const newDomain = "https://devnewnulpblob.blob.core.windows.net/";
+    
+          this.allContent = _.map(data.result.content, (content) => {
+            if (content.appIcon) {
+              oldDomains.forEach((oldDomain) => {
+                if (content.appIcon.includes(oldDomain)) {
+                  console.log(`Replacing ${oldDomain} in`, content.appIcon);
+                  content.appIcon = content.appIcon.replace(oldDomain, newDomain);
+                }
+              });
+            } else {
+              content.appIcon = "assets/images/default.png"; // Fallback image
+            }
+            return content;
+          });
+    
           this.totalCount = data.result.count;
           this.pager = this.paginationService.getPager(data.result.count, pageNumber, limit);
           this.showLoader = false;
@@ -307,7 +327,7 @@ export class AllContentComponent extends WorkSpace implements OnInit, AfterViewI
           this.noResult = true;
           this.showLoader = false;
           this.noResultMessage = {
-            'messageText': 'messages.stmsg.m0006'
+            messageText: "messages.stmsg.m0006"
           };
         }
       },
@@ -317,7 +337,7 @@ export class AllContentComponent extends WorkSpace implements OnInit, AfterViewI
         this.showError = true;
         this.toasterService.error(this.resourceService.messages.fmsg.m0081);
       }
-    );
+    );    
   }
 
   public deleteConfirmModal(contentIds, mimeType) {
