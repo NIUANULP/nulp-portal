@@ -300,9 +300,9 @@ export class AllContentComponent extends WorkSpace implements OnInit, AfterViewI
           // Replace old domain with new domain in content
           const oldDomains = [
             "https://nulpstorage1.blob.core.windows.net/",
-            "https://devnewnulp.blob.core.windows.net/"
+            "https://nuisprod.blob.core.windows.net/"
           ];
-          const newDomain = "https://devnewnulpblob.blob.core.windows.net/";
+          const newDomain = "https://nulpstorage.blob.core.windows.net/";
     
           this.allContent = _.map(data.result.content, (content) => {
             if (content.appIcon) {
