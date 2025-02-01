@@ -172,10 +172,29 @@ export class WorkSpaceService {
 
   getDataForCard(data, staticData, dynamicFields, metaData) {
     const list: Array<ICard> = [];
+    const oldDomains = [
+      "https://nulpstorage1.blob.core.windows.net/",
+      "https://devnewnulp.blob.core.windows.net/"
+    ];
+    const newDomain = "https://devnewnulpblob.blob.core.windows.net/";
+
     _.forEach(data, (item, key) => {
+      let imageUrl = item.appIcon;
+
+      if (imageUrl) {
+        oldDomains.forEach((oldDomain) => {
+          if (imageUrl.includes(oldDomain)) {
+            console.log(`Replacing ${oldDomain} in`, imageUrl);
+            imageUrl = imageUrl.replace(oldDomain, newDomain);
+          }
+        });
+      } else {
+        imageUrl = "assets/images/default.png";
+      }
+
       const card = {
         name: item.name,
-        image: item.appIcon,
+        image: imageUrl,
         description: item.description,
         lockInfo: item.lockInfo,
         originData : item.originData

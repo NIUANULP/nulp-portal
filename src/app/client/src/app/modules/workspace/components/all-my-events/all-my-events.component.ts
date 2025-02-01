@@ -175,14 +175,31 @@ export class AllMyEventsComponent extends WorkSpace implements OnInit {
       this.eventList = data.result?.Event;
       this.EventListCount = data.result?.count;
       this.setPage(1);
+    
+      const oldDomains = [
+        "https://nulpstorage1.blob.core.windows.net/",
+        "https://devnewnulp.blob.core.windows.net/"
+      ]; // List of domains to replace
+      const newDomain = "https://devnewnulpblob.blob.core.windows.net/";
+    
       this.eventList.forEach((item, index) => {
         var array = JSON.parse("[" + item.venue + "]");
         this.eventList[index].venue = array[0].name;
-      });
-
+        if (item.appIcon) {
+          oldDomains.forEach((oldDomain) => {
+            if (item.appIcon.includes(oldDomain)) {
+              this.eventList[index].appIcon = item.appIcon.replace(oldDomain, newDomain);
+            }
+          });
+        } else {
+          this.eventList[index].appIcon = "assets/images/default.png"; // Default image
+        }
+    
+      });    
       this.isLoading = false;
-    }, err => { console.log("err", err); }
-    )
+    }, err => { 
+      console.log("err", err); 
+    });
   }
 
 
