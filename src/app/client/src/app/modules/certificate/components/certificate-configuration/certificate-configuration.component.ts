@@ -180,6 +180,25 @@ export class CertificateConfigurationComponent implements OnInit, OnDestroy {
     };
   }
 
+  replaceDomain(obj: any) {
+    const oldDomain = "https://nulpstorage1.blob.core.windows.net";
+    const newDomain = "https://nulpstorage.blob.core.windows.net";
+  
+    if (!obj || typeof obj !== "object") return obj;
+  
+    if (typeof obj === "string" && obj.includes(oldDomain)) {
+      return obj.replace(oldDomain, newDomain);
+    }
+  
+    if (Array.isArray(obj)) {
+      return obj.map((item) => this.replaceDomain(item));
+    }
+  
+    return Object.fromEntries(
+      Object.entries(obj).map(([key, value]) => [key, this.replaceDomain(value)])
+    );
+  }
+
   /**
    * @description - It will fetch the drop-down values by calling the preference api with proper request payload.
    */
@@ -221,7 +240,7 @@ export class CertificateConfigurationComponent implements OnInit, OnDestroy {
   return this.uploadCertificateService.getCertificates(request).pipe(
       tap((certTemplateData) => {
         const templatList = _.get(certTemplateData, 'result.content');
-        this.certTemplateList = templatList;
+        this.certTemplateList = this.replaceDomain(templatList);
         // To select the newly created certificate
         let tempIdToSelect;
         if (this.newTemplateIdentifier) {
@@ -233,7 +252,7 @@ export class CertificateConfigurationComponent implements OnInit, OnDestroy {
         if (templateData) {
           _.remove(this.certTemplateList, (cert) => _.get(cert, 'identifier') === _.get(templateData , 'identifier'));
           this.certTemplateList.unshift(templateData);
-          this.selectedTemplate = templateData;
+          this.selectedTemplate = this.replaceDomain(templateData);
         }
       }), catchError(error => {
           return of({});
@@ -254,14 +273,14 @@ export class CertificateConfigurationComponent implements OnInit, OnDestroy {
   getBatchDetails(batchId) {
     return this.certificateService.getBatchDetails(batchId).pipe(
       tap(batchDetails => {
-        this.batchDetails = _.get(batchDetails, 'result.response');
+        this.batchDetails = this.replaceDomain(_.get(batchDetails, 'result.response'));
         const cert_templates = _.get(this.batchDetails, 'cert_templates');
         if (_.isEmpty(cert_templates)) {
           this.getCertConfigFields();
         } else {
           // Certifciate has attached to a batch
           if (_.isArray(cert_templates)) {
-            this.batchDetails.cert_templates = cert_templates[0];
+            this.batchDetails.cert_templates = this.replaceDomain(cert_templates[0]);
           }
           this.processCertificateDetails(cert_templates);
         }
@@ -298,7 +317,7 @@ export class CertificateConfigurationComponent implements OnInit, OnDestroy {
   getCourseDetails(courseId: string) {
     return this.playerService.getCollectionHierarchy(courseId).pipe(
       tap(courseData => {
-        this.courseDetails = _.get(courseData, 'result.content');
+        this.courseDetails =this.replaceDomain(_.get(courseData, 'result.content'));
       }, catchError(error => {
         return of({});
       }))
@@ -326,7 +345,7 @@ export class CertificateConfigurationComponent implements OnInit, OnDestroy {
         'batch': {
           'courseId': _.get(this.queryParams, 'courseId'),
           'batchId': _.get(this.queryParams, 'batchId'),
-          'template': {
+          'template':this.replaceDomain({
             'identifier': _.get(this.selectedTemplate, 'identifier'),
             'criteria': this.getCriteria(this.userPreference.value),
             'name': _.get(this.selectedTemplate, 'name'),
@@ -334,7 +353,7 @@ export class CertificateConfigurationComponent implements OnInit, OnDestroy {
             'data': JSON.stringify(_.get(this.selectedTemplate, 'data')),
             'previewUrl': _.get(this.selectedTemplate, 'artifactUrl'),
             'signatoryList': JSON.parse(_.get(this.selectedTemplate, 'signatoryList'))
-          }
+          }),
         }
       }
     };
