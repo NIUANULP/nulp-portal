@@ -180,23 +180,32 @@ export class CertificateConfigurationComponent implements OnInit, OnDestroy {
     };
   }
 
-  replaceDomain(obj: any) {
+  replaceDomain(obj: any): any {
     const oldDomain = "https://nulpstorage1.blob.core.windows.net";
     const newDomain = "https://nulpstorage.blob.core.windows.net";
   
-    if (!obj || typeof obj !== "object") return obj;
+    if (!obj) return obj;
   
+    // If the value is a string and contains the old domain, replace it
     if (typeof obj === "string" && obj.includes(oldDomain)) {
       return obj.replace(oldDomain, newDomain);
     }
   
+    // If the value is an array, apply this function to each element
     if (Array.isArray(obj)) {
-      return obj.map((item) => this.replaceDomain(item));
+      return obj.map(item => this.replaceDomain(item));
     }
   
-    return Object.fromEntries(
-      Object.entries(obj).map(([key, value]) => [key, this.replaceDomain(value)])
-    );
+    // If the value is an object, apply this function to each property
+    if (typeof obj === "object") {
+      const updatedObject = {};
+      for (const key in obj) {
+        updatedObject[key] = this.replaceDomain(obj[key]); // Recursively update all properties
+      }
+      return updatedObject;
+    }
+  
+    return obj; // Return unchanged if it's not a string, array, or object
   }
 
   /**
@@ -357,7 +366,6 @@ export class CertificateConfigurationComponent implements OnInit, OnDestroy {
         }
       }
     };
-
     if (this.isTemplateChanged) {
       request['request']['oldTemplateId'] = this.templateIdentifier;
     }
