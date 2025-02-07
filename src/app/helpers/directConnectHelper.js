@@ -995,4 +995,5 @@ module.exports = {
   updateChat,
   unBlockUserChat,
   getBlockUserList,
+  decryptMessage
 };

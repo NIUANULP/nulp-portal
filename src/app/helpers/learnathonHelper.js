@@ -13,6 +13,7 @@ const axios = require("axios");
 const crypto = require("crypto");
 const qs = require("qs");
 const dayjs = require("dayjs");
+const { decryptMessage } = require("./directConnectHelper.js");
 
 function generateUniqueId() {
   const currentUnixTime = Date.now(); // Get current Unix timestamp in milliseconds
@@ -34,6 +35,14 @@ const encrypt = (text) => {
   const encryptedData = iv.toString("hex") + ":" + encrypted.toString("hex");
   return encryptedData;
 };
+
+
+// Encrypting a phone number
+const phoneNumber = "9876543210"; 
+const encryptedPhoneNumber ="c3cbe5babcbf71c01da5ab610c9c9dcc:f6027d4b27ba959ba204bf4debeb7d3a";
+
+console.log("Encrypted Phone Number:", encryptedPhoneNumber,decryptMessage(encryptedPhoneNumber));
+
 
 const createLearnathonContent = async (req, res) => {
   try {
@@ -303,6 +312,15 @@ const listLearnathonContents = async (req, res) => {
     values.push(parseInt(limit), parseInt(offset));
 
     const result = await getRecords(query, values);
+
+    result?.rows?.forEach((row) => {
+      if (row.email) {
+        row.email = decrypt(row.email);
+      }
+      if (row.mobile_number) {
+        row.mobile_number = decrypt(row.mobile_number);
+      }
+    })
 
     let countQuery = `
       SELECT COUNT(*) 
@@ -852,6 +870,7 @@ const provideCreatorAccess = async (req, res) => {
 
 const listLearnathonCreators = async (req, res) => {
   try {
+    console.log("Encrypted Phone Number:", encryptedPhoneNumber, await decryptMessage(encryptedPhoneNumber));
     const query = "SELECT * FROM user_rolles";
 
     const result = await getRecords(query);

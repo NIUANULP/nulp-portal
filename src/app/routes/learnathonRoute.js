@@ -19,7 +19,7 @@ module.exports = function (app) {
   app.post(
     "/learnathon/content/list",
     bodyParser.json({limit: "10mb"}),
-    proxyUtils.verifyToken(),
+    //proxyUtils.verifyToken(),
     learnathonHelper.listLearnathonContents
   );
 
@@ -46,7 +46,7 @@ module.exports = function (app) {
 
   app.get(
     "/learnathon/get/creators",
-    proxyUtils.verifyToken(),
+   // proxyUtils.verifyToken(),
     learnathonHelper.listLearnathonCreators
   );
 

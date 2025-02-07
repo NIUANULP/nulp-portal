@@ -4,6 +4,7 @@ const envHelper = require('./helpers/environmentVariablesHelper.js');
 const path = require('path');
 const fs = require('fs');
 const packageObj = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+console.log("envHelper.sunbird_azure_account_name, envHelper.sunbird_azure_account_key",envHelper.sunbird_azure_account_name, envHelper.sunbird_azure_account_key);
 
 enableLogger({
   logBasePath: path.join(__dirname, 'logs'),
