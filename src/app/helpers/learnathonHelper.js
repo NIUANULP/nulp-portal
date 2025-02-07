@@ -35,6 +35,15 @@ const encrypt = (text) => {
   const encryptedData = iv.toString("hex") + ":" + encrypted.toString("hex");
   return encryptedData;
 };
+const decrypt = (encryptedData) => {
+  const textParts = encryptedData?.split(":");
+  const iv = Buffer?.from(textParts?.shift(), "hex");
+  const encryptedText = Buffer.from(textParts?.join(":"), "hex");
+  let decipher = crypto?.createDecipheriv("aes-256-cbc", key, iv);
+  let decrypted = decipher?.update(encryptedText);
+  decrypted = Buffer?.concat([decrypted, decipher?.final()]);
+  return decrypted?.toString();
+};
 
 const createLearnathonContent = async (req, res) => {
   try {
@@ -300,6 +309,15 @@ const listLearnathonContents = async (req, res) => {
     values.push(parseInt(limit), parseInt(offset));
 
     const result = await getRecords(query, values);
+
+    result?.rows?.forEach((row) => {
+      if (row.email) {
+        row.email = decrypt(row.email);
+      }
+      if (row.mobile_number) {
+        row.mobile_number = decrypt(row.mobile_number);
+      }
+    })
 
     let countQuery = `
       SELECT COUNT(*) 
