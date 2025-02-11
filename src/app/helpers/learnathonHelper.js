@@ -66,7 +66,7 @@ const createLearnathonContent = async (req, res) => {
       });
     }
     const today = dayjs();
-    if (today.isAfter("2025-02-10 18:29:00")) {
+    if (today.isAfter("2025-02-28 23:59:59")) {
       return res.status(403).send({
         ts: new Date().toISOString(),
         params: {
@@ -424,7 +424,7 @@ const updateLearnathonContent = async (req, res) => {
     }
 
     const today = dayjs();
-    if (today.isAfter("2025-02-10 18:29:00")) {
+    if (today.isAfter("2025-02-28 23:59:59")) {
       return res.status(403).send({
         ts: new Date().toISOString(),
         params: {
