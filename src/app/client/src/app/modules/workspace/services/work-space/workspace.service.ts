@@ -174,9 +174,9 @@ export class WorkSpaceService {
     const list: Array<ICard> = [];
     const oldDomains = [
       "https://nulpstorage1.blob.core.windows.net/",
-      "https://nuisprod.blob.core.windows.net/"
+      "https://devnewnulp.blob.core.windows.net/"
     ];
-    const newDomain = "https://nulpstorage.blob.core.windows.net/";
+    const newDomain = "https://devnewnulpblob.blob.core.windows.net/";
 
     _.forEach(data, (item, key) => {
       let imageUrl = item.appIcon;
