@@ -994,6 +994,66 @@ const getLearnathonUserDetails = async (req, res) => {
   }
 };
 
+const getLearnathonCreators = async (req, res) => {
+  try {
+    const query = "SELECT * FROM user_rolles";
+
+    const result = await getRecords(query);
+
+    const totalCount = result?.rowCount || 0;
+
+    if (totalCount === 0) {
+      return res.status(200).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "successful",
+          message: "No learnathon creators found",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {
+          totalCount
+        },
+      });
+    }
+
+    return res.status(200).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "successful",
+        message: "Learnathon creators fetched successfully",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {
+        totalCount
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching learnathon creators:", error);
+    return res.status(500).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "unsuccessful",
+        message: "Error fetching learnathon creators",
+        err: null,
+        errmsg: error.message,
+      },
+      responseCode: "SERVER_ERROR",
+      result: {},
+    });
+  }
+};
+
+
 module.exports = {
   createLearnathonContent,
   listLearnathonContents,
@@ -1002,4 +1062,5 @@ module.exports = {
   provideCreatorAccess,
   listLearnathonCreators,
   getLearnathonUserDetails,
+  getLearnathonCreators,
 };
