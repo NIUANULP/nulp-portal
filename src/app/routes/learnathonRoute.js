@@ -54,6 +54,10 @@ module.exports = function (app) {
     "/learnathon/get/creators/details",
     proxyUtils.verifyToken(),
     learnathonHelper.getLearnathonUserDetails
+  );
+  app.get(
+    "/get/creators",
+    learnathonHelper.getLearnathonCreators
   )
 
 };
