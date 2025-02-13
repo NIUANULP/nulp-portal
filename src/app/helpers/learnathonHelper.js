@@ -1005,10 +1005,10 @@ const getLearnathonCreators = async (req, res) => {
 
 
     const totalResult = await getRecords(query);
-    const stateResult= await getRecord(query1);
-    const cityResult= await getRecord(query2);
-    const institutionResult= await getRecord(query3);
-    const industriesResult= await getRecord(query4);
+    const stateResult= await getRecords(query1);
+    const cityResult= await getRecords(query2);
+    const institutionResult= await getRecords(query3);
+    const industriesResult= await getRecords(query4);
 
     const totalCount = totalResult?.rowCount || 0;
     const stateCount = stateResult?.rowCount || 0;
