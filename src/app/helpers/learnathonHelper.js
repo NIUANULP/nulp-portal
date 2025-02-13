@@ -996,11 +996,11 @@ const getLearnathonUserDetails = async (req, res) => {
 
 const getLearnathonCreators = async (req, res) => {
   try {
-    const query1 = "SELECT * FROM user_rolles";
-    const query2 = "SELECT count(*) FROM user_rolles ur INNER JOIN users u ON ur.user_id = u.user_id where u.user_type='State Governments / Parastatal Bodies'";
-    const query3 = "SELECT count(*) FROM user_rolles ur INNER JOIN users u ON ur.user_id = u.user_id where u.user_type='Any Other Government Entities' or u.user_type='Urban Local Bodies / Special Purpose Vehicles'";
-    const query4="SELECT count(*) FROM user_rolles ur INNER JOIN users u ON ur.user_id = u.user_id where u.user_type='Academia and Research Organisations' ";
-    const query5="SELECT count(*) FROM user_rolles ur INNER JOIN users u ON ur.user_id = u.user_id where u.user_type='Industries'" ;
+    const query = "SELECT * FROM user_rolles";
+    const query1 = "SELECT count(*) FROM user_rolles ur INNER JOIN users u ON ur.user_id = u.user_id where u.user_type='State Governments / Parastatal Bodies'";
+    const query2 = "SELECT count(*) FROM user_rolles ur INNER JOIN users u ON ur.user_id = u.user_id where u.user_type='Any Other Government Entities' or u.user_type='Urban Local Bodies / Special Purpose Vehicles'";
+    const query3="SELECT count(*) FROM user_rolles ur INNER JOIN users u ON ur.user_id = u.user_id where u.user_type='Academia and Research Organisations' ";
+    const query4="SELECT count(*) FROM user_rolles ur INNER JOIN users u ON ur.user_id = u.user_id where u.user_type='Industries'" ;
 
 
 
