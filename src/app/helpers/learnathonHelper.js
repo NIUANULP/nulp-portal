@@ -996,30 +996,27 @@ const getLearnathonUserDetails = async (req, res) => {
 
 const getLearnathonCreators = async (req, res) => {
   try {
-    const query = "SELECT * FROM user_rolles";
+    const query1 = "SELECT * FROM user_rolles";
+    const query2 = "SELECT count(*) FROM user_rolles ur INNER JOIN users u ON ur.user_id = u.user_id where u.user_type='State Governments / Parastatal Bodies'";
+    const query3 = "SELECT count(*) FROM user_rolles ur INNER JOIN users u ON ur.user_id = u.user_id where u.user_type='Any Other Government Entities' or u.user_type='Urban Local Bodies / Special Purpose Vehicles'";
+    const query4="SELECT count(*) FROM user_rolles ur INNER JOIN users u ON ur.user_id = u.user_id where u.user_type='Academia and Research Organisations' ";
+    const query5="SELECT count(*) FROM user_rolles ur INNER JOIN users u ON ur.user_id = u.user_id where u.user_type='Industries'" ;
 
-    const result = await getRecords(query);
 
-    const totalCount = result?.rowCount || 0;
 
-    if (totalCount === 0) {
-      return res.status(200).send({
-        ts: new Date().toISOString(),
-        params: {
-          resmsgid: uuidv1(),
-          msgid: uuidv1(),
-          status: "successful",
-          message: "No learnathon creators found",
-          err: null,
-          errmsg: null,
-        },
-        responseCode: "OK",
-        result: {
-          totalCount
-        },
-      });
-    }
+    const totalResult = await getRecords(query);
+    const stateResult= await getRecord(query1);
+    const cityResult= await getRecord(query2);
+    const institutionResult= await getRecord(query3);
+    const industriesResult= await getRecord(query4);
 
+    const totalCount = totalResult?.rowCount || 0;
+    const stateCount = stateResult?.rowCount || 0;
+    const cityCount = cityResult?.rowCount || 0;
+    const institutionCount=institutionResult?.rowCount ||0;
+    const industriesCount=industriesResult?.rowCount ||0;
+
+     
     return res.status(200).send({
       ts: new Date().toISOString(),
       params: {
@@ -1032,7 +1029,11 @@ const getLearnathonCreators = async (req, res) => {
       },
       responseCode: "OK",
       result: {
-        totalCount
+        totalCount,
+        stateCount,
+        cityCount,
+        institutionCount,
+        industriesCount
       },
     });
   } catch (error) {
