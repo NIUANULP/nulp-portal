@@ -1000,7 +1000,7 @@ const getLearnathonCreators = async (req, res) => {
     const query1 = "SELECT count(*) FROM user_rolles ur INNER JOIN users u ON ur.user_id = u.user_id where u.user_type='State Governments / Parastatal Bodies'";
     const query2 = "SELECT count(*) FROM user_rolles ur INNER JOIN users u ON ur.user_id = u.user_id where u.user_type='Any Other Government Entities' or u.user_type='Urban Local Bodies / Special Purpose Vehicles'";
     const query3="SELECT count(*) FROM user_rolles ur INNER JOIN users u ON ur.user_id = u.user_id where u.user_type='Academia and Research Organisations' ";
-    const query4="SELECT count(*) FROM user_rolles ur INNER JOIN users u ON ur.user_id = u.user_id where u.user_type='Industries'" ;
+    const query4="SELECT count(*) FROM user_rolles ur INNER JOIN users u ON ur.user_id = u.user_id where LOWER(u.user_type) = 'industries'" ;
 
 
 
