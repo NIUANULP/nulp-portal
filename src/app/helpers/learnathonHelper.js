@@ -933,8 +933,10 @@ const listLearnathonCreators = async (req, res) => {
 
 const getLearnathonUserDetails = async (req, res) => {
   try {
+
+    // const { userIds } = req.body;
     const query =
-      "SELECT ur.user_id ,u.designation,u.user_type,u.organisation FROM user_rolles ur INNER JOIN users u ON ur.user_id=u.user_id";
+      "SELECT ur.user_id ,CONCAT(u.firstName, ' ', u.lastName) AS name,u.designation,u.user_type,u.organisation FROM user_rolles ur INNER JOIN users u ON ur.user_id=u.user_id";
 
     const result = await getRecords(query);
     console.log("result", result);
