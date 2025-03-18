@@ -439,7 +439,7 @@ const updateLearnathonContent = async (req, res) => {
     }
 
     const today = dayjs();
-    if (today.isAfter("2025-02-28 23:59:59")) {
+    if (today.isAfter("2025-04-10 09:00:00")) {
       return res.status(403).send({
         ts: new Date().toISOString(),
         params: {
