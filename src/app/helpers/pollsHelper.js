@@ -106,17 +106,19 @@ const createPolls = async (req, res) => {
       console.log("visibility is not PublicToAll");
       data.organization = req?.session?.rootOrgId;
     }
-    // Hack - This change is for Learnathon to accept one option in poll
-    if (data.category != "Learnathon") {
+// Hack - This change is for Learnathon to accept one option in poll
+    if(data.category != "Learnathon"){
       if (
-        !data?.poll_options ||
-        data?.poll_options.filter((option) => option.trim() !== "").length < 2
-      ) {
-        const error = new Error(`Poll option should be more than 2`);
-        error.statusCode = 400;
-        throw error;
-      }
+      !data?.poll_options ||
+      data?.poll_options.filter((option) => option.trim() !== "").length < 2
+    ) {
+      const error = new Error(`Poll option should be more than 2`);
+      error.statusCode = 400;
+      throw error;
     }
+
+    }
+    
 
     const pollOptions = data?.poll_options.map((option) => `"${option}"`);
     data.poll_options = pollOptions;
@@ -252,16 +254,16 @@ const updatePolls = async (req, res) => {
     }
     // Hack - This change is for Learnathon to accept one option in poll
 
-    if (body.category != "Learnathon") {
+    if(body.category != "Learnathon"){
       if (
-        body?.poll_options &&
-        body?.poll_options?.filter((option) => option?.trim() !== "").length < 2
-      ) {
-        const error = new Error(`Poll option should be more than 2`);
-        error.statusCode = 400;
-        throw error;
-      }
+      body?.poll_options &&
+      body?.poll_options?.filter((option) => option?.trim() !== "").length < 2
+    ) {
+      const error = new Error(`Poll option should be more than 2`);
+      error.statusCode = 400;
+      throw error;
     }
+  }
 
     if (body.visibility || body.organization || body.poll_id) {
       const error = new Error(
@@ -667,7 +669,6 @@ const listPolls = async (req, res) => {
       offset = 0,
       search = "",
     } = req.body.request;
-
     const isSystemAdmin = req?.session?.roles?.includes(
       "SYSTEM_ADMINISTRATION"
     );
@@ -735,10 +736,7 @@ const listPolls = async (req, res) => {
       values.push(filters.to_date);
       query += ` AND polls.end_date <= $${values.length}`;
     }
-    if (filters.content_category) {
-      values.push(filters.content_category);
-      query += ` AND polls.content_category = $${values.length}`;
-    }
+
     // Apply search across all relevant fields
     if (search) {
       values.push(`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`);
@@ -826,10 +824,6 @@ const listPolls = async (req, res) => {
     if (filters.to_date) {
       countValues.push(filters.to_date);
       countQuery += ` AND polls.end_date <= $${countValues.length}`;
-    }
-    if (filters.content_category) {
-      countValues.push(filters.content_category);
-      countQuery += ` AND polls.content_category = $${countValues.length}`;
     }
     if (search) {
       countValues.push(
