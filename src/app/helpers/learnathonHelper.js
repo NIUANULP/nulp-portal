@@ -7,13 +7,12 @@ const {
 } = require("./dbOperationHelper.js");
 const uuidv1 = require("uuid/v1");
 const cron = require("node-cron");
-const { pool } = require("./postgresqlConfig.js");
+const {pool} = require("./postgresqlConfig.js");
 const envHelper = require("./environmentVariablesHelper.js");
 const axios = require("axios");
 const crypto = require("crypto");
 const qs = require("qs");
-const dayjs = require('dayjs');
-
+const dayjs = require("dayjs");
 
 function generateUniqueId() {
   const currentUnixTime = Date.now(); // Get current Unix timestamp in milliseconds
@@ -47,15 +46,22 @@ const decrypt = (encryptedData) => {
 
 const createLearnathonContent = async (req, res) => {
   try {
-    const url = `${envHelper.api_base_url}/learner/user/v5/read/${req?.session?.userId}?fields=organisations,roles,locations,declarations,externalIds`
+    const url = `${envHelper.api_base_url}/learner/user/v5/read/${req?.session?.userId}?fields=organisations,roles,locations,declarations,externalIds`;
     const rollcheck = await axios.get(url, {
+      headers: {
       headers: {
         Cookie: `${req.headers.cookie}`,
         "Content-Type": "application/json",
       },
     });
+      },
+    });
 
-    if (!rollcheck?.data?.result?.response?.roles?.some(role => role.role === "CONTENT_CREATOR")) {
+    if (
+      !rollcheck?.data?.result?.response?.roles?.some(
+        (role) => role.role === "CONTENT_CREATOR"
+      )
+    ) {
       return res.status(403).send({
         ts: new Date().toISOString(),
         params: {
@@ -419,7 +425,7 @@ const listLearnathonContents = async (req, res) => {
 const updateLearnathonContent = async (req, res) => {
   try {
     const content_id = req.query.id;
-    const { session, body } = req;
+    const {session, body} = req;
 
     if (!content_id) {
       const error = new Error("Content id is missing");
@@ -577,7 +583,7 @@ const updateLearnathonContent = async (req, res) => {
 
 const deleteLearnathonContent = async (req, res) => {
   try {
-    const { id } = req.query; // Get the learnathon_content_id from the query parameters
+    const {id} = req.query; // Get the learnathon_content_id from the query parameters
 
     // Check if the content ID is provided
     if (!id) {
@@ -925,6 +931,130 @@ const listLearnathonCreators = async (req, res) => {
   }
 };
 
+const getLearnathonUserDetails = async (req, res) => {
+  try {
+    const query =
+      "SELECT ur.user_id ,u.designation,u.user_type,u.organisation FROM user_rolles ur INNER JOIN users u ON ur.user_id=u.user_id";
+
+    const result = await getRecords(query);
+    console.log("result", result);
+
+    const totalCount = result?.rowCount || 0;
+
+    if (totalCount === 0) {
+      return res.status(200).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "successful",
+          message: "No learnathon creators found",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {
+          totalCount,
+          data: [],
+        },
+      });
+    }
+
+    return res.status(200).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "successful",
+        message: "Learnathon creators fetched successfully",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {
+        totalCount,
+        data: result.rows,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching learnathon creators:", error);
+    return res.status(500).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "unsuccessful",
+        message: "Error fetching learnathon creators",
+        err: null,
+        errmsg: error.message,
+      },
+      responseCode: "SERVER_ERROR",
+      result: {},
+    });
+  }
+};
+
+const getLearnathonCreators = async (req, res) => {
+  try {
+    const query = "SELECT * FROM user_rolles";
+    const query1 = "SELECT count(*) FROM user_rolles ur INNER JOIN users u ON ur.user_id = u.user_id where u.user_type='State Governments / Parastatal Bodies'";
+    const query2 = "SELECT count(*) FROM user_rolles ur INNER JOIN users u ON ur.user_id = u.user_id where u.user_type='Any Other Government Entities' or u.user_type='Urban Local Bodies / Special Purpose Vehicles'";
+    const query3="SELECT count(*) FROM user_rolles ur INNER JOIN users u ON ur.user_id = u.user_id where u.user_type='Academia and Research Organisations' ";
+    const query4="SELECT count(*) FROM user_rolles ur INNER JOIN users u ON ur.user_id = u.user_id where u.user_type='Industries'" ;
+
+
+
+    const totalResult = await getRecords(query);
+    const stateResult= await getRecords(query1);
+    const cityResult= await getRecords(query2);
+    const institutionResult= await getRecords(query3);
+    const industriesResult= await getRecords(query4);
+
+    const totalCount = totalResult?.rowCount || 0;
+    const stateCount = stateResult?.rowCount || 0;
+    const cityCount = cityResult?.rowCount || 0;
+    const institutionCount=institutionResult?.rowCount ||0;
+    const industriesCount=industriesResult?.rowCount ||0;
+
+     
+    return res.status(200).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "successful",
+        message: "Learnathon creators fetched successfully",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {
+        totalCount,
+        stateCount,
+        cityCount,
+        institutionCount,
+        industriesCount
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching learnathon creators:", error);
+    return res.status(500).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "unsuccessful",
+        message: "Error fetching learnathon creators",
+        err: null,
+        errmsg: error.message,
+      },
+      responseCode: "SERVER_ERROR",
+      result: {},
+    });
+  }
+};
+
+
 module.exports = {
   createLearnathonContent,
   listLearnathonContents,
@@ -932,4 +1062,6 @@ module.exports = {
   deleteLearnathonContent,
   provideCreatorAccess,
   listLearnathonCreators,
+  getLearnathonUserDetails,
+  getLearnathonCreators,
 };

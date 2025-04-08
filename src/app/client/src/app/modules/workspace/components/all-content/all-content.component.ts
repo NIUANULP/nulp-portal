@@ -293,6 +293,7 @@ export class AllContentComponent extends WorkSpace implements OnInit, AfterViewI
     this.searchContentWithLockStatus(searchParams).subscribe(
       (data: ServerResponse) => {
         if (data.result.count && (!_.isEmpty(data.result.content) || !_.isEmpty(data.result.QuestionSet))) {
+        if (data.result.count && (!_.isEmpty(data.result.content) || !_.isEmpty(data.result.QuestionSet))) {
           if (this.isQuestionSetFilterEnabled === true && data.result.QuestionSet) {
             data.result.content = _.concat(data.result.content, data.result.QuestionSet);
           }
@@ -300,9 +301,9 @@ export class AllContentComponent extends WorkSpace implements OnInit, AfterViewI
           // Replace old domain with new domain in content
           const oldDomains = [
             "https://nulpstorage1.blob.core.windows.net/",
-            "https://nuisprod.blob.core.windows.net/"
+            "https://devnewnulp.blob.core.windows.net/"
           ];
-          const newDomain = "https://nulpstorage.blob.core.windows.net/";
+          const newDomain = "https://devnewnulpblob.blob.core.windows.net/";
     
           this.allContent = _.map(data.result.content, (content) => {
             if (content.appIcon) {

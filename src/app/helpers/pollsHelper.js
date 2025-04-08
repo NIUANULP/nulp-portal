@@ -65,6 +65,7 @@ const createPolls = async (req, res) => {
       "created_by",
       "content_id",
       "category",
+      "content_category",
     ];
     const requiredFields = [
       "title",
