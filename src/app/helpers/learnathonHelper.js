@@ -49,11 +49,11 @@ const createLearnathonContent = async (req, res) => {
   try {
     const url = `${envHelper.api_base_url}/learner/user/v5/read/${req?.session?.userId}?fields=organisations,roles,locations,declarations,externalIds`
     const rollcheck = await axios.get(url, {
-    headers: {
+      headers: {
         Cookie: `${req.headers.cookie}`,
         "Content-Type": "application/json",
-    },
-});
+      },
+    });
 
     if (!rollcheck?.data?.result?.response?.roles?.some(role => role.role === "CONTENT_CREATOR")) {
       return res.status(403).send({
@@ -71,8 +71,8 @@ const createLearnathonContent = async (req, res) => {
         result: {},
       });
     }
-const today = dayjs();
-    if (today.isAfter("2025-02-28 23:59:59")) {
+    const today = dayjs();
+    if (today.isAfter("2025-05-28 23:59:59")) {
       return res.status(403).send({
         ts: new Date().toISOString(),
         params: {
@@ -439,7 +439,7 @@ const updateLearnathonContent = async (req, res) => {
     }
 
     const today = dayjs();
-    if (today.isAfter("2025-04-10 09:00:00")) {
+    if (today.isAfter("2025-05-10 09:00:00")) {
       return res.status(403).send({
         ts: new Date().toISOString(),
         params: {
@@ -803,10 +803,9 @@ const provideCreatorAccess = async (req, res) => {
         url: `${envHelper.api_base_url}/api/user/v1/role/assign`,
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${
-            envHelper.PORTAL_API_AUTH_TOKEN ||
+          Authorization: `Bearer ${envHelper.PORTAL_API_AUTH_TOKEN ||
             envHelper.sunbird_logged_default_token
-          }`,
+            }`,
           "x-authenticated-user-token": response.data.access_token,
         },
         data: req.body,
