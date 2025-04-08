@@ -57,9 +57,9 @@
                     Organization Report
                  </a>
 
-                 <a *ngIf="adminVarLink=='present'" class="item" (click)="urlPathOfDashboard('userreport')" >
+                 <!-- <a *ngIf="adminVarLink=='present'" class="item" (click)="urlPathOfDashboard('userreport')" >
                      User Report
-                  </a>
+                  </a> -->
 
                   <a *ngIf="adminVarLink=='present'" class="item" (click)="urlPathOfDashboard('contentreport')" >
                      Content Report
@@ -469,11 +469,11 @@
                      Organization Report
                     </a>
                   </li>
-                       <li (click)="toggleSideMenu(false)" >
+                       <!-- <li (click)="toggleSideMenu(false)" >
                          <a *ngIf="adminVarLink=='present'" class="item" (click)="urlPathOfDashboard('userreport')" >
                            User Report
                           </a>
-                       </li>
+                       </li> -->
                     <li (click)="toggleSideMenu(false)">
                      <a *ngIf="adminVarLink=='present'" class="item" (click)="urlPathOfDashboard('contentreport')" >
                        Content Report

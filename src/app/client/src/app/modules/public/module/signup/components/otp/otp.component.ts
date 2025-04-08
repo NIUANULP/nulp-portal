@@ -60,6 +60,8 @@ export class OtpComponent implements OnInit {
   }
 
   ngOnInit() {
+
+
     console.log('Global Object data => ', this.startingForm); // TODO: log!
     this.emailAddress = _.get(this.startingForm, 'emailPassInfo.type') === 'email' ? _.get(this.startingForm, 'emailPassInfo.key') : '';
     this.phoneNumber = _.get(this.startingForm, 'emailPassInfo.type') === 'phone' ? _.get(this.startingForm, 'emailPassInfo.key') : '';
@@ -178,7 +180,7 @@ export class OtpComponent implements OnInit {
         },
         'request': {
             'firstName': _.trim(_.get(this.startingForm, 'basicInfo.name')),
-            'password': _.trim(_.get(this.startingForm, 'emailPassInfo.password')),
+            'password': _.trim(_.get(this.startingForm, 'emailPassInfo.password')), 
         }
     };
 
@@ -188,6 +190,15 @@ export class OtpComponent implements OnInit {
       createRequest.request['roles'] = [ "PUBLIC","CONTENT_CREATOR"];
       createRequest.request['id'] = ["nulp-learn"]; 
     }
+
+    // if (window.location.href.includes("learnathon")) { 
+    //   this.isLearnathonUser = true;
+    //   console.log('Learnathon URL Detected');
+    //   createRequest.request['channel'] = "nulp-learn";
+    //   createRequest.request['organisationId'] = "0137506576041902087";
+    //   createRequest.request['roles'] = [ "PUBLIC","CONTENT_CREATOR"];
+    //   createRequest.request['id'] = "nulp-learn"; 
+    // }
 
     if (this.mode === 'phone') {
         createRequest.request['phone'] = _.get(this.startingForm, 'emailPassInfo.key').toString();

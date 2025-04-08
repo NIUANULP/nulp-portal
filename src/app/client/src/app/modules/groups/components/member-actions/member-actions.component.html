@@ -1,10 +1,13 @@
-<app-modal-wrapper  [config]="{disableClose: true, size: 'small',panelClass: 'material-modal'}" (dismiss)="closeModal()" #modal>
+<app-modal-wrapper  [config]="{disableClose: true, size: 'medium',panelClass: 'material-modal'}" (dismiss)="closeModal()" #modal>
   <ng-template sbModalContent>
     <div class="sb-mat__modal">
-      <div mat-dialog-title class="px-16">
-        <div class="title" tabindex="0">{{memberActionData?.title}}</div>
-        <button type="button" aria-label="close dialog" class="close-btn" 
-        (dismiss)="closeModel()" mat-dialog-close tabindex="0"></button>
+      <div class="mat-dialog-title">
+        <div class="modal-title">
+        <div class="sb-modal-header title" >{{memberActionData?.title}}</div>
+        </div>
+        <div class="dismiss-modal">
+        <button aria-label="close dialog" mat-dialog-close class="close-btn" (dismiss)="closeModel()"><i class="fa fa-close"></i></button>
+        </div>
       </div>
       <mat-dialog-content>
         <div class="sb-mat__modal__content">

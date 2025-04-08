@@ -1,0 +1,1066 @@
+const {
+  createRecord,
+  updateRecord,
+  getRecord,
+  deleteRecord,
+  getRecords,
+} = require("./dbOperationHelper.js");
+const uuidv1 = require("uuid/v1");
+const cron = require("node-cron");
+const { pool } = require("./postgresqlConfig.js");
+const envHelper = require("./environmentVariablesHelper.js");
+const axios = require("axios");
+const crypto = require("crypto");
+const qs = require("qs");
+const dayjs = require("dayjs");
+
+function generateUniqueId() {
+  const currentUnixTime = Date.now(); // Get current Unix timestamp in milliseconds
+  const randomSuffix = Math.floor(Math.random() * 1000000); // Generate random number between 0 and 999999
+
+  // Construct the unique id with the format "do_{current_unix_time}{random_number}"
+  const uniqueId = `do_${currentUnixTime}${randomSuffix}`;
+
+  return uniqueId;
+}
+
+const key = Buffer.from(envHelper.EVENT_ENCRYPTION_KEY, "hex"); // 32 bytes hex string
+const encrypt = (text) => {
+  const iv = crypto.randomBytes(16); // New IV for each encryption
+  let cipher = crypto.createCipheriv("aes-256-cbc", key, iv);
+  let encrypted = cipher.update(text);
+  encrypted = Buffer.concat([encrypted, cipher.final()]);
+  // Concatenate IV and encrypted data
+  const encryptedData = iv.toString("hex") + ":" + encrypted.toString("hex");
+  return encryptedData;
+};
+
+const decrypt = (encryptedData) => {
+  const textParts = encryptedData?.split(":");
+  const iv = Buffer?.from(textParts?.shift(), "hex");
+  const encryptedText = Buffer.from(textParts?.join(":"), "hex");
+  let decipher = crypto?.createDecipheriv("aes-256-cbc", key, iv);
+  let decrypted = decipher?.update(encryptedText);
+  decrypted = Buffer?.concat([decrypted, decipher?.final()]);
+  return decrypted?.toString();
+};
+
+const createLearnathonContent = async (req, res) => {
+  try {
+    const url = `${envHelper.api_base_url}/learner/user/v5/read/${req?.session?.userId}?fields=organisations,roles,locations,declarations,externalIds`;
+    const rollcheck = await axios.get(url, {
+      headers: {
+        Cookie: `${req.headers.cookie}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (
+      !rollcheck?.data?.result?.response?.roles?.some(
+        (role) => role.role === "CONTENT_CREATOR"
+      )
+    ) {
+      return res.status(403).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          statusCode: 403,
+          status: "unsuccessful",
+          message: "You don't have the privilege to create records",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {},
+      });
+    }
+    const today = dayjs();
+    if (today.isAfter("2025-05-28 12:30:00")) {
+      return res.status(403).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          statusCode: 403,
+          status: "unsuccessful",
+          message: "Submission date is exceeded",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {},
+      });
+    }
+
+    let data = req.body;
+
+    const allowedColumns = [
+      "learnathon_content_id",
+      "user_name",
+      "email",
+      "mobile_number",
+      "category_of_participation",
+      "link_to_guidelines",
+      "name_of_organisation",
+      "name_of_department_group",
+      "indicative_theme",
+      "title_of_submission",
+      "content_id",
+      "consent_checkbox",
+      "created_by",
+      "icon",
+      "status",
+      "description",
+      "other_indicative_themes",
+      "indicative_sub_theme",
+      "state",
+      "city",
+    ];
+
+    let requiredFields = [];
+
+    if (data.status === "review") {
+      requiredFields = [
+        "user_name",
+        "email",
+        "mobile_number",
+        "category_of_participation",
+        "name_of_organisation",
+        "indicative_theme",
+        "title_of_submission",
+        "created_by",
+      ];
+    } else {
+      requiredFields = ["title_of_submission", "status", "created_by"];
+    }
+
+    const missingFields = requiredFields.filter((column) => !data[column]);
+
+    if (missingFields.length > 0) {
+      const error = new Error(
+        `Missing required fields: ${missingFields.join(", ")}`
+      );
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const generatedId = generateUniqueId();
+    let encryptedEmail;
+    let encryptedMobile;
+    if (data.email) {
+      encryptedEmail = encrypt(data.email);
+    }
+    if (data.mobile_number) {
+      encryptedMobile = encrypt(data.mobile_number);
+    }
+
+    // data.poll_id = generatedId;
+
+    const now = new Date();
+
+    const newRecord = {
+      learnathon_content_id: generatedId,
+      user_name: data.user_name,
+      email: encryptedEmail || null,
+      mobile_number: encryptedMobile || null,
+      category_of_participation: data.category_of_participation,
+      link_to_guidelines: data.link_to_guidelines || null,
+      name_of_organisation: data.name_of_organisation,
+      name_of_department_group: data.name_of_department_group || null,
+      indicative_theme: data.indicative_theme,
+      title_of_submission: data.title_of_submission,
+      content_id: data.content_id || null,
+      consent_checkbox: data.consent_checkbox || false,
+      created_on: now,
+      updated_on: now,
+      created_by: req?.session?.userId || data.created_by,
+      poll_id: null,
+      icon: data.icon,
+      status: data.status,
+      other_indicative_themes: data.other_indicative_themes,
+      description: data.description,
+      indicative_sub_theme: data.indicative_sub_theme,
+      state: data.state,
+      city: data.city,
+    };
+
+    const response = await createRecord(
+      newRecord,
+      "learnathon_contents",
+      allowedColumns
+    );
+
+    if (response?.length > 0) {
+      return res.send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "Learnathon content created successfully",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {
+          data: response,
+        },
+      });
+    } else {
+      throw new Error("Error creating learnathon content");
+    }
+  } catch (error) {
+    console.error(error);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "ERROR",
+      result: {},
+    });
+  }
+};
+
+const listLearnathonContents = async (req, res) => {
+  try {
+    const {
+      filters = {},
+      sort_by = {},
+      limit = 10,
+      offset = 0,
+      search = "",
+    } = req.body.request;
+
+    const userId = filters.user_id || req?.session?.userId;
+
+    let query = `
+      SELECT * 
+      FROM learnathon_contents 
+      WHERE 1=1
+    `;
+    let values = [];
+
+    if (filters.name_of_organisation) {
+      values.push(filters.name_of_organisation);
+      query += ` AND name_of_organisation ILIKE $${values.length}`;
+    }
+    if (filters.learnathon_content_id) {
+      values.push(filters.learnathon_content_id);
+      query += ` AND learnathon_content_id = $${values.length}`;
+    }
+    if (filters.created_by) {
+      values.push(filters.created_by);
+      query += ` AND created_by ILIKE $${values.length}`;
+    }
+    if (filters.content_id) {
+      values.push(filters.content_id);
+      query += ` AND content_id = $${values.length}`;
+    }
+    if (filters.name_of_department_group) {
+      values.push(filters.name_of_department_group);
+      query += ` AND name_of_department_group = $${values.length}`;
+    }
+    if (filters.category_of_participation) {
+      values.push(filters.category_of_participation);
+      query += ` AND category_of_participation ILIKE $${values.length}`;
+    }
+    if (filters.status !== undefined) {
+      values.push(filters.status);
+      query += ` AND status = $${values.length}`;
+    }
+    if (filters.from_date) {
+      values.push(filters.from_date);
+      query += ` AND created_on >= $${values.length}`;
+    }
+    if (filters.to_date) {
+      values.push(filters.to_date);
+      query += ` AND created_on <= $${values.length}`;
+    }
+    if (filters.indicative_theme) {
+      values.push(filters.indicative_theme);
+      query += ` AND indicative_theme ILIKE $${values.length}`;
+    }
+    if (filters.state) {
+      values.push(filters.state);
+      query += ` AND state ILIKE $${values.length}`;
+    }
+
+    if (search) {
+      values.push(`%${search}%`);
+      query += `
+      AND (title_of_submission ILIKE $${values.length} OR content_id ILIKE $${values.length})
+    `;
+    }
+
+    const sortClauses = [];
+    for (const [column, direction] of Object.entries(sort_by)) {
+      sortClauses.push(`${column} ${direction.toUpperCase()}`);
+    }
+    if (sortClauses.length > 0) {
+      query += ` ORDER BY ${sortClauses.join(", ")}`;
+    }
+
+    query += ` LIMIT $${values.length + 1} OFFSET $${values.length + 2}`;
+    values.push(parseInt(limit), parseInt(offset));
+
+    const result = await getRecords(query, values);
+
+    result?.rows?.forEach((row) => {
+      if (row.email) {
+        row.email = decrypt(row.email);
+      }
+      if (row.mobile_number) {
+        row.mobile_number = decrypt(row.mobile_number);
+      }
+    })
+
+
+    let countQuery = `
+      SELECT COUNT(*) 
+      FROM learnathon_contents 
+      WHERE 1=1
+    `;
+    let countValues = [];
+
+    if (filters.name_of_organisation) {
+      countValues.push(filters.name_of_organisation);
+      countQuery += ` AND name_of_organisation ILIKE $${countValues.length}`;
+    }
+    if (filters.learnathon_content_id) {
+      countValues.push(filters.learnathon_content_id);
+      countQuery += ` AND learnathon_content_id = $${countValues.length}`;
+    }
+    if (filters.created_by) {
+      countValues.push(filters.created_by);
+      countQuery += ` AND created_by ILIKE $${countValues.length}`;
+    }
+    if (filters.content_id) {
+      countValues.push(filters.content_id);
+      countQuery += ` AND content_id = $${countValues.length}`;
+    }
+    if (filters.name_of_department_group) {
+      countValues.push(filters.name_of_department_group);
+      countQuery += ` AND name_of_department_group = $${countValues.length}`;
+    }
+    if (filters.category_of_participation) {
+      countValues.push(filters.category_of_participation);
+      countQuery += ` AND category_of_participation ILIKE $${countValues.length}`;
+    }
+    if (filters.status !== undefined) {
+      countValues.push(filters.status);
+      countQuery += ` AND status = $${countValues.length}`;
+    }
+    if (filters.from_date) {
+      countValues.push(filters.from_date);
+      countQuery += ` AND created_on >= $${countValues.length}`;
+    }
+    if (filters.to_date) {
+      countValues.push(filters.to_date);
+      countQuery += ` AND created_on <= $${countValues.length}`;
+    }
+    if (search) {
+      countValues.push(`%${search}%`);
+      countQuery += `
+      AND (title_of_submission ILIKE $${countValues.length} OR content_id ILIKE $${countValues.length})
+    `;
+    }
+    if (filters.indicative_theme) {
+      countValues.push(filters.indicative_theme);
+      countQuery += ` AND indicative_theme ILIKE $${countValues.length}`;
+    }
+    if (filters.state) {
+      countValues.push(filters.state);
+      countQuery += ` AND state ILIKE $${countValues.length}`;
+    }
+
+    const countResult = await getRecords(countQuery, countValues);
+    const totalCount = parseInt(countResult?.rows[0]?.count, 10);
+
+    return res.send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "Learnathon contents fetched successfully",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {
+        totalCount: totalCount,
+        data: result.rows || [],
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+};
+
+const updateLearnathonContent = async (req, res) => {
+  try {
+    const content_id = req.query.id;
+    const { session, body } = req;
+
+    if (!content_id) {
+      const error = new Error("Content id is missing");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    // Check user roles
+
+    if (
+      !session?.roles?.includes("CONTENT_CREATOR") &&
+      !session?.roles?.includes("SYSTEM_ADMINISTRATION")
+    ) {
+      const error = new Error("You don't have privilege to update records");
+      error.statusCode = 403;
+      throw error;
+    }
+
+    const today = dayjs();
+    if (today.isAfter("2025-05-10 09:00:00")) {
+      return res.status(403).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          statusCode: 403,
+          status: "unsuccessful",
+          message: "Submission date is exceeded",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {},
+      });
+    }
+
+    let requiredFields = [];
+
+    if (body.status === "review") {
+      requiredFields = [
+        "user_name",
+        "email",
+        "mobile_number",
+        "category_of_participation",
+        "name_of_organisation",
+        "indicative_theme",
+        "title_of_submission",
+        "created_by",
+      ];
+    } else {
+      requiredFields = ["title_of_submission", "status", "created_by"];
+    }
+
+    const missingFields = requiredFields.filter((column) => !body[column]);
+
+    if (missingFields.length > 0) {
+      const error = new Error(
+        `Missing required fields: ${missingFields.join(", ")}`
+      );
+      error.statusCode = 400;
+      throw error;
+    }
+    // Allowed fields for updating
+    const allowedColumns = [
+      "title_of_submission",
+      "user_name",
+      "mobile_number",
+      "category_of_participation",
+      "isPublished",
+      "updated_on",
+    ];
+
+    // Set updated by user
+    body.updated_by = session?.userId;
+    if (body.email) {
+      body.email = encrypt(body.email);
+    }
+    if (body.mobile_number) {
+      body.mobile_number = encrypt(body.mobile_number);
+    }
+
+    // Validate update logic here if necessary
+
+    // Call your method to update record
+    const response = await updateRecord(
+      content_id, // id
+      body, // data to update
+      "learnathon_contents", // table name
+      [
+        "user_name",
+        "email",
+        "mobile_number",
+        "category_of_participation",
+        "link_to_guidelines",
+        "name_of_organisation",
+        "name_of_department_group",
+        "indicative_theme",
+        "title_of_submission",
+        "content_id",
+        "consent_checkbox",
+        "updated_on",
+        "status",
+        "poll_id",
+        "icon",
+        "description",
+        "other_indicative_themes",
+        "other_indicative_themes",
+        "indicative_sub_theme",
+        "state",
+        "city",
+      ], // allowed columns
+      "learnathon_content_id", // column for the WHERE clause
+      "updated_by" // optional second column
+      // session.userId // value for the optional second column
+    );
+
+    if (response?.length) {
+      return res.send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "Content updated successfully",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {
+          data: response,
+        },
+      });
+    }
+
+    throw new Error("Update failed");
+  } catch (error) {
+    console.error(error);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+};
+
+const deleteLearnathonContent = async (req, res) => {
+  try {
+    const { id } = req.query; // Get the learnathon_content_id from the query parameters
+
+    // Check if the content ID is provided
+    if (!id) {
+      return res.status(404).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          statusCode: 404,
+          status: "unsuccessful",
+          message: "Content ID is missing",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "ERROR",
+        result: {},
+      });
+    }
+
+    // Check user privileges
+    if (!req?.session?.roles?.includes("CONTENT_CREATOR")) {
+      return res.status(403).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          statusCode: 403,
+          status: "unsuccessful",
+          message: "You don't have privilege to delete record",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "ERROR",
+        result: {},
+      });
+    }
+
+    const isContentCreatorOnly =
+      req?.session?.roles?.includes("CONTENT_CREATOR");
+    const userId = isContentCreatorOnly ? req?.session.userId : null;
+
+    // Retrieve content_id from the learnathon_contents table
+    const query =
+      "SELECT content_id FROM learnathon_contents WHERE learnathon_content_id=$1";
+    const result = await getRecords(query, [id.trim()]);
+
+    // If content_id is null, directly delete the record without retiring
+    if (!result || result.length === 0 || result.rows[0].content_id === null) {
+      let contentData = await deleteRecord(
+        "DELETE FROM learnathon_contents WHERE learnathon_content_id=$1",
+        [id.trim()]
+      );
+
+      if (contentData <= 0) {
+        const error = new Error("Unable to delete content");
+        error.statusCode = 500;
+        throw error;
+      }
+
+      // Send success response for direct deletion
+      return res.send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "Content deleted successfully",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {
+          data: contentData,
+        },
+      });
+    }
+
+    // Extract content_id from the result if it exists
+    const contentId = result.rows[0].content_id;
+
+    try {
+      // Retire the content using the content_id
+      let config = {
+        method: "delete",
+        maxBodyLength: Infinity,
+        url: `${envHelper.api_base_url}/content/content/v1/retire`,
+        headers: {
+          Cookie: `${req.headers.cookie}`,
+          "Content-Type": "application/json",
+        },
+        data: {
+          request: {
+            contentIds: [contentId], // Use contentId retrieved from the database
+          },
+        },
+      };
+
+      let retireResponse = await axios.request(config);
+
+      if (retireResponse.data.responseCode === "OK") {
+        let contentData = await deleteRecord(
+          "DELETE FROM learnathon_contents WHERE learnathon_content_id=$1",
+          [id.trim()]
+        );
+
+        if (contentData <= 0) {
+          const error = new Error("Unable to delete content");
+          error.statusCode = 500;
+          throw error;
+        }
+
+        // Send success response after content is deleted and retired
+        return res.send({
+          ts: new Date().toISOString(),
+          params: {
+            resmsgid: uuidv1(),
+            msgid: uuidv1(),
+            status: "Content deleted and retired successfully",
+            err: null,
+            errmsg: null,
+          },
+          responseCode: "OK",
+          result: {
+            data: contentData,
+            retireResponse: retireResponse.data,
+          },
+        });
+      }
+    } catch (retireError) {
+      console.error(
+        retireError.response?.data || retireError.message,
+        "Retire API error"
+      );
+
+      // Return a specific error if the retire API fails, but content is deleted
+      return res.status(500).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "Content deletion successful but retire failed",
+          err: null,
+          errmsg: "Failed to retire content",
+        },
+        responseCode: "ERROR",
+        result: {
+          retireError: retireError.response?.data || retireError.message,
+        },
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "ERROR",
+      result: {},
+    });
+  }
+};
+
+const provideCreatorAccess = async (req, res) => {
+  console.log("ffffffff-----------", req.body.request);
+
+  try {
+    // Check if user_id already exists in user_rolles
+    const userCheckQuery = "SELECT * FROM user_rolles WHERE user_id = $1";
+    const userCheckValues = [req.body.request.userId];
+    const existingUser = await pool.query(userCheckQuery, userCheckValues);
+
+    // If user_id exists and creator_access is true, return an error
+    if (existingUser.rows.length > 0 && existingUser.rows[0].creator_access) {
+      return res.status(400).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "unsuccessful",
+          err: null,
+          errmsg: "User is already a creator.",
+        },
+        responseCode: "Failed",
+        result: {},
+      });
+    }
+
+    // Proceed with token generation and API call for role assignment
+    const data = {
+      client_id: envHelper.client_id,
+      client_secret: envHelper.client_secret,
+      grant_type: envHelper.grant_type,
+    };
+
+    const formattedData = qs.stringify(data);
+
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${envHelper.api_base_url}/auth/realms/sunbird/protocol/openid-connect/token`,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      data: formattedData,
+    };
+
+    const response = await axios(config);
+    let apiresponse;
+
+    if (response?.data?.access_token) {
+      let config = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: `${envHelper.api_base_url}/api/user/v1/role/assign`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${envHelper.PORTAL_API_AUTH_TOKEN ||
+            envHelper.sunbird_logged_default_token
+            }`,
+          "x-authenticated-user-token": response.data.access_token,
+        },
+        data: req.body,
+      };
+
+      if (req?.body?.iscreator !== true) {
+        apiresponse = await axios(config);
+      }
+
+      let query;
+      let values;
+      if (apiresponse?.data?.result?.response === "SUCCESS") {
+        query =
+          "INSERT INTO user_rolles (user_id , creator_access) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET creator_access = $2 RETURNING *";
+        values = [req.body.request.userId, req.body.isCreator];
+      } else {
+        query =
+          "INSERT INTO user_rolles (user_id) VALUES ($1) ON CONFLICT (user_id) DO NOTHING RETURNING *";
+        values = [req.body.request.userId];
+      }
+      await pool.query(query, values);
+    }
+
+    return res.send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "Fetched successfully",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {
+        data: apiresponse?.data,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "Failed",
+      result: {},
+    });
+  }
+};
+
+const listLearnathonCreators = async (req, res) => {
+  try {
+    const query = "SELECT * FROM user_rolles";
+
+    const result = await getRecords(query);
+
+    const totalCount = result?.rowCount || 0;
+
+    if (totalCount === 0) {
+      return res.status(200).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "successful",
+          message: "No learnathon creators found",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {
+          totalCount,
+          data: [],
+        },
+      });
+    }
+
+    return res.status(200).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "successful",
+        message: "Learnathon creators fetched successfully",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {
+        totalCount,
+        data: result.rows,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching learnathon creators:", error);
+    return res.status(500).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "unsuccessful",
+        message: "Error fetching learnathon creators",
+        err: null,
+        errmsg: error.message,
+      },
+      responseCode: "SERVER_ERROR",
+      result: {},
+    });
+  }
+};
+
+const getLearnathonUserDetails = async (req, res) => {
+  try {
+    const query =
+      "SELECT ur.user_id ,u.designation,u.user_type,u.organisation FROM user_rolles ur INNER JOIN users u ON ur.user_id=u.user_id";
+
+    const result = await getRecords(query);
+    console.log("result", result);
+
+    const totalCount = result?.rowCount || 0;
+
+    if (totalCount === 0) {
+      return res.status(200).send({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "successful",
+          message: "No learnathon creators found",
+          err: null,
+          errmsg: null,
+        },
+        responseCode: "OK",
+        result: {
+          totalCount,
+          data: [],
+        },
+      });
+    }
+
+    return res.status(200).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "successful",
+        message: "Learnathon creators fetched successfully",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {
+        totalCount,
+        data: result.rows,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching learnathon creators:", error);
+    return res.status(500).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "unsuccessful",
+        message: "Error fetching learnathon creators",
+        err: null,
+        errmsg: error.message,
+      },
+      responseCode: "SERVER_ERROR",
+      result: {},
+    });
+  }
+};
+
+const getLearnathonCreators = async (req, res) => {
+  try {
+    const query = "SELECT * FROM user_rolles";
+    const query1 = "SELECT count(*) FROM user_rolles ur INNER JOIN users u ON ur.user_id = u.user_id where u.user_type='State Governments / Parastatal Bodies'";
+    const query2 = "SELECT count(*) FROM user_rolles ur INNER JOIN users u ON ur.user_id = u.user_id where u.user_type='Any Other Government Entities' or u.user_type='Urban Local Bodies / Special Purpose Vehicles'";
+    const query3 = "SELECT count(*) FROM user_rolles ur INNER JOIN users u ON ur.user_id = u.user_id where u.user_type='Academia and Research Organisations' ";
+    const query4 = "SELECT count(*) FROM user_rolles ur INNER JOIN users u ON ur.user_id = u.user_id where u.user_type='Industries'";
+
+
+
+    const totalResult = await getRecords(query);
+    const stateResult = await getRecords(query1);
+    const cityResult = await getRecords(query2);
+    const institutionResult = await getRecords(query3);
+    const industriesResult = await getRecords(query4);
+
+    const totalCount = totalResult?.rowCount || 0;
+    const stateCount = stateResult?.rowCount || 0;
+    const cityCount = cityResult?.rowCount || 0;
+    const institutionCount = institutionResult?.rowCount || 0;
+    const industriesCount = industriesResult?.rowCount || 0;
+
+
+    return res.status(200).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "successful",
+        message: "Learnathon creators fetched successfully",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {
+        totalCount,
+        stateCount,
+        cityCount,
+        institutionCount,
+        industriesCount
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching learnathon creators:", error);
+    return res.status(500).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "unsuccessful",
+        message: "Error fetching learnathon creators",
+        err: null,
+        errmsg: error.message,
+      },
+      responseCode: "SERVER_ERROR",
+      result: {},
+    });
+  }
+};
+
+
+module.exports = {
+  createLearnathonContent,
+  listLearnathonContents,
+  updateLearnathonContent,
+  deleteLearnathonContent,
+  provideCreatorAccess,
+  listLearnathonCreators,
+  getLearnathonUserDetails,
+  getLearnathonCreators,
+};

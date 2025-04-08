@@ -122,16 +122,27 @@ async function createEvent(req, res) {
 
     const requestId = generateRandomString(10);
 
+    const startdate = new Date(startDateTime);
+    startdate.setHours(startdate.getHours() - 5);
+    startdate.setMinutes(startdate.getMinutes() - 30);
+    const updatedStartDateTime = startdate.toISOString();
+
+     const endtdate = new Date(endDateTime);
+    endtdate.setHours(endtdate.getHours() - 5);
+    endtdate.setMinutes(endtdate.getMinutes() - 30);
+    const updatedEndDateTime = endtdate.toISOString();
+
     const event = {
       summary: eventData.event_name || "",
       location: eventData.event_type || "",
       description: eventData.description || "",
       start: {
-        dateTime: startDateTime,
+
+        dateTime: updatedStartDateTime,
         timeZone: startTimezone,
       },
       end: {
-        dateTime: endDateTime,
+        dateTime: updatedEndDateTime,
         timeZone: endTimezone,
       },
       visibility: "public",
@@ -1252,14 +1263,24 @@ async function getTopTrending(req, res) {
 }
 
 async function getTopEvents(userId, column, fromDate, toDate) {
-  let query = `
-    SELECT er.event_id, COUNT(er.${column}) AS user_count,er.designation
-    FROM event_registration er
-    JOIN event_details ed ON er.event_id = ed.event_id
-    WHERE 1 = 1 AND ed.status = 'Live'
-  `;
-
+  let query = '';
   const values = [];
+
+  if (column === 'user_id') {
+    query = `
+      SELECT er.event_id, COUNT(er.user_id) AS user_count
+      FROM event_registration er
+      JOIN event_details ed ON er.event_id = ed.event_id
+      WHERE ed.status = 'Live'
+    `;
+  } else if (column === 'designation') {
+    query = `
+      SELECT er.event_id, COUNT(er.designation) AS user_count, er.designation
+      FROM event_registration er
+      JOIN event_details ed ON er.event_id = ed.event_id
+      WHERE ed.status = 'Live'
+    `;
+  }
 
   if (userId) {
     query += `AND ed.created_by = $${values.length + 1} `;
@@ -1279,11 +1300,19 @@ async function getTopEvents(userId, column, fromDate, toDate) {
     values.push(thirtyDaysAgo.toISOString());
   }
 
-  query += `
-    GROUP BY er.event_id, er.designation
-    ORDER BY user_count DESC
-    LIMIT 5;
-  `;
+  if (column === 'user_id') {
+    query += `
+      GROUP BY er.event_id
+      ORDER BY user_count DESC
+      LIMIT 5;
+    `;
+  } else if (column === 'designation') {
+    query += `
+      GROUP BY er.event_id, er.designation
+      ORDER BY user_count DESC
+      LIMIT 5;
+    `;
+  }
 
   const { rows } = await pool.query(query, values);
 
@@ -1710,9 +1739,10 @@ async function eventEnrollmentList(req, res) {
     const {
       filters = {},
       sort_by = {},
-      limit = 10,
-      offset = 0,
+      
     } = req.body.request;
+    const limit = 100;
+     const offset = 0;
 
     let query = `SELECT * FROM event_registration WHERE 1=1 `;
     let values = [];
@@ -1735,9 +1765,9 @@ async function eventEnrollmentList(req, res) {
     }
 
     // Pagination
-    query += ` LIMIT $${values.length + 1} OFFSET $${values.length + 2}`;
-    values.push(parseInt(limit), parseInt(offset));
-    console.log(query, values);
+    // query += ` LIMIT $${values.length + 1} OFFSET $${values.length + 2}`;
+    // values.push(parseInt(limit), parseInt(offset));
+    // console.log(query, values);
     const result = await getRecords(query, values);
 
     // Now, to get the count of total records matching the filters
@@ -1754,7 +1784,7 @@ async function eventEnrollmentList(req, res) {
 
     // Get the total count
     const countResult = await getRecords(countQuery, countValues);
-    const totalCount = parseInt(countResult.rows[0].count, 10); // Convert to integer
+    let totalCount = parseInt(countResult.rows[0].count, 10); // Convert to integer
 
     let apiResponse = null;
 
@@ -1769,7 +1799,10 @@ async function eventEnrollmentList(req, res) {
             startDate: req.body.request.filters.startDate,
             identifier: result.rows.map((row) => row.event_id),
           },
+          limit : req.body.request.limit,
+          offset : req.body.request.offset,
           query: req.body.request.query,
+          sort_by : {lastPublishedOn: "desc", startDate: "desc"}
         },
       };
 
@@ -1787,10 +1820,16 @@ async function eventEnrollmentList(req, res) {
         },
         data: data,
       };
-      const response = await axios.request(config);
+      let response;
+      if(totalCount>0)
+      {
+        response = await axios.request(config);
+      }
 
-      if (response.status === 200) {
+
+      if (response?.status === 200) {
         apiResponse = response?.data?.result?.Event || [];
+        totalCount = response?.data?.result?.count;
       }
     }
 
@@ -2151,6 +2190,49 @@ async function eventRetire(req, res) {
     });
   }
 }
+
+async function createCertificate(req, res) {
+  try {
+    const eventId = req.query.eventId;
+    const data = req.body
+
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${envHelper.api_base_url}/api/rc/certificate/v1/create`,
+      headers: {
+        Authorization: `Bearer ${
+            envHelper.PORTAL_API_AUTH_TOKEN ||
+            envHelper.sunbird_logged_default_token
+          }`,        
+          "Content-Type": "application/json",
+      },
+      data: data,
+    };
+
+    const response = await axios(config);
+    return res.send(response.data);
+  } catch (error) {
+    console.error(error);
+    const statusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
+
 module.exports = {
   createEvent,
   getEvent,
@@ -2174,4 +2256,5 @@ module.exports = {
   eventUpdateWrapper,
   eventPublishWrapper,
   eventRetire,
+  createCertificate,
 };

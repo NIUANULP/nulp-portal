@@ -88,3 +88,19 @@
         color: var(--rc-E08A20);
       }
     }
+
+    ::ng-deep {
+      .group-details-modal .sb-modal .mat-close-btn {
+        margin: 0.3rem !important;
+       }
+      .ui.modal.transition.active.visible.small {
+        margin-top: 22% !important;
+      }
+      .mat-dialog-container{
+        padding:0px !important;
+      }
+      .sb-mat__modal{
+        padding: 24px;
+    }
+    }
+   
