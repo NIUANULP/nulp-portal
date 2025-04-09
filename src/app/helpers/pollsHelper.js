@@ -65,6 +65,7 @@ const createPolls = async (req, res) => {
       "created_by",
       "content_id",
       "category",
+      "content_category",
     ];
     const requiredFields = [
       "title",
@@ -312,6 +313,7 @@ const updatePolls = async (req, res) => {
       "image",
       "is_live_poll_result",
       "updated_by",
+      "content_category",
     ];
 
     body.updated_by = session?.userId;
@@ -667,7 +669,6 @@ const listPolls = async (req, res) => {
       offset = 0,
       search = "",
     } = req.body.request;
-
     const isSystemAdmin = req?.session?.roles?.includes(
       "SYSTEM_ADMINISTRATION"
     );
