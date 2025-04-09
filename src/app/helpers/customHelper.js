@@ -1,4 +1,4 @@
-const { body, param, validationResult } = require("express-validator");
+const { body, param, validationResult, query } = require("express-validator");
 const { pool } = require("../helpers/postgresqlConfig");
 const uuidv1 = require("uuid/v1");
 const express = require("express");
@@ -14,6 +14,8 @@ const validateUserFields = [
   body("created_by").isString().notEmpty(),
   body("user_type").optional().isString(),
   body("organisation").optional().isString(),
+  body("state").isString().notEmpty(),
+  body("district").isString().notEmpty(),
 ];
 
 // Error handler middleware
@@ -39,11 +41,19 @@ async function saveUserInfo(req, res) {
     });
   }
 
-  const { user_id, designation, bio, created_by, user_type, organisation } =
-    req.body;
+  const {
+    user_id,
+    designation,
+    bio,
+    created_by,
+    user_type,
+    organisation,
+    state,
+    district,
+  } = req.body;
 
   const query =
-    "INSERT INTO users (user_id, designation, bio, created_by,user_type,organisation) VALUES ($1, $2, $3, $4,$5,$6) RETURNING *";
+    "INSERT INTO users (user_id, designation, bio, created_by,user_type,organisation,state,district) VALUES ($1, $2, $3, $4,$5,$6,$7,$8) RETURNING *";
   const values = [
     user_id,
     designation,
@@ -51,6 +61,8 @@ async function saveUserInfo(req, res) {
     created_by,
     user_type,
     organisation,
+    state,
+    district,
   ];
 
   try {
@@ -97,7 +109,15 @@ async function updateUserInfo(req, res) {
       throw error;
     }
 
-    const { designation, bio, updated_by, user_type, organisation } = req.body;
+    const {
+      designation,
+      bio,
+      updated_by,
+      user_type,
+      organisation,
+      state,
+      district,
+    } = req.body;
 
     // Query to check if the user exists
     const getQuery = "SELECT * FROM users WHERE user_id = $1";
@@ -124,6 +144,8 @@ async function updateUserInfo(req, res) {
         user_type || null,
         organisation || null,
         updated_by || null,
+        state || null,
+        district || null,
         user_id,
       ];
 
@@ -144,8 +166,8 @@ async function updateUserInfo(req, res) {
     } else {
       // If user does not exist, perform an insert
       const query = `
-        INSERT INTO users (user_id, designation, bio, created_by, user_type, organisation) 
-        VALUES ($1, $2, $3, $4, $5, $6) 
+        INSERT INTO users (user_id, designation, bio, created_by, user_type, organisation,state,district) 
+        VALUES ($1, $2, $3, $4, $5, $6,$7,$8) 
         RETURNING *`;
 
       const values = [
@@ -155,6 +177,8 @@ async function updateUserInfo(req, res) {
         updated_by,
         user_type || null,
         organisation || null,
+        state || null,
+        district || null,
       ];
 
       const { rows } = await pool.query(query, values);
@@ -288,10 +312,117 @@ async function emailNotification(req, res) {
   }
 }
 
+async function readState(req, res) {
+  try {
+    const { rows } = await pool.query("SELECT * FROM state;");
+
+    res.send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "successful",
+        message: "State fetched successfully",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: rows,
+    });
+  } catch (err) {
+    const statusCode = err.statusCode || 500;
+    const errorMessage = err.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
+
+async function readDistrict(req, res) {
+  try {
+    // Validate and sanitize input
+    await query("state_code")
+      .trim()
+      .notEmpty()
+      .withMessage("State code is required")
+      .isNumeric()
+      .withMessage("State code must be numeric")
+      .isLength({ min: 1, max: 10 })
+      .withMessage("State code must be between 1-10 numbers")
+      .run(req);
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "unsuccessful",
+          message: "Validation failed",
+          err: errors.array(),
+          errmsg: "Invalid input data",
+        },
+        responseCode: "BAD_REQUEST",
+        result: {},
+      });
+    }
+
+    const stateCode = req.query.state_code.trim();
+
+    const { rows } = await pool.query(
+      "SELECT * FROM district WHERE state_code = $1;",
+      [stateCode]
+    );
+
+    res.send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "successful",
+        message: "District fetched successfully",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: rows,
+    });
+  } catch (err) {
+    console.error("Error fetching districts:", err);
+    res.status(500).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "unsuccessful",
+        message: "Internal Server Error",
+        err: err.message,
+        errmsg: "An unexpected error occurred",
+      },
+      responseCode: "INTERNAL_SERVER_ERROR",
+      result: {},
+    });
+  }
+}
+
 module.exports = {
   saveUserInfo,
   updateUserInfo,
   readUserInfo,
   validateUserFields,
   emailNotification,
+  readState,
+  readDistrict,
 };
