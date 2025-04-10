@@ -1,12 +1,20 @@
 import { Injectable } from '@angular/core';
 import { LearnerService } from '@sunbird/core';
 import { ConfigService } from '@sunbird/shared';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SignupService {
+
+  private apiUrl = 'https://devnulp.niua.org/api/data/v1/location/search';
+  private headers = new HttpHeaders({
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIzVGRIUkFpTUFiRHN1SUhmQzFhYjduZXFxbjdyQjZrWSJ9.MotRsgyrPzt8O2jp8QZfWw0d9iIcZz-cfNYbpifx5vs',
+    'Content-Type': 'application/json'
+  });
+
 
   constructor(private learnerService: LearnerService, public configService: ConfigService,
               private http: HttpClient) {
@@ -21,6 +29,8 @@ export class SignupService {
   }
 
   generateOTPforAnonymousUser(data, captchaResponse) {
+    console.log("generateOTPforAnonymousUser 24")
+    console.log(data)
     const options = {
       url: this.configService.urlConFig.URLS.OTP.ANONYMOUS.GENERATE + '?captchaResponse=' + captchaResponse,
       data: data
@@ -79,6 +89,30 @@ export class SignupService {
 
   CreateUser(data){
     return  this.http.post(this.configService.urlConFig.URLS.USER.COSTOMSIGNUP,data)
+  }
+
+  getStates(): Observable<any> {
+    console.log("getStates")
+    const body = {
+      request: {
+        filters: {
+          type: 'state'
+        }
+      }
+    };
+    return this.http.post(this.apiUrl, body, { headers: this.headers });
+  }
+
+  getDistrictsByState(stateId: string): Observable<any> {
+    const body = {
+      request: {
+        filters: {
+          parentId: stateId,
+          type: 'district'
+        }
+      }
+    };
+    return this.http.post(this.apiUrl, body, { headers: this.headers });
   }
 
 }

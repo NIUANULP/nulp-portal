@@ -48,6 +48,7 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
+    console.log("SignupComponent loaded")
     this.signupStage = SignUpStage.BASIC_INFO;
     this.isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent);
     this.instance = _.upperCase(this.resourceService.instance || 'NULP');
