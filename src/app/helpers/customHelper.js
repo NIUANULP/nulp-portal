@@ -324,6 +324,42 @@ async function emailNotification(req, res) {
   }
 }
 
+async function locationData(req, res) {
+  try {
+    const data = req.body;
+
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${envHelper.api_base_url}/api/data/v1/location/search`,
+      headers: {
+        Authorization: `Bearer ${envHelper.PORTAL_API_AUTH_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+    const response = await axios(config);
+    return res.send(response.data);
+  } catch (err) {
+    const statusCode = err.statusCode || 500;
+    const errorMessage = err.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
+
 async function readState(req, res) {
   try {
     const { rows } = await pool.query("SELECT * FROM state;");
@@ -437,4 +473,5 @@ module.exports = {
   emailNotification,
   readState,
   readDistrict,
+  locationData,
 };
