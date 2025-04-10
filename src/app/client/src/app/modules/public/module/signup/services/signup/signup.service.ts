@@ -9,11 +9,7 @@ import { Observable } from 'rxjs';
 })
 export class SignupService {
 
-  // private apiUrl = 'https://devnulp.niua.org/api/data/v1/location/search';
-  // private headers = new HttpHeaders({
-  //   'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIzVGRIUkFpTUFiRHN1SUhmQzFhYjduZXFxbjdyQjZrWSJ9.MotRsgyrPzt8O2jp8QZfWw0d9iIcZz-cfNYbpifx5vs',
-  //   'Content-Type': 'application/json'
-  // });
+  
 
   private apiUrl = '/custom/'+this.configService.urlConFig.URLS.USER.LOCATION_SEARCH;
   private headers = new HttpHeaders({
