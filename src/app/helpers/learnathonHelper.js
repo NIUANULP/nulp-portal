@@ -12,8 +12,7 @@ const envHelper = require("./environmentVariablesHelper.js");
 const axios = require("axios");
 const crypto = require("crypto");
 const qs = require("qs");
-const dayjs = require('dayjs');
-
+const dayjs = require("dayjs");
 
 function generateUniqueId() {
   const currentUnixTime = Date.now(); // Get current Unix timestamp in milliseconds
@@ -47,15 +46,19 @@ const decrypt = (encryptedData) => {
 
 const createLearnathonContent = async (req, res) => {
   try {
-    const url = `${envHelper.api_base_url}/learner/user/v5/read/${req?.session?.userId}?fields=organisations,roles,locations,declarations,externalIds`
+    const url = `${envHelper.api_base_url}/learner/user/v5/read/${req?.session?.userId}?fields=organisations,roles,locations,declarations,externalIds`;
     const rollcheck = await axios.get(url, {
-    headers: {
+      headers: {
         Cookie: `${req.headers.cookie}`,
         "Content-Type": "application/json",
-    },
-});
+      },
+    });
 
-    if (!rollcheck?.data?.result?.response?.roles?.some(role => role.role === "CONTENT_CREATOR")) {
+    if (
+      !rollcheck?.data?.result?.response?.roles?.some(
+        (role) => role.role === "CONTENT_CREATOR"
+      )
+    ) {
       return res.status(403).send({
         ts: new Date().toISOString(),
         params: {
@@ -71,7 +74,7 @@ const createLearnathonContent = async (req, res) => {
         result: {},
       });
     }
-const today = dayjs();
+    const today = dayjs();
     if (today.isAfter("2025-02-28 23:59:59")) {
       return res.status(403).send({
         ts: new Date().toISOString(),
@@ -317,7 +320,7 @@ const listLearnathonContents = async (req, res) => {
       if (row.mobile_number) {
         row.mobile_number = decrypt(row.mobile_number);
       }
-    })
+    });
 
     let countQuery = `
       SELECT COUNT(*) 
@@ -439,7 +442,7 @@ const updateLearnathonContent = async (req, res) => {
     }
 
     const today = dayjs();
-    if (today.isAfter("2025-04-10 09:00:00")) {
+    if (today.isAfter("2025-04-10 23:00:00")) {
       return res.status(403).send({
         ts: new Date().toISOString(),
         params: {
