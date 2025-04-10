@@ -4,6 +4,7 @@ import { ResourceService, UtilService, ConfigService } from '@sunbird/shared';
 import { TelemetryService } from '@sunbird/telemetry';
 import * as _ from 'lodash-es';
 import { NgSelectComponent } from '@ng-select/ng-select';
+import { SignupService } from '../../services';
 
 @Component({
   selector: 'app-signup-basic-info',
@@ -30,20 +31,35 @@ export class SignupBasicInfoComponent implements OnInit {
   isOtherDesignationType: boolean = false;
   isOtherUserType1: boolean = false;
 
+  // states: string[] = ['Maharashtra', 'Karnataka', 'Tamil Nadu', 'Uttar Pradesh'];
+  // districts: string[] = ['Pune', 'Mumbai', 'Bangalore', 'Chennai', 'Lucknow'];
+  // allDistricts: { [key: string]: string[] } = {
+  //   'Maharashtra': ['Pune', 'Mumbai', 'Nagpur'],
+  //   'Karnataka': ['Bengaluru', 'Mysuru', 'Hubli'],
+  //   'Tamil Nadu': ['Chennai', 'Madurai', 'Coimbatore'],
+  //   'Delhi': ['New Delhi', 'South Delhi']
+  // };
+
+  states: { name: string, id: string }[] = [];
+  districts: { name: string, id: string }[] = [];
+
 
   constructor(
     public resourceService: ResourceService, public telemetryService: TelemetryService,
-    public utilService: UtilService, public configService: ConfigService, private _fb: FormBuilder) { }
+    public utilService: UtilService, public configService: ConfigService, private _fb: FormBuilder, private signupService: SignupService) { }
 
     ngOnInit(): void {
       this.instance = _.upperCase(this.resourceService.instance || 'NULP');
+      this.loadStates();  // Fetch state list from API
       this.personalInfoForm = this._fb.group({
         name: ['', Validators.required],
         organisation: ['', Validators.required],
         userType: ['', Validators.required],
         otherUserType: [''],  // Initialize without validators; they'll be added conditionally
         designation: ['', Validators.required],
-        otherDesignation: ['']
+        otherDesignation: [''],
+        state: ['', Validators.required],
+        district: ['', Validators.required]
       });
     
       this.personalInfoForm.get('userType').valueChanges.subscribe(value => {
@@ -66,9 +82,51 @@ export class SignupBasicInfoComponent implements OnInit {
           this.personalInfoForm.get('designation')?.setErrors(null);
         }
       });
+
+      // Optional: any further logic when state/district is selected
+      this.personalInfoForm.get('state').valueChanges.subscribe(value => {
+        this.onStateChange(value); // This is the correct method to call
+      });
+
+      // Optional logic for district (keep only if needed)
+      this.personalInfoForm.get('district').valueChanges.subscribe(() => {
+        // No specific logic? You can remove this.
+      });
     
       console.log('Global Object data => ', this.startingForm);
     }
+
+     // Fetch states from API
+  loadStates(): void {
+    console.log("loadstate")
+    this.signupService.getStates().subscribe(
+      res => {
+        this.states = res?.result?.response || [];
+      },
+      err => {
+        console.error('Error loading states:', err);
+      }
+    );
+  }
+
+  // Fetch districts for selected state
+  onStateChange(selectedStateId: string) {
+    this.personalInfoForm.get('district')?.setValue('');
+    this.signupService.getDistrictsByState(selectedStateId).subscribe(
+      res => {
+        this.districts = res?.result?.response || [];
+      },
+      err => {
+        console.error('Error loading districts:', err);
+        this.districts = [];
+      }
+    );
+  }
+
+    // onStateChange(selectedState: string) {
+    //   this.districts = this.allDistricts[selectedState] || [];
+    //   this.personalInfoForm.get('district')?.setValue('');
+    // }
     
 
   onUserTypeChange(event: Event): void {
@@ -105,28 +163,81 @@ export class SignupBasicInfoComponent implements OnInit {
   //   this.personalInfoForm.get('designation').setValue(inputElement.value);
   // }
 
+  // next() {
+
+  //   if (this.personalInfoForm.valid) {
+  //     let userDetails: any = localStorage.getItem('guestUserDetails')
+  //       ? JSON.parse(localStorage.getItem('guestUserDetails'))
+  //       : {};
+  
+  //     userDetails.name = this.personalInfoForm.controls.name.value;
+  //     userDetails.organisation = this.personalInfoForm.controls.organisation.value;
+  //     userDetails.state = this.personalInfoForm.controls.state.value;
+  //     userDetails.district = this.personalInfoForm.controls.district.value;
+  
+  //     // Handle userType selection, including 'other' case
+  //     if (this.isOtherUserType1) {
+  //       userDetails.userType = this.personalInfoForm.controls.otherUserType.value; // Use input value for 'other'
+  //     } else {
+  //       userDetails.userType = this.personalInfoForm.controls.userType.value; // Use selected value from dropdown
+  //     }
+  
+  //     // Handle designation selection, including 'other' case
+  //     if (this.isOtherDesignationType) {
+  //       userDetails.designation = this.personalInfoForm.controls.otherDesignation.value; // Use input value for 'other'
+  //     } else {
+  //       userDetails.designation = this.personalInfoForm.controls.designation.value; // Use selected value from dropdown
+  //     }
+  
+  //     localStorage.setItem('guestUserDetails', JSON.stringify(userDetails));
+  
+  //     const signupStage1Details = {
+  //       name: userDetails.name,
+  //       organisation: userDetails.organisation,
+  //       state: userDetails.state,
+  //       district: userDetails.district,
+  //       userType: userDetails.userType,
+  //       designation: userDetails.designation, // Ensures that the correct designation is used
+
+  //     };
+  
+  //     console.log('signupStage1Details => ', signupStage1Details); // Debugging log
+  
+  //     this.subformInitialized.emit(signupStage1Details);
+  //     this.triggerNext.emit();
+  //   } else {
+  //     console.log("Invalid form");
+  //   }
+  // }
+
   next() {
     if (this.personalInfoForm.valid) {
       let userDetails: any = localStorage.getItem('guestUserDetails')
         ? JSON.parse(localStorage.getItem('guestUserDetails'))
         : {};
   
-      userDetails.name = this.personalInfoForm.controls.name.value;
-      userDetails.organisation = this.personalInfoForm.controls.organisation.value;
+      const formValue = this.personalInfoForm.value;
   
-      // Handle userType selection, including 'other' case
-      if (this.isOtherUserType1) {
-        userDetails.userType = this.personalInfoForm.controls.otherUserType.value; // Use input value for 'other'
-      } else {
-        userDetails.userType = this.personalInfoForm.controls.userType.value; // Use selected value from dropdown
-      }
+      // Find full state and district objects
+      const selectedState = this.states.find(s => s.id === formValue.state);
+      const selectedDistrict = this.districts.find(d => d.id === formValue.district);
   
-      // Handle designation selection, including 'other' case
-      if (this.isOtherDesignationType) {
-        userDetails.designation = this.personalInfoForm.controls.otherDesignation.value; // Use input value for 'other'
-      } else {
-        userDetails.designation = this.personalInfoForm.controls.designation.value; // Use selected value from dropdown
-      }
+      userDetails.name = formValue.name;
+      userDetails.organisation = formValue.organisation;
+  
+      userDetails.state_id = selectedState?.id;
+      userDetails.state = selectedState?.name;
+  
+      userDetails.district_id = selectedDistrict?.id;
+      userDetails.district = selectedDistrict?.name;
+  
+      userDetails.userType = this.isOtherUserType1
+        ? formValue.otherUserType
+        : formValue.userType;
+  
+      userDetails.designation = this.isOtherDesignationType
+        ? formValue.otherDesignation
+        : formValue.designation;
   
       localStorage.setItem('guestUserDetails', JSON.stringify(userDetails));
   
@@ -134,10 +245,14 @@ export class SignupBasicInfoComponent implements OnInit {
         name: userDetails.name,
         organisation: userDetails.organisation,
         userType: userDetails.userType,
-        designation: userDetails.designation, // Ensures that the correct designation is used
+        designation: userDetails.designation,
+        state_id: userDetails.state_id,
+        state: userDetails.state,
+        district_id: userDetails.district_id,
+        district: userDetails.district
       };
   
-      console.log('signupStage1Details => ', signupStage1Details); // Debugging log
+      console.log('signupStage1Details => ', signupStage1Details);
   
       this.subformInitialized.emit(signupStage1Details);
       this.triggerNext.emit();
@@ -145,6 +260,7 @@ export class SignupBasicInfoComponent implements OnInit {
       console.log("Invalid form");
     }
   }
+  
   
   
   
