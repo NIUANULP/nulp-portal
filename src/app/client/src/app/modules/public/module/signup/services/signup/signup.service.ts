@@ -9,9 +9,10 @@ import { Observable } from 'rxjs';
 })
 export class SignupService {
 
-  private apiUrl = 'https://devnulp.niua.org/api/data/v1/location/search';
+  
+
+  private apiUrl = '/custom/'+this.configService.urlConFig.URLS.USER.LOCATION_SEARCH;
   private headers = new HttpHeaders({
-    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIzVGRIUkFpTUFiRHN1SUhmQzFhYjduZXFxbjdyQjZrWSJ9.MotRsgyrPzt8O2jp8QZfWw0d9iIcZz-cfNYbpifx5vs',
     'Content-Type': 'application/json'
   });
 
@@ -92,6 +93,7 @@ export class SignupService {
   }
 
   getStates(): Observable<any> {
+    console.log("state apiUrl",this.apiUrl)
     console.log("getStates")
     const body = {
       request: {
@@ -104,6 +106,7 @@ export class SignupService {
   }
 
   getDistrictsByState(stateId: string): Observable<any> {
+    console.log("district apiUrl", this.apiUrl)
     const body = {
       request: {
         filters: {
