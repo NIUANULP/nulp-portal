@@ -16,6 +16,8 @@ const validateUserFields = [
   body("organisation").optional().isString(),
   body("state").isString().notEmpty(),
   body("district").isString().notEmpty(),
+  body("state_id").isString().notEmpty(),
+  body("district_id").isString().notEmpty(),
 ];
 
 // Error handler middleware
@@ -50,10 +52,12 @@ async function saveUserInfo(req, res) {
     organisation,
     state,
     district,
+    state_id,
+    district_id,
   } = req.body;
 
   const query =
-    "INSERT INTO users (user_id, designation, bio, created_by,user_type,organisation,state,district) VALUES ($1, $2, $3, $4,$5,$6,$7,$8) RETURNING *";
+    "INSERT INTO users (user_id, designation, bio, created_by,user_type,organisation,state,district,state_id,district_id) VALUES ($1, $2, $3, $4,$5,$6,$7,$8,$9,$10) RETURNING *";
   const values = [
     user_id,
     designation,
@@ -63,6 +67,8 @@ async function saveUserInfo(req, res) {
     organisation,
     state,
     district,
+    state_id,
+    district_id,
   ];
 
   try {
@@ -117,6 +123,8 @@ async function updateUserInfo(req, res) {
       organisation,
       state,
       district,
+      state_id,
+      district_id,
     } = req.body;
 
     // Query to check if the user exists
@@ -146,6 +154,8 @@ async function updateUserInfo(req, res) {
         updated_by || null,
         state || null,
         district || null,
+        state_id || null,
+        district_id || null,
         user_id,
       ];
 
@@ -166,8 +176,8 @@ async function updateUserInfo(req, res) {
     } else {
       // If user does not exist, perform an insert
       const query = `
-        INSERT INTO users (user_id, designation, bio, created_by, user_type, organisation,state,district) 
-        VALUES ($1, $2, $3, $4, $5, $6,$7,$8) 
+        INSERT INTO users (user_id, designation, bio, created_by, user_type, organisation,state,district,state_id,district_id) 
+        VALUES ($1, $2, $3, $4, $5, $6,$7,$8,$9 $10) 
         RETURNING *`;
 
       const values = [
@@ -179,6 +189,8 @@ async function updateUserInfo(req, res) {
         organisation || null,
         state || null,
         district || null,
+        state_id || null,
+        district_id || null,
       ];
 
       const { rows } = await pool.query(query, values);
