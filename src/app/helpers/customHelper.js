@@ -141,9 +141,13 @@ async function updateUserInfo(req, res) {
           bio = COALESCE($2, bio), 
           user_type = COALESCE($3, user_type), 
           organisation = COALESCE($4, organisation), 
-          updated_by = COALESCE($5, updated_by), 
+          updated_by = COALESCE($5, updated_by),
+          state = COALESCE($6, state),
+          district = COALESCE($7, district),
+          state_id = COALESCE($8, state_id),
+          district_id = COALESCE($9, district_id),
           updated_at = NOW() 
-        WHERE user_id = $6 
+        WHERE user_id = $10
         RETURNING *`;
 
       const values = [
@@ -176,8 +180,8 @@ async function updateUserInfo(req, res) {
     } else {
       // If user does not exist, perform an insert
       const query = `
-        INSERT INTO users (user_id, designation, bio, created_by, user_type, organisation,state,district,state_id,district_id) 
-        VALUES ($1, $2, $3, $4, $5, $6,$7,$8,$9 $10) 
+        INSERT INTO users (user_id, designation, bio, created_by, user_type, organisation, state, district, state_id, district_id) 
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
         RETURNING *`;
 
       const values = [
