@@ -108,6 +108,8 @@ async function saveUserInfo(req, res) {
 async function updateUserInfo(req, res) {
   try {
     const { user_id } = req.query;
+    console.log("updateUserInfo", user_id)
+
     if (!user_id) {
       const errorMessage = `Missing user_id`;
       const error = new Error(errorMessage);
@@ -127,11 +129,13 @@ async function updateUserInfo(req, res) {
       district_id,
     } = req.body;
 
+    console.log("req.body", req.body)
+
     // Query to check if the user exists
     const getQuery = "SELECT * FROM users WHERE user_id = $1";
     const getValues = [user_id];
     const getData = await pool.query(getQuery, getValues);
-
+    console.log("getData", getData)
     if (getData.rows?.length > 0) {
       // If user exists, perform an update
       const query = `
@@ -141,9 +145,13 @@ async function updateUserInfo(req, res) {
           bio = COALESCE($2, bio), 
           user_type = COALESCE($3, user_type), 
           organisation = COALESCE($4, organisation), 
-          updated_by = COALESCE($5, updated_by), 
+          updated_by = COALESCE($5, updated_by),
+          state = COALESCE($6, state),
+          district = COALESCE($7, district),
+          state_id = COALESCE($8, state_id),
+          district_id = COALESCE($9, district_id),
           updated_at = NOW() 
-        WHERE user_id = $6 
+        WHERE user_id = $10
         RETURNING *`;
 
       const values = [
@@ -158,7 +166,6 @@ async function updateUserInfo(req, res) {
         district_id || null,
         user_id,
       ];
-
       const { rows } = await pool.query(query, values);
       res.send({
         ts: new Date().toISOString(),
@@ -176,8 +183,8 @@ async function updateUserInfo(req, res) {
     } else {
       // If user does not exist, perform an insert
       const query = `
-        INSERT INTO users (user_id, designation, bio, created_by, user_type, organisation,state,district,state_id,district_id) 
-        VALUES ($1, $2, $3, $4, $5, $6,$7,$8,$9 $10) 
+        INSERT INTO users (user_id, designation, bio, created_by, user_type, organisation, state, district, state_id, district_id) 
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
         RETURNING *`;
 
       const values = [
@@ -194,6 +201,7 @@ async function updateUserInfo(req, res) {
       ];
 
       const { rows } = await pool.query(query, values);
+      
       res.send({
         ts: new Date().toISOString(),
         params: {
