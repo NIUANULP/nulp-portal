@@ -7,6 +7,7 @@ const {
   readUserInfo,
   validateUserFields,
   emailNotification,
+  locationData,
 } = require("../helpers/customHelper.js");
 
 module.exports = function (app) {
@@ -36,5 +37,11 @@ module.exports = function (app) {
     bodyParser.json({ limit: "10mb" }),
     proxyUtils.verifyToken(),
     emailNotification
+  );
+
+  app.post(
+    "/custom/data/v1/location/search",
+    bodyParser.json({ limit: "10mb" }),
+    locationData
   );
 };
