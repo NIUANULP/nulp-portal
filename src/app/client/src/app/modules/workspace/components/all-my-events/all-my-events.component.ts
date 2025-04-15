@@ -178,9 +178,9 @@ export class AllMyEventsComponent extends WorkSpace implements OnInit {
     
       const oldDomains = [
         "https://nulpstorage1.blob.core.windows.net/",
-        "https://devnewnulp.blob.core.windows.net/"
+        "https://nuisprod.blob.core.windows.net/"
       ]; // List of domains to replace
-      const newDomain = "https://devnewnulpblob.blob.core.windows.net/";
+      const newDomain = "https://nulpstorage.blob.core.windows.net/";
     
       this.eventList.forEach((item, index) => {
         var array = JSON.parse("[" + item.venue + "]");

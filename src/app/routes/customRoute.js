@@ -7,8 +7,6 @@ const {
   readUserInfo,
   validateUserFields,
   emailNotification,
-  readState,
-  readDistrict,
   locationData,
 } = require("../helpers/customHelper.js");
 
@@ -40,8 +38,6 @@ module.exports = function (app) {
     proxyUtils.verifyToken(),
     emailNotification
   );
-  app.get("/custom/state/read", readState);
-  app.get("/custom/district/read", readDistrict);
 
   app.post(
     "/custom/data/v1/location/search",

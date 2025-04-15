@@ -129,8 +129,6 @@ async function updateUserInfo(req, res) {
       district_id,
     } = req.body;
 
-    console.log("req.body", req.body)
-
     // Query to check if the user exists
     const getQuery = "SELECT * FROM users WHERE user_id = $1";
     const getValues = [user_id];
@@ -368,118 +366,11 @@ async function locationData(req, res) {
   }
 }
 
-async function readState(req, res) {
-  try {
-    const { rows } = await pool.query("SELECT * FROM state;");
-
-    res.send({
-      ts: new Date().toISOString(),
-      params: {
-        resmsgid: uuidv1(),
-        msgid: uuidv1(),
-        status: "successful",
-        message: "State fetched successfully",
-        err: null,
-        errmsg: null,
-      },
-      responseCode: "OK",
-      result: rows,
-    });
-  } catch (err) {
-    const statusCode = err.statusCode || 500;
-    const errorMessage = err.message || "Internal Server Error";
-    res.status(statusCode).send({
-      ts: new Date().toISOString(),
-      params: {
-        resmsgid: uuidv1(),
-        msgid: uuidv1(),
-        statusCode: statusCode,
-        status: "unsuccessful",
-        message: errorMessage,
-        err: null,
-        errmsg: null,
-      },
-      responseCode: "OK",
-      result: {},
-    });
-  }
-}
-
-async function readDistrict(req, res) {
-  try {
-    // Validate and sanitize input
-    await query("state_code")
-      .trim()
-      .notEmpty()
-      .withMessage("State code is required")
-      .isNumeric()
-      .withMessage("State code must be numeric")
-      .isLength({ min: 1, max: 10 })
-      .withMessage("State code must be between 1-10 numbers")
-      .run(req);
-
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        ts: new Date().toISOString(),
-        params: {
-          resmsgid: uuidv1(),
-          msgid: uuidv1(),
-          status: "unsuccessful",
-          message: "Validation failed",
-          err: errors.array(),
-          errmsg: "Invalid input data",
-        },
-        responseCode: "BAD_REQUEST",
-        result: {},
-      });
-    }
-
-    const stateCode = req.query.state_code.trim();
-
-    const { rows } = await pool.query(
-      "SELECT * FROM district WHERE state_code = $1;",
-      [stateCode]
-    );
-
-    res.send({
-      ts: new Date().toISOString(),
-      params: {
-        resmsgid: uuidv1(),
-        msgid: uuidv1(),
-        status: "successful",
-        message: "District fetched successfully",
-        err: null,
-        errmsg: null,
-      },
-      responseCode: "OK",
-      result: rows,
-    });
-  } catch (err) {
-    console.error("Error fetching districts:", err);
-    res.status(500).send({
-      ts: new Date().toISOString(),
-      params: {
-        resmsgid: uuidv1(),
-        msgid: uuidv1(),
-        status: "unsuccessful",
-        message: "Internal Server Error",
-        err: err.message,
-        errmsg: "An unexpected error occurred",
-      },
-      responseCode: "INTERNAL_SERVER_ERROR",
-      result: {},
-    });
-  }
-}
-
 module.exports = {
   saveUserInfo,
   updateUserInfo,
   readUserInfo,
   validateUserFields,
   emailNotification,
-  readState,
-  readDistrict,
   locationData,
 };
