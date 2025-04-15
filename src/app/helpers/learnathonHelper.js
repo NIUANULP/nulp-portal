@@ -34,7 +34,6 @@ const encrypt = (text) => {
   const encryptedData = iv.toString("hex") + ":" + encrypted.toString("hex");
   return encryptedData;
 };
-
 const decrypt = (encryptedData) => {
   const textParts = encryptedData?.split(":");
   const iv = Buffer?.from(textParts?.shift(), "hex");
@@ -76,7 +75,7 @@ const createLearnathonContent = async (req, res) => {
       });
     }
     const today = dayjs();
-    if (today.isAfter("2025-05-28 12:30:00")) {
+    if (today.isAfter("2025-02-28 23:59:59")) {
       return res.status(403).send({
         ts: new Date().toISOString(),
         params: {
@@ -321,8 +320,7 @@ const listLearnathonContents = async (req, res) => {
       if (row.mobile_number) {
         row.mobile_number = decrypt(row.mobile_number);
       }
-    })
-
+    });
 
     let countQuery = `
       SELECT COUNT(*) 
@@ -444,7 +442,7 @@ const updateLearnathonContent = async (req, res) => {
     }
 
     const today = dayjs();
-    if (today.isAfter("2025-05-28 09:00:00")) {
+    if (today.isAfter("2025-04-10 23:00:00")) {
       return res.status(403).send({
         ts: new Date().toISOString(),
         params: {

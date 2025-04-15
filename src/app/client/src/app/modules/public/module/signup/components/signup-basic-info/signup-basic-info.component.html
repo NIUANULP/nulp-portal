@@ -39,6 +39,47 @@
       {{resourceService.frmelmnts?.lbl?.enterOrganisation}}</div>
   </div>
 
+
+  <!-- State Dropdown -->
+  <div class="required mb-16">
+    <label for="signup-form-state" class="mb-8 font-weight-bold">
+      {{resourceService.frmelmnts?.lbl?.profile?.State}}<span class="sb-color-red">*</span>
+    </label>
+
+    <select id="signup-form-state" class="sb-form-control"
+      [ngClass]="{'orange-border': personalInfoForm.controls.state.touched && personalInfoForm.controls['state'].errors}"
+      formControlName="state" (change)="onStateChange($event.target.value)">
+      <option value="" disabled>{{resourceService.frmelmnts?.lbl?.profile?.selectState}}</option>
+      <option *ngFor="let state of states" [value]="state.id">{{ state.name }}</option>
+    </select>
+
+    <div class="sb-color-red pt-0" aria-describedby="signup-form-state" tabindex="0" aria-label="select state"
+      *ngIf="personalInfoForm.controls.state.touched && personalInfoForm.controls['state'].errors?.required">
+      {{resourceService.frmelmnts?.lbl?.profile?.selectState}}
+    </div>
+  </div>
+
+
+  <!-- District Dropdown -->
+  <div class="required mb-16">
+    <label for="signup-form-district" class="mb-8 font-weight-bold">
+      {{resourceService.frmelmnts?.lbl?.profile?.District}}<span class="sb-color-red">*</span>
+    </label>
+
+    <select id="signup-form-district" class="sb-form-control"
+      [ngClass]="{'orange-border': personalInfoForm.controls.district.touched && personalInfoForm.controls['district'].errors}"
+      formControlName="district">
+      <option value="" disabled>{{resourceService.frmelmnts?.lbl?.profile?.selectDistrict}}</option>
+      <option *ngFor="let district of districts" [value]="district.id">{{ district.name }}</option>
+    </select>
+
+    <div class="sb-color-red pt-0" aria-describedby="signup-form-district" tabindex="0" aria-label="select district"
+      *ngIf="personalInfoForm.controls.district.touched && personalInfoForm.controls['district'].errors?.required">
+      {{resourceService.frmelmnts?.lbl?.profile?.selectDistrict}}
+    </div>
+  </div>
+
+
   <!-- User Type Dropdown -->
   <div class="required mb-16">
     <label for="signup-form-user-type" class="font-weight-bold">

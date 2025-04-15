@@ -206,6 +206,7 @@ export class OtpComponent implements OnInit {
     createRequest.request['reqData'] = _.get(data, 'reqData');
 
     if (this.otpForm.controls.tncAccepted.value && this.otpForm.controls.tncAccepted.status === 'VALID') {
+      console.log("createRequest")
         this.signupService.createUserV3(createRequest).subscribe((resp: ServerResponse) => {
             this.telemetryLogEvents('sign-up', true);
 
@@ -248,13 +249,19 @@ export class OtpComponent implements OnInit {
 }
 
 customUserCreation(identifier: string) {
+  console.log(this.startingForm)
     const customData = {
         "user_id": identifier,
         "designation": _.trim(_.get(this.startingForm, 'basicInfo.designation')),
         "user_type": _.trim(_.get(this.startingForm, 'basicInfo.userType')),
         "organisation": _.trim(_.get(this.startingForm, 'basicInfo.organisation')),
+        "state": _.trim(_.get(this.startingForm, 'basicInfo.state')),
+        "state_id": _.trim(_.get(this.startingForm, 'basicInfo.state_id')),
+        "district": _.trim(_.get(this.startingForm, 'basicInfo.district')),
+        "district_id": _.trim(_.get(this.startingForm, 'basicInfo.district_id')),
         "created_by":identifier,
     };
+    console.log("customData  =>", customData)
 
     this.signupService.CreateUser(customData).subscribe(
         (response) => {
