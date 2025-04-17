@@ -109,6 +109,10 @@ export class SignupBasicInfoComponent implements OnInit {
     );
   }
 
+  onStateClick() {
+    this.loadStates();
+  }
+
   // Fetch districts for selected state
   onStateChange(selectedStateId: string) {
     this.personalInfoForm.get('district')?.setValue('');
