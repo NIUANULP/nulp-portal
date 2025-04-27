@@ -10,6 +10,7 @@ const {
   readState,
   readDistrict,
   locationData,
+  getToken,
 } = require("../helpers/customHelper.js");
 
 module.exports = function (app) {
@@ -48,4 +49,5 @@ module.exports = function (app) {
     bodyParser.json({ limit: "10mb" }),
     locationData
   );
+  app.get("/auth/token", proxyUtils.verifyToken(), getToken);
 };
