@@ -108,7 +108,7 @@ async function saveUserInfo(req, res) {
 async function updateUserInfo(req, res) {
   try {
     const { user_id } = req.query;
-    console.log("updateUserInfo", user_id)
+    console.log("updateUserInfo", user_id);
 
     if (!user_id) {
       const errorMessage = `Missing user_id`;
@@ -129,13 +129,13 @@ async function updateUserInfo(req, res) {
       district_id,
     } = req.body;
 
-    console.log("req.body", req.body)
+    console.log("req.body", req.body);
 
     // Query to check if the user exists
     const getQuery = "SELECT * FROM users WHERE user_id = $1";
     const getValues = [user_id];
     const getData = await pool.query(getQuery, getValues);
-    console.log("getData", getData)
+    console.log("getData", getData);
     if (getData.rows?.length > 0) {
       // If user exists, perform an update
       const query = `
@@ -201,7 +201,7 @@ async function updateUserInfo(req, res) {
       ];
 
       const { rows } = await pool.query(query, values);
-      
+
       res.send({
         ts: new Date().toISOString(),
         params: {
@@ -473,6 +473,36 @@ async function readDistrict(req, res) {
   }
 }
 
+async function getToken(req, res) {
+  try {
+    const data = {
+      access_token: req.kauth.grant.access_token.token,
+      token_type: req.kauth.grant.token_type,
+      expires_in: req.kauth.grant.expires_in,
+    };
+    const token = req.kauth.grant.access_token.token;
+
+    return res.send(data);
+  } catch (err) {
+    const statusCode = err.statusCode || 500;
+    const errorMessage = err.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
+
 module.exports = {
   saveUserInfo,
   updateUserInfo,
@@ -482,4 +512,5 @@ module.exports = {
   readState,
   readDistrict,
   locationData,
+  getToken,
 };
