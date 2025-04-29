@@ -139,10 +139,6 @@ export class CertificateTemplateUploadComponent implements OnInit {
         this.certTemplateList = templateList.map((template: any) => {
           if (template.artifactUrl) {
             template.artifactUrl = template.artifactUrl.replace(
-              'https://devnewnulp.blob.core.windows.net',
-              'https://devnewnulpblob.blob.core.windows.net'
-            );
-            template.artifactUrl = template.artifactUrl.replace(
               'https://nulpstorage1.blob.core.window',
               'https://nulpstorage.blob.core.window'
             );

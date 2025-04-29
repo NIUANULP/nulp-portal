@@ -1,4 +1,4 @@
-const { body, param, validationResult } = require("express-validator");
+const { body, param, validationResult, query } = require("express-validator");
 const { pool } = require("../helpers/postgresqlConfig");
 const uuidv1 = require("uuid/v1");
 const express = require("express");
@@ -14,6 +14,10 @@ const validateUserFields = [
   body("created_by").isString().notEmpty(),
   body("user_type").optional().isString(),
   body("organisation").optional().isString(),
+  body("state").isString().notEmpty(),
+  body("district").isString().notEmpty(),
+  body("state_id").isString().notEmpty(),
+  body("district_id").isString().notEmpty(),
 ];
 
 // Error handler middleware
@@ -39,11 +43,21 @@ async function saveUserInfo(req, res) {
     });
   }
 
-  const { user_id, designation, bio, created_by, user_type, organisation } =
-    req.body;
+  const {
+    user_id,
+    designation,
+    bio,
+    created_by,
+    user_type,
+    organisation,
+    state,
+    district,
+    state_id,
+    district_id,
+  } = req.body;
 
   const query =
-    "INSERT INTO users (user_id, designation, bio, created_by,user_type,organisation) VALUES ($1, $2, $3, $4,$5,$6) RETURNING *";
+    "INSERT INTO users (user_id, designation, bio, created_by,user_type,organisation,state,district,state_id,district_id) VALUES ($1, $2, $3, $4,$5,$6,$7,$8,$9,$10) RETURNING *";
   const values = [
     user_id,
     designation,
@@ -51,6 +65,10 @@ async function saveUserInfo(req, res) {
     created_by,
     user_type,
     organisation,
+    state,
+    district,
+    state_id,
+    district_id,
   ];
 
   try {
@@ -97,7 +115,17 @@ async function updateUserInfo(req, res) {
       throw error;
     }
 
-    const { designation, bio, updated_by, user_type, organisation } = req.body;
+    const {
+      designation,
+      bio,
+      updated_by,
+      user_type,
+      organisation,
+      state,
+      district,
+      state_id,
+      district_id,
+    } = req.body;
 
     // Query to check if the user exists
     const getQuery = "SELECT * FROM users WHERE user_id = $1";
@@ -113,9 +141,13 @@ async function updateUserInfo(req, res) {
           bio = COALESCE($2, bio), 
           user_type = COALESCE($3, user_type), 
           organisation = COALESCE($4, organisation), 
-          updated_by = COALESCE($5, updated_by), 
+          updated_by = COALESCE($5, updated_by),
+          state = COALESCE($6, state),
+          district = COALESCE($7, district),
+          state_id = COALESCE($8, state_id),
+          district_id = COALESCE($9, district_id),
           updated_at = NOW() 
-        WHERE user_id = $6 
+        WHERE user_id = $10
         RETURNING *`;
 
       const values = [
@@ -124,6 +156,10 @@ async function updateUserInfo(req, res) {
         user_type || null,
         organisation || null,
         updated_by || null,
+        state || null,
+        district || null,
+        state_id || null,
+        district_id || null,
         user_id,
       ];
 
@@ -144,8 +180,8 @@ async function updateUserInfo(req, res) {
     } else {
       // If user does not exist, perform an insert
       const query = `
-        INSERT INTO users (user_id, designation, bio, created_by, user_type, organisation) 
-        VALUES ($1, $2, $3, $4, $5, $6) 
+        INSERT INTO users (user_id, designation, bio, created_by, user_type, organisation, state, district, state_id, district_id) 
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
         RETURNING *`;
 
       const values = [
@@ -155,6 +191,10 @@ async function updateUserInfo(req, res) {
         updated_by,
         user_type || null,
         organisation || null,
+        state || null,
+        district || null,
+        state_id || null,
+        district_id || null,
       ];
 
       const { rows } = await pool.query(query, values);
@@ -288,10 +328,77 @@ async function emailNotification(req, res) {
   }
 }
 
+async function locationData(req, res) {
+  try {
+    const data = req.body;
+
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${envHelper.api_base_url}/api/data/v1/location/search`,
+      headers: {
+        Authorization: `Bearer ${envHelper.PORTAL_API_AUTH_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+    const response = await axios(config);
+    return res.send(response.data);
+  } catch (err) {
+    const statusCode = err.statusCode || 500;
+    const errorMessage = err.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
+async function getToken(req, res) {
+  try {
+    const data = {
+      access_token: req.kauth.grant.access_token.token,
+      token_type: req.kauth.grant.token_type,
+      expires_in: req.kauth.grant.expires_in,
+    };
+    const token = req.kauth.grant.access_token.token;
+
+    return res.send(data);
+  } catch (err) {
+    const statusCode = err.statusCode || 500;
+    const errorMessage = err.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
+
 module.exports = {
   saveUserInfo,
   updateUserInfo,
   readUserInfo,
   validateUserFields,
   emailNotification,
+  locationData,
+  getToken,
 };

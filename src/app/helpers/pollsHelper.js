@@ -313,6 +313,7 @@ const updatePolls = async (req, res) => {
       "image",
       "is_live_poll_result",
       "updated_by",
+      "content_category",
     ];
 
     body.updated_by = session?.userId;
