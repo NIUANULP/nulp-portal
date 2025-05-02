@@ -363,6 +363,35 @@ async function locationData(req, res) {
     });
   }
 }
+async function getToken(req, res) {
+  try {
+    const data = {
+      access_token: req.kauth.grant.access_token.token,
+      token_type: req.kauth.grant.token_type,
+      expires_in: req.kauth.grant.expires_in,
+    };
+    const token = req.kauth.grant.access_token.token;
+
+    return res.send(data);
+  } catch (err) {
+    const statusCode = err.statusCode || 500;
+    const errorMessage = err.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
 
 module.exports = {
   saveUserInfo,
@@ -371,4 +400,5 @@ module.exports = {
   validateUserFields,
   emailNotification,
   locationData,
+  getToken,
 };
