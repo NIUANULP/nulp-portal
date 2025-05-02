@@ -20,6 +20,7 @@ export class TermsAndConditionsPopupComponent implements OnInit, OnDestroy {
   @Input() adminTncVersion: any;
   @Input() reportViewerTncVersion: any;
   @Output() close = new EventEmitter<any>();
+  nulp_logo = '../../../../../assets/images/nulp_logo.png';
 
   /**
    * user profile details.
