@@ -4,24 +4,6 @@
     {{resourceService.frmelmnts.lbl.registerOn | interpolate:'{instance}': instance}}
   </h5>
 
-  <!--  Inserted custom message starts here -->
-  <div class="required mb-16 text-center" style="white-space: pre-line;">
-    <div style="font-weight: normal;">
-      Due to scheduled maintenance activity, the registration has been  
-      <br>
-      paused on the platform. It will be resumed shortly.  
-      <br>
-      Due to overwhelming participation for अrban Learnathon 2.0,  
-      <br>
-      the voting has been <span class="sb-color-red">extended till 09th May 2025 11:59 PM</span>  
-      <br>
-      Thank you for your patience and support!
-    </div>
-  </div>
-  
-  
-  <!-- Inserted custom message ends here -->
-
   <div class="required mb-16">
     <label for="signup-form-name" class="mb-8 font-weight-bold">
       {{resourceService.frmelmnts?.lbl?.name}}<span class="sb-color-red">*</span>
@@ -66,7 +48,7 @@
 
     <select id="signup-form-state" class="sb-form-control"
       [ngClass]="{'orange-border': personalInfoForm.controls.state.touched && personalInfoForm.controls['state'].errors}"
-      formControlName="state" (click)="onStateClick()" (change)="onStateChange($event.target.value)">
+      formControlName="state" (change)="onStateChange($event.target.value)">
       <option value="" disabled>{{resourceService.frmelmnts?.lbl?.profile?.selectState}}</option>
       <option *ngFor="let state of states" [value]="state.id">{{ state.name }}</option>
     </select>
