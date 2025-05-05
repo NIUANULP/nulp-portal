@@ -239,6 +239,9 @@ const listLearnathonContents = async (req, res) => {
       search = "",
     } = req.body.request;
 
+    const isEmail = req.query.email;
+    const isPhone = req.query.phone;
+
     const userId = filters.user_id || req?.session?.userId;
 
     let query = `
@@ -314,11 +317,17 @@ const listLearnathonContents = async (req, res) => {
     const result = await getRecords(query, values);
 
     result?.rows?.forEach((row) => {
-      if (row.email) {
-        row.email = decrypt(row.email);
+      
+      if (isEmail) {
+        if (row.email) {
+          row.email = decrypt(row.email);
+        }
       }
-      if (row.mobile_number) {
-        row.mobile_number = decrypt(row.mobile_number);
+
+      if (isPhone) {
+        if (row.mobile_number) {
+          row.mobile_number = decrypt(row.mobile_number);
+        }
       }
     });
 
