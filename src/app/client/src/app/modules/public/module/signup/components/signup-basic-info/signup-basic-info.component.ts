@@ -5,6 +5,7 @@ import { TelemetryService } from '@sunbird/telemetry';
 import * as _ from 'lodash-es';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { SignupService } from '../../services';
+import { retry } from 'rxjs/operators';
 
 @Component({
   selector: 'app-signup-basic-info',
@@ -99,18 +100,16 @@ export class SignupBasicInfoComponent implements OnInit {
      // Fetch states from API
   loadStates(): void {
     console.log("loadstate")
-    this.signupService.getStates().subscribe(
+    this.signupService.getStates().pipe(
+      retry(2) // Retry twice if the first call fails
+    ).subscribe(
       res => {
         this.states = res?.result?.response || [];
       },
       err => {
-        console.error('Error loading states:', err);
+        console.error('Error loading states after retries:', err);
       }
     );
-  }
-
-  onStateClick() {
-    this.loadStates();
   }
 
   // Fetch districts for selected state
