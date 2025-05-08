@@ -9,6 +9,9 @@ const {
   emailNotification,
   locationData,
   getToken,
+  emailServiceForNodebb,
+  emailServiceForDiscussionForum,
+  verifyHMAC,
 } = require("../helpers/customHelper.js");
 
 module.exports = function (app) {
@@ -46,5 +49,14 @@ module.exports = function (app) {
     locationData
   );
 
+  // discussion forum api
   app.get("/auth/token", proxyUtils.verifyToken(), getToken);
+
+  // Email service for discussion forum
+  app.post(
+    "/discussion/forum/email",
+    bodyParser.json({ limit: "10mb" }),
+    verifyHMAC,
+    emailServiceForDiscussionForum
+  );
 };
