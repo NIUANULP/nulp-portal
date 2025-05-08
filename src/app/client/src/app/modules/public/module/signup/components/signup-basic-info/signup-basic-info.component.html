@@ -48,7 +48,7 @@
 
     <select id="signup-form-state" class="sb-form-control"
       [ngClass]="{'orange-border': personalInfoForm.controls.state.touched && personalInfoForm.controls['state'].errors}"
-      formControlName="state" (click)="onStateClick()" (change)="onStateChange($event.target.value)">
+      formControlName="state" (change)="onStateChange($event.target.value)">
       <option value="" disabled>{{resourceService.frmelmnts?.lbl?.profile?.selectState}}</option>
       <option *ngFor="let state of states" [value]="state.id">{{ state.name }}</option>
     </select>
