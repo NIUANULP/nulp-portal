@@ -165,6 +165,8 @@ let envVariables = {
   event_meet_id:env.event_meet_id,
   event_meet_secret:env.event_meet_secret,
   google_refresh_token :env.google_refresh_token,
+  //Discussion forum
+  discussion_forum_key:env.discussion_forum_key,
 
   // Auth tokens
   client_id :env.client_id,
