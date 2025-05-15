@@ -12,6 +12,8 @@ const {
   emailServiceForNodebb,
   emailServiceForDiscussionForum,
   verifyHMAC,
+  getUserPosts,
+  getSearchResults,
 } = require("../helpers/customHelper.js");
 
 module.exports = function (app) {
@@ -59,4 +61,12 @@ module.exports = function (app) {
     verifyHMAC,
     emailServiceForDiscussionForum
   );
+  // get user posts
+  app.get(
+    "/discussion/api/user/:username/posts",
+    proxyUtils.verifyToken(),
+    getUserPosts
+  );
+  // get search results
+  app.get("/discussion/api/search", proxyUtils.verifyToken(), getSearchResults);
 };

@@ -492,6 +492,109 @@ function verifyHMAC(req, res, next) {
   }
 }
 
+async function getUserPosts(req, res) {
+  const { username } = req.params;
+  const discussionForumUrl = `${envHelper.api_base_url}/discussion-forum/api/user/${username}/posts`;
+  const options = {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${envHelper.discussion_forum_key}`,
+    },
+  };
+
+  try {
+    const response = await axios(discussionForumUrl, options);
+    const data = response?.data;
+
+    return res.status(200).json(data);
+  } catch (error) {
+    console.error("Error fetching user posts:", error);
+
+    return res.status(500).json({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "unsuccessful",
+        err: "INTERNAL_SERVER_ERROR",
+        errmsg: error.message,
+      },
+      responseCode: "INTERNAL_SERVER_ERROR",
+      result: {},
+    });
+  }
+}
+
+async function getSearchResults(req, res) {
+  const {
+    in: searchIn,
+    term,
+    matchWords,
+    by,
+    categories,
+    searchChildren,
+    hasTags,
+    replies,
+    repliesFilter,
+    timeFilter,
+    timeRange,
+    sortBy,
+    sortDirection,
+    showAs,
+  } = req.query;
+
+  // Build the search URL with all parameters
+  const searchParams = new URLSearchParams({
+    in: searchIn,
+    term: term,
+    matchWords: matchWords,
+    by: by,
+    categories: categories,
+    searchChildren: searchChildren,
+    hasTags: hasTags,
+    replies: replies,
+    repliesFilter: repliesFilter,
+    timeFilter: timeFilter,
+    timeRange: timeRange,
+    sortBy: sortBy,
+    sortDirection: sortDirection,
+    showAs: showAs,
+  });
+
+  const discussionForumUrl = `${
+    envHelper.api_base_url
+  }/discussion-forum/api/search?${searchParams.toString()}`;
+
+  const options = {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${envHelper.discussion_forum_key}`,
+    },
+  };
+
+  try {
+    const response = await axios(discussionForumUrl, options);
+    const data = response?.data;
+
+    return res.status(200).json(data);
+  } catch (error) {
+    console.error("Error fetching search results:", error);
+
+    return res.status(500).json({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "unsuccessful",
+        err: "INTERNAL_SERVER_ERROR",
+        errmsg: error.message,
+      },
+      responseCode: "INTERNAL_SERVER_ERROR",
+      result: {},
+    });
+  }
+}
+
 module.exports = {
   saveUserInfo,
   updateUserInfo,
@@ -502,4 +605,6 @@ module.exports = {
   getToken,
   emailServiceForDiscussionForum,
   verifyHMAC,
+  getUserPosts,
+  getSearchResults,
 };
