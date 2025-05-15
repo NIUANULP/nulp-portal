@@ -93,8 +93,6 @@ export class SignupService {
   }
 
   getStates(): Observable<any> {
-    console.log("state apiUrl",this.apiUrl)
-    console.log("getStates")
     const body = {
       request: {
         filters: {

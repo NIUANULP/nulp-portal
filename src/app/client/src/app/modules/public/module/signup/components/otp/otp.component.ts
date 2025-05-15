@@ -255,6 +255,7 @@ customUserCreation(identifier: string) {
         "designation": _.trim(_.get(this.startingForm, 'basicInfo.designation')),
         "user_type": _.trim(_.get(this.startingForm, 'basicInfo.userType')),
         "organisation": _.trim(_.get(this.startingForm, 'basicInfo.organisation')),
+        "country": _.trim(_.get(this.startingForm, 'basicInfo.country')),
         "state": _.trim(_.get(this.startingForm, 'basicInfo.state')),
         "state_id": _.trim(_.get(this.startingForm, 'basicInfo.state_id')),
         "district": _.trim(_.get(this.startingForm, 'basicInfo.district')),
