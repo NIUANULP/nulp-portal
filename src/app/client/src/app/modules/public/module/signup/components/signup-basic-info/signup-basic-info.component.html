@@ -40,10 +40,10 @@
   </div>
 
 
-  <!-- Country Dropdown -->
+<!-- Country Dropdown -->
 <div class="required mb-16">
   <label for="signup-form-country" class="mb-8 font-weight-bold">
-    {{resourceService.frmelmnts?.lbl?.profile?.Country}}<span class="sb-color-red">*</span>
+    {{resourceService.frmelmnts?.lbl?.profile?.Country || 'Country'}}<span class="sb-color-red">*</span>
   </label>
 
   <select id="signup-form-country" class="sb-form-control"
@@ -55,19 +55,19 @@
 
   <div class="sb-color-red pt-0" aria-describedby="signup-form-country" tabindex="0"
     *ngIf="personalInfoForm.controls.country.touched && personalInfoForm.controls['country'].errors?.required">
-    {{resourceService.frmelmnts?.lbl?.profile?.selectCountry}}
+    {{resourceService.frmelmnts?.lbl?.profile?.selectCountry || 'Select country'}}
   </div>
 </div>
 
 <!-- Other Country Input -->
 <div class="required mb-16" *ngIf="isOtherCountrySelected">
   <label for="signup-form-other-country" class="mb-8 font-weight-bold">
-    {{resourceService.frmelmnts?.lbl?.profile?.enterCountryName}}<span class="sb-color-red">*</span>
+    {{resourceService.frmelmnts?.lbl?.profile?.enterCountryName || 'Enter country name'}}<span class="sb-color-red">*</span>
   </label>
   <input id="signup-form-other-country" class="sb-form-control" formControlName="otherCountry" type="text"
-    placeholder="{{resourceService.frmelmnts?.lbl?.profile?.enterCountryName}}">
+    placeholder="{{resourceService.frmelmnts?.lbl?.profile?.enterCountryName || 'Enter country name'}}">
   <div class="sb-color-red pt-0" *ngIf="personalInfoForm.controls.otherCountry?.touched && personalInfoForm.controls.otherCountry?.errors?.required">
-    {{resourceService.frmelmnts?.lbl?.profile?.enterCountryName}}
+    {{resourceService.frmelmnts?.lbl?.profile?.enterCountryName || 'Enter country name'}}
   </div>
 </div>
 
