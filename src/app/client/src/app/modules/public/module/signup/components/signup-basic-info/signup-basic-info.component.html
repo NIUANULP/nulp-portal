@@ -65,7 +65,7 @@
     {{resourceService.frmelmnts?.lbl?.profile?.enterCountryName}}<span class="sb-color-red">*</span>
   </label>
   <input id="signup-form-other-country" class="sb-form-control" formControlName="otherCountry" type="text"
-    placeholder="{{resourceService.frmelmnts?.lbl?.enterCountryName}}">
+    placeholder="{{resourceService.frmelmnts?.lbl?.profile?.enterCountryName}}">
   <div class="sb-color-red pt-0" *ngIf="personalInfoForm.controls.otherCountry?.touched && personalInfoForm.controls.otherCountry?.errors?.required">
     {{resourceService.frmelmnts?.lbl?.profile?.enterCountryName}}
   </div>
