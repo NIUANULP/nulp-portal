@@ -5,6 +5,7 @@ const express = require("express");
 const app = express();
 const envHelper = require("../helpers/environmentVariablesHelper.js");
 const axios = require("axios");
+const crypto = require("crypto");
 
 // Validation middleware for user_id, designation, bio, and created_by fields
 const validateUserFields = [
@@ -54,10 +55,11 @@ async function saveUserInfo(req, res) {
     district,
     state_id,
     district_id,
+    country
   } = req.body;
 
   const query =
-    "INSERT INTO users (user_id, designation, bio, created_by,user_type,organisation,state,district,state_id,district_id) VALUES ($1, $2, $3, $4,$5,$6,$7,$8,$9,$10) RETURNING *";
+    "INSERT INTO users (user_id, designation, bio, created_by, user_type, organisation, state, district, state_id, district_id, country) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *";
   const values = [
     user_id,
     designation,
@@ -69,6 +71,7 @@ async function saveUserInfo(req, res) {
     district,
     state_id,
     district_id,
+    country
   ];
 
   try {
@@ -393,6 +396,104 @@ async function getToken(req, res) {
   }
 }
 
+async function emailServiceForDiscussionForum(req, res) {
+  try {
+    const data = req.body;
+
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${envHelper.api_base_url}/api/user/v1/notification/email`,
+      headers: {
+        Authorization: `Bearer ${envHelper.PORTAL_API_AUTH_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+    //Debugging logs
+    console.log("config", config);
+    console.log("data", data);
+
+    const response = await axios(config);
+    return res.send(response.data);
+  } catch (err) {
+    const statusCode = err.statusCode || 500;
+    const errorMessage = err.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
+
+function verifyHMAC(req, res, next) {
+  const unauthorizedResponse = (message) => {
+    res.status(401).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: 401,
+        status: "unsuccessful",
+        message,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  };
+
+  try {
+    // Check if the request body is empty
+    const secretKey = envHelper.discussion_forum_key;
+    const authHeader = req.headers["authorization"];
+    const receivedHMAC = authHeader?.split(" ")[1];
+
+    if (!receivedHMAC) {
+      return unauthorizedResponse("Unauthorized: No HMAC provided");
+    }
+
+    const dataToVerify = JSON.stringify(req.body);
+    const computedHMAC = crypto
+      .createHmac("sha256", secretKey)
+      .update(dataToVerify)
+      .digest("hex");
+
+    if (computedHMAC !== receivedHMAC) {
+      return unauthorizedResponse("Unauthorized: Invalid HMAC");
+    }
+
+    next(); // HMAC is valid, proceed
+  } catch (err) {
+    console.error("HMAC verification error:", err);
+    res.status(500).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: 500,
+        status: "unsuccessful",
+        message: "Internal Server Error",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
+
 module.exports = {
   saveUserInfo,
   updateUserInfo,
@@ -401,4 +502,6 @@ module.exports = {
   emailNotification,
   locationData,
   getToken,
+  emailServiceForDiscussionForum,
+  verifyHMAC,
 };
