@@ -9,7 +9,8 @@ export const urlConfig = {
   // search: "/content/composite/v1/search",
   // compositeSearch: "/action/composite/v3/search",
   gmeetget: "custom_event/gmeet/get?eventId=",
-  attachCertificate :"/certreg/v1/template/add",
+  attachCertificate: "/certreg/v1/template/add",
+  certificateList: "/content/composite/v1/search",
 
   search: "/custom_event/composite/search",
   compositeSearch: "/custom_event/composite/search",
