@@ -317,7 +317,7 @@ const listLearnathonContents = async (req, res) => {
     const result = await getRecords(query, values);
 
     result?.rows?.forEach((row) => {
-      
+
       if (isEmail) {
         if (row.email) {
           row.email = decrypt(row.email);
@@ -815,10 +815,9 @@ const provideCreatorAccess = async (req, res) => {
         url: `${envHelper.api_base_url}/api/user/v1/role/assign`,
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${
-            envHelper.PORTAL_API_AUTH_TOKEN ||
+          Authorization: `Bearer ${envHelper.PORTAL_API_AUTH_TOKEN ||
             envHelper.sunbird_logged_default_token
-          }`,
+            }`,
           "x-authenticated-user-token": response.data.access_token,
         },
         data: req.body,
@@ -877,32 +876,23 @@ const provideCreatorAccess = async (req, res) => {
   }
 };
 
+
 const listLearnathonCreators = async (req, res) => {
   try {
-    const query = "SELECT * FROM user_rolles";
+    const { user_id } = req.query;
 
-    const result = await getRecords(query);
+    let query, params;
 
-    const totalCount = result?.rowCount || 0;
-
-    if (totalCount === 0) {
-      return res.status(200).send({
-        ts: new Date().toISOString(),
-        params: {
-          resmsgid: uuidv1(),
-          msgid: uuidv1(),
-          status: "successful",
-          message: "No learnathon creators found",
-          err: null,
-          errmsg: null,
-        },
-        responseCode: "OK",
-        result: {
-          totalCount,
-          data: [],
-        },
-      });
+    if (user_id) {
+      query = `SELECT * FROM user_rolles WHERE user_id = $1`;
+      params = [user_id];
+    } else {
+      query = `SELECT * FROM user_rolles`;
+      params = [];
     }
+
+    const result = await getRecords(query, params);
+    const totalCount = result?.rowCount || 0;
 
     return res.status(200).send({
       ts: new Date().toISOString(),
@@ -910,14 +900,17 @@ const listLearnathonCreators = async (req, res) => {
         resmsgid: uuidv1(),
         msgid: uuidv1(),
         status: "successful",
-        message: "Learnathon creators fetched successfully",
+        message:
+          totalCount > 0
+            ? "Learnathon creators fetched successfully"
+            : "No learnathon creators found",
         err: null,
         errmsg: null,
       },
       responseCode: "OK",
       result: {
         totalCount,
-        data: result.rows,
+        data: result.rows || [],
       },
     });
   } catch (error) {
