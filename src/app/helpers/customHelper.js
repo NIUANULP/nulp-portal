@@ -124,6 +124,7 @@ async function updateUserInfo(req, res) {
       updated_by,
       user_type,
       organisation,
+      country,
       state,
       district,
       state_id,
@@ -145,12 +146,13 @@ async function updateUserInfo(req, res) {
           user_type = COALESCE($3, user_type), 
           organisation = COALESCE($4, organisation), 
           updated_by = COALESCE($5, updated_by),
-          state = COALESCE($6, state),
-          district = COALESCE($7, district),
-          state_id = COALESCE($8, state_id),
-          district_id = COALESCE($9, district_id),
+          country = COALESCE($6, country),
+          state = COALESCE($7, state),
+          district = COALESCE($8, district),
+          state_id = COALESCE($9, state_id),
+          district_id = COALESCE($10, district_id),
           updated_at = NOW() 
-        WHERE user_id = $10
+        WHERE user_id = $11
         RETURNING *`;
 
       const values = [
@@ -159,6 +161,7 @@ async function updateUserInfo(req, res) {
         user_type || null,
         organisation || null,
         updated_by || null,
+        country || null,
         state || null,
         district || null,
         state_id || null,
@@ -183,8 +186,8 @@ async function updateUserInfo(req, res) {
     } else {
       // If user does not exist, perform an insert
       const query = `
-        INSERT INTO users (user_id, designation, bio, created_by, user_type, organisation, state, district, state_id, district_id) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
+        INSERT INTO users (user_id, designation, bio, created_by, user_type, organisation, country, state, district, state_id, district_id) 
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) 
         RETURNING *`;
 
       const values = [
@@ -194,6 +197,7 @@ async function updateUserInfo(req, res) {
         updated_by,
         user_type || null,
         organisation || null,
+        country || null,
         state || null,
         district || null,
         state_id || null,
