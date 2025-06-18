@@ -879,30 +879,20 @@ const provideCreatorAccess = async (req, res) => {
 
 const listLearnathonCreators = async (req, res) => {
   try {
-    const query = "SELECT * FROM user_rolles";
+    const { user_id } = req.query;
 
-    const result = await getRecords(query);
+    let query, params;
 
-    const totalCount = result?.rowCount || 0;
-
-    if (totalCount === 0) {
-      return res.status(200).send({
-        ts: new Date().toISOString(),
-        params: {
-          resmsgid: uuidv1(),
-          msgid: uuidv1(),
-          status: "successful",
-          message: "No learnathon creators found",
-          err: null,
-          errmsg: null,
-        },
-        responseCode: "OK",
-        result: {
-          totalCount,
-          data: [],
-        },
-      });
+    if (user_id) {
+      query = `SELECT * FROM user_rolles WHERE user_id = $1`;
+      params = [user_id];
+    } else {
+      query = `SELECT * FROM user_rolles`;
+      params = [];
     }
+
+    const result = await getRecords(query, params);
+    const totalCount = result?.rowCount || 0;
 
     return res.status(200).send({
       ts: new Date().toISOString(),
@@ -910,14 +900,17 @@ const listLearnathonCreators = async (req, res) => {
         resmsgid: uuidv1(),
         msgid: uuidv1(),
         status: "successful",
-        message: "Learnathon creators fetched successfully",
+        message:
+          totalCount > 0
+            ? "Learnathon creators fetched successfully"
+            : "No learnathon creators found",
         err: null,
         errmsg: null,
       },
       responseCode: "OK",
       result: {
         totalCount,
-        data: result.rows,
+        data: result.rows || [],
       },
     });
   } catch (error) {
