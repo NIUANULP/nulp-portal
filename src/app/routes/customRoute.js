@@ -14,6 +14,8 @@ const {
   getUserPosts,
   getSearchResults,
 } = require("../helpers/customHelper.js");
+const { syncUsers } = require("../helpers/announcemenHelper.js");
+const { main } = require("../helpers/sendEmail.js");
 
 module.exports = function (app) {
   // Create user
@@ -68,4 +70,8 @@ module.exports = function (app) {
   );
   // get search results
   app.get("/discussion/api/search", proxyUtils.verifyToken(), getSearchResults);
+  // sync users
+  app.get("/admin/sync/users", syncUsers);
+  // send email
+  app.post("/admin/send/email", bodyParser.json({ limit: "10mb" }), main);
 };
