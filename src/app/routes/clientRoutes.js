@@ -17,6 +17,7 @@ const { memoryStore } = require('../helpers/keyCloakHelper')
 const session = require('express-session');
 const { logger } = require('@project-sunbird/logger');
 const VDNURL = envHelper.vdnURL || 'https://dockstaging.sunbirded.org';
+const axios = require('axios');
 
 logger.info({msg:`CDN index file exist: ${cdnIndexFileExist}`});
 
@@ -45,18 +46,204 @@ module.exports = (app, keycloak) => {
 
   app.set('view engine', 'ejs')
   app.set('views', path.join(__dirname, '../dist/webapp'));
-  const webapp = (req, res) => {
+  // const webapp = (req, res) => {
+  //   const filePath = path.join(__dirname, '../dist/webapp', 'index.ejs');
+  //   console.log('Checking file path:', filePath);
+    
+  //   if (req.path.includes('/webapp') && fs.existsSync(filePath)) {
+  //     console.log('File exists. Rendering file:', filePath);
+  //     req.includeUserDetail = true;
+  //     const templateVariables=getLocals(req)
+  //     res.render('index', templateVariables);
+  //   }
+  //   else{
+  //     console.log("React build folder path not exist");
+  //   }
+  // };
+  const webapp = async (req, res) => {
     const filePath = path.join(__dirname, '../dist/webapp', 'index.ejs');
     console.log('Checking file path:', filePath);
-    
+  
     if (req.path.includes('/webapp') && fs.existsSync(filePath)) {
-      console.log('File exists. Rendering file:', filePath);
       req.includeUserDetail = true;
-      const templateVariables=getLocals(req)
+      const page = parseInt(req.query.page) || 1;
+      const pageSize = parseInt(req.query.pageSize) || 50;
+      const offset = (page - 1) * pageSize;
+      const templateVariables = getLocals(req);
+      templateVariables.structuredData = []; // default empty array
+    
+      try {
+        
+
+        let data = JSON.stringify({
+          request: {
+            filters: {
+              status: ["Live"],
+    
+              visibility: [],
+              primaryCategory: [
+                "Collection",
+                "Resource",
+                "Course",
+                "eTextbook",
+                "Explanation Content",
+                "Learning Resource",
+                "Practice Question Set",
+                "ExplanationResource",
+                "Practice Resource",
+                "Exam Question",
+                "Good Practices",
+                "Reports",
+                "Manual/SOPs",
+              ],
+            },
+            limit: pageSize,
+            offset: offset,
+            sort_by: {
+              lastUpdatedOn: "desc",
+            },
+            fields: [
+              "name",
+              "appIcon",
+              "medium",
+              "subject",
+              "resourceType",
+              "contentType",
+              "organisation",
+              "topic",
+              "mimeType",
+              "trackable",
+              "gradeLevel",
+              "se_boards",
+              "board",
+              "se_subjects",
+              "se_mediums",
+              "se_gradeLevels",
+              "primaryCategory",
+              "createdOn",
+              "previewUrl",
+              "creator",
+              "identifier",
+              "lastPublishedOn",
+              "lastUpdatedOn",
+              "lastPublishedBy",
+              "lastUpdatedBy",
+              "lastPublishedByUser",
+              "lastUpdatedByUser",
+            ],
+            facets: ["channel", "gradeLevel", "subject", "medium"],
+            query: "",
+          },
+        });
+    
+        // Headers
+       
+    
+          const url = `${envHelper.api_base_url}/api/content/v1/search?orgdetails=orgName,email&licenseDetails=name,description,url`;
+          const response = await axios.post(url, data, {
+            headers: {
+              "Content-Type": "application/json"
+            }
+          });
+         
+          const apiData = await response.data;
+  
+        // const apiData = await apiResponse.json();
+        const contentList = apiData?.result?.content || [];
+        templateVariables.totalCount = apiData?.result?.count || 0;
+        templateVariables.page = page;
+        templateVariables.pageSize = pageSize;
+        const itemListJsonLd = {
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          "itemListElement": contentList.map((course, index) => ({
+            "@type": "ListItem",
+            "position": offset + index + 1,
+            "item": { 
+              "@type": "Course",
+              "name": course.name,
+              "description": course.subject?.[0] || "Course",
+              "provider": {
+                "@type": "Organization",
+                "name": course.organisation?.[0] || "NULP"
+              },
+              "url": `${envHelper.api_base_url}/webapp/joinCourse?${course.identifier}`,
+              "offers": {
+                "@type": "Offer",
+                "availability": "https://schema.org/InStock",
+                "price": "0",
+                "priceCurrency": "INR",
+                "url": `${envHelper.api_base_url}/webapp/joinCourse?${course.identifier}`,
+                "category": course?.primaryCategory || "Course",
+              },
+              "hasCourseInstance": {
+                "@type": "CourseInstance",
+                "courseMode": "online",
+                "startDate": course?.createdOn,
+                "endDate": course?.lastUpdatedOn,
+                "inLanguage": course?.language?.[0] || "English",
+                "courseWorkload": "PT1H",
+              },
+
+            },
+           
+          })),
+         
+        };
+  
+       
+        const firstCourse = contentList[0];
+        let courseJsonLd = null;
+        if (firstCourse) {
+          courseJsonLd = {
+            "@context": "https://schema.org",
+            "@type": "Course",
+            "name": firstCourse.name,
+            "description": firstCourse.subject?.[0] || "Course",
+            "provider": {
+              "@type": "Organization",
+              "name": firstCourse.organisation?.[0] || "NULP"
+            },
+            "educationalLevel": firstCourse.gradeLevel?.[0],
+            "inLanguage": firstCourse.se_mediums?.[0] || "English",
+            "url": `${envHelper.api_base_url}/webapp/joinCourse?${firstCourse.identifier}`,
+            "datePublished": firstCourse.createdOn,
+            "dateModified": firstCourse.lastUpdatedOn,
+            "image": firstCourse.appIcon,
+            "offers": {
+              "@type": "Offer",
+              "availability": "https://schema.org/InStock",
+              "price": "0",
+              "priceCurrency": "INR",
+              "url": `${envHelper.api_base_url}/webapp/joinCourse?${firstCourse.identifier}`,
+              "category": firstCourse?.primaryCategory || "Course",
+            },
+            hasCourseInstance: {
+              "@type": "CourseInstance",
+              courseMode: "online",
+              startDate: firstCourse?.createdOn,
+              endDate: firstCourse?.lastUpdatedOn,
+              inLanguage: firstCourse?.language?.[0] || "English",
+              courseWorkload: "PT1H",
+            },
+          };
+        }
+  
+       
+        templateVariables.structuredData = [
+          JSON.stringify(itemListJsonLd),
+          courseJsonLd ? JSON.stringify(courseJsonLd) : null
+        ].filter(Boolean); 
+  
+      } catch (err) {
+        console.error("Error fetching API for structured data:", err);
+      }
+  
       res.render('index', templateVariables);
-    }
-    else{
-      console.log("React build folder path not exist");
+  
+    } else {
+      console.log("React build folder path does not exist");
+      res.status(404).send("Not found");
     }
   };
   app.get('/webapp', webapp);
