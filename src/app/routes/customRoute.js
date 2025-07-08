@@ -13,6 +13,7 @@ const {
   verifyHMAC,
   getUserPosts,
   getSearchResults,
+  getCategories,
 } = require("../helpers/customHelper.js");
 const { syncUsers } = require("../helpers/announcemenHelper.js");
 const { main } = require("../helpers/sendEmail.js");
@@ -74,4 +75,10 @@ module.exports = function (app) {
   app.get("/admin/sync/users", syncUsers);
   // send email
   app.post("/admin/send/email", bodyParser.json({ limit: "10mb" }), main);
+  // get categories
+  app.get(
+    "/discussion/api/categories",
+    proxyUtils.verifyToken(),
+    getCategories
+  );
 };
