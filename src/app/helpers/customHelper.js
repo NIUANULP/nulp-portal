@@ -600,6 +600,25 @@ async function getSearchResults(req, res) {
   }
 }
 
+// get categories from discussion forum
+async function getCategories(req, res) {
+  const discussionForumUrl = `${envHelper.api_base_url}/discussion-forum/api/categories`;
+  const options = {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${envHelper.discussion_forum_key}`,
+    },
+  };
+
+  try {
+    const response = await axios(discussionForumUrl, options);
+    const data = response?.data;
+    return res.status(200).json(data);
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+  }
+}
+
 module.exports = {
   saveUserInfo,
   updateUserInfo,
@@ -612,4 +631,5 @@ module.exports = {
   verifyHMAC,
   getUserPosts,
   getSearchResults,
+  getCategories,
 };
