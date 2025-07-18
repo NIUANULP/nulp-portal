@@ -168,6 +168,6 @@
 "resolutions": {
     "@azure/core-auth": "1.9.0",
     "@azure/core-xml": "1.4.0",
-    "@azure/logger": "1.2.1"
+    "@azure/logger": "1.2.0"
   }
 }
