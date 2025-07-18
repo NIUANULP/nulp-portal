@@ -18,6 +18,7 @@ const session = require('express-session');
 const { logger } = require('@project-sunbird/logger');
 const VDNURL = envHelper.vdnURL || 'https://dockstaging.sunbirded.org';
 const axios = require('axios');
+const SitemapHelper = require("../helpers/sitemapHelper"); 
 
 logger.info({msg:`CDN index file exist: ${cdnIndexFileExist}`});
 
@@ -46,6 +47,31 @@ module.exports = (app, keycloak) => {
 
   app.set('view engine', 'ejs')
   app.set('views', path.join(__dirname, '../dist/webapp'));
+
+  // Initialize sitemap helper
+  const sitemapHelper = new SitemapHelper();
+
+  // Sitemap routes
+  app.get("/sitemap.xml", async (req, res) => {
+    try {
+      const sitemap = await sitemapHelper.generateSitemap();
+      res.set("Content-Type", "text/xml");
+      res.set("Cache-Control", "public, max-age=3600"); // Cache for 1 hour
+      res.send(sitemap);
+    } catch (error) {
+      logger.error("Error generating sitemap:", error);
+      res.status(500).send("Error generating sitemap");
+    }
+  });
+
+  // Robots.txt route
+  app.get("/robots.txt", (req, res) => {
+    const robotsTxt = sitemapHelper.generateRobotsTxt();
+    res.set("Content-Type", "text/plain");
+    res.set("Cache-Control", "public, max-age=86400"); // Cache for 24 hours
+    res.send(robotsTxt);
+  });
+
   // const webapp = (req, res) => {
   //   const filePath = path.join(__dirname, '../dist/webapp', 'index.ejs');
   //   console.log('Checking file path:', filePath);
@@ -323,7 +349,7 @@ module.exports = (app, keycloak) => {
     '/explore/*', '/:slug/explore', '/:slug/explore/*', '/play/*', '/:slug/play/*',  '/explore-course', '/explore-course/*',
     '/:slug/explore-course', '/:slug/explore-course/*', '/:slug/signup', '/signup', '/:slug/sign-in/*',
     '/sign-in/*', '/download/*', '/accountMerge/*','/:slug/accountMerge/*', '/:slug/download/*', '/certs/*', '/:slug/certs/*', '/recover/*', '/:slug/recover/*', '/explore-groups',
-    '/guest-profile','/chatbot','/webapp/signup/','/webapp/otp/','/otp'],
+    '/guest-profile','/chatbot','/webapp/signup/','/webapp/otp/','/otp','/webapp/join-course'],
     session({
       secret: envHelper.PORTAL_SESSION_SECRET_KEY,
       resave: false,
@@ -362,6 +388,7 @@ module.exports = (app, keycloak) => {
   app.all('/:tenantName', renderTenantPage)
 
   app.all('/redirect/login', redirectToLogin)
+  app.all('/public/login', redirectToLoginPage)
 
   // ####################### Testing Re direction####################
   app.use((req, res, next) => {
@@ -575,7 +602,13 @@ const redirectToLogin = (req, res) => {
   const query = `?client_id=portal&state=3c9a2d1b-ede9-4e6d-a496-068a490172ee&redirect_uri=https://${req.get('host')}/${redirectUrl}&scope=openid&version=${CONSTANTS.KEYCLOAK.VERSION}&response_type=code&error_message=${req.query.error_message}`;
   res.redirect(url + query);
 };
-
+const redirectToLoginPage = (req, res) => {
+  const redirectUrl = req.query.redirectUri || '/webapp/domainList';
+  const url = `${envHelper.PORTAL_AUTH_SERVER_URL}/realms/${envHelper.PORTAL_REALM}/protocol/openid-connect/auth`;
+  const protocol = req.protocol; 
+  const query = `?client_id=portal&state=3c9a2d1b-ede9-4e6d-a496-068a490172ee&redirect_uri=${protocol}://${req.get('host')}/${redirectUrl}&scope=openid&version=${CONSTANTS.KEYCLOAK.VERSION}&response_type=code&error_message=${req.query.error_message}`;
+  res.redirect(url + query);
+};
 
 const getdial = (req,res) => {
   if (fs.existsSync(path.join(__dirname, '../tenant/course/', 'index.html'))) {
