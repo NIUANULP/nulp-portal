@@ -18,6 +18,55 @@ class SitemapHelper {
       .replace(/'/g, "&apos;");
   }
 
+  // Format date to W3C Date format (ISO 8601) for XML sitemaps
+  formatDateForSitemap(dateInput) {
+    if (!dateInput) {
+      return new Date().toISOString();
+    }
+
+    let date;
+
+    try {
+      // Handle different input types
+      if (typeof dateInput === "string") {
+        // Handle common date formats from API
+        if (dateInput.includes("+")) {
+          // Format: "2024-05-17T09:52:14.433+0000"
+          date = new Date(dateInput);
+        } else {
+          // Try parsing as is
+          date = new Date(dateInput);
+        }
+      } else if (dateInput instanceof Date) {
+        date = dateInput;
+      } else if (typeof dateInput === "number") {
+        // Unix timestamp (milliseconds or seconds)
+        date = new Date(dateInput < 1e12 ? dateInput * 1000 : dateInput);
+      } else {
+        // Fallback to current date
+        date = new Date();
+      }
+
+      // Validate the date
+      if (isNaN(date.getTime()) || date.getTime() < 0) {
+        console.warn(`Invalid date detected: ${dateInput}, using current date`);
+        date = new Date();
+      }
+
+      // Ensure date is not in the future (sitemap best practice)
+      const now = new Date();
+      if (date > now) {
+        date = now;
+      }
+
+      // Return in ISO format (W3C Date format)
+      return date.toISOString();
+    } catch (error) {
+      console.error(`Error formatting date ${dateInput}:`, error);
+      return new Date().toISOString();
+    }
+  }
+
   // URL encode function to ensure valid URLs
   encodeURL(url) {
     try {
@@ -103,20 +152,45 @@ class SitemapHelper {
 
   // Convert content to sitemap URLs (webapp routes only)
   contentToSitemapUrls(contentList) {
+    if (!Array.isArray(contentList)) {
+      console.warn("contentList is not an array, returning empty array");
+      return [];
+    }
+
     return contentList
       .filter(
-        (content) => content.visibility === "Default" || !content.visibility
-      ) // Only public content
-      .filter((content) => content.identifier) // Ensure identifier exists
-      .map((content) => ({
-        url: `/webapp/join-course?${encodeURIComponent(content.identifier)}`,
-        changefreq: "weekly",
-        priority: "0.7",
-        lastmod:
-          content.lastUpdatedOn ||
-          content.createdOn ||
-          new Date().toISOString(),
-      }));
+        (content) =>
+          content && (content.visibility === "Default" || !content.visibility)
+      ) // Only public content and valid objects
+      .filter(
+        (content) =>
+          content.identifier && typeof content.identifier === "string"
+      ) // Ensure identifier exists and is string
+      .map((content) => {
+        try {
+          // Use the first available date and format it properly
+          const dateToUse =
+            content.lastUpdatedOn ||
+            content.lastPublishedOn ||
+            content.createdOn;
+
+          return {
+            url: `/webapp/join-course?${encodeURIComponent(
+              content.identifier
+            )}`,
+            changefreq: "daily",
+            priority: "0.6",
+            lastmod: this.formatDateForSitemap(dateToUse),
+          };
+        } catch (error) {
+          console.error(
+            `Error processing content ${content.identifier}:`,
+            error
+          );
+          return null;
+        }
+      })
+      .filter((url) => url !== null); // Remove any failed conversions
   }
 
   // Validate URL object structure
@@ -163,10 +237,10 @@ class SitemapHelper {
         try {
           const fullUrl = this.encodeURL(`${this.baseUrl}${url.url}`);
           const lastmod = this.escapeXML(
-            url.lastmod || new Date().toISOString()
+            this.formatDateForSitemap(url.lastmod)
           );
-          const changefreq = this.escapeXML(url.changefreq || "weekly");
-          const priority = this.escapeXML(url.priority || "0.5");
+          const changefreq = this.escapeXML(url.changefreq || "daily");
+          const priority = this.escapeXML(url.priority || "0.6");
 
           return `
     <url>
@@ -184,7 +258,7 @@ class SitemapHelper {
       .join("");
 
     return `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
   ${urlSet}
 </urlset>`;
   }
@@ -195,7 +269,7 @@ class SitemapHelper {
       .map((sitemap) => {
         const fullUrl = this.encodeURL(`${this.baseUrl}${sitemap.url}`);
         const lastmod = this.escapeXML(
-          sitemap.lastmod || new Date().toISOString()
+          this.formatDateForSitemap(sitemap.lastmod)
         );
 
         return `
@@ -222,7 +296,7 @@ class SitemapHelper {
         .filter((route) => route && route.url) // Ensure valid routes
         .map((route) => ({
           ...route,
-          lastmod: new Date().toISOString(),
+          lastmod: this.formatDateForSitemap(new Date()),
         }));
 
       // Get dynamic public content with error handling
@@ -261,7 +335,7 @@ class SitemapHelper {
             url: "/",
             changefreq: "daily",
             priority: "1.0",
-            lastmod: new Date().toISOString(),
+            lastmod: this.formatDateForSitemap(new Date()),
           },
         ]);
       }
@@ -282,7 +356,7 @@ class SitemapHelper {
           url: "/",
           changefreq: "daily",
           priority: "1.0",
-          lastmod: new Date().toISOString(),
+          lastmod: this.formatDateForSitemap(new Date()),
         },
       ]);
     }
@@ -300,7 +374,7 @@ class SitemapHelper {
       sitemaps.push({
         url: `/sitemap-${sitemapIndex}.xml`,
         content: this.generateSitemapXML(chunk),
-        lastmod: new Date().toISOString(),
+        lastmod: this.formatDateForSitemap(new Date()),
       });
     }
 
