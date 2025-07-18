@@ -375,6 +375,20 @@ module.exports = (app, keycloak) => {
     keycloak.protect(), 
     webapp
   );
+    
+    app.all(['/webapp/join-course/*','/webapp/join-course'],
+      session({
+        secret: envHelper.PORTAL_SESSION_SECRET_KEY,
+        resave: false,
+        cookie: {
+          maxAge: envHelper.sunbird_session_ttl
+        },
+        saveUninitialized: false,
+        store: memoryStore
+      }),
+      keycloak.middleware({ admin: '/callback', logout: '/logout' }),
+      redirectTologgedInPage, indexPage(false))
+    
   app.all(['*/dial/:dialCode', '/dial/:dialCode'], (req, res) => {
     if (_.get(req, 'query.channel')) {
       res.redirect(`/${_.get(req, 'query.channel')}/get/dial/${req.params.dialCode}?source=scan`);
