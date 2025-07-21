@@ -349,7 +349,7 @@ module.exports = (app, keycloak) => {
     '/explore/*', '/:slug/explore', '/:slug/explore/*', '/play/*', '/:slug/play/*',  '/explore-course', '/explore-course/*',
     '/:slug/explore-course', '/:slug/explore-course/*', '/:slug/signup', '/signup', '/:slug/sign-in/*',
     '/sign-in/*', '/download/*', '/accountMerge/*','/:slug/accountMerge/*', '/:slug/download/*', '/certs/*', '/:slug/certs/*', '/recover/*', '/:slug/recover/*', '/explore-groups',
-    '/guest-profile','/chatbot','/webapp/signup/','/webapp/otp/','/otp','/join-course/*'],
+    '/guest-profile','/chatbot','/webapp/signup/','/webapp/otp/','/otp','/webapp/join-course/*','/webapp/join-course/:contentId'],
     session({
       secret: envHelper.PORTAL_SESSION_SECRET_KEY,
       resave: false,
