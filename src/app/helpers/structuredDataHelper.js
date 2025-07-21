@@ -102,13 +102,13 @@ const buildItemListJsonLd = (contentList, offset) => {
           "@type": "Organization",
           name: course.organisation?.[0] || "NULP",
         },
-        url: `${envHelper.api_base_url}/join-course?${course.identifier}`,
+        url: `${envHelper.api_base_url}/webapp/join-course?${course.identifier}`,
         offers: {
           "@type": "Offer",
           availability: "https://schema.org/InStock",
           price: "0",
           priceCurrency: "INR",
-          url: `${envHelper.api_base_url}/join-course?${course.identifier}`,
+          url: `${envHelper.api_base_url}/webapp/join-course?${course.identifier}`,
           category: course?.primaryCategory || "Course",
         },
         hasCourseInstance: {
@@ -143,7 +143,7 @@ const buildCourseJsonLd = (course) => {
     },
     educationalLevel: course.gradeLevel?.[0],
     inLanguage: course.se_mediums?.[0] || "English",
-    url: `${envHelper.api_base_url}/join-course?${course.identifier}`,
+    url: `${envHelper.api_base_url}/webapp/join-course?${course.identifier}`,
     datePublished: course.createdOn,
     dateModified: course.lastUpdatedOn,
     image: course.appIcon,
@@ -152,7 +152,7 @@ const buildCourseJsonLd = (course) => {
       availability: "https://schema.org/InStock",
       price: "0",
       priceCurrency: "INR",
-      url: `${envHelper.api_base_url}/join-course?${course.identifier}`,
+      url: `${envHelper.api_base_url}/webapp/join-course?${course.identifier}`,
       category: course?.primaryCategory || "Course",
     },
     hasCourseInstance: {
