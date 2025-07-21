@@ -164,5 +164,17 @@
         "single"
       ]
     }
+  },
+"resolutions": {
+    "@azure/core-auth": "1.9.0",
+    "@azure/core-xml": "1.4.0",
+    "@azure/logger": "1.2.0",
+    "@azure/abort-controller": "1.0.0",
+    "@azure/core-client": "1.0.0",
+    "@azure/core-http": "3.0.0",
+    "@azure/core-lro": "2.2.0",
+    "@azure/core-rest-pipeline": "1.0.0",
+    "@azure/core-tracing": "1.0.0-preview.13",
+    "@azure/core-util": "1.11.0"
   }
 }
