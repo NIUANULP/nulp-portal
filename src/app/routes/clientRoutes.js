@@ -349,7 +349,7 @@ module.exports = (app, keycloak) => {
     '/explore/*', '/:slug/explore', '/:slug/explore/*', '/play/*', '/:slug/play/*',  '/explore-course', '/explore-course/*',
     '/:slug/explore-course', '/:slug/explore-course/*', '/:slug/signup', '/signup', '/:slug/sign-in/*',
     '/sign-in/*', '/download/*', '/accountMerge/*','/:slug/accountMerge/*', '/:slug/download/*', '/certs/*', '/:slug/certs/*', '/recover/*', '/:slug/recover/*', '/explore-groups',
-    '/guest-profile','/chatbot','/webapp/signup/','/webapp/otp/','/otp','/webapp/join-course','/webapp/join-course/*','/:slug/webapp/join-course','/:slug/webapp/join-course/*','/join-course','/join-course/*'],
+    '/guest-profile','/chatbot','/webapp/signup/','/webapp/otp/','/otp','/join-course/*'],
     session({
       secret: envHelper.PORTAL_SESSION_SECRET_KEY,
       resave: false,
@@ -376,18 +376,6 @@ module.exports = (app, keycloak) => {
     webapp
   );
     
-    app.all(['/webapp/join-course/*','/webapp/join-course','/join-course','/join-course/*'],
-      session({
-        secret: envHelper.PORTAL_SESSION_SECRET_KEY,
-        resave: false,
-        cookie: {
-          maxAge: envHelper.sunbird_session_ttl
-        },
-        saveUninitialized: false,
-        store: memoryStore
-      }),
-      keycloak.middleware({ admin: '/callback', logout: '/logout' }),
-      redirectTologgedInPage, indexPage(false))
     
   app.all(['*/dial/:dialCode', '/dial/:dialCode'], (req, res) => {
     if (_.get(req, 'query.channel')) {
