@@ -19,6 +19,7 @@ const { logger } = require('@project-sunbird/logger');
 const VDNURL = envHelper.vdnURL || 'https://dockstaging.sunbirded.org';
 const axios = require('axios');
 const SitemapHelper = require("../helpers/sitemapHelper"); 
+const { isbot } = require('isbot');
 
 logger.info({msg:`CDN index file exist: ${cdnIndexFileExist}`});
 
@@ -362,8 +363,197 @@ module.exports = (app, keycloak) => {
     keycloak.middleware({ admin: '/callback', logout: '/logout' }),
     redirectTologgedInPage, indexPage(false))
     // join course route for public content
-    app.get('/webapp/join-course', webapp);
+    app.get('/webapp/join-course', async (req, res) => {
+      const userAgent = req.headers['user-agent'] || '';
+      const isBotRequest = isbot(userAgent);
+    
+      const courseId = Object.keys(req.query).find(key => key.startsWith('do_'));
+    
+      const page = 1;
+      const pageSize = 10;
+      const offset = (page - 1) * pageSize;
+    
+      if (isBotRequest && courseId) {
+        try {
+          const data = {
+            request: {
+              filters: {
+                status: ['Live'],
+                visibility: [],
+                primaryCategory: [
+                  'Collection',
+                  'Resource',
+                  'Course',
+                  'eTextbook',
+                  'Explanation Content',
+                  'Learning Resource',
+                  'Practice Question Set',
+                  'ExplanationResource',
+                  'Practice Resource',
+                  'Exam Question',
+                  'Good Practices',
+                  'Reports',
+                  'Manual/SOPs',
+                ],
+                identifier: courseId,
+              },
+              limit: pageSize,
+              offset,
+              sort_by: {
+                lastUpdatedOn: 'desc',
+              },
+              fields: [
+                'name',
+                'appIcon',
+                'medium',
+                'subject',
+                'resourceType',
+                'contentType',
+                'organisation',
+                'topic',
+                'mimeType',
+                'trackable',
+                'gradeLevel',
+                'se_boards',
+                'board',
+                'se_subjects',
+                'se_mediums',
+                'se_gradeLevels',
+                'primaryCategory',
+                'createdOn',
+                'previewUrl',
+                'creator',
+                'identifier',
+                'lastPublishedOn',
+                'lastUpdatedOn',
+                'lastPublishedBy',
+                'lastUpdatedBy',
+                'lastPublishedByUser',
+                'lastUpdatedByUser',
+                "description"
 
+              ],
+              facets: ['channel', 'gradeLevel', 'subject', 'medium'],
+              query: '',
+            },
+          };
+    
+          const url = `${envHelper.api_base_url}/api/content/v1/search?orgdetails=orgName,email&licenseDetails=name,description,url`;
+    
+          const response = await axios.post(url, data, {
+            headers: { 'Content-Type': 'application/json' },
+          });
+    
+          const contentList = response.data?.result?.content || [];
+          const course = contentList.find((c) => c.identifier === courseId) || contentList[0];
+    
+          if (!course) {
+            return res.status(404).send('Course not found');
+          }
+    
+          // Schema.org JSON-LD
+          const itemListJsonLd = {
+            '@context': 'https://schema.org',
+            '@type': 'ItemList',
+            itemListElement: contentList.map((course, index) => ({
+              '@type': 'ListItem',
+              position: offset + index + 1,
+              item: {
+                '@type': 'Course',
+                name: course.name,
+                description: course.description || 'Course',
+                provider: {
+                  '@type': 'Organization',
+                  name: course.organisation?.[0] || 'NULP',
+                },
+                url: `https://devnulp.niua.org/webapp/join-course?${course.identifier}`,
+                offers: {
+                  '@type': 'Offer',
+                  availability: 'https://schema.org/InStock',
+                  price: '0',
+                  priceCurrency: 'INR',
+                  url: `https://devnulp.niua.org/webapp/join-course?${course.identifier}`,
+                  category: course?.primaryCategory || 'Course',
+                },
+                hasCourseInstance: {
+                  '@type': 'CourseInstance',
+                  courseMode: 'online',
+                  startDate: course?.createdOn,
+                  endDate: course?.lastUpdatedOn,
+                  inLanguage: course?.language?.[0] || 'English',
+                  courseWorkload: 'PT1H',
+                },
+              },
+            })),
+          };
+    
+          const courseJsonLd = {
+            '@context': 'https://schema.org',
+            '@type': 'Course',
+            name: course.name,
+            description: course.description || 'Course',
+            provider: {
+              '@type': 'Organization',
+              name: course.organisation?.[0] || 'NULP',
+            },
+            educationalLevel: course.gradeLevel?.[0],
+            inLanguage: course.se_mediums?.[0] || 'English',
+            url: `https://devnulp.niua.org/webapp/join-course?${course.identifier}`,
+            datePublished: course.createdOn,
+            dateModified: course.lastUpdatedOn,
+            image: course.appIcon,
+            offers: {
+              '@type': 'Offer',
+              availability: 'https://schema.org/InStock',
+              price: '0',
+              priceCurrency: 'INR',
+              url: `https://devnulp.niua.org/webapp/join-course?${course.identifier}`,
+              category: course?.primaryCategory || 'Course',
+            },
+            hasCourseInstance: {
+              '@type': 'CourseInstance',
+              courseMode: 'online',
+              startDate: course?.createdOn,
+              endDate: course?.lastUpdatedOn,
+              inLanguage: course?.language?.[0] || 'English',
+              courseWorkload: 'PT1H',
+            },
+          };
+    
+          const html = `
+            <!DOCTYPE html>
+            <html lang="en">
+              <head>
+                <meta charset="UTF-8">
+                <title>${course.name}</title>
+                <meta name="description" content="${course.description || 'Join this course'}">
+                <meta name="robots" content="index, follow" />
+                <meta property="og:title" content="${course.name}" />
+                <meta property="og:description" content="${course.description || 'Join this course'}" />
+                <meta property="og:url" content="https://devnulp.niua.org/webapp/join-course?${course.identifier}" />
+                <script type="application/ld+json">
+                  ${JSON.stringify(itemListJsonLd, null, 2)}
+                </script>
+                <script type="application/ld+json">
+                  ${JSON.stringify(courseJsonLd, null, 2)}
+                </script>
+              </head>
+              <body>
+                <h1>${course.name}</h1>
+                <p>${course.description}</p>
+              </body>
+            </html>
+          `;
+    
+          return res.send(html);
+        } catch (err) {
+          console.error('Error rendering bot page:', err.message || err);
+          return res.status(500).send('Something went wrong.');
+        }
+      }else{
+        webapp(req, res);
+      }
+    });
     app.all('/webapp/*', 
     session({
       secret: envHelper.PORTAL_SESSION_SECRET_KEY,
@@ -379,7 +569,7 @@ module.exports = (app, keycloak) => {
     webapp
   );
 
-  
+
   app.all(['*/dial/:dialCode', '/dial/:dialCode'], (req, res) => {
     if (_.get(req, 'query.channel')) {
       res.redirect(`/${_.get(req, 'query.channel')}/get/dial/${req.params.dialCode}?source=scan`);
