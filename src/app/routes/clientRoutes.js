@@ -364,12 +364,9 @@ module.exports = (app, keycloak) => {
     redirectTologgedInPage, indexPage(false))
     // join course route for public content
     app.get('/webapp/join-course', async (req, res) => {
-      console.log("join-course route");
       const userAgent = req.headers['user-agent'] || '';
-      console.log("userAgent", userAgent);
       const isBotRequest = isbot(userAgent);
-      console.log("isBotRequest", isBotRequest);
-      console.log("req.query", req.query);
+    
       const courseId = Object.keys(req.query).find(key => key.startsWith('do_'));
     
       const page = 1;
@@ -449,7 +446,6 @@ module.exports = (app, keycloak) => {
     
           const contentList = response.data?.result?.content || [];
           const course = contentList.find((c) => c.identifier === courseId) || contentList[0];
-    console.log("course", course);
     
           if (!course) {
             return res.status(404).send('Course not found');
@@ -554,8 +550,9 @@ module.exports = (app, keycloak) => {
           console.error('Error rendering bot page:', err.message || err);
           return res.status(500).send('Something went wrong.');
         }
+      }else{
+        webapp(req, res);
       }
-      webapp
     });
     app.all('/webapp/*', 
     session({
