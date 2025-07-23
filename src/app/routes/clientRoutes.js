@@ -87,6 +87,13 @@ module.exports = (app, keycloak) => {
   //     console.log("React build folder path not exist");
   //   }
   // };
+  // For course objects
+const getContentUrl = (course) => {
+  return course?.primaryCategory === "Course" 
+    ? `${envHelper.api_base_url}/webapp/join-course?${course.identifier}`
+    : `${envHelper.api_base_url}/webapp/player?id=${course.identifier}`;
+};
+
   const webapp = async (req, res) => {
     const filePath = path.join(__dirname, '../dist/webapp', 'index.ejs');
     console.log('Checking file path:', filePath);
@@ -194,13 +201,13 @@ module.exports = (app, keycloak) => {
                 "@type": "Organization",
                 "name": course.organisation?.[0] || "NULP"
               },
-              "url": `${envHelper.api_base_url}/webapp/joinCourse?${course.identifier}`,
+              "url": getContentUrl(course),
               "offers": {
                 "@type": "Offer",
                 "availability": "https://schema.org/InStock",
                 "price": "0",
                 "priceCurrency": "INR",
-                "url": `${envHelper.api_base_url}/webapp/joinCourse?${course.identifier}`,
+                "url": getContentUrl(course),
                 "category": course?.primaryCategory || "Course",
               },
               "hasCourseInstance": {
@@ -233,7 +240,7 @@ module.exports = (app, keycloak) => {
             },
             "educationalLevel": firstCourse.gradeLevel?.[0],
             "inLanguage": firstCourse.se_mediums?.[0] || "English",
-            "url": `${envHelper.api_base_url}/webapp/joinCourse?${firstCourse.identifier}`,
+            "url": getContentUrl(firstCourse),
             "datePublished": firstCourse.createdOn,
             "dateModified": firstCourse.lastUpdatedOn,
             "image": firstCourse.appIcon,
@@ -242,7 +249,7 @@ module.exports = (app, keycloak) => {
               "availability": "https://schema.org/InStock",
               "price": "0",
               "priceCurrency": "INR",
-              "url": `${envHelper.api_base_url}/webapp/joinCourse?${firstCourse.identifier}`,
+              "url": getContentUrl(firstCourse),
               "category": firstCourse?.primaryCategory || "Course",
             },
             hasCourseInstance: {
@@ -334,7 +341,7 @@ module.exports = (app, keycloak) => {
   '/orgType', '/orgType/*', '/dashBoard', '/dashBoard/*',
   '/workspace', '/workspace/*', '/profile', '/profile/*', '/learn', '/learn/*', '/resources', '/discussion-forum/*',
   '/resources/*', '/myActivity', '/myActivity/*', '/org/*', '/manage/*', '/contribute','/contribute/*','/groups','/groups/*', '/my-groups','/my-groups/*','/certs/configure/*',
-   '/observation', '/observation/*','/solution','/solution/*','/questionnaire','/questionnaire/*', '/uci-admin', '/uci-admin/*','/program',"/all","/category/:category","/addConnections","/message","/home","/contents","/certificate","/learningHistory","/continueLearning","/help","/framework","/addConnections","/domainList","/contentList/:pageNumber","/joinCourse/*","/joinCourse/:contentId","/player","/pdf","/noresult","/user","/search","/view-all/:category","/nulp-chatbot"],
+   '/observation', '/observation/*','/solution','/solution/*','/questionnaire','/questionnaire/*', '/uci-admin', '/uci-admin/*','/program',"/all","/category/:category","/addConnections","/message","/home","/contents","/certificate","/learningHistory","/continueLearning","/help","/framework","/addConnections","/domainList","/contentList/:pageNumber","/joinCourse/*","/joinCourse/:contentId","/pdf","/noresult","/user","/search","/view-all/:category","/nulp-chatbot"],
   session({
     secret: envHelper.PORTAL_SESSION_SECRET_KEY,
     resave: false,
@@ -363,11 +370,11 @@ module.exports = (app, keycloak) => {
     keycloak.middleware({ admin: '/callback', logout: '/logout' }),
     redirectTologgedInPage, indexPage(false))
     // join course route for public content
-    app.get('/webapp/join-course', async (req, res) => {
+    app.get(['/webapp/join-course','/webapp/player'], async (req, res) => {
       const userAgent = req.headers['user-agent'] || '';
       const isBotRequest = isbot(userAgent);
     
-      const courseId = Object.keys(req.query).find(key => key.startsWith('do_'));
+      const courseId = Object.keys(req.query).find(key => key.startsWith('do_'))||req.query.id;
     
       const page = 1;
       const pageSize = 10;
@@ -445,6 +452,7 @@ module.exports = (app, keycloak) => {
           });
     
           const contentList = response.data?.result?.content || [];
+          
           const course = contentList.find((c) => c.identifier === courseId) || contentList[0];
     
           if (!course) {
@@ -461,19 +469,19 @@ module.exports = (app, keycloak) => {
               item: {
                 '@type': 'Course',
                 name: course.name,
-                description: course.description || 'Course',
+                description: course.description,
                 provider: {
                   '@type': 'Organization',
                   name: course.organisation?.[0] || 'NULP',
                 },
-                url: `https://devnulp.niua.org/webapp/join-course?${course.identifier}`,
+                url: getContentUrl(course),
                 offers: {
                   '@type': 'Offer',
                   availability: 'https://schema.org/InStock',
                   price: '0',
                   priceCurrency: 'INR',
-                  url: `https://devnulp.niua.org/webapp/join-course?${course.identifier}`,
-                  category: course?.primaryCategory || 'Course',
+                  url: getContentUrl(course),
+                  category: course?.primaryCategory ,
                 },
                 hasCourseInstance: {
                   '@type': 'CourseInstance',
@@ -491,14 +499,14 @@ module.exports = (app, keycloak) => {
             '@context': 'https://schema.org',
             '@type': 'Course',
             name: course.name,
-            description: course.description || 'Course',
+            description: course.description ,
             provider: {
               '@type': 'Organization',
               name: course.organisation?.[0] || 'NULP',
             },
             educationalLevel: course.gradeLevel?.[0],
             inLanguage: course.se_mediums?.[0] || 'English',
-            url: `https://devnulp.niua.org/webapp/join-course?${course.identifier}`,
+            url: getContentUrl(course),
             datePublished: course.createdOn,
             dateModified: course.lastUpdatedOn,
             image: course.appIcon,
@@ -507,8 +515,8 @@ module.exports = (app, keycloak) => {
               availability: 'https://schema.org/InStock',
               price: '0',
               priceCurrency: 'INR',
-              url: `https://devnulp.niua.org/webapp/join-course?${course.identifier}`,
-              category: course?.primaryCategory || 'Course',
+              url: getContentUrl(course),
+              category: course?.primaryCategory ,
             },
             hasCourseInstance: {
               '@type': 'CourseInstance',
@@ -530,7 +538,7 @@ module.exports = (app, keycloak) => {
                 <meta name="robots" content="index, follow" />
                 <meta property="og:title" content="${course.name}" />
                 <meta property="og:description" content="${course.description || 'Join this course'}" />
-                <meta property="og:url" content="https://devnulp.niua.org/webapp/join-course?${course.identifier}" />
+                <meta property="og:url" content="${getContentUrl(course)}" />
                 <script type="application/ld+json">
                   ${JSON.stringify(itemListJsonLd, null, 2)}
                 </script>

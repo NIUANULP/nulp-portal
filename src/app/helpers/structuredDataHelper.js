@@ -1,6 +1,10 @@
 const axios = require("axios");
 const envHelper = require("./environmentVariablesHelper.js");
-
+const getContentUrl = (course) => {
+  return course?.primaryCategory === "Course"
+    ? `${envHelper.api_base_url}/webapp/join-course?${course.identifier}`
+    : `${envHelper.api_base_url}/webapp/player?id=${course.identifier}`;
+};
 /**
  * Fetches content data from the API for structured data generation
  * @param {number} page - Page number for pagination
@@ -102,13 +106,13 @@ const buildItemListJsonLd = (contentList, offset) => {
           "@type": "Organization",
           name: course.organisation?.[0] || "NULP",
         },
-        url: `${envHelper.api_base_url}/webapp/join-course?${course.identifier}`,
+        url: getContentUrl(course),
         offers: {
           "@type": "Offer",
           availability: "https://schema.org/InStock",
           price: "0",
           priceCurrency: "INR",
-          url: `${envHelper.api_base_url}/webapp/join-course?${course.identifier}`,
+          url: getContentUrl(course),
           category: course?.primaryCategory || "Course",
         },
         hasCourseInstance: {
@@ -143,7 +147,7 @@ const buildCourseJsonLd = (course) => {
     },
     educationalLevel: course.gradeLevel?.[0],
     inLanguage: course.se_mediums?.[0] || "English",
-    url: `${envHelper.api_base_url}/webapp/join-course?${course.identifier}`,
+    url: getContentUrl(course),
     datePublished: course.createdOn,
     dateModified: course.lastUpdatedOn,
     image: course.appIcon,
@@ -152,7 +156,7 @@ const buildCourseJsonLd = (course) => {
       availability: "https://schema.org/InStock",
       price: "0",
       priceCurrency: "INR",
-      url: `${envHelper.api_base_url}/webapp/join-course?${course.identifier}`,
+      url: getContentUrl(course),
       category: course?.primaryCategory || "Course",
     },
     hasCourseInstance: {
