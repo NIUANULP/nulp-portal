@@ -87,6 +87,7 @@ class SitemapHelper {
       // Public webapp routes (main content area)
       { url: "/webapp", changefreq: "daily", priority: "0.9" },
       { url: "/webapp/join-course", changefreq: "daily", priority: "0.9" },
+      { url: "/webapp/player", changefreq: "daily", priority: "0.9" },
     ];
   }
 
@@ -175,9 +176,12 @@ class SitemapHelper {
             content.createdOn;
 
           return {
-            url: `/webapp/join-course?${encodeURIComponent(
-              content.identifier
-            )}`,
+            url:
+              content.primaryCategory === "Course"
+                ? `/webapp/join-course?${encodeURIComponent(
+                    content.identifier
+                  )}`
+                : `/webapp/player?id=${encodeURIComponent(content.identifier)}`,
             changefreq: "daily",
             priority: "0.6",
             lastmod: this.formatDateForSitemap(dateToUse),
@@ -392,6 +396,7 @@ Sitemap: ${this.baseUrl}/sitemap.xml
 # Allow public routes
 Allow: /webapp/
 Allow: /webapp/join-course
+Allow: /webapp/player
 
 # Disallow protected/private routes
 Disallow: /learn/
@@ -427,6 +432,7 @@ Disallow: /domainList/
 Disallow: /contentList/
 Disallow: /joinCourse/
 Disallow: /webapp/join-course/
+Disallow: /webapp/player/
 Disallow: /player/
 Disallow: /pdf/
 Disallow: /noresult/
