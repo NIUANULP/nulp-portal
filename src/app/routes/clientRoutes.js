@@ -18,6 +18,8 @@ const session = require('express-session');
 const { logger } = require('@project-sunbird/logger');
 const VDNURL = envHelper.vdnURL || 'https://dockstaging.sunbirded.org';
 const axios = require('axios');
+const SitemapHelper = require("../helpers/sitemapHelper"); 
+const { isbot } = require('isbot');
 
 logger.info({msg:`CDN index file exist: ${cdnIndexFileExist}`});
 
@@ -46,6 +48,31 @@ module.exports = (app, keycloak) => {
 
   app.set('view engine', 'ejs')
   app.set('views', path.join(__dirname, '../dist/webapp'));
+
+  // Initialize sitemap helper
+  const sitemapHelper = new SitemapHelper();
+
+  // Sitemap routes
+  app.get("/sitemap.xml", async (req, res) => {
+    try {
+      const sitemap = await sitemapHelper.generateSitemap();
+      res.set("Content-Type", "text/xml");
+      res.set("Cache-Control", "public, max-age=3600"); // Cache for 1 hour
+      res.send(sitemap);
+    } catch (error) {
+      logger.error("Error generating sitemap:", error);
+      res.status(500).send("Error generating sitemap");
+    }
+  });
+
+  // Robots.txt route
+  app.get("/robots.txt", (req, res) => {
+    const robotsTxt = sitemapHelper.generateRobotsTxt();
+    res.set("Content-Type", "text/plain");
+    res.set("Cache-Control", "public, max-age=86400"); // Cache for 24 hours
+    res.send(robotsTxt);
+  });
+
   // const webapp = (req, res) => {
   //   const filePath = path.join(__dirname, '../dist/webapp', 'index.ejs');
   //   console.log('Checking file path:', filePath);
@@ -60,6 +87,13 @@ module.exports = (app, keycloak) => {
   //     console.log("React build folder path not exist");
   //   }
   // };
+  // For course objects
+const getContentUrl = (course) => {
+  return course?.primaryCategory === "Course" 
+    ? `${envHelper.api_base_url}/webapp/join-course?${course.identifier}`
+    : `${envHelper.api_base_url}/webapp/player?id=${course.identifier}`;
+};
+
   const webapp = async (req, res) => {
     const filePath = path.join(__dirname, '../dist/webapp', 'index.ejs');
     console.log('Checking file path:', filePath);
@@ -167,13 +201,13 @@ module.exports = (app, keycloak) => {
                 "@type": "Organization",
                 "name": course.organisation?.[0] || "NULP"
               },
-              "url": `${envHelper.api_base_url}/webapp/joinCourse?${course.identifier}`,
+              "url": getContentUrl(course),
               "offers": {
                 "@type": "Offer",
                 "availability": "https://schema.org/InStock",
                 "price": "0",
                 "priceCurrency": "INR",
-                "url": `${envHelper.api_base_url}/webapp/joinCourse?${course.identifier}`,
+                "url": getContentUrl(course),
                 "category": course?.primaryCategory || "Course",
               },
               "hasCourseInstance": {
@@ -206,7 +240,7 @@ module.exports = (app, keycloak) => {
             },
             "educationalLevel": firstCourse.gradeLevel?.[0],
             "inLanguage": firstCourse.se_mediums?.[0] || "English",
-            "url": `${envHelper.api_base_url}/webapp/joinCourse?${firstCourse.identifier}`,
+            "url": getContentUrl(firstCourse),
             "datePublished": firstCourse.createdOn,
             "dateModified": firstCourse.lastUpdatedOn,
             "image": firstCourse.appIcon,
@@ -215,7 +249,7 @@ module.exports = (app, keycloak) => {
               "availability": "https://schema.org/InStock",
               "price": "0",
               "priceCurrency": "INR",
-              "url": `${envHelper.api_base_url}/webapp/joinCourse?${firstCourse.identifier}`,
+              "url": getContentUrl(firstCourse),
               "category": firstCourse?.primaryCategory || "Course",
             },
             hasCourseInstance: {
@@ -307,7 +341,7 @@ module.exports = (app, keycloak) => {
   '/orgType', '/orgType/*', '/dashBoard', '/dashBoard/*',
   '/workspace', '/workspace/*', '/profile', '/profile/*', '/learn', '/learn/*', '/resources', '/discussion-forum/*',
   '/resources/*', '/myActivity', '/myActivity/*', '/org/*', '/manage/*', '/contribute','/contribute/*','/groups','/groups/*', '/my-groups','/my-groups/*','/certs/configure/*',
-   '/observation', '/observation/*','/solution','/solution/*','/questionnaire','/questionnaire/*', '/uci-admin', '/uci-admin/*','/program',"/all","/category/:category","/addConnections","/message","/home","/contents","/certificate","/learningHistory","/continueLearning","/help","/framework","/addConnections","/domainList","/contentList/:pageNumber","/joinCourse/*","/joinCourse/:contentId","/player","/pdf","/noresult","/user","/search","/view-all/:category","/nulp-chatbot"],
+   '/observation', '/observation/*','/solution','/solution/*','/questionnaire','/questionnaire/*', '/uci-admin', '/uci-admin/*','/program',"/all","/category/:category","/addConnections","/message","/home","/contents","/certificate","/learningHistory","/continueLearning","/help","/framework","/addConnections","/domainList","/contentList/:pageNumber","/joinCourse/*","/joinCourse/:contentId","/pdf","/noresult","/user","/search","/view-all/:category","/nulp-chatbot"],
   session({
     secret: envHelper.PORTAL_SESSION_SECRET_KEY,
     resave: false,
@@ -323,7 +357,7 @@ module.exports = (app, keycloak) => {
     '/explore/*', '/:slug/explore', '/:slug/explore/*', '/play/*', '/:slug/play/*',  '/explore-course', '/explore-course/*',
     '/:slug/explore-course', '/:slug/explore-course/*', '/:slug/signup', '/signup', '/:slug/sign-in/*',
     '/sign-in/*', '/download/*', '/accountMerge/*','/:slug/accountMerge/*', '/:slug/download/*', '/certs/*', '/:slug/certs/*', '/recover/*', '/:slug/recover/*', '/explore-groups',
-    '/guest-profile','/chatbot','/webapp/signup/','/webapp/otp/','/otp'],
+    '/guest-profile','/chatbot','/webapp/signup/','/webapp/otp/','/otp','/webapp/join-course/*','/webapp/join-course/:contentId'],
     session({
       secret: envHelper.PORTAL_SESSION_SECRET_KEY,
       resave: false,
@@ -335,6 +369,199 @@ module.exports = (app, keycloak) => {
     }),
     keycloak.middleware({ admin: '/callback', logout: '/logout' }),
     redirectTologgedInPage, indexPage(false))
+    // join course route for public content
+    app.get(['/webapp/join-course','/webapp/player'], async (req, res) => {
+      const userAgent = req.headers['user-agent'] || '';
+      const isBotRequest = isbot(userAgent);
+    
+      const courseId = Object.keys(req.query).find(key => key.startsWith('do_'))||req.query.id;
+    
+      const page = 1;
+      const pageSize = 10;
+      const offset = (page - 1) * pageSize;
+    
+      if (isBotRequest && courseId) {
+        try {
+          const data = {
+            request: {
+              filters: {
+                status: ['Live'],
+                visibility: [],
+                primaryCategory: [
+                  'Collection',
+                  'Resource',
+                  'Course',
+                  'eTextbook',
+                  'Explanation Content',
+                  'Learning Resource',
+                  'Practice Question Set',
+                  'ExplanationResource',
+                  'Practice Resource',
+                  'Exam Question',
+                  'Good Practices',
+                  'Reports',
+                  'Manual/SOPs',
+                ],
+                identifier: courseId,
+              },
+              limit: pageSize,
+              offset,
+              sort_by: {
+                lastUpdatedOn: 'desc',
+              },
+              fields: [
+                'name',
+                'appIcon',
+                'medium',
+                'subject',
+                'resourceType',
+                'contentType',
+                'organisation',
+                'topic',
+                'mimeType',
+                'trackable',
+                'gradeLevel',
+                'se_boards',
+                'board',
+                'se_subjects',
+                'se_mediums',
+                'se_gradeLevels',
+                'primaryCategory',
+                'createdOn',
+                'previewUrl',
+                'creator',
+                'identifier',
+                'lastPublishedOn',
+                'lastUpdatedOn',
+                'lastPublishedBy',
+                'lastUpdatedBy',
+                'lastPublishedByUser',
+                'lastUpdatedByUser',
+                "description"
+
+              ],
+              facets: ['channel', 'gradeLevel', 'subject', 'medium'],
+              query: '',
+            },
+          };
+    
+          const url = `${envHelper.api_base_url}/api/content/v1/search?orgdetails=orgName,email&licenseDetails=name,description,url`;
+    
+          const response = await axios.post(url, data, {
+            headers: { 'Content-Type': 'application/json' },
+          });
+    
+          const contentList = response.data?.result?.content || [];
+          
+          const course = contentList.find((c) => c.identifier === courseId) || contentList[0];
+    
+          if (!course) {
+            return res.status(404).send('Course not found');
+          }
+    
+          // Schema.org JSON-LD
+          const itemListJsonLd = {
+            '@context': 'https://schema.org',
+            '@type': 'ItemList',
+            itemListElement: contentList.map((course, index) => ({
+              '@type': 'ListItem',
+              position: offset + index + 1,
+              item: {
+                '@type': 'Course',
+                name: course.name,
+                description: course.description,
+                provider: {
+                  '@type': 'Organization',
+                  name: course.organisation?.[0] || 'NULP',
+                },
+                url: getContentUrl(course),
+                offers: {
+                  '@type': 'Offer',
+                  availability: 'https://schema.org/InStock',
+                  price: '0',
+                  priceCurrency: 'INR',
+                  url: getContentUrl(course),
+                  category: course?.primaryCategory ,
+                },
+                hasCourseInstance: {
+                  '@type': 'CourseInstance',
+                  courseMode: 'online',
+                  startDate: course?.createdOn,
+                  endDate: course?.lastUpdatedOn,
+                  inLanguage: course?.language?.[0] || 'English',
+                  courseWorkload: 'PT1H',
+                },
+              },
+            })),
+          };
+    
+          const courseJsonLd = {
+            '@context': 'https://schema.org',
+            '@type': 'Course',
+            name: course.name,
+            description: course.description ,
+            provider: {
+              '@type': 'Organization',
+              name: course.organisation?.[0] || 'NULP',
+            },
+            educationalLevel: course.gradeLevel?.[0],
+            inLanguage: course.se_mediums?.[0] || 'English',
+            url: getContentUrl(course),
+            datePublished: course.createdOn,
+            dateModified: course.lastUpdatedOn,
+            image: course.appIcon,
+            offers: {
+              '@type': 'Offer',
+              availability: 'https://schema.org/InStock',
+              price: '0',
+              priceCurrency: 'INR',
+              url: getContentUrl(course),
+              category: course?.primaryCategory ,
+            },
+            hasCourseInstance: {
+              '@type': 'CourseInstance',
+              courseMode: 'online',
+              startDate: course?.createdOn,
+              endDate: course?.lastUpdatedOn,
+              inLanguage: course?.language?.[0] || 'English',
+              courseWorkload: 'PT1H',
+            },
+          };
+    
+          const html = `
+            <!DOCTYPE html>
+            <html lang="en">
+              <head>
+                <meta charset="UTF-8">
+                <title>${course.name}</title>
+                <meta name="description" content="${course.description || 'Join this course'}">
+                <meta name="robots" content="index, follow" />
+                <meta property="og:title" content="${course.name}" />
+                <meta property="og:description" content="${course.description || 'Join this course'}" />
+                <meta property="og:url" content="${getContentUrl(course)}" />
+                <script type="application/ld+json">
+                  ${JSON.stringify(itemListJsonLd, null, 2)}
+                </script>
+                <script type="application/ld+json">
+                  ${JSON.stringify(courseJsonLd, null, 2)}
+                </script>
+              </head>
+              <body>
+                <h1>${course.name}</h1>
+                <p>${course.description}</p>
+              </body>
+            </html>
+          `;
+    
+          return res.send(html);
+        } catch (err) {
+          console.error('Error rendering bot page:', err.message || err);
+          return res.status(500).send('Something went wrong.');
+        }
+      }else{
+        webapp(req, res);
+      }
+    });
     app.all('/webapp/*', 
     session({
       secret: envHelper.PORTAL_SESSION_SECRET_KEY,
@@ -349,6 +576,8 @@ module.exports = (app, keycloak) => {
     keycloak.protect(), 
     webapp
   );
+
+
   app.all(['*/dial/:dialCode', '/dial/:dialCode'], (req, res) => {
     if (_.get(req, 'query.channel')) {
       res.redirect(`/${_.get(req, 'query.channel')}/get/dial/${req.params.dialCode}?source=scan`);
@@ -362,6 +591,7 @@ module.exports = (app, keycloak) => {
   app.all('/:tenantName', renderTenantPage)
 
   app.all('/redirect/login', redirectToLogin)
+  app.all('/public/login', redirectToLoginPage)
 
   // ####################### Testing Re direction####################
   app.use((req, res, next) => {
@@ -575,7 +805,13 @@ const redirectToLogin = (req, res) => {
   const query = `?client_id=portal&state=3c9a2d1b-ede9-4e6d-a496-068a490172ee&redirect_uri=https://${req.get('host')}/${redirectUrl}&scope=openid&version=${CONSTANTS.KEYCLOAK.VERSION}&response_type=code&error_message=${req.query.error_message}`;
   res.redirect(url + query);
 };
-
+const redirectToLoginPage = (req, res) => {
+  const redirectUrl = req.query.redirectUri || '/webapp/domainList';
+  const url = `${envHelper.PORTAL_AUTH_SERVER_URL}/realms/${envHelper.PORTAL_REALM}/protocol/openid-connect/auth`;
+  const protocol = req.protocol; 
+  const query = `?client_id=portal&state=3c9a2d1b-ede9-4e6d-a496-068a490172ee&redirect_uri=${protocol}://${req.get('host')}/${redirectUrl}&scope=openid&version=${CONSTANTS.KEYCLOAK.VERSION}&response_type=code&error_message=${req.query.error_message}`;
+  res.redirect(url + query);
+};
 
 const getdial = (req,res) => {
   if (fs.existsSync(path.join(__dirname, '../tenant/course/', 'index.html'))) {
