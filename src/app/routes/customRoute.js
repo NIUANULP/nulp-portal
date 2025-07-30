@@ -14,6 +14,7 @@ const {
   getUserPosts,
   getSearchResults,
   getCategories,
+  getForumPostsByDomain,
 } = require("../helpers/customHelper.js");
 const { syncUsers } = require("../helpers/announcemenHelper.js");
 const { main } = require("../helpers/sendEmail.js");
@@ -76,5 +77,10 @@ module.exports = function (app) {
   // send email
   app.post("/admin/send/email", bodyParser.json({ limit: "10mb" }), main);
   // get categories
-  app.get("/discussion/api/categories", getCategories);
+  app.get(
+    "/discussion/api/categories",
+    proxyUtils.verifyToken(),
+    getCategories
+  );
+  app.get("/discussion/api/posts/by-domain", getForumPostsByDomain);
 };
