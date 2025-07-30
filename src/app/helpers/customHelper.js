@@ -619,6 +619,139 @@ async function getCategories(req, res) {
   }
 }
 
+// Function to fetch forum posts by domain
+async function getForumPostsByDomain(req, res) {
+  const { domainName, searchQuery } = req.query;
+
+  // Validate required parameters
+  if (!domainName) {
+    return res.status(400).json({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "unsuccessful",
+        err: "BAD_REQUEST",
+        errmsg: "domainName is required",
+      },
+      responseCode: "BAD_REQUEST",
+      result: {},
+    });
+  }
+
+  try {
+    const categoriesUrl = `${envHelper.api_base_url}/discussion-forum/api/categories`;
+    const categoriesOptions = {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${envHelper.discussion_forum_key}`,
+      },
+    };
+
+    const categoriesResponse = await axios(categoriesUrl, categoriesOptions);
+
+    const categoriesData = categoriesResponse?.data;
+
+    if (!categoriesData?.categories) {
+      return res.status(404).json({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "unsuccessful",
+          err: "NOT_FOUND",
+          errmsg: "Categories not found",
+        },
+        responseCode: "NOT_FOUND",
+        result: {},
+      });
+    }
+
+    const category = categoriesData.categories.find(
+      (item) => item.name === domainName
+    );
+
+    if (!category) {
+      return res.status(404).json({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "unsuccessful",
+          err: "NOT_FOUND",
+          errmsg: `Category with domain name '${domainName}' not found`,
+        },
+        responseCode: "NOT_FOUND",
+        result: {},
+      });
+    }
+
+    const categoryId = category.cid;
+
+    const searchParams = new URLSearchParams({
+      in: "titlesposts",
+      term: encodeURIComponent(searchQuery || ""),
+      matchWords: "all",
+      by: "",
+      "categories[]": categoryId,
+      searchChildren: "true",
+      hasTags: "",
+      replies: "",
+      repliesFilter: "atleast",
+      timeFilter: "newer",
+      timeRange: "",
+      sortBy: "topic.postcount",
+      sortDirection: "desc",
+      showAs: "posts",
+    });
+
+    const searchUrl = `${
+      envHelper.api_base_url
+    }/discussion-forum/api/search?${searchParams.toString()}`;
+
+    const searchOptions = {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${envHelper.discussion_forum_key}`,
+        "Content-Type": "application/json",
+      },
+    };
+
+    const searchResponse = await axios(searchUrl, searchOptions);
+    const searchData = searchResponse?.data;
+
+    return res.status(200).json({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "successful",
+      },
+      responseCode: "OK",
+      result: {
+        domainName,
+        totalPosts: searchData?.posts?.length || 0,
+        posts: searchData?.posts || [],
+      },
+    });
+  } catch (error) {
+    console.error("Error in getForumPostsByDomain:", error);
+
+    return res.status(500).json({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "unsuccessful",
+        err: "INTERNAL_SERVER_ERROR",
+        errmsg: error.message,
+      },
+      responseCode: "INTERNAL_SERVER_ERROR",
+      result: {},
+    });
+  }
+}
+
 module.exports = {
   saveUserInfo,
   updateUserInfo,
@@ -632,4 +765,5 @@ module.exports = {
   getUserPosts,
   getSearchResults,
   getCategories,
+  getForumPostsByDomain,
 };
