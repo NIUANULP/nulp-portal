@@ -76,9 +76,5 @@ module.exports = function (app) {
   // send email
   app.post("/admin/send/email", bodyParser.json({ limit: "10mb" }), main);
   // get categories
-  app.get(
-    "/discussion/api/categories",
-    proxyUtils.verifyToken(),
-    getCategories
-  );
+  app.get("/discussion/api/categories", getCategories);
 };
