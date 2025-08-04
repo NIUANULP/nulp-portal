@@ -472,7 +472,7 @@ const getContentUrl = (course) => {
                 description: course.description,
                 provider: {
                   '@type': 'Organization',
-                  name: course.organisation?.[0] || 'NULP',
+                  name: 'The National Institute of Urban Affairs,Ministry of Housing and Urban Affairs,National Urban Learning Platform,Government of India',
                 },
                 url: getContentUrl(course),
                 offers: {
@@ -502,7 +502,7 @@ const getContentUrl = (course) => {
             description: course.description ,
             provider: {
               '@type': 'Organization',
-              name: course.organisation?.[0] || 'NULP',
+              name:'The National Institute of Urban Affairs,Ministry of Housing and Urban Affairs,National Urban Learning Platform,Government of India',
             },
             educationalLevel: course.gradeLevel?.[0],
             inLanguage: course.se_mediums?.[0] || 'English',

@@ -98,7 +98,7 @@ class SitemapHelper {
         request: {
           filters: {
             status: ["Live"],
-            visibility: ["Default"], // Only public content
+            visibility: [],
             primaryCategory: [
               "Collection",
               "Resource",
@@ -174,14 +174,13 @@ class SitemapHelper {
             content.lastUpdatedOn ||
             content.lastPublishedOn ||
             content.createdOn;
+          const isCourse = content?.primaryCategory?.toLowerCase() === "course";
+          const identifier = encodeURIComponent(content.identifier);
 
           return {
-            url:
-              content.primaryCategory === "Course"
-                ? `/webapp/join-course?${encodeURIComponent(
-                    content.identifier
-                  )}`
-                : `/webapp/player?id=${encodeURIComponent(content.identifier)}`,
+            url: isCourse
+              ? `/webapp/join-course?${identifier}`
+              : `/webapp/player?id=${identifier}`,
             changefreq: "daily",
             priority: "0.6",
             lastmod: this.formatDateForSitemap(dateToUse),
@@ -397,6 +396,7 @@ Sitemap: ${this.baseUrl}/sitemap.xml
 Allow: /webapp/
 Allow: /webapp/join-course
 Allow: /webapp/player
+Allow: /discussion-forum/
 
 # Disallow protected/private routes
 Disallow: /learn/
@@ -414,7 +414,6 @@ Disallow: /announcement/
 Disallow: /orgType/
 Disallow: /myActivity/
 Disallow: /org/
-Disallow: /discussion-forum/
 Disallow: /observation/
 Disallow: /solution/
 Disallow: /questionnaire/
@@ -431,9 +430,6 @@ Disallow: /addConnections/
 Disallow: /domainList/
 Disallow: /contentList/
 Disallow: /joinCourse/
-Disallow: /webapp/join-course/
-Disallow: /webapp/player/
-Disallow: /player/
 Disallow: /pdf/
 Disallow: /noresult/
 Disallow: /user/

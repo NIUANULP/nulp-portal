@@ -14,6 +14,7 @@ const {
   getUserPosts,
   getSearchResults,
   getCategories,
+  getForumPostsByDomain,
 } = require("../helpers/customHelper.js");
 const { syncUsers } = require("../helpers/announcemenHelper.js");
 const { main } = require("../helpers/sendEmail.js");
@@ -81,4 +82,5 @@ module.exports = function (app) {
     proxyUtils.verifyToken(),
     getCategories
   );
+  app.get("/discussion/api/posts/by-domain", getForumPostsByDomain);
 };
