@@ -98,7 +98,7 @@ class SitemapHelper {
         request: {
           filters: {
             status: ["Live"],
-            visibility: ["Default"], // Only public content
+            visibility: [],
             primaryCategory: [
               "Collection",
               "Resource",
@@ -174,14 +174,13 @@ class SitemapHelper {
             content.lastUpdatedOn ||
             content.lastPublishedOn ||
             content.createdOn;
+          const isCourse = content?.primaryCategory?.toLowerCase() === "course";
+          const identifier = encodeURIComponent(content.identifier);
 
           return {
-            url:
-              content.primaryCategory === "Course"
-                ? `/webapp/join-course?${encodeURIComponent(
-                    content.identifier
-                  )}`
-                : `/webapp/player?id=${encodeURIComponent(content.identifier)}`,
+            url: isCourse
+              ? `/webapp/join-course?${identifier}`
+              : `/webapp/player?id=${identifier}`,
             changefreq: "daily",
             priority: "0.6",
             lastmod: this.formatDateForSitemap(dateToUse),
