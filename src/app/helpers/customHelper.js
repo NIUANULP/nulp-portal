@@ -5,6 +5,7 @@ const express = require("express");
 const app = express();
 const envHelper = require("../helpers/environmentVariablesHelper.js");
 const axios = require("axios");
+const crypto = require("crypto");
 
 // Validation middleware for user_id, designation, bio, and created_by fields
 const validateUserFields = [
@@ -54,10 +55,11 @@ async function saveUserInfo(req, res) {
     district,
     state_id,
     district_id,
+    country,
   } = req.body;
 
   const query =
-    "INSERT INTO users (user_id, designation, bio, created_by,user_type,organisation,state,district,state_id,district_id) VALUES ($1, $2, $3, $4,$5,$6,$7,$8,$9,$10) RETURNING *";
+    "INSERT INTO users (user_id, designation, bio, created_by, user_type, organisation, state, district, state_id, district_id, country) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *";
   const values = [
     user_id,
     designation,
@@ -69,6 +71,7 @@ async function saveUserInfo(req, res) {
     district,
     state_id,
     district_id,
+    country,
   ];
 
   try {
@@ -121,6 +124,7 @@ async function updateUserInfo(req, res) {
       updated_by,
       user_type,
       organisation,
+      country,
       state,
       district,
       state_id,
@@ -142,12 +146,13 @@ async function updateUserInfo(req, res) {
           user_type = COALESCE($3, user_type), 
           organisation = COALESCE($4, organisation), 
           updated_by = COALESCE($5, updated_by),
-          state = COALESCE($6, state),
-          district = COALESCE($7, district),
-          state_id = COALESCE($8, state_id),
-          district_id = COALESCE($9, district_id),
+          country = COALESCE($6, country),
+          state = COALESCE($7, state),
+          district = COALESCE($8, district),
+          state_id = COALESCE($9, state_id),
+          district_id = COALESCE($10, district_id),
           updated_at = NOW() 
-        WHERE user_id = $10
+        WHERE user_id = $11
         RETURNING *`;
 
       const values = [
@@ -156,6 +161,7 @@ async function updateUserInfo(req, res) {
         user_type || null,
         organisation || null,
         updated_by || null,
+        country || null,
         state || null,
         district || null,
         state_id || null,
@@ -180,8 +186,8 @@ async function updateUserInfo(req, res) {
     } else {
       // If user does not exist, perform an insert
       const query = `
-        INSERT INTO users (user_id, designation, bio, created_by, user_type, organisation, state, district, state_id, district_id) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
+        INSERT INTO users (user_id, designation, bio, created_by, user_type, organisation, country, state, district, state_id, district_id) 
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) 
         RETURNING *`;
 
       const values = [
@@ -191,6 +197,7 @@ async function updateUserInfo(req, res) {
         updated_by,
         user_type || null,
         organisation || null,
+        country || null,
         state || null,
         district || null,
         state_id || null,
@@ -393,6 +400,358 @@ async function getToken(req, res) {
   }
 }
 
+async function emailServiceForDiscussionForum(req, res) {
+  try {
+    const data = req.body;
+
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${envHelper.api_base_url}/api/user/v1/notification/email`,
+      headers: {
+        Authorization: `Bearer ${envHelper.PORTAL_API_AUTH_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+    //Debugging logs
+    console.log("config", config);
+    console.log("data", data);
+
+    const response = await axios(config);
+    return res.send(response.data);
+  } catch (err) {
+    const statusCode = err.statusCode || 500;
+    const errorMessage = err.message || "Internal Server Error";
+    res.status(statusCode).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: statusCode,
+        status: "unsuccessful",
+        message: errorMessage,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
+
+function verifyHMAC(req, res, next) {
+  const unauthorizedResponse = (message) => {
+    res.status(401).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: 401,
+        status: "unsuccessful",
+        message,
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  };
+
+  try {
+    // Check if the request body is empty
+    const secretKey = envHelper.discussion_forum_key;
+    const authHeader = req.headers["authorization"];
+    const receivedHMAC = authHeader?.split(" ")[1];
+
+    if (!receivedHMAC) {
+      return unauthorizedResponse("Unauthorized: No HMAC provided");
+    }
+
+    const dataToVerify = JSON.stringify(req.body);
+    const computedHMAC = crypto
+      .createHmac("sha256", secretKey)
+      .update(dataToVerify)
+      .digest("hex");
+
+    if (computedHMAC !== receivedHMAC) {
+      return unauthorizedResponse("Unauthorized: Invalid HMAC");
+    }
+
+    next(); // HMAC is valid, proceed
+  } catch (err) {
+    console.error("HMAC verification error:", err);
+    res.status(500).send({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        statusCode: 500,
+        status: "unsuccessful",
+        message: "Internal Server Error",
+        err: null,
+        errmsg: null,
+      },
+      responseCode: "OK",
+      result: {},
+    });
+  }
+}
+async function getUserPosts(req, res) {
+  const { username } = req.params;
+  const discussionForumUrl = `${envHelper.api_base_url}/discussion-forum/api/user/${username}/posts`;
+  const options = {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${envHelper.discussion_forum_key}`,
+    },
+  };
+
+  try {
+    const response = await axios(discussionForumUrl, options);
+    const data = response?.data;
+
+    return res.status(200).json(data);
+  } catch (error) {
+    console.error("Error fetching user posts:", error);
+
+    return res.status(500).json({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "unsuccessful",
+        err: "INTERNAL_SERVER_ERROR",
+        errmsg: error.message,
+      },
+      responseCode: "INTERNAL_SERVER_ERROR",
+      result: {},
+    });
+  }
+}
+
+async function getSearchResults(req, res) {
+  const {
+    in: searchIn,
+    term,
+    matchWords,
+    by,
+    categories,
+    searchChildren,
+    hasTags,
+    replies,
+    repliesFilter,
+    timeFilter,
+    timeRange,
+    sortBy,
+    sortDirection,
+    showAs,
+  } = req.query;
+
+  // Build the search URL with all parameters
+  const searchParams = new URLSearchParams({
+    in: searchIn,
+    term: term,
+    matchWords: matchWords,
+    by: by,
+    categories: categories,
+    searchChildren: searchChildren,
+    hasTags: hasTags,
+    replies: replies,
+    repliesFilter: repliesFilter,
+    timeFilter: timeFilter,
+    timeRange: timeRange,
+    sortBy: sortBy,
+    sortDirection: sortDirection,
+    showAs: showAs,
+  });
+
+  const discussionForumUrl = `${
+    envHelper.api_base_url
+  }/discussion-forum/api/search?${searchParams.toString()}`;
+
+  const options = {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${envHelper.discussion_forum_key}`,
+    },
+  };
+
+  try {
+    const response = await axios(discussionForumUrl, options);
+    const data = response?.data;
+
+    return res.status(200).json(data);
+  } catch (error) {
+    console.error("Error fetching search results:", error);
+
+    return res.status(500).json({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "unsuccessful",
+        err: "INTERNAL_SERVER_ERROR",
+        errmsg: error.message,
+      },
+      responseCode: "INTERNAL_SERVER_ERROR",
+      result: {},
+    });
+  }
+}
+
+// get categories from discussion forum
+async function getCategories(req, res) {
+  const discussionForumUrl = `${envHelper.api_base_url}/discussion-forum/api/categories`;
+  const options = {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${envHelper.discussion_forum_key}`,
+    },
+  };
+
+  try {
+    const response = await axios(discussionForumUrl, options);
+    const data = response?.data;
+    return res.status(200).json(data);
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+  }
+}
+
+// Function to fetch forum posts by domain
+async function getForumPostsByDomain(req, res) {
+  const { domainName, searchQuery } = req.query;
+
+  // Validate required parameters
+  if (!domainName) {
+    return res.status(400).json({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "unsuccessful",
+        err: "BAD_REQUEST",
+        errmsg: "domainName is required",
+      },
+      responseCode: "BAD_REQUEST",
+      result: {},
+    });
+  }
+
+  try {
+    const categoriesUrl = `${envHelper.api_base_url}/discussion-forum/api/categories`;
+    const categoriesOptions = {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${envHelper.discussion_forum_key}`,
+      },
+    };
+
+    const categoriesResponse = await axios(categoriesUrl, categoriesOptions);
+
+    const categoriesData = categoriesResponse?.data;
+
+    if (!categoriesData?.categories) {
+      return res.status(404).json({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "unsuccessful",
+          err: "NOT_FOUND",
+          errmsg: "Categories not found",
+        },
+        responseCode: "NOT_FOUND",
+        result: {},
+      });
+    }
+
+    const category = categoriesData.categories.find(
+      (item) => item.name === domainName
+    );
+
+    if (!category) {
+      return res.status(404).json({
+        ts: new Date().toISOString(),
+        params: {
+          resmsgid: uuidv1(),
+          msgid: uuidv1(),
+          status: "unsuccessful",
+          err: "NOT_FOUND",
+          errmsg: `Category with domain name '${domainName}' not found`,
+        },
+        responseCode: "NOT_FOUND",
+        result: {},
+      });
+    }
+
+    const categoryId = category.cid;
+
+    const searchParams = new URLSearchParams({
+      in: "titlesposts",
+      term: encodeURIComponent(searchQuery || ""),
+      matchWords: "all",
+      by: "",
+      "categories[]": categoryId,
+      searchChildren: "true",
+      hasTags: "",
+      replies: "",
+      repliesFilter: "atleast",
+      timeFilter: "newer",
+      timeRange: "",
+      sortBy: "topic.postcount",
+      sortDirection: "desc",
+      showAs: "posts",
+    });
+
+    const searchUrl = `${
+      envHelper.api_base_url
+    }/discussion-forum/api/search?${searchParams.toString()}`;
+
+    const searchOptions = {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${envHelper.discussion_forum_key}`,
+        "Content-Type": "application/json",
+      },
+    };
+
+    const searchResponse = await axios(searchUrl, searchOptions);
+    const searchData = searchResponse?.data;
+
+    return res.status(200).json({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "successful",
+      },
+      responseCode: "OK",
+      result: {
+        domainName,
+        totalPosts: searchData?.posts?.length || 0,
+        posts: searchData?.posts || [],
+      },
+    });
+  } catch (error) {
+    console.error("Error in getForumPostsByDomain:", error);
+
+    return res.status(500).json({
+      ts: new Date().toISOString(),
+      params: {
+        resmsgid: uuidv1(),
+        msgid: uuidv1(),
+        status: "unsuccessful",
+        err: "INTERNAL_SERVER_ERROR",
+        errmsg: error.message,
+      },
+      responseCode: "INTERNAL_SERVER_ERROR",
+      result: {},
+    });
+  }
+}
+
 module.exports = {
   saveUserInfo,
   updateUserInfo,
@@ -401,4 +760,10 @@ module.exports = {
   emailNotification,
   locationData,
   getToken,
+  emailServiceForDiscussionForum,
+  verifyHMAC,
+  getUserPosts,
+  getSearchResults,
+  getCategories,
+  getForumPostsByDomain,
 };

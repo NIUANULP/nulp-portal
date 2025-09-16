@@ -765,6 +765,9 @@
           "privacyPolicy": "Privacy Policy",
           "processid": "Process ID",
           "profile": {
+            "Country": "Country",
+            "selectCountry": "Select country",
+            "enterCountryName": "Enter country name",
             "selectDistrict": "Select district",
             "Board": "Category",
             "Classes": "Sub-Categories",
