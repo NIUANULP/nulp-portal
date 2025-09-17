@@ -205,16 +205,16 @@ function checkHealth (req, response) {
           isCSHealthy = false
           envHelper.sunbird_content_service_health_status = 'false'
           checksArrayObj.push(getHealthCheckObj(hcMessages.CONTENT_SERVICE.NAME,
-            isLSHealthy, hcMessages.CONTENT_SERVICE.FAILED_CODE, hcMessages.CONTENT_SERVICE.FAILED_MESSAGE))
+            isCSHealthy, hcMessages.CONTENT_SERVICE.FAILED_CODE, hcMessages.CONTENT_SERVICE.FAILED_MESSAGE))
         } else if (res && res === true) {
           isCSHealthy = true
           envHelper.sunbird_content_service_health_status = 'true'
-          checksArrayObj.push(getHealthCheckObj(hcMessages.CONTENT_SERVICE.NAME, isLSHealthy, '', ''))
+          checksArrayObj.push(getHealthCheckObj(hcMessages.CONTENT_SERVICE.NAME, isCSHealthy, '', ''))
         } else {
           isCSHealthy = false
           envHelper.sunbird_content_service_health_status = 'false'
           checksArrayObj.push(getHealthCheckObj(hcMessages.CONTENT_SERVICE.NAME,
-            isLSHealthy, hcMessages.CONTENT_SERVICE.FAILED_CODE, hcMessages.CONTENT_SERVICE.FAILED_MESSAGE))
+            isCSHealthy, hcMessages.CONTENT_SERVICE.FAILED_CODE, hcMessages.CONTENT_SERVICE.FAILED_MESSAGE))
         }
         CB()
       })
@@ -259,12 +259,7 @@ function checkDependantServiceHealth (dependancyServices) {
       next()
     } else {
       var heathyServiceCount = 0
-      
-      console.log("dependancyServices - ", dependancyServices);
-      
-      const uniqueServices = [...new Set(dependancyServices)]
-
-      uniqueServices.forEach(service => {
+      dependancyServices.forEach(service => {
         if (service === 'LEARNER' && envHelper.sunbird_learner_service_health_status === 'true') {
           heathyServiceCount++
         } else if (service === 'CONTENT' && envHelper.sunbird_content_service_health_status === 'true') {
@@ -273,8 +268,8 @@ function checkDependantServiceHealth (dependancyServices) {
           heathyServiceCount++
         }
       });
-            
-      if (uniqueServices.length !== heathyServiceCount) {
+
+      if (dependancyServices.length !== heathyServiceCount) {
         res.status(503)
         res.send({
           'id': 'api.error',
