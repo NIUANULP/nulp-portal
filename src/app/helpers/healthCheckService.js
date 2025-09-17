@@ -260,11 +260,7 @@ function checkDependantServiceHealth (dependancyServices) {
     } else {
       var heathyServiceCount = 0
       
-      console.log("dependancyServices - ", dependancyServices);
-      
-      const uniqueServices = [...new Set(dependancyServices)]
-
-      uniqueServices.forEach(service => {
+      dependancyServices.forEach(service => {
         if (service === 'LEARNER' && envHelper.sunbird_learner_service_health_status === 'true') {
           heathyServiceCount++
         } else if (service === 'CONTENT' && envHelper.sunbird_content_service_health_status === 'true') {
@@ -274,7 +270,7 @@ function checkDependantServiceHealth (dependancyServices) {
         }
       });
             
-      if (uniqueServices.length !== heathyServiceCount) {
+      if (dependancyServices.length !== heathyServiceCount) {
         res.status(503)
         res.send({
           'id': 'api.error',
