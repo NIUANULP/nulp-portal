@@ -316,7 +316,7 @@ function logMemoryUsage(logger, context = "") {
 async function readUserDataFromDatabase() {
   const logger = getLogger();
   const users = [];
-  const maxUsersInMemory = 5000; // Maximum users to keep in memory at once
+  const maxUsersInMemory = 39000; // Maximum users to keep in memory at once
 
   logger.log("Starting to read user data from email_campaign_data table...");
 
