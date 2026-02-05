@@ -205,16 +205,16 @@ function checkHealth (req, response) {
           isCSHealthy = false
           envHelper.sunbird_content_service_health_status = 'false'
           checksArrayObj.push(getHealthCheckObj(hcMessages.CONTENT_SERVICE.NAME,
-            isCSHealthy, hcMessages.CONTENT_SERVICE.FAILED_CODE, hcMessages.CONTENT_SERVICE.FAILED_MESSAGE))
+            isLSHealthy, hcMessages.CONTENT_SERVICE.FAILED_CODE, hcMessages.CONTENT_SERVICE.FAILED_MESSAGE))
         } else if (res && res === true) {
           isCSHealthy = true
           envHelper.sunbird_content_service_health_status = 'true'
-          checksArrayObj.push(getHealthCheckObj(hcMessages.CONTENT_SERVICE.NAME, isCSHealthy, '', ''))
+          checksArrayObj.push(getHealthCheckObj(hcMessages.CONTENT_SERVICE.NAME, isLSHealthy, '', ''))
         } else {
           isCSHealthy = false
           envHelper.sunbird_content_service_health_status = 'false'
           checksArrayObj.push(getHealthCheckObj(hcMessages.CONTENT_SERVICE.NAME,
-            isCSHealthy, hcMessages.CONTENT_SERVICE.FAILED_CODE, hcMessages.CONTENT_SERVICE.FAILED_MESSAGE))
+            isLSHealthy, hcMessages.CONTENT_SERVICE.FAILED_CODE, hcMessages.CONTENT_SERVICE.FAILED_MESSAGE))
         }
         CB()
       })
@@ -259,7 +259,6 @@ function checkDependantServiceHealth (dependancyServices) {
       next()
     } else {
       var heathyServiceCount = 0
-      
       dependancyServices.forEach(service => {
         if (service === 'LEARNER' && envHelper.sunbird_learner_service_health_status === 'true') {
           heathyServiceCount++
@@ -269,7 +268,7 @@ function checkDependantServiceHealth (dependancyServices) {
           heathyServiceCount++
         }
       });
-            
+
       if (dependancyServices.length !== heathyServiceCount) {
         res.status(503)
         res.send({

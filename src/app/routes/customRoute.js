@@ -9,15 +9,10 @@ const {
   emailNotification,
   locationData,
   getToken,
+  emailServiceForNodebb,
   emailServiceForDiscussionForum,
   verifyHMAC,
-  getUserPosts,
-  getSearchResults,
-  getCategories,
-  getForumPostsByDomain,
 } = require("../helpers/customHelper.js");
-const { syncUsers } = require("../helpers/announcemenHelper.js");
-const { main } = require("../helpers/sendEmail.js");
 
 module.exports = function (app) {
   // Create user
@@ -64,23 +59,4 @@ module.exports = function (app) {
     verifyHMAC,
     emailServiceForDiscussionForum
   );
-  // get user posts
-  app.get(
-    "/discussion/api/user/:username/posts",
-    proxyUtils.verifyToken(),
-    getUserPosts
-  );
-  // get search results
-  app.get("/discussion/api/search", proxyUtils.verifyToken(), getSearchResults);
-  // sync users
-  app.get("/admin/sync/users", syncUsers);
-  // send email
-  app.post("/admin/send/email", bodyParser.json({ limit: "10mb" }), main);
-  // get categories
-  app.get(
-    "/discussion/api/categories",
-    proxyUtils.verifyToken(),
-    getCategories
-  );
-  app.get("/discussion/api/posts/by-domain", getForumPostsByDomain);
 };
