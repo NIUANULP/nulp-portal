@@ -54,6 +54,15 @@ build_client(){
     #yarn install --no-progress --production=true
     yarn install --no-progress
     echo "completed client yarn install"
+    echo "==== DEBUG: yarn why common-form-elements-event ===="
+    yarn why common-form-elements-event || true
+
+    echo "==== DEBUG: yarn list common-form-elements ===="
+    yarn list --pattern common-form-elements || true
+
+    echo "==== DEBUG: location check ===="
+    ls -d node_modules/common-form-elements* || true
+    ls -d node_modules/ngtek-event-library/node_modules/common-form-elements* || true
     if [ $buildDockerImage == true ]
     then
     build_client_docker & # run client local build in background 
