@@ -51,7 +51,8 @@ build_client(){
     nvm use $CLIENT_NODE_VERSION
     cd client
     echo "starting client yarn install"
-    yarn install --no-progress --production=true
+    #yarn install --no-progress --production=true
+    yarn install --no-progress
     echo "completed client yarn install"
     echo "ensuring common-form-elements-event is installed"
     yarn add common-form-elements-event --production=true --ignore-scripts
