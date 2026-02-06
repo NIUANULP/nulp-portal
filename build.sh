@@ -54,9 +54,6 @@ build_client(){
     #yarn install --no-progress --production=true
     yarn install --no-progress
     echo "completed client yarn install"
-    echo "ensuring common-form-elements-event is installed"
-    yarn add common-form-elements-event --production=true --ignore-scripts
-    echo "completed installing common-form-elements-event"
     if [ $buildDockerImage == true ]
     then
     build_client_docker & # run client local build in background 
