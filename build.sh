@@ -32,7 +32,8 @@ rm -rf dist-cdn # remove cdn dist folder
 # function to run client build for docker image
 build_client_docker(){
     echo "starting client local prod build"
-    npm run build # Angular prod build
+    #npm run build # Angular prod build
+    yarn build
     echo "completed client local prod build"
     cd ..
     mv app_dist/dist/index.html app_dist/dist/index.ejs # rename index file
@@ -40,9 +41,11 @@ build_client_docker(){
 # function to run client build for cdn
 build_client_cdn(){
     echo "starting client cdn prod build"
-    npm run build-cdn -- --deployUrl $cdnUrl # prod command
+    #npm run build-cdn -- --deployUrl $cdnUrl # prod command
+    yarn build-cdn -- --deployUrl "$cdnUrl"
     export sunbird_portal_cdn_url=$cdnUrl # required for inject-cdn-fallback task
-    npm run inject-cdn-fallback
+    #npm run inject-cdn-fallback
+    yarn inject-cdn-fallback
     echo "completed client cdn prod build"
 }
 # function to run client build
