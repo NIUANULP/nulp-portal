@@ -169,6 +169,7 @@
   },
   "resolutions": {
     "moment": "2.22.1",
-    "**/common-form-elements-event": "npm:common-form-elements-v9@4.5.0"
+    "**/common-form-elements-event": "npm:common-form-elements-v9@4.5.0",
+    "**/common-form-elements-v9": "4.5.0"
   }
 }
