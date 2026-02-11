@@ -56,6 +56,7 @@ build_client(){
     echo "starting client yarn install"
     #yarn install --no-progress --production=true
     yarn install --no-progress
+    ./node_modules/.bin/ngcc --properties es2015 browser module main --first-only
     echo "completed client yarn install"
     echo "==== DEBUG: yarn why common-form-elements-event ===="
     yarn why common-form-elements-event || true
