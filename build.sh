@@ -32,8 +32,7 @@ rm -rf dist-cdn # remove cdn dist folder
 # function to run client build for docker image
 build_client_docker(){
     echo "starting client local prod build"
-    #npm run build # Angular prod build
-    yarn build
+    npm run build # Angular prod build
     echo "completed client local prod build"
     cd ..
     mv app_dist/dist/index.html app_dist/dist/index.ejs # rename index file
@@ -41,11 +40,9 @@ build_client_docker(){
 # function to run client build for cdn
 build_client_cdn(){
     echo "starting client cdn prod build"
-    #npm run build-cdn -- --deployUrl $cdnUrl # prod command
-    yarn build-cdn -- --deployUrl "$cdnUrl"
+    npm run build-cdn -- --deployUrl $cdnUrl # prod command
     export sunbird_portal_cdn_url=$cdnUrl # required for inject-cdn-fallback task
-    #npm run inject-cdn-fallback
-    yarn inject-cdn-fallback
+    npm run inject-cdn-fallback
     echo "completed client cdn prod build"
 }
 # function to run client build
@@ -54,19 +51,9 @@ build_client(){
     nvm use $CLIENT_NODE_VERSION
     cd client
     echo "starting client yarn install"
-    #yarn install --no-progress --production=true
-    yarn install --no-progress
-    ./node_modules/.bin/ngcc --properties es2015 browser module main --first-only
+    yarn install --no-progress --production=true
     echo "completed client yarn install"
-    echo "==== DEBUG: yarn why common-form-elements-event ===="
-    yarn why common-form-elements-event || true
-
-    echo "==== DEBUG: yarn list common-form-elements ===="
-    yarn list --pattern common-form-elements || true
-
-    echo "==== DEBUG: location check ===="
-    ls -d node_modules/common-form-elements* || true
-    ls -d node_modules/ngtek-event-library/node_modules/common-form-elements* || true
+    cp -r node_modules/ngtek-event-library/node_modules/common-form-elements-event node_modules/
     if [ $buildDockerImage == true ]
     then
     build_client_docker & # run client local build in background 
