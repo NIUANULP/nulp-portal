@@ -53,6 +53,7 @@ build_client(){
     echo "starting client yarn install"
     yarn install --no-progress --production=true
     echo "completed client yarn install"
+    cp -r node_modules/ngtek-event-library/node_modules/common-form-elements-event node_modules/
     if [ $buildDockerImage == true ]
     then
     build_client_docker & # run client local build in background 
