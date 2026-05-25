@@ -148,7 +148,45 @@ module.exports = (app, keycloak) => {
     }),
     keycloak.middleware({ admin: '/callback', logout: '/logout' }),
     redirectTologgedInPage, indexPage(false))
-    app.all('/webapp/*', 
+  app.get('/webapp/joinCourseSSO',
+    session({
+      secret: envHelper.PORTAL_SESSION_SECRET_KEY,
+      resave: false,
+      cookie: { maxAge: envHelper.sunbird_session_ttl },
+      saveUninitialized: false,
+      store: memoryStore
+    }),
+    function storeIgotContext(req, res, next) {
+      if (req.query.sso === 'igot' && req.query.userId) {
+        req.session.igotSSO = true;
+        req.session.igotUserId = req.query.userId;
+        req.session.save(function (err) {
+          if (err) return next(err);
+          next();
+        });
+      } else {
+        next();
+      }
+    },
+    keycloak.middleware({ admin: '/callback', logout: '/logout' }),
+    keycloak.protect(),
+    function applyIgotUserId(req, res, next) {
+      const igotUserId = req.query.userId || req.session.igotUserId;
+      if (req.session.igotSSO && igotUserId) {
+        req.session.userId = igotUserId;
+        req.session.userSid = req.sessionID;
+        req.session.save(function (err) {
+          if (err) return next(err);
+          req.includeUserDetail = true;
+          webapp(req, res);
+        });
+      } else {
+        webapp(req, res);
+      }
+    }
+  );
+
+    app.all('/webapp/*',
     session({
       secret: envHelper.PORTAL_SESSION_SECRET_KEY,
       resave: false,
@@ -157,9 +195,9 @@ module.exports = (app, keycloak) => {
       },
       saveUninitialized: false,
       store: memoryStore
-    }), 
-    keycloak.middleware({ admin: '/callback', logout: '/logout' }), 
-    keycloak.protect(), 
+    }),
+    keycloak.middleware({ admin: '/callback', logout: '/logout' }),
+    keycloak.protect(),
     webapp
   );
   app.all(['*/dial/:dialCode', '/dial/:dialCode'], (req, res) => {
