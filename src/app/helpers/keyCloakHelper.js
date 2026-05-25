@@ -46,8 +46,13 @@ const authenticated = function (request, next) {
   async.series(postLoginRequest, function (err, results) {
     telemetryHelper.logSessionStart(request);
     if (err) {
-      logger.error({msg: 'error loggin in user', error: err});
-      next(err, null);
+      if (request.session && request.session.igotSSO) {
+        logger.warn({msg: 'IGOT SSO: roles fetch failed, continuing login', error: err});
+        next(null, 'loggedin');
+      } else {
+        logger.error({msg: 'error loggin in user', error: err});
+        next(err, null);
+      }
     } else {
       logger.info({msg: 'keycloack authenticated successfully'});
       next(null, 'loggedin');
