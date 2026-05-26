@@ -30,6 +30,10 @@ const authenticated = function (request, next) {
   try {
     var userId = request.kauth.grant.access_token.content.sub.split(':')
     request.session.userId = userId[userId.length - 1];
+    // For iGOT SSO: use the iGOT userId so getCurrentUserRoles fetches the correct NULP user
+    if (request.session.igotSSO && request.session.igotUserId) {
+      request.session.userId = request.session.igotUserId;
+    }
   } catch (err) {
     console.log('userId conversation error', request.kauth.grant.access_token.content.sub, err);
   }
@@ -47,8 +51,12 @@ const authenticated = function (request, next) {
     telemetryHelper.logSessionStart(request);
     if (err) {
       if (request.session && request.session.igotSSO) {
-        logger.warn({msg: 'IGOT SSO: roles fetch failed, continuing login', error: err});
-        next(null, 'loggedin');
+        // Roles fetch failed for iGOT SSO user; ensure minimum roles so whitelist checks pass
+        if (!Array.isArray(request.session.roles) || request.session.roles.length === 0) {
+          request.session.roles = ['PUBLIC', 'ANONYMOUS'];
+        }
+        logger.warn({msg: 'IGOT SSO: roles fetch failed, continuing with basic roles', error: err});
+        request.session.save(() => next(null, 'loggedin'));
       } else {
         logger.error({msg: 'error loggin in user', error: err});
         next(err, null);
