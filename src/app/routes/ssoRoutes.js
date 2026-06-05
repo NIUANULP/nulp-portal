@@ -1,16 +1,17 @@
 const _ = require('lodash');
 const jwt = require('jsonwebtoken');
+const bodyParser = require('body-parser');
 const envHelper = require('../helpers/environmentVariablesHelper');
-const {encrypt, decrypt} = require('../helpers/crypto');
+const { encrypt, decrypt } = require('../helpers/crypto');
 const {
   verifySignature, verifyIdentifier, verifyToken, fetchUserWithExternalId, createUser, fetchUserDetails,
   createSession, updateContact, updateRoles, sendSsoKafkaMessage, migrateUser, freeUpUser, getIdentifier,
   orgSearch
 } = require('./../helpers/ssoHelper');
 const telemetryHelper = require('../helpers/telemetryHelper');
-const {generateAuthToken, getGrantFromCode} = require('../helpers/keyCloakHelperService');
-const {parseJson, isDateExpired} = require('../helpers/utilityService');
-const {getUserIdFromToken} = require('../helpers/jwtHelper');
+const { generateAuthToken, getGrantFromCode } = require('../helpers/keyCloakHelperService');
+const { parseJson, isDateExpired } = require('../helpers/utilityService');
+const { getUserIdFromToken } = require('../helpers/jwtHelper');
 const fs = require('fs');
 const externalKey = envHelper.CRYPTO_ENCRYPTION_KEY_EXTERNAL;
 const successUrl = '/sso/sign-in/success';
@@ -18,14 +19,51 @@ const updateContactUrl = '/sign-in/sso/update/contact';
 const errorUrl = '/sso/sign-in/error';
 const { logger } = require('@project-sunbird/logger');
 const url = require('url');
-const {acceptTncAndGenerateToken} = require('../helpers/userService');
+const { acceptTncAndGenerateToken } = require('../helpers/userService');
 const VDNURL = envHelper.vdnURL || 'https://dockstaging.sunbirded.org';
 const { getAuthToken } = require('../helpers/kongTokenHelper');
+const { getKeyCloakClient } = require('../helpers/keyCloakHelper');
 
 module.exports = (app) => {
 
+  app.post('/v1/user/session/start', bodyParser.json(), async (req, res) => {
+    console.log('start session api called');
+    const { access_token, refresh_token } = req.body;
+    if (!access_token) {
+      return res.status(400).json({ error: 'access_token is required' });
+    }
+    try {
+      const keycloakPortal = getKeyCloakClient({
+        clientId: envHelper.PORTAL_TRAMPOLINE_CLIENT_ID,
+        bearerOnly: false,
+        serverUrl: envHelper.PORTAL_AUTH_SERVER_URL,
+        realm: envHelper.PORTAL_REALM,
+        credentials: { secret: envHelper.PORTAL_TRAMPOLINE_SECRET }
+      });
+      const grant = await keycloakPortal.grantManager.createGrant({
+        access_token,
+        refresh_token: refresh_token || undefined
+      });
+      keycloakPortal.storeGrant(grant, req, res);
+      req.kauth.grant = grant;
+      await new Promise((resolve, reject) => {
+        keycloakPortal.authenticated(req, (err) => err ? reject(err) : resolve());
+      });
+      res.json({
+        responseCode: 'OK',
+        result: {
+          userId: req.session.userId,
+          roles: req.session.roles
+        }
+      });
+    } catch (error) {
+      logger.error({ msg: '/v1/user/session/start failed', error: String(error) });
+      res.status(500).json({ error: 'Session creation failed', detail: String(error) });
+    }
+  });
+
   app.get('/v2/user/session/create', async (req, res) => { // updating api version to 2
-    logger.info({msg: '/v2/user/session/create called'});
+    logger.info({ msg: '/v2/user/session/create called' });
     let jwtPayload, userDetails, redirectUrl, errType, orgDetails;
     try {
       errType = 'VERIFY_SIGNATURE';
@@ -43,13 +81,13 @@ module.exports = (app) => {
       verifyToken(jwtPayload);
       errType = 'USER_FETCH_API';
       userDetails = await fetchUserWithExternalId(jwtPayload, req);
-      if (_.get(req,'cookies.redirectPath')){
-        res.cookie ('userDetails', JSON.stringify(encrypt(userDetails.userName, externalKey)));
+      if (_.get(req, 'cookies.redirectPath')) {
+        res.cookie('userDetails', JSON.stringify(encrypt(userDetails.userName, externalKey)));
       }
       req.session.userDetails = userDetails;
-      logger.info({msg: "userDetails fetched" + userDetails});
-      if(!_.isEmpty(userDetails) && (userDetails.phone || userDetails.email)) {
-        redirectUrl = successUrl + getEncyptedQueryParams({userName: userDetails.userName});
+      logger.info({ msg: "userDetails fetched" + userDetails });
+      if (!_.isEmpty(userDetails) && (userDetails.phone || userDetails.email)) {
+        redirectUrl = successUrl + getEncyptedQueryParams({ userName: userDetails.userName });
         logger.info({
           msg: 'sso session create v2 api, successfully redirected to success page',
           additionalInfo: {
@@ -73,7 +111,7 @@ module.exports = (app) => {
         req.session.userEncryptedInfo = encrypt(JSON.stringify(dataToEncrypt));
         redirectUrl = updateContactUrl; // verify phone then create user
         logger.info({
-          msg:'sso session create v2 api, successfully redirected to update phone page',
+          msg: 'sso session create v2 api, successfully redirected to update phone page',
           additionalInfo: {
             state_id: jwtPayload.state_id,
             jwtPayload: jwtPayload,
@@ -103,7 +141,7 @@ module.exports = (app) => {
   });
 
   app.get('/v1/sso/contact/verified', async (req, res) => {
-    logger.info({msg: '/v1/sso/contact/verified called'});
+    logger.info({ msg: '/v1/sso/contact/verified called' });
     let userDetails, jwtPayload, redirectUrl, errType;
     jwtPayload = req.session.jwtPayload; // fetch from session
     userDetails = req.session.userDetails; // fetch from session
@@ -158,7 +196,7 @@ module.exports = (app) => {
         }
         errType = 'FETCH_USER_AFTER_CREATE';
         userDetails = await fetchUserWithExternalId(jwtPayload, req); // to get userName
-        if(_.isEmpty(userDetails)){
+        if (_.isEmpty(userDetails)) {
           errType = 'USER_DETAILS_EMPTY';
           throw 'USER_DETAILS_IS_EMPTY';
         }
@@ -167,7 +205,7 @@ module.exports = (app) => {
           errType = 'ACCEPT_TNC';
           await acceptTncAndGenerateToken(userDetails.userName, req.query.tncVersion).catch(handleProfileUpdateError);
         }
-        redirectUrl = successUrl + getEncyptedQueryParams({userName: userDetails.userName});
+        redirectUrl = successUrl + getEncyptedQueryParams({ userName: userDetails.userName });
         logger.info({
           msg: 'sso user creation and role updated successfully and redirected to success page',
           additionalInfo: {
@@ -202,16 +240,16 @@ module.exports = (app) => {
 
   app.get(successUrl, async (req, res) => { // to support mobile sso flow
     sendSsoKafkaMessage(req);
-    if (_.get(req, 'cookies.redirectPath')){ 
-      res.redirect(VDNURL+'/v1/sourcing/sso/success/redirect?userName='+(_.get(req, 'cookies.userDetails')) + '&redirectUrl='+ (_.get(req, 'cookies.redirectTo')));
+    if (_.get(req, 'cookies.redirectPath')) {
+      res.redirect(VDNURL + '/v1/sourcing/sso/success/redirect?userName=' + (_.get(req, 'cookies.userDetails')) + '&redirectUrl=' + (_.get(req, 'cookies.redirectTo')));
     } else {
-      res.status(200).sendFile('./success_loader.html', {root: __dirname})
+      res.status(200).sendFile('./success_loader.html', { root: __dirname })
     }
     // res.status(200).sendFile('./success_loader.html', {root: __dirname})
   });
 
   app.get('/v1/sso/success/redirect', async (req, res) => {
-    logger.info({msg: '/v1/sso/success/redirect called'});
+    logger.info({ msg: '/v1/sso/success/redirect called' });
     let userDetails, jwtPayload, redirectUrl, errType, redirectURIFromCookie;
     jwtPayload = req.session.jwtPayload;
     userDetails = req.session.userDetails;
@@ -255,13 +293,13 @@ module.exports = (app) => {
       })
       logErrorEvent(req, errType, error);
     } finally {
-      redirectURIFromCookie && res.cookie('SSO_REDIRECT_URI', '', {expires: new Date(0)});
+      redirectURIFromCookie && res.cookie('SSO_REDIRECT_URI', '', { expires: new Date(0) });
       res.redirect(redirectUrl || errorUrl);
     }
   })
 
   app.get('/v1/sso/create/session', async (req, res) => { // needs to onboard to kong
-    logger.info({msg: '/v1/sso/create/session called'});
+    logger.info({ msg: '/v1/sso/create/session called' });
     let userName, response, errType;
     try {
       if (!req.query.id) {
@@ -272,7 +310,7 @@ module.exports = (app) => {
       const userData = isValidRequest(req.query.id);
       errType = 'CREATE_SESSION';
       let clientId = 'android';
-      if(req.query.clientId && req.query.clientId === 'desktop') {
+      if (req.query.clientId && req.query.clientId === 'desktop') {
         clientId = req.query.clientId;
       }
       response = await createSession(userData.userName, clientId, req, res);
@@ -300,11 +338,11 @@ module.exports = (app) => {
   })
 
   app.get(errorUrl, (req, res) => {
-    res.status(200).sendFile('./error_loader.html', {root: __dirname })
+    res.status(200).sendFile('./error_loader.html', { root: __dirname })
   })
 
   app.get('/v1/sso/error/redirect', async (req, res) => {
-    logger.info({msg: '/v1/sso/error/redirect called'});
+    logger.info({ msg: '/v1/sso/error/redirect called' });
     const redirect_uri = encodeURIComponent(`https://${req.get('host')}/resources?auth_callback=1`);
     const redirectUrl = `/auth/realms/sunbird/protocol/openid-connect/auth?client_id=portal&redirect_uri=${redirect_uri}&scope=openid&response_type=code&version=2&error_message=` + req.query.error_message;
     res.redirect(redirectUrl); // should go to error page
@@ -312,7 +350,7 @@ module.exports = (app) => {
 
   // creates state user
   app.get('/v1/sso/create/user', async (req, res) => {
-    logger.info({msg: '/v1/sso/create/user called'});
+    logger.info({ msg: '/v1/sso/create/user called' });
     let response, errType, jwtPayload, redirectUrl, userDetails;
     jwtPayload = req.session.jwtPayload; // fetch from session
     try {
@@ -356,7 +394,7 @@ module.exports = (app) => {
       }
       errType = 'FETCH_USER_AFTER_CREATE';
       userDetails = await fetchUserWithExternalId(jwtPayload, req); // to get userName
-      if(_.isEmpty(userDetails)){
+      if (_.isEmpty(userDetails)) {
         errType = 'USER_DETAILS_EMPTY';
         throw 'USER_DETAILS_IS_EMPTY';
       }
@@ -365,7 +403,7 @@ module.exports = (app) => {
         errType = 'ACCEPT_TNC';
         await acceptTncAndGenerateToken(userDetails.userName, req.query.tncVersion).catch(handleProfileUpdateError);
       }
-      redirectUrl = successUrl + getEncyptedQueryParams({userName: userDetails.userName});
+      redirectUrl = successUrl + getEncyptedQueryParams({ userName: userDetails.userName });
       logger.info({
         msg: 'sso user creation and role updated successfully and redirected to success page',
         additionalInfo: {
@@ -396,7 +434,7 @@ module.exports = (app) => {
 
 
   app.get('/v1/sso/migrate/account/initiate', async (req, res) => {
-    logger.info({msg: '/v1/sso/migrate/account/initiate called'});
+    logger.info({ msg: '/v1/sso/migrate/account/initiate called' });
     let response, errType, redirectUrl, url, query;
     try {
       if (!req.query.userId || !req.query.identifier || !req.query.identifierValue || !req.session.migrateAccountInfo
@@ -405,7 +443,7 @@ module.exports = (app) => {
         throw 'some of the query params are missing';
       }
       const dataToEncrypt = {
-        stateToken : req.session.migrateAccountInfo.stateToken,
+        stateToken: req.session.migrateAccountInfo.stateToken,
         userId: req.query.userId,
         identifier: req.query.identifier,
         identifierValue: req.query.identifierValue,
@@ -419,10 +457,10 @@ module.exports = (app) => {
       query = `?client_id=portal&state=3c9a2d1b-ede9-4e6d-a496-068a490172ee&redirect_uri=https://${req.get('host')}/migrate/account/login/callback&payload=${payload}&scope=openid&response_type=code&automerge=1&version=3&goBackUrl=https://${req.get('host')}/sign-in/sso/select-org`;
       const userInfo = `&userId=${req.query.userId}&identifierType=${req.query.identifier}&identifierValue=${req.query.identifierValue}&tncVersion=${req.query.tncVersion}&tncAccepted=${req.query.tncAccepted}`;
       redirectUrl = url + query + userInfo;
-      logger.info({msg: 'url for migration' + redirectUrl});
+      logger.info({ msg: 'url for migration' + redirectUrl });
     } catch (error) {
       redirectUrl = `${errorUrl}?error_message=` + getErrorMessage(error, errType);
-      response = {error: getErrorMessage(error, errType)};
+      response = { error: getErrorMessage(error, errType) };
       logger.error({
         msg: 'sso migrate account initiate failed',
         error,
@@ -439,14 +477,14 @@ module.exports = (app) => {
 
   app.get('/learner/get/user/sessionId/:userId', (req, res) => {
     if (req.session.userId === req.params.userId) {
-      res.send({id: getEncyptedQueryParams({userName: req.session.userName})})
+      res.send({ id: getEncyptedQueryParams({ userName: req.session.userName }) })
     } else {
       throw 'unhandled exception while getting sessionID';
     }
   });
 
   app.all('/migrate/account/login/callback', async (req, res) => {
-    logger.info({msg: '/migrate/account/login/callback called'});
+    logger.info({ msg: '/migrate/account/login/callback called' });
     let nonStateUserToken;
     if (!req.session.migrateAccountInfo) {
       res.status(401).send({
@@ -455,11 +493,11 @@ module.exports = (app) => {
       return false;
     }
     if (req.session.migrateAccountInfo.client_id === 'android') {
-      logger.info({msg: 'mobile login success'});
+      logger.info({ msg: 'mobile login success' });
       const query = '?payload=' + req.session.migrateAccountInfo.encryptedData + '&code=' + req.query.code + '&automerge=1';
       res.redirect('/account/migrate/login' + query);
     } else if (req.session.migrateAccountInfo.client_id === 'desktop') {
-      logger.info({msg: 'desktop login success'});
+      logger.info({ msg: 'desktop login success' });
       const query = '?payload=' + req.session.migrateAccountInfo.encryptedData + '&code=' + req.query.code + '&automerge=1';
       res.redirect('/account/migrate/login' + query);
     } else {
@@ -514,9 +552,9 @@ const handleProfileUpdateError = (error) => {
 }
 
 const getErrorMessage = (error, errorType) => {
-  if(_.get(error, 'params.err') === 'USER_ACCOUNT_BLOCKED') {
+  if (_.get(error, 'params.err') === 'USER_ACCOUNT_BLOCKED') {
     return 'User account is blocked. Please contact admin';
-  } else if (['VERIFY_SIGNATURE', 'PAYLOAD_DATA_MISSING', 'VERIFY_TOKEN'].includes(errorType) ) {
+  } else if (['VERIFY_SIGNATURE', 'PAYLOAD_DATA_MISSING', 'VERIFY_TOKEN'].includes(errorType)) {
     return 'Your account could not be signed in to DIKSHA due to invalid credentials provided. Please try again with valid credentials.';
   } else if (error === 'SCHOOL_ID_NOT_REGISTERED') {
     return 'Login failed. Details received from your State seem to be invalid. Contact your State administration for more details';
@@ -550,11 +588,11 @@ const delay = (duration = 1000) => {
 
 const logErrorEvent = (req, type, error) => {
   let stacktrace;
-  if(error instanceof Error){
+  if (error instanceof Error) {
     stacktrace = error.message;
   } else {
     stacktrace = JSON.stringify(error)
-    if(stacktrace === '{}'){
+    if (stacktrace === '{}') {
       stacktrace = 'STRINGIFY_FAILED'
     }
   }
@@ -566,7 +604,7 @@ const logErrorEvent = (req, type, error) => {
   const context = {
     env: 'SSO_SIGN_IN'
   }
-  telemetryHelper.logApiErrorEventV2(req, {edata, context});
+  telemetryHelper.logApiErrorEventV2(req, { edata, context });
 }
 
 const getQueryParams = (queryObj) => {
@@ -596,7 +634,7 @@ const ssoValidations = async (req, res) => {
       encryptedData: parseJson(decodeURIComponent(req.get('x-authenticated-user-data')))
     };
   }
-  req.session.nonStateUserToken = req.session.nonStateUserToken ||  getAuthToken(req);
+  req.session.nonStateUserToken = req.session.nonStateUserToken || getAuthToken(req);
   if (!req.session.nonStateUserToken || !(req.session.migrateAccountInfo && req.session.migrateAccountInfo.encryptedData)) {
     res.status(401).send({
       responseCode: 'UNAUTHORIZED'
@@ -631,7 +669,7 @@ const ssoValidations = async (req, res) => {
       errType = 'ERROR_FETCHING_USER_DETAILS';
       const userDetails = await fetchUserWithExternalId(stateJwtPayload, req); // to get userName
       console.log('userDetails fetched from external ID', JSON.stringify(userDetails));
-      if (_.isEmpty(userDetails)){
+      if (_.isEmpty(userDetails)) {
         errType = 'USER_DETAILS_EMPTY';
         throw 'USER_DETAILS_IS_EMPTY';
       }
@@ -650,7 +688,7 @@ const ssoValidations = async (req, res) => {
           "id": "api.user.migrate", "params": {
             "resmsgid": null, "err": null, "status": "success",
             "errmsg": null
-          }, "responseCode": "OK", "result": {"response": "SUCCESS",}
+          }, "responseCode": "OK", "result": { "response": "SUCCESS", }
         };
         statusCode = 200
       }
@@ -659,13 +697,13 @@ const ssoValidations = async (req, res) => {
       throw 'USER_DETAILS_DID_NOT_MATCH';
     }
   } catch (error) {
-    redirectUrl ='/accountMerge?status=error&merge_type=auto&redirect_uri=/resources';
+    redirectUrl = '/accountMerge?status=error&merge_type=auto&redirect_uri=/resources';
     if (req.query.client_id === 'android' || req.query.client_id === 'desktop') {
       response = {
         "id": "api.user.migrate", "params": {
           "resmsgid": null, "err": JSON.stringify(error), "status": "error",
           "errType": errType
-        }, "responseCode": "INTERNAL_SERVER_ERROR", "result": {"response": "ERROR",}
+        }, "responseCode": "INTERNAL_SERVER_ERROR", "result": { "response": "ERROR", }
       };
       statusCode = 500
     }
