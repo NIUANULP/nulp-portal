@@ -6,6 +6,7 @@ const {
   updateUserInfo,
   readUserInfo,
   validateUserFields,
+  validateUserFieldsV2,
   emailNotification,
   locationData,
   getToken,
@@ -25,6 +26,13 @@ module.exports = function (app) {
     "/custom/user/signup",
     bodyParser.json({ limit: "10mb" }),
     validateUserFields,
+    saveUserInfo
+  );
+  // Create user v2 (state, district, state_id, district_id are optional)
+  app.post(
+    "/custom/user/v2/signup",
+    bodyParser.json({ limit: "10mb" }),
+    validateUserFieldsV2,
     saveUserInfo
   );
   // Update user
