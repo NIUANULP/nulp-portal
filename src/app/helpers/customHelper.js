@@ -21,6 +21,19 @@ const validateUserFields = [
   body("district_id").isString().notEmpty(),
 ];
 
+const validateUserFieldsV2 = [
+  body("user_id").isString().notEmpty(),
+  body("designation").isString().notEmpty(),
+  body("bio").optional().isString(),
+  body("created_by").isString().notEmpty(),
+  body("user_type").optional().isString(),
+  body("organisation").optional().isString(),
+  body("state").optional().isString(),
+  body("district").optional().isString(),
+  body("state_id").optional().isString(),
+  body("district_id").optional().isString(),
+];
+
 // Error handler middleware
 const errorHandler = (err, req, res, next) => {
   console.error(err.stack);
@@ -757,6 +770,7 @@ module.exports = {
   updateUserInfo,
   readUserInfo,
   validateUserFields,
+  validateUserFieldsV2,
   emailNotification,
   locationData,
   getToken,
