@@ -63,7 +63,7 @@ module.exports = function (app) {
   );
 
   // discussion forum api
-  app.get("/auth/token", proxyUtils.verifyToken(), getToken);
+  app.get("/portal/auth/token", proxyUtils.verifyToken(), getToken);
 
   // Email service for discussion forum
   app.post(
