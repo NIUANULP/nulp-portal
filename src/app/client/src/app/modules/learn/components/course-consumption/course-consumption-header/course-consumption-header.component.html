@@ -134,7 +134,7 @@
         </div>
 
         <div class="ml-auto text-right py-8 mr-4"
-          *ngIf="!enrolledCourse && viewDashboard && !router.url.includes('/dashboard')">
+          *ngIf=" viewDashboard && !router.url.includes('/dashboard')">
           <button appTelemetryInteract [telemetryInteractObject]="courseInteractObject"
             [telemetryInteractEdata]="{id:'viewCourseDashboard' , type: 'click' , pageid:'course-consumption'}"
             class="sb-btn sb-btn-secondary sb-btn-normal" tabindex="0" (click)="showDashboard()">
