@@ -113,7 +113,14 @@ app.all([
     },
     saveUninitialized: false,
     store: memoryStore
-  }), keycloak.middleware({ admin: '/callback', logout: '/logout' }));
+  }), keycloak.middleware({ admin: '/callback', logout: '/logout' }),
+  (req, res, next) => {
+    if (req.session && req.sessionID && _.get(req, 'cookies.connect.sid') &&
+        (!req.session.userId || !req.session.roles || req.session.roles.length === 0)) {
+      res.clearCookie('connect.sid', { path: '/' });
+    }
+    next();
+  });
 
 app.all('/logoff', endSession, (req, res) => {
   // Clear cookie for client (browser)
