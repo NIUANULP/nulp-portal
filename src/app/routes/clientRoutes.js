@@ -337,10 +337,18 @@ const getContentUrl = (course) => {
       }
   });
 
+  const clearStaleSession = (req, res, next) => {
+    if (req.session && req.sessionID && _.get(req, 'cookies.connect.sid') &&
+        (!req.session.userId || !req.session.roles || req.session.roles.length === 0)) {
+      res.clearCookie('connect.sid', { path: '/' });
+    }
+    next();
+  };
+
   app.all(['/announcement', '/announcement/*', '/search', '/search/*',
   '/orgType', '/orgType/*', '/dashBoard', '/dashBoard/*',
   '/workspace', '/workspace/*', '/profile', '/profile/*', '/learn', '/learn/*', '/resources', '/discussion-forum/*',
-  '/resources/*', '/myActivity', '/myActivity/*', '/org/*', '/manage/*', '/contribute','/contribute/*','/groups','/groups/*', '/my-groups','/my-groups/*','/certs/configure/*',
+  '/resources/*', '/myActivity', '/myActivity/*', '/org/*', '/manage/*', '/contribute','/contribute/*','/groups','/groups/*', '/my-groups','/my-groups/*', '/certs/configure/*',
    '/observation', '/observation/*','/solution','/solution/*','/questionnaire','/questionnaire/*', '/uci-admin', '/uci-admin/*','/program',"/all","/category/:category","/addConnections","/message","/home","/contents","/certificate","/learningHistory","/continueLearning","/help","/framework","/addConnections","/domainList","/contentList/:pageNumber","/joinCourse/*","/joinCourse/:contentId","/pdf","/noresult","/user","/search","/view-all/:category","/nulp-chatbot"],
   session({
     secret: envHelper.PORTAL_SESSION_SECRET_KEY,
@@ -350,7 +358,7 @@ const getContentUrl = (course) => {
     },
     saveUninitialized: false,
     store: memoryStore
-  }), keycloak.middleware({ admin: '/callback', logout: '/logout' }), keycloak.protect(), indexPage(true));
+  }), keycloak.middleware({ admin: '/callback', logout: '/logout' }), clearStaleSession, keycloak.protect(), indexPage(true));
 
   // all public route should also have same route prefixed with slug
   app.all(['/', '/get', '/:slug/get', '/:slug/get/dial/:dialCode',  '/get/dial/:dialCode', '/explore',
