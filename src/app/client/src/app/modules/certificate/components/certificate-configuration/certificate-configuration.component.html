@@ -288,6 +288,8 @@
                       [isSelectedTemplate]="selectedTemplate?.identifier === template?.identifier && !showPreviewModal"
                       [template]="template?.artifactUrl" (buttonClick)="handleCertificateEvent($event, template)">
                     </sb-certificate-actions>
+                    <div *ngIf="template?.name" class="cert-template-name"
+                      title="{{template?.name}}">{{template?.name}}</div>
                   </div>
                 </div>
               </div>
