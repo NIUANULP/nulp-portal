@@ -60,6 +60,17 @@
         padding-right: 0;
         padding-left: 0.5rem;
       }
+
+      .cert-template-name {
+        text-align: center;
+        font-size: calculateRem(12px);
+        color: var(--gray-400);
+        font-weight: bold;
+        margin: 0.25rem 0 0.75rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
     }
     .certificates-label {
       font-size: calculateRem(18px);
