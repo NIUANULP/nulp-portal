@@ -42,14 +42,24 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
 
   private courseId: string;
 
+  /**
+  * participants already in the batch (loaded from backend)
+  */
   public selectedParticipants: any = [];
+  /**
+  * members shown/selected in the members dropdown: existing participants + newly picked users
+  */
+  public batchMembers: any[] = [];
+  /**
+  * ids of participants already in the batch
+  */
+  public existingParticipantIds: string[] = [];
 
   public showFormInViewMode: boolean;
 
   public selectedMentors: any = [];
 
   private userSearchTime: any;
-  private removedUsers: any = [];
 
   forumIds: any;
   fetchForumIdReq: any;
@@ -118,6 +128,12 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
    * telemetryImpression object for update batch page
   */
   public telemetryImpression: IImpressionEventInput;
+
+  /**
+  * TEMPORARY: lets enrollment type and start date be edited on batches that have already started.
+  * Set back to false (or remove) once the one-time batch correction is done.
+  */
+  public allowEditStartedBatch = true;
 
   public pickerMinDate = new Date(new Date().setHours(0, 0, 0, 0));
 
@@ -206,11 +222,6 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
             _.remove(this.mentorList, mentor => mentor.id === id);
           });
         }
-        if (this.batchDetails.participants) {
-          this.batchDetails.participants.forEach(id => {
-            _.remove(this.participantList, participant => participant.id === id);
-          });
-        }
         this.initializeUpdateForm();
         this.getEnabledForumId();
         this.fetchParticipantDetails();
@@ -252,18 +263,6 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
         ));
     }
   }
-  private isSubmitBtnDisable(batchForm): boolean {
-    const batchFormControls = ['name', 'description', 'enrollmentType', 'mentors', 'startDate', 'endDate', 'users'];
-    for (let i = 0; i < batchFormControls.length; i++) {
-      if (batchForm.controls[batchFormControls[i]].status !== 'VALID') {
-        return true;
-      }
-    }
-    if (batchForm.controls['enrollmentEndDate'].status !== 'VALID' && batchForm.controls['enrollmentEndDate'].pristine) {
-      return false;
-    }
-    return true;
-  }
   /**
   * initializes form fields and apply field level validation
   */
@@ -303,11 +302,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     });
 
     this.batchUpdateForm.valueChanges.subscribe(val => {
-      if (this.batchUpdateForm.status === 'VALID') {
-        this.disableSubmitBtn = false;
-      } else {
-        this.disableSubmitBtn = this.isSubmitBtnDisable(this.batchUpdateForm);
-      }
+      this.refreshSubmitState();
     });
     this.disableSubmitBtn = true;
     if (this.batchDetails.createdBy !== this.userService.userid) {
@@ -322,11 +317,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     let userList = [];
     if (this.batchDetails.participants || (this.batchDetails.mentors && this.batchDetails.mentors.length > 0)) {
       if (this.batchDetails.enrollmentType !== 'open') {
-        if (this.batchDetails.participants && this.batchDetails.participants.length > 100) {
-          userList = this.batchDetails.mentors;
-        } else {
-          userList = _.union(this.batchDetails.participants, this.batchDetails.mentors);
-        }
+        userList = _.union(this.batchDetails.participants, this.batchDetails.mentors);
       } else {
         userList = this.batchDetails.mentors;
       }
@@ -375,6 +366,9 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
       }
     });
     this.selectedParticipants = _.uniqBy(this.selectedParticipants, 'id');
+    // keep any users picked before the existing participants finished loading
+    this.batchMembers = _.uniqBy([...this.selectedParticipants, ...this.batchMembers], 'id');
+    this.existingParticipantIds = _.map(this.selectedParticipants, 'id');
     this.selectedMentors = _.uniqBy(this.selectedMentors, 'id');
     this.disableSubmitBtn = false;
     this.showLoader = false;
@@ -384,8 +378,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     const mentorList = [];
     if (res.result.response.content && res.result.response.content.length > 0) {
       _.forEach(res.result.response.content, (userData) => {
-        if (_.find(this.selectedMentors, { 'id': userData.identifier }) ||
-          _.find(this.selectedParticipants, { 'id': userData.identifier })) {
+        if (_.find(this.selectedMentors, { 'id': userData.identifier })) {
           return;
         }
         if (userData.identifier !== this.userService.userid) {
@@ -419,18 +412,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     }, 1000);
   }
   private initDropDown() {
-    const count = _.get(this.batchDetails, 'participants') ? _.get(this.batchDetails, 'participants.length') : 0;
     this.lazzyLoadScriptService.loadScript('semanticDropdown.js').subscribe(() => {
-      $('#participant').dropdown({
-        forceSelection: false,
-        fullTextSearch: true,
-        maxSelections: 100 - count,
-        message: {
-          maxSelections : this.resourceService.messages.imsg.m0047
-        },
-        onAdd: () => {
-        }
-      });
       if (!$('#mentors input.search').val()) {
         $('#mentors').dropdown({
           fullTextSearch: true,
@@ -440,9 +422,6 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
         });
       }
       $('#mentors input.search').attr('aria-label', 'select batch mentor'); // fix accessibility on screen reader
-      $('#participant input.search').on('keyup', (e) => {
-        this.getUserListWithQuery($('#participant input.search').val(), 'participant');
-      });
       $('#mentors input.search').on('keyup', (e) => {
         this.getUserListWithQuery($('#mentors input.search').val(), 'mentor');
       });
@@ -480,15 +459,6 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     });
   }
 
-  public removeParticipant(user: any) {
-    if (user && user.id) {
-      this.removedUsers.push(user.id);
-    }
-    _.remove(this.selectedParticipants, (data) => {
-      return data === user;
-    });
-  }
-
   private removeParticipantFromBatch(batchId, participantId) {
     return this.courseBatchService.removeUsersFromBatch(participantId,batchId, this.courseId);
   }
@@ -503,8 +473,11 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     const selectedMentors = [];
     let mentors = [];
     mentors = $('#mentors').dropdown('get value') ? $('#mentors').dropdown('get value').split(',') : [];
+    const memberIds = _.map(this.batchMembers, 'id');
+    const existingIds = _.map(this.selectedParticipants, 'id');
+    const removedUsers = _.difference(existingIds, memberIds);
     if (this.batchUpdateForm.value.enrollmentType !== 'open') {
-      participants = $('#participant').dropdown('get value') ? $('#participant').dropdown('get value').split(',') : [];
+      participants = _.difference(memberIds, existingIds);
     }
     participants = participants.filter(participantId => !mentors.some(mentorId => mentorId == participantId));
     if ((this.selectedMentors).length > 0) {
@@ -536,8 +509,8 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     requestBody['mentors'] = _.concat(_.compact(requestBody['mentors']), selected);
     const requests = [];
     requests.push(this.courseBatchService.updateBatch(requestBody));
-    if (this.removedUsers && this.removedUsers.length > 0) {
-      _.forEach(this.removedUsers, (id) => {
+    if (removedUsers.length > 0) {
+      _.forEach(removedUsers, (id) => {
         requests.push(this.removeParticipantFromBatch(this.batchId, id));
       });
     }
@@ -672,6 +645,10 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
         this.callCreateDiscussion = false;
       }
       this.initializeUpdateForm();
+      // form re-init disables update; re-enable if participant details have already loaded
+      if (!this.showLoader) {
+        this.refreshSubmitState();
+      }
     }, error => {
       this.toasterService.error(this.resourceService.messages.emsg.m0005);
     });
@@ -755,6 +732,9 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     };
     this.telemetryService.interact(telemetryData);
   }
+  public onParticipantSearch(query: string) {
+    this.getUserListWithQuery(query, 'participant');
+  }
   getSelectedMembers() {
     if(this.batchUpdateForm.value.enrollmentType !== 'open'){
       return $('#mentors').dropdown('get value') ? $('#mentors').dropdown('get value').split(',') : [];
@@ -762,15 +742,20 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
       return [];
     }
   }
-  checkList(field){
-    if(field =='mentor' ){
-      this.disableSubmitBtn = true;
-      console.log(typeof($('#mentors').dropdown('get value')))
-    }else if(field =='participant'){
-      this.disableSubmitBtn = true;
-
+  checkList(field) {
+    // selecting mentors/members is a valid change; enable update when the form is valid
+    if (field === 'mentor' || field === 'participant') {
+      this.refreshSubmitState();
     }
-
-  }  
+  }
+  /**
+  * enables update when the required batch fields are valid. enableDiscussions is not checked as it
+  * is only filled once the forum API responds and may stay empty when that call fails.
+  */
+  private refreshSubmitState() {
+    const controls = this.batchUpdateForm.controls;
+    const invalid = ['name', 'enrollmentType', 'startDate', 'issueCertificate'].some(key => controls[key].invalid);
+    this.disableSubmitBtn = this.showFormInViewMode || this.showLoader || invalid;
+  }
   
 }

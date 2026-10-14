@@ -160,19 +160,12 @@
 
           <div class="sb-field-group " [hidden]="createBatchForm.value.enrollmentType === 'open'">
             <label>{{resourceService?.frmelmnts?.lbl?.bacthmembers}}</label>
-            <div class="createbatchdropdown ui fluid multiple search selection dropdown" id="participants"
-              ng-class="batch.isUserSearch === 1 ? 'loading' : undefined">
-              <input id="userSelList">
-              <i class="dropdown icon"></i>
-              <div class="default text">{{resourceService?.frmelmnts?.intxt?.t0006}}</div>
-              <div class="menu">
-                <div class="item" *ngFor="let user of participantList | participants : getSelectedMembers()" [attr.data-value]="user.id">
-                  <img class="ui mini avatar image"
-                    src="{{user.avatar || 'assets/images/user_logo.png' | cdnprefixurl}}" alt="avatar image">
-                  {{user.name}}{{user.otherDetail}}
-                </div>
-              </div>
-            </div>
+            <app-batch-member-select inputId="userSelList" [users]="participantList"
+              [excludeIds]="getSelectedMembers()" [(selectedUsers)]="newParticipants"
+              [placeholder]="resourceService?.frmelmnts?.intxt?.t0006"
+              [selectAllLabel]="resourceService?.frmelmnts?.lbl?.selectAll || 'Select all'"
+              (search)="onParticipantSearch($event)">
+            </app-batch-member-select>
           </div>
 
           <div class="sb-field mt-24 mb-8">

@@ -40,6 +40,10 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
   participantList = [];
 
   public selectedParticipants: any = [];
+  /**
+  * participants picked in the members dropdown
+  */
+  public newParticipants: any[] = [];
 
   public selectedMentors: any = [];
   /**
@@ -233,7 +237,7 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
     let mentors = [];
     mentors = $('#mentors').dropdown('get value') ? $('#mentors').dropdown('get value').split(',') : [];
     if (this.createBatchForm.value.enrollmentType !== 'open') {
-      participants = $('#participants').dropdown('get value') ? $('#participants').dropdown('get value').split(',') : [];
+      participants = _.map(this.newParticipants, 'id');
       participants = participants.filter(participantId => !mentors.some(mentorId => mentorId == participantId));
     }
     const startDate = dayjs(this.createBatchForm.value.startDate).format('YYYY-MM-DD');
@@ -324,19 +328,10 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   private initDropDown() {
     this.lazzyLoadScriptService.loadScript('semanticDropdown.js').subscribe(() => {
-      $('#participants').dropdown({
-        forceSelection: false,
-        fullTextSearch: true,
-        onAdd: () => {
-        }
-      });
       $('#mentors').dropdown({
         fullTextSearch: true,
         forceSelection: false,
     });
-      $('#participants input.search').on('keyup', (e) => {
-        this.getUserListWithQuery($('#participants input.search').val(), 'participant');
-      });
       $('#mentors input.search').on('keyup', (e) => {
         this.getUserListWithQuery($('#mentors input.search').val(), 'mentor');
       });
@@ -354,7 +349,6 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
   *  api call to get user list
   */
   private getUserList(query: string = '', type) {
-    this.selectedParticipants = $('#participants').dropdown('get value') ? $('#participants').dropdown('get value').split(',') : [];
     this.selectedMentors = $('#mentors').dropdown('get value') ? $('#mentors').dropdown('get value').split(',') : [];
     const requestBody = {
       filters: {'status': '1'},
@@ -484,13 +478,17 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
     this.telemetryService.interact(telemetryData);
   }
 
+  public onParticipantSearch(query: string) {
+    this.getUserListWithQuery(query, 'participant');
+  }
+
   handleBatchTypeInputChange() {
-    $('#participants').dropdown('restore defaults')
+    this.newParticipants = [];
   }
 
   clearList() {
     $('#mentors').dropdown('restore defaults')
-    $('#participants').dropdown('restore defaults')
+    this.newParticipants = [];
   }
 
   getPickerMinDateForEndDate() {

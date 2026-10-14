@@ -1,0 +1,47 @@
+<div class="bms" [class.bms--disabled]="disabled" [class.bms--open]="isOpen">
+  <div class="bms__trigger" (click)="open()">
+    <input #searchInput class="bms__search" type="text" autocomplete="off" [id]="inputId" [attr.aria-label]="placeholder"
+      [placeholder]="selectedCount ? selectedCount + ' selected' : placeholder" [disabled]="disabled"
+      [value]="query" (focus)="open()" (input)="onQueryChange(searchInput.value)">
+    <button type="button" class="bms__caret" [disabled]="disabled" aria-label="toggle member list"
+      (click)="$event.stopPropagation(); toggleOpen()">
+      <i class="dropdown icon"></i>
+    </button>
+  </div>
+
+  <div class="bms__panel" *ngIf="isOpen" role="listbox" aria-multiselectable="true">
+    <ng-container *ngIf="visibleUsers.length; else noUsers">
+      <label class="bms__option bms__option--all">
+        <input type="checkbox" [checked]="allVisibleSelected" [indeterminate]="someVisibleSelected"
+          (change)="toggleSelectAll()">
+        <span>{{selectAllLabel}} ({{visibleUsers.length}})</span>
+      </label>
+      <label class="bms__option" *ngFor="let user of visibleUsers" [class.bms__option--checked]="isSelected(user.id)">
+        <input type="checkbox" [checked]="isSelected(user.id)" [disabled]="isLocked(user.id)"
+          (change)="toggleUser(user)">
+        <img class="ui mini avatar image" src="{{user.avatar || 'assets/images/user_logo.png' | cdnprefixurl}}"
+          alt="avatar image">
+        <span class="bms__name">{{user.name}}{{user.otherDetail}}</span>
+      </label>
+    </ng-container>
+    <ng-template #noUsers>
+      <div class="bms__empty">No users found</div>
+    </ng-template>
+  </div>
+
+  <div class="bms__selected" *ngIf="selectedCount">
+    <div class="bms__selected-header">
+      <span>{{selectedCount}} selected</span>
+      <button type="button" class="bms__clear" *ngIf="!disabled" (click)="clearAll()">Clear all</button>
+    </div>
+    <div class="bms__chips">
+      <span class="ui label bms__chip" *ngFor="let user of selectedUsers">
+        <img class="ui right spaced avatar image" src="{{user.avatar || 'assets/images/user_logo.png' | cdnprefixurl}}"
+          alt="avatar image">
+        {{user.name}}{{user.otherDetail}}
+        <i class="delete icon" *ngIf="!disabled && !isLocked(user.id)" tabindex="0" role="button" aria-label="remove"
+          (click)="remove(user)" (keydown.enter)="remove(user)"></i>
+      </span>
+    </div>
+  </div>
+</div>

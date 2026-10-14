@@ -360,6 +360,32 @@ mat-tooltip-component .mat-tooltip {
         }
     }
 
+    // Update batch modal: keep header/actions visible, scroll only the form body
+    &.batch-update-modal {
+        .mat-dialog-container {
+            overflow: hidden;
+        }
+
+        .sb-mat__modal {
+            display: flex;
+            flex-direction: column;
+            max-height: 96vh;
+            margin-top: 2vh;
+
+            .sb-mat__modal__content {
+                flex: 1 1 auto;
+                min-height: 0;
+                max-height: none;
+                overflow-y: auto;
+            }
+
+            .mat-dialog-title,
+            .sb-mat__modal__actions {
+                flex: 0 0 auto;
+            }
+        }
+    }
+
     .sb-mat__modal {
         max-width: 720px;
         width: 100%;
