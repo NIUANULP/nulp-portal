@@ -29,6 +29,22 @@ cd src/app
 mkdir -p app_dist/ # this folder should be created prior server and client build
 rm -rf dist-cdn # remove cdn dist folder
 
+wait_for_builds(){
+    local pid
+    local status=0
+    for pid in "$@"
+    do
+        if wait "$pid"
+        then
+            :
+        else
+            echo "Build process $pid failed" >&2
+            status=1
+        fi
+    done
+    return "$status"
+}
+
 # function to run client build for docker image
 build_client_docker(){
     echo "starting client local prod build"
@@ -47,6 +63,7 @@ build_client_cdn(){
 }
 # function to run client build
 build_client(){
+    local build_pids=()
     echo "Building client in background"
     nvm use $CLIENT_NODE_VERSION
     cd client
@@ -57,12 +74,14 @@ build_client(){
     if [ $buildDockerImage == true ]
     then
     build_client_docker & # run client local build in background 
+    build_pids+=("$!")
     fi
     if [ $buildCdnAssests == true ]
     then
     build_client_cdn & # run client local build in background
+    build_pids+=("$!")
     fi
-    wait # wait for both build to complete
+    wait_for_builds "${build_pids[@]}"
     echo "completed client post_build"
 }
 
@@ -70,23 +89,27 @@ build_client(){
 build_server(){
     echo "Building server in background"
     echo "copying requied files to app_dist"
-    cp -R libs helpers proxy resourcebundles package.json framework.config.js sunbird-plugins routes constants controllers server.js ./../../Dockerfile app_dist
+    cp -R libs helpers proxy resourcebundles package.json yarn.lock framework.config.js sunbird-plugins routes constants controllers server.js ./../../Dockerfile app_dist
     cd app_dist
     nvm use $SERVER_NODE_VERSION
     echo "starting server yarn install"
-    yarn install --no-progress --production=true
+    yarn install --no-progress --production=true --frozen-lockfile --registry https://registry.npmjs.org
     echo "completed server yarn install"
+    node helpers/validateDependencies.js
     node helpers/resourceBundles/build.js -task="phraseAppPull"
 }
 
+build_pids=()
 build_client & # run client build in background 
+build_pids+=("$!")
 if [ $buildDockerImage == true ]
 then
    build_server & # run client build in background
+   build_pids+=("$!")
 fi
 
 ## wait for both build to complete
-wait 
+wait_for_builds "${build_pids[@]}"
 
 BUILD_ENDTIME=$(date +%s)
 echo "Client and Server Build complete Took $[$BUILD_ENDTIME - $STARTTIME] seconds to complete."

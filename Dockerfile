@@ -5,5 +5,6 @@ WORKDIR /home/sunbird
 COPY --chown=sunbird . /home/sunbird/app_dist/
 USER sunbird
 WORKDIR /home/sunbird/app_dist
+RUN node helpers/validateDependencies.js
 EXPOSE 3000
 CMD ["node", "server.js", "&"]
