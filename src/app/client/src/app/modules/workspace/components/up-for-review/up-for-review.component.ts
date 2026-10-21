@@ -215,11 +215,8 @@ export class UpForReviewComponent extends WorkSpace implements OnInit, AfterView
     this.search(searchParams).subscribe(
       (data: ServerResponse) => {
         if (data.result.count && data.result.content.length > 0) {
-          const content = _.filter(data.result.content, (c: any) =>
-            (!c.status || c.status === 'Review') && !_.includes(this.workSpaceService.publishedContentIds, c.identifier));
-          // search index may lag behind the publish; drop the just-published item
-          this.upForReviewContentData = content;
-          this.totalCount = data.result.count - (data.result.content.length - content.length);
+          this.upForReviewContentData = data.result.content;
+          this.totalCount = data.result.count;
           this.pager = this.paginationService.getPager(data.result.count, pageNumber, limit);
           this.showLoader = false;
           this.noResult = false;

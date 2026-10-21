@@ -12,10 +12,6 @@ import { CacheService } from 'ng2-cache-service';
 @Injectable()
 export class WorkSpaceService {
   /**
-   * Ids published in this session; hidden from review lists while the search index catches up
-   */
-  publishedContentIds: string[] = [];
-  /**
   * reference of config service.
   */
   public config: ConfigService;
