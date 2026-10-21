@@ -191,7 +191,8 @@ export class PublishedPopupComponent implements OnInit {
     });
   }
   navigateToWorkspace() {
-    const extras = { queryParams: { _t: Date.now() } };
+    this.workSpaceService.publishedContentIds.push(this.contentId);
+    const extras = { queryParams: { _t: Date.now() }, state: { publishedContentId: this.contentId } };
     if (this.closeUrl.url.includes('flagreviewer')) {
       this.route.navigate(['workspace/content/flagreviewer/1'], extras);
     } else {
