@@ -602,3 +602,25 @@ describe("App Component", () => {
     appComponent.isLocationStatusRequired();
   });
 });
+
+describe('AppComponent.isCertificateVerifyUrl', () => {
+  it('should match the public certificate verification page opened from a QR', () => {
+    expect(AppComponent.isCertificateVerifyUrl('/certs/9763d1a9-0d49-411a-b7e7-a9147fd39b6e?t=1')).toBe(true);
+    expect(AppComponent.isCertificateVerifyUrl('/certs/9763d1a9-0d49?t=URL&entity=Title%20Course')).toBe(true);
+    expect(AppComponent.isCertificateVerifyUrl('/certs/9763d1a9-0d49?data=abc%2Bdef')).toBe(true);
+  });
+
+  it('should keep the app header on the access-code certificate page (no QR query)', () => {
+    expect(AppComponent.isCertificateVerifyUrl('/certs/9763d1a9-0d49-411a-b7e7-a9147fd39b6e')).toBe(false);
+    expect(AppComponent.isCertificateVerifyUrl('/certs/9763d1a9-0d49?clientId=android')).toBe(false);
+    expect(AppComponent.isCertificateVerifyUrl('/certs/9763d1a9-0d49?t=')).toBe(false);
+  });
+
+  it('should not match certificate admin pages or other routes', () => {
+    expect(AppComponent.isCertificateVerifyUrl('/certs/configure/certificate')).toBe(false);
+    expect(AppComponent.isCertificateVerifyUrl('/certs/configure/certificate?t=1')).toBe(false);
+    expect(AppComponent.isCertificateVerifyUrl('/certs')).toBe(false);
+    expect(AppComponent.isCertificateVerifyUrl('/resources')).toBe(false);
+    expect(AppComponent.isCertificateVerifyUrl(undefined)).toBe(false);
+  });
+});

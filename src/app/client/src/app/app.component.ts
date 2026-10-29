@@ -123,6 +123,9 @@ export class AppComponent implements OnInit, OnDestroy {
   resourceDataSubscription: any;
   private fingerprintInfo: any;
   hideHeaderNFooter = false;
+  // Public certificate verification page (opened from the certificate QR) renders without app chrome.
+  // Read from the URL so the header/footer never render, not even before the lazy route has loaded.
+  isCertificateVerifyPage = AppComponent.isCertificateVerifyUrl(window.location.pathname + window.location.search);
   queryParams: any;
   telemetryContextData: any;
   didV2: boolean;
@@ -245,6 +248,19 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * `/certs/<certificateId>` opened from a certificate QR (`t` or `data` query), which the certificate page shows as
+   * the public verification page. Not the older access-code form (no query) or the `/certs/configure/...` admin pages.
+   */
+  static isCertificateVerifyUrl(url: string): boolean {
+    const [path, query = ""] = (url || "").split("#")[0].split("?");
+    if (!/^\/certs\/(?!configure\/)[^/]+\/?$/.test(path)) {
+      return false;
+    }
+    const params = new URLSearchParams(query);
+    return !!(params.get("t") || params.get("data"));
+  }
+
   handleHeaderNFooter() {
     this.router.events
       .pipe(
@@ -253,6 +269,9 @@ export class AppComponent implements OnInit, OnDestroy {
       )
       .subscribe((data) => {
         this.setDynamicPageTitle();
+        this.isCertificateVerifyPage = AppComponent.isCertificateVerifyUrl(
+          (data as NavigationEnd).urlAfterRedirects
+        );
         this.hideHeaderNFooter =
           _.get(
             this.activatedRoute,
