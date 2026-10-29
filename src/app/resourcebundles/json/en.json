@@ -1291,7 +1291,33 @@
           },
           "imsg": {
             "alertMessageForCert": "You have created the template successfully. The preview of the new template will be displayed in about 30 minutes. Click Refresh in case the template is not displayed",
-            "rcInvalid": "Scanned URL is invalid"
+            "rcInvalid": "Scanned URL is invalid",
+            "verify": {
+              "logoAlt": "NIUA and National Urban Learning Platform (NULP) home",
+              "checkingTitle": "Verifying certificate",
+              "checkingText": "Checking this certificate against NULP's records.",
+              "verifiedTitle": "Genuine NULP certificate",
+              "verifiedText": "This certificate is in NULP's records and is valid.",
+              "checkedAt": "Checked on {time}",
+              "awardedTo": "Awarded to",
+              "forCompleting": "for completing",
+              "issuedOn": "Issued on",
+              "issuedBy": "Issued by",
+              "certificateId": "Certificate ID",
+              "matchTitle": "Compare these details with the certificate you have.",
+              "matchText": "If anything differs, the certificate has been altered.",
+              "invalidTitle": "Not a NULP certificate",
+              "invalidText": "No certificate with this ID is in NULP's records. Do not accept it as a NULP certificate.",
+              "revokedTitle": "Certificate revoked",
+              "revokedText": "NULP issued this certificate but has since revoked it. It is no longer valid.",
+              "errorTitle": "Certificate not checked",
+              "errorText": "NULP's records could not be reached. Try again in a moment.",
+              "tooManyText": "Too many checks from your network. Wait a minute, then try again.",
+              "tryAgain": "Try again",
+              "copyLink": "Copy verification link",
+              "linkCopied": "Link copied",
+              "officialNotice": "Official certificate check by NULP"
+            }
           },
           "inlntxt": {
             "confrmtion": "I confirm that all the elements for this certificate provided by me are correct and appropriate and the signatories and logo owners authorise me to provide the same",
