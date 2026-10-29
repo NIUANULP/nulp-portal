@@ -689,8 +689,10 @@ const API_LIST = {
       checksNeeded: ["ROLE_CHECK"],
       ROLE_CHECK: [ROLE.PUBLIC],
     },
+    // Only the logged-in profile pages use this; the public QR page uses /certificate/public/v1/verify/:id
     "/learner/rc/certificate/v1/download/:id": {
-      checksNeeded: [],
+      checksNeeded: ["ROLE_CHECK"],
+      ROLE_CHECK: [ROLE.PUBLIC],
     },
     "/learner/rc/certificate/v1/key/:id": {
       checksNeeded: [],
@@ -897,8 +899,20 @@ const API_LIST = {
       checksNeeded: [],
       ROLE_CHECK: [ROLE.PUBLIC],
     },
+    // Callers (profile and event pages) only search their own certificates by recipient.id;
+    // ROLE_CHECK is needed too, as OWNER_CHECK alone passes when both ids are empty (logged out)
     "/learner/rc/certificate/v1/search": {
-      checksNeeded: [],
+      checksNeeded: ["ROLE_CHECK", "OWNER_CHECK"],
+      ROLE_CHECK: [ROLE.PUBLIC],
+      OWNER_CHECK: {
+        checks: [
+          {
+            entity: "__session__userId",
+            params: [],
+            key: "body.filters.recipient.id.eq",
+          },
+        ],
+      },
     },
     // get user session
     "/learner/get/user/sessionId/:userId": {
