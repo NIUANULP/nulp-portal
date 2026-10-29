@@ -308,6 +308,7 @@ require("./routes/pollsRoute.js")(app)
 require("./routes/feedbackRoute.js")(app)
 require("./routes/learnathonRoute.js")(app)
 require("./routes/userCountHelper.js")(app)
+require("./routes/certificateVerifyRoute.js")(app) // public certificate QR verification
 app.get('/getGeneralisedResourcesBundles/:lang/:fileName', proxyUtils.addCorsHeaders, getGeneralisedResourcesBundles);
 
 app.get('/v1/user/session/start/:deviceId', (req, res) => {
