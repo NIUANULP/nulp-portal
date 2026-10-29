@@ -1,14 +1,13 @@
 import { PublicPlayerService } from '@sunbird/public';
 import {CertificateService, UserService, TenantService} from '@sunbird/core';
-import { ServerResponse, ResourceService, ConfigService, PlayerConfig, ToasterService } from '@sunbird/shared';
-import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Inject } from '@angular/core';
+import { ServerResponse, ResourceService, ConfigService, PlayerConfig } from '@sunbird/shared';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Meta } from '@angular/platform-browser';
 import * as _ from 'lodash-es';
 import * as dayjs from 'dayjs';
 import { IImpressionEventInput } from '@sunbird/telemetry';
 import { Subscription} from 'rxjs';
-import { CsCertificateService } from '@project-sunbird/client-services/services/certificate/interface';
 
 /** English text for the public verification page; translations live in resource bundles under cert.imsg.verify */
 const CERT_VERIFY_TEXT = {
@@ -89,8 +88,6 @@ export class CertificateDetailsComponent implements OnInit , OnDestroy {
     public playerService: PublicPlayerService,
     public router: Router,
     public tenantService: TenantService,
-    @Inject('CS_CERTIFICATE_SERVICE') private CsCertificateService: CsCertificateService,
-    private toasterService: ToasterService,
     private meta: Meta,
   ) { }
 
@@ -287,14 +284,9 @@ export class CertificateDetailsComponent implements OnInit , OnDestroy {
       },
       (err) => {
         this.viewCertificate = false;
-        // 404 (unknown id) and 400 (malformed id, e.g. a tampered QR) mean it is not in the RC registry;
+        // 404 (unknown id) and 400 (malformed id, e.g. a tampered QR) mean it is not a NULP certificate;
         // anything else is a failure on our side, so offer a retry
         if (_.includes([400, 404], _.get(err, 'status'))) {
-          // Older certreg certificates are not in the RC registry; their QR carries signed `data` instead
-          if (_.get(this.activatedRoute, 'snapshot.queryParams.data')) {
-            this.verifyLegacyCertificate();
-            return;
-          }
           this.isInvalidCertificate = true;
         } else {
           this.verificationError = true;
@@ -303,39 +295,6 @@ export class CertificateDetailsComponent implements OnInit , OnDestroy {
         this.loader = false;
       }
     );
-  }
-
-  /** Verifies an older (certreg) certificate from the signed `data` in its QR, as the page did before RC */
-  private verifyLegacyCertificate() {
-    const encodedData = _.replace(String(_.get(this.activatedRoute, 'snapshot.queryParams.data')), / /g, '+');
-    this.CsCertificateService.getEncodedData(encodedData)
-      .then((certificateData) => this.CsCertificateService.verifyCertificate({
-        certificateData,
-        schemaName: 'certificate',
-        certificateId: this.certificateId,
-      }, {
-        apiPath: '/learner/certreg/v2',
-        apiPathLegacy: '/certreg/v1',
-        rcApiPath: '/learner/rc/${schemaName}/v1',
-      }).toPromise())
-      .then((data) => {
-        const certData = _.get(data, 'certificateData');
-        if (_.get(data, 'verified')) {
-          this.viewCertificate = true;
-          this.recipient = _.get(certData, 'issuedTo');
-          this.courseName = _.get(certData, 'trainingName');
-          this.issuedOn = dayjs(new Date(_.get(certData, 'issuanceDate'))).format('DD MMM YYYY');
-          this.checkedAt = dayjs().format('DD MMM YYYY, h:mm A');
-        } else {
-          this.isInvalidCertificate = true;
-        }
-      })
-      .catch(() => {
-        this.isInvalidCertificate = true;
-      })
-      .then(() => {
-        this.loader = false;
-      });
   }
 
   /** Text for the public verification page: translated from resource bundles, English otherwise */

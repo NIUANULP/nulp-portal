@@ -1,8 +1,7 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { Meta } from '@angular/platform-browser';
-import { CsCertificateService } from '@project-sunbird/client-services/services/certificate';
 import { UserService, CertificateService, TenantService } from'@sunbird/core';
-import { ResourceService, ToasterService, ConfigService } from '@sunbird/shared';
+import { ResourceService, ConfigService } from '@sunbird/shared';
 import { PublicPlayerService } from '@sunbird/public';
 import { CertificateDetailsComponent } from './certificate-details.component';
 import { validateCertMockResponse } from './certificate-details.component.spec.data'
@@ -33,11 +32,6 @@ describe("CertificateDetailsComponent", () => {
     const mockTenantService: Partial<TenantService> = {
         tenantData$: of({tenantData: {titleName: 'sample-favicon', logo: "logo-path"}}) as any
     };
-    const mockCsCertificateService: Partial<CsCertificateService> = {};
-    const mockToasterService: Partial<ToasterService> = {
-        error: jest.fn(),
-        success: jest.fn()
-    };
     const mockResourceService: Partial<ResourceService> = {
         instance: "SUNBIRD",
         messages: {emsg: {m0005: ""}}
@@ -58,8 +52,6 @@ describe("CertificateDetailsComponent", () => {
             mockPublicPlayerService as PublicPlayerService, 
             mockRouter as Router, 
             mockTenantService as TenantService, 
-            mockCsCertificateService as CsCertificateService, 
-            mockToasterService as ToasterService,
             mockMeta as Meta,
         );
     });
@@ -183,58 +175,13 @@ describe("CertificateDetailsComponent", () => {
             expect(component.verificationError).toBeFalsy();
         });
 
-        describe('older certreg certificates (QR with signed `data`)', () => {
-            const flushPromises = () => new Promise((resolve) => setTimeout(resolve, 0));
-
-            beforeEach(() => {
-                (mockActivatedRoute.snapshot.queryParams as any).data = 'signed data';
-                mockCertificateService.verifyPublicCertificate = jest.fn(() => throwError({ status: 404 }));
-                mockCsCertificateService.getEncodedData = jest.fn(() => Promise.resolve('decoded')) as any;
-            });
-
-            afterEach(() => {
-                delete (mockActivatedRoute.snapshot.queryParams as any).data;
-            });
-
-            it('should verify through the certificate library when the RC registry does not have it', async () => {
-                mockCsCertificateService.verifyCertificate = jest.fn(() => of({
-                    verified: true,
-                    certificateData: { issuedTo: 'Legacy Learner', trainingName: 'Old Course', issuanceDate: '2022-08-09T00:00:00Z' }
-                })) as any;
-                component.validateCertificate();
-                expect(component.verifyState).toEqual('loading');
-                await flushPromises();
-                expect(mockCsCertificateService.getEncodedData).toHaveBeenCalledWith('signed+data');
-                expect(mockCsCertificateService.verifyCertificate).toHaveBeenCalledWith(
-                    { certificateData: 'decoded', schemaName: 'certificate', certificateId: '9545879' }, expect.anything());
-                expect(component.verifyState).toEqual('verified');
-                expect(component.recipient).toEqual('Legacy Learner');
-                expect(component.courseName).toEqual('Old Course');
-                expect(component.issuedOn).toEqual('09 Aug 2022');
-            });
-
-            it('should mark the certificate invalid if the certificate library cannot verify it', async () => {
-                mockCsCertificateService.verifyCertificate = jest.fn(() => of({ verified: false })) as any;
-                component.validateCertificate();
-                await flushPromises();
-                expect(component.verifyState).toEqual('invalid');
-            });
-
-            it('should mark the certificate invalid if the signed data cannot be read', async () => {
-                mockCsCertificateService.getEncodedData = jest.fn(() => Promise.reject('bad data')) as any;
-                component.validateCertificate();
-                await flushPromises();
-                expect(component.verifyState).toEqual('invalid');
-                expect(component.loader).toBe(false);
-            });
-        });
-
-        it('should not use the certificate library for a `t` QR that the RC registry does not have', () => {
-            mockCsCertificateService.getEncodedData = jest.fn();
+        it('should report not a NULP certificate for a `data` QR that the RC registry does not have', () => {
+            (mockActivatedRoute.snapshot.queryParams as any).data = 'signed data';
             mockCertificateService.verifyPublicCertificate = jest.fn(() => throwError({ status: 404 }));
-            component.validateTCertificate();
-            expect(mockCsCertificateService.getEncodedData).not.toHaveBeenCalled();
+            component.validateCertificate();
             expect(component.verifyState).toEqual('invalid');
+            expect(component.loader).toBe(false);
+            delete (mockActivatedRoute.snapshot.queryParams as any).data;
         });
 
         it('should show retryable error, not invalid certificate, if verification fails on our side', () => {
