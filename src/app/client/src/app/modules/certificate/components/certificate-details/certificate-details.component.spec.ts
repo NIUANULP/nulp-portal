@@ -1,7 +1,7 @@
 import { ActivatedRoute, Router } from '@angular/router';
-import { CsCertificateService } from '@project-sunbird/client-services/services/certificate';
+import { Meta } from '@angular/platform-browser';
 import { UserService, CertificateService, TenantService } from'@sunbird/core';
-import { ResourceService, ToasterService, ConfigService } from '@sunbird/shared';
+import { ResourceService, ConfigService } from '@sunbird/shared';
 import { PublicPlayerService } from '@sunbird/public';
 import { CertificateDetailsComponent } from './certificate-details.component';
 import { validateCertMockResponse } from './certificate-details.component.spec.data'
@@ -32,16 +32,15 @@ describe("CertificateDetailsComponent", () => {
     const mockTenantService: Partial<TenantService> = {
         tenantData$: of({tenantData: {titleName: 'sample-favicon', logo: "logo-path"}}) as any
     };
-    const mockCsCertificateService: Partial<CsCertificateService> = {};
-    const mockToasterService: Partial<ToasterService> = {
-        error: jest.fn(),
-        success: jest.fn()
-    };
     const mockResourceService: Partial<ResourceService> = {
         instance: "SUNBIRD",
         messages: {emsg: {m0005: ""}}
     };
     const mockUserService: Partial<UserService> = {};
+    const mockMeta: Partial<Meta> = {
+        updateTag: jest.fn(),
+        removeTag: jest.fn()
+    };
     
     beforeAll(() => {
         component = new CertificateDetailsComponent(
@@ -53,8 +52,7 @@ describe("CertificateDetailsComponent", () => {
             mockPublicPlayerService as PublicPlayerService, 
             mockRouter as Router, 
             mockTenantService as TenantService, 
-            mockCsCertificateService as CsCertificateService, 
-            mockToasterService as ToasterService,
+            mockMeta as Meta,
         );
     });
 
@@ -78,128 +76,174 @@ describe("CertificateDetailsComponent", () => {
     })
 
 
-    describe('validateCertificate', () => { 
-        it('should validate certificate if URL has `data` params and verified', (done) => {
-            mockActivatedRoute.snapshot.queryParams = { data: "https://sunbirddev.blob.core.windows.net/do_112831862871203840114/small.mp4"};
-            mockCsCertificateService.getEncodedData = jest.fn().mockImplementation(() => Promise.resolve({}));
-            const certMockData = {
-                certificateData: {
-                    issuedTo: "state",
-                    trainingName: "Course Name",
-                    issuanceDate: "2022-04-12T11:54:46.473Z"
-                },
-                verified: true
+    describe('verifyRCCertificate', () => {
+        const verifiedResponse = {
+            result: {
+                verified: true,
+                status: 'ACTIVE',
+                certificate: {
+                    recipientName: 'state',
+                    trainingName: 'Course Name',
+                    issuedOn: '2022-04-12T11:54:46.473Z'
+                }
             }
-            jest.spyOn(console, 'log');
-            mockCsCertificateService.verifyCertificate = jest.fn().mockImplementation(() => of(certMockData));
-            component.validateCertificate();
-            setTimeout(() => {
-                expect(mockCsCertificateService.verifyCertificate).toHaveBeenCalled();
-                expect(component.viewCertificate).toBeTruthy();
-                expect(component.recipient).toEqual(certMockData.certificateData.issuedTo);
-                expect(component.courseName).toEqual(certMockData.certificateData.trainingName);
-                done();
-            });
-        });
+        };
 
-        it('should validate certificate if URL has `data` params and not verified', (done) => {
-            mockActivatedRoute.snapshot.queryParams = { data: "https://sunbirddev.blob.core.windows.net/do_112831862871203840114/small.mp4"};
-            mockCsCertificateService.getEncodedData = jest.fn().mockImplementation(() => Promise.resolve({}));
-            const certMockData = {
-                certificateData: {
-                    issuedTo: "state",
-                    trainingName: "Course Name",
-                    issuanceDate: "2022-04-12T11:54:46.473Z"
-                },
-                verified: false
-            }
-            mockCsCertificateService.verifyCertificate = jest.fn().mockImplementation(() => of(certMockData));
+        it('should verify certificate through public API when URL has `data` params', () => {
+            component.viewCertificate = false;
+            component.isInvalidCertificate = false;
+            mockCertificateService.verifyPublicCertificate = jest.fn().mockImplementation(() => of(verifiedResponse));
             component.validateCertificate();
-            setTimeout(() => {
-                expect(mockCsCertificateService.verifyCertificate).toHaveBeenCalled();
-                expect(component.viewCertificate).toBeFalsy();
-                expect(component.isInvalidCertificate).toBeTruthy();
-                done();
-            });
-        });
-
-        it('should set invalid certificate and throw error if verifyCertificate fails', (done) => {
-            mockActivatedRoute.snapshot.queryParams = { data: "https://sunbirddev.blob.core.windows.net/do_112831862871203840114/small.mp4"};
-            mockCsCertificateService.getEncodedData = jest.fn().mockImplementation(() => Promise.resolve({}));
-            mockCsCertificateService.verifyCertificate = jest.fn(() => throwError({}));
-            component.validateCertificate();
-            setTimeout(() => {
-                expect(mockCsCertificateService.verifyCertificate).toHaveBeenCalled();
-                expect(component.viewCertificate).toBeFalsy();
-                expect(component.isInvalidCertificate).toBeTruthy();
-                expect(mockToasterService.error).toHaveBeenCalled()
-                done();
-            });
-        });
-
-        it('should throw error on getEncodedData', (done) => {
-            mockActivatedRoute.snapshot.queryParams = { data: "https://sunbirddev.blob.core.windows.net/do_112831862871203840114/small.mp4"};
-            mockCsCertificateService.getEncodedData = jest.fn().mockImplementation(() => Promise.reject({}));
-            component.validateCertificate();
-            setTimeout(() => {
-                expect(mockCsCertificateService.getEncodedData).toHaveBeenCalled();
-                expect(component.viewCertificate).toBeFalsy();
-                expect(component.isInvalidCertificate).toBeTruthy();
-                done();
-            });
-        });
-    })
-
-    describe('validateTCertificate', () => { 
-        it('should validate certificate if URL has `t` params and verified', () => {
-            mockActivatedRoute.snapshot.queryParams = { uuid: "xyzxyz"};
-            const certMockData = {
-                certificateData: {
-                    issuedTo: "state",
-                    trainingName: "Course Name",
-                    issuanceDate: "2022-04-12T11:54:46.473Z"
-                },
-                verified: true
-            }
-            jest.spyOn(console, 'log');
-            mockCsCertificateService.verifyCertificate = jest.fn().mockImplementation(() => of(certMockData));
-            component.validateTCertificate();
-            expect(mockCsCertificateService.verifyCertificate).toHaveBeenCalled();
+            expect(mockCertificateService.verifyPublicCertificate).toHaveBeenCalledWith('9545879');
+            expect(component.loader).toBe(false);
             expect(component.viewCertificate).toBeTruthy();
-            expect(component.recipient).toEqual(certMockData.certificateData.issuedTo);
-            expect(component.courseName).toEqual(certMockData.certificateData.trainingName);
+            expect(component.recipient).toEqual('state');
+            expect(component.courseName).toEqual('Course Name');
+            expect(component.issuedOn).toEqual('12 Apr 2022');
+            expect(component.certificateId).toEqual('9545879');
+            expect(component.checkedAt).toBeTruthy();
+            expect(component.verifyState).toEqual('verified');
         });
 
-        it('should validate certificate if URL has `t` params and not verified', () => {
-            mockActivatedRoute.snapshot.queryParams = { uuid: "xyzxyz"};
-            const certMockData = {
-                certificateData: {
-                    issuedTo: "state",
-                    trainingName: "Course Name",
-                    issuanceDate: "2022-04-12T11:54:46.473Z"
-                },
-                verified: false
-            }
-            mockCsCertificateService.verifyCertificate = jest.fn().mockImplementation(() => of(certMockData));
+        it('should verify certificate through public API when URL has `t` params', () => {
+            component.viewCertificate = false;
+            component.isInvalidCertificate = false;
+            mockCertificateService.verifyPublicCertificate = jest.fn().mockImplementation(() => of(verifiedResponse));
             component.validateTCertificate();
-            expect(mockCsCertificateService.verifyCertificate).toHaveBeenCalled();
-            expect(component.viewCertificate).toBeFalsy();
-            expect(component.isInvalidCertificate).toBeTruthy();
+            expect(mockCertificateService.verifyPublicCertificate).toHaveBeenCalledWith('9545879');
+            expect(component.viewCertificate).toBeTruthy();
+            expect(component.recipient).toEqual('state');
         });
 
-        it('should set invalid certificate and throw error if verifyCertificate fails', () => {
-            mockActivatedRoute.snapshot.queryParams = { uuid: "xyzxyz"};
-            mockCsCertificateService.verifyCertificate = jest.fn(() => throwError({}));
+        it('should report revoked, invalid and error page states', () => {
+            mockCertificateService.verifyPublicCertificate = jest.fn().mockImplementation(() =>
+                of({ result: { verified: false, status: 'REVOKED' } }));
+            component.verifyRCCertificate();
+            expect(component.verifyState).toEqual('revoked');
+            mockCertificateService.verifyPublicCertificate = jest.fn().mockImplementation(() => of({ result: { verified: false } }));
+            component.verifyRCCertificate();
+            expect(component.verifyState).toEqual('invalid');
+            mockCertificateService.verifyPublicCertificate = jest.fn(() => throwError({ status: 500 }));
+            component.verifyRCCertificate();
+            expect(component.verifyState).toEqual('error');
+        });
+
+        it('should show revoked state if the certificate exists but is not active', () => {
+            component.viewCertificate = true;
+            mockCertificateService.verifyPublicCertificate = jest.fn().mockImplementation(() =>
+                of({ result: { verified: false, status: 'REVOKED' } }));
             component.validateTCertificate();
-            expect(mockCsCertificateService.verifyCertificate).toHaveBeenCalled();
+            expect(component.viewCertificate).toBeFalsy();
+            expect(component.isRevokedCertificate).toBeTruthy();
+            expect(component.isInvalidCertificate).toBeFalsy();
+        });
+
+        it('should mark certificate invalid if it is not verified and has no status', () => {
+            component.viewCertificate = true;
+            mockCertificateService.verifyPublicCertificate = jest.fn().mockImplementation(() =>
+                of({ result: { verified: false } }));
+            component.validateTCertificate();
+            expect(component.isInvalidCertificate).toBeTruthy();
+            expect(component.isRevokedCertificate).toBeFalsy();
+        });
+
+        it('should show the too-many-checks message when rate limited', () => {
+            mockCertificateService.verifyPublicCertificate = jest.fn(() => throwError({ status: 429 }));
+            component.validateTCertificate();
+            expect(component.verificationError).toBeTruthy();
+            expect(component.tooManyRequests).toBeTruthy();
+            expect(component.isInvalidCertificate).toBeFalsy();
+        });
+
+        it('should mark certificate invalid if certificate is not found', () => {
+            component.viewCertificate = true;
+            component.isInvalidCertificate = false;
+            mockCertificateService.verifyPublicCertificate = jest.fn(() => throwError({ status: 404 }));
+            component.validateTCertificate();
+            expect(component.loader).toBe(false);
             expect(component.viewCertificate).toBeFalsy();
             expect(component.isInvalidCertificate).toBeTruthy();
-            expect(mockToasterService.error).toHaveBeenCalled()
+            expect(component.verificationError).toBeFalsy();
+        });
+
+        it('should mark certificate invalid if the certificate id is malformed', () => {
+            component.viewCertificate = true;
+            component.isInvalidCertificate = false;
+            mockCertificateService.verifyPublicCertificate = jest.fn(() => throwError({ status: 400 }));
+            component.validateTCertificate();
+            expect(component.verifyState).toEqual('invalid');
+            expect(component.verificationError).toBeFalsy();
+        });
+
+        it('should report not a NULP certificate for a `data` QR that the RC registry does not have', () => {
+            (mockActivatedRoute.snapshot.queryParams as any).data = 'signed data';
+            mockCertificateService.verifyPublicCertificate = jest.fn(() => throwError({ status: 404 }));
+            component.validateCertificate();
+            expect(component.verifyState).toEqual('invalid');
+            expect(component.loader).toBe(false);
+            delete (mockActivatedRoute.snapshot.queryParams as any).data;
+        });
+
+        it('should show retryable error, not invalid certificate, if verification fails on our side', () => {
+            component.viewCertificate = true;
+            component.isInvalidCertificate = false;
+            mockCertificateService.verifyPublicCertificate = jest.fn(() => throwError({ status: 500 }));
+            component.validateTCertificate();
+            expect(component.loader).toBe(false);
+            expect(component.viewCertificate).toBeFalsy();
+            expect(component.isInvalidCertificate).toBeFalsy();
+            expect(component.verificationError).toBeTruthy();
+            expect(component.tooManyRequests).toBeFalsy();
+        });
+
+        it('should clear previous error and verify again on retry', () => {
+            component.verificationError = true;
+            mockCertificateService.verifyPublicCertificate = jest.fn().mockImplementation(() => of(verifiedResponse));
+            component.verifyRCCertificate();
+            expect(component.verificationError).toBeFalsy();
+            expect(component.viewCertificate).toBeTruthy();
+            expect(component.loader).toBe(false);
         });
     })
 
+
+    describe('verifyLabel', () => {
+        afterEach(() => {
+            delete (mockResourceService as any).frmelmnts;
+        });
+
+        it('should use the translated text when the resource bundle has it', () => {
+            (mockResourceService as any).frmelmnts = { cert: { imsg: { verify: { verifiedTitle: 'प्रमाण-पत्र सत्यापित' } } } };
+            expect(component.verifyLabel('verifiedTitle')).toEqual('प्रमाण-पत्र सत्यापित');
+        });
+
+        it('should fall back to English and fill placeholders', () => {
+            expect(component.verifyLabel('verifiedTitle')).toEqual('Genuine NULP certificate');
+            expect(component.verifyLabel('checkedAt', { time: '27 Oct 2026, 11:42 AM' }))
+                .toEqual('Checked on 27 Oct 2026, 11:42 AM');
+        });
+    });
+
+    describe('copyVerificationLink', () => {
+        it('should copy a clean verification link and show copied state', async () => {
+            component.certificateId = '9763d1a9';
+            const writeText = jest.fn(() => Promise.resolve());
+            Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
+            component.copyVerificationLink();
+            await Promise.resolve();
+            expect(writeText).toHaveBeenCalledWith(`${window.location.origin}/certs/9763d1a9?t=1`);
+            expect(component.linkCopied).toBe(true);
+            component.ngOnDestroy();
+        });
+    });
 
     describe("ngOnInit", () => {
+        it("should keep the certificate page out of search engines", () => {
+            mockActivatedRoute.snapshot.queryParams = {};
+            component.ngOnInit();
+            expect(mockMeta.updateTag).toHaveBeenCalledWith({ name: 'robots', content: 'noindex, nofollow' });
+        });
+
         it("should validate certificate for data queryparams", () => {
             mockActivatedRoute.snapshot.queryParams = { data: {}};
             jest.spyOn(component, 'validateCertificate').mockImplementation();
@@ -321,6 +365,7 @@ describe("CertificateDetailsComponent", () => {
             } as any;
             component.ngOnDestroy();
             expect(component.tenantDataSubscription.unsubscribe).toHaveBeenCalled();
+            expect(mockMeta.removeTag).toHaveBeenCalledWith(`name='robots'`);
         });
     })
 
