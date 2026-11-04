@@ -7,7 +7,7 @@
     }"
   >
     <div
-      *ngIf="!isDesktopApp"
+      *ngIf="!isDesktopApp && !isCertificateVerifyPage"
       class="sbt-container d-flex flex-ai-center sb-bg-color-black py-8 flex-w-wrap sbt-sticky-topbar sb-fontresizecontainer"
       [ngClass]="{ hide: isFullScreenView }"
     >
@@ -167,7 +167,7 @@
     </app-modal-wrapper> -->
 
     <app-header
-      *ngIf="!hideHeaderNFooter"
+      *ngIf="!hideHeaderNFooter && !isCertificateVerifyPage"
       [layoutConfiguration]="layoutConfiguration"
       [routerEvents]="routeData$"
       [ngClass]="{ 'header-block': isFullScreenView }"
@@ -194,7 +194,7 @@
 </div> -->
 <app-footer
   [layoutConfiguration]="layoutConfiguration"
-  *ngIf="!hideHeaderNFooter && !isGuestUser"
+  *ngIf="!hideHeaderNFooter && !isGuestUser && !isCertificateVerifyPage"
 ></app-footer>
 
 <app-modal-wrapper

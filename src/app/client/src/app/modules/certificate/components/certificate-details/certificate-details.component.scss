@@ -74,4 +74,400 @@
       }
     }
   }
- 
+
+/* Public certificate verification page (opened from the certificate QR code)
+   One idea: the verdict is an official seal. Everything else stays quiet so the seal and the record read first. */
+$cv-tablet: 640px;
+
+.cv {
+  // Portal palette on marigold paper
+  --cv-paper: #fff7dc;
+  --cv-sheet: #ffffff;
+  --cv-marigold: #ffbc01;
+  --cv-marigold-soft: #ffe7a3;
+  --cv-ink: #004367;
+  --cv-body: #2b3a42;
+  --cv-muted: #5e6b72;
+  --cv-rule: #efe3bf;
+  --cv-teal: #0e7a9c;
+  --cv-teal-dark: #0a6582;
+  --cv-green: #1f7a4d;
+  --cv-red: #b3261e;
+  --cv-grey: #7a858b;
+  --cv-serif: Georgia, "Noto Serif", "Noto Serif Devanagari", "Times New Roman", serif;
+  --cv-gutter: 20px;
+  // Vertical rhythm follows the screen height, so the sheet fills tall screens and still fits short ones
+  --cv-space: clamp(6px, 2.6vh, 44px);
+
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--cv-paper);
+  color: var(--cv-body);
+  font-family: var(--font-stack-en);
+  font-size: 16px;
+  line-height: 1.5;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  // Phones: less air between blocks, the content itself needs the height
+  @media only screen and (max-width: #{$cv-tablet - 1px}) {
+    --cv-space: clamp(6px, 2vh, 22px);
+  }
+
+  @media only screen and (min-width: $cv-tablet) {
+    --cv-gutter: 40px;
+  }
+
+  // Seal colours per state; the ring is always marigold except where the verdict needs red or grey
+  &--loading { --cv-seal-ring: var(--cv-teal); --cv-seal-face: #ffffff; --cv-seal-mark: var(--cv-teal); }
+  &--verified { --cv-seal-ring: var(--cv-marigold); --cv-seal-face: var(--cv-green); --cv-seal-mark: #ffffff; }
+  &--invalid { --cv-seal-ring: var(--cv-red); --cv-seal-face: #fdecea; --cv-seal-mark: var(--cv-red); }
+  &--revoked { --cv-seal-ring: var(--cv-grey); --cv-seal-face: #eef1f2; --cv-seal-mark: var(--cv-red); }
+  &--error { --cv-seal-ring: var(--cv-marigold); --cv-seal-face: #fff8e6; --cv-seal-mark: var(--cv-ink); }
+}
+
+/* Top bar: who is answering */
+.cv-top {
+  display: flex;
+  align-items: center;
+  padding: 4px var(--cv-gutter);
+  border-bottom: 1px solid var(--cv-rule);
+
+  &__home {
+    display: block;
+    flex: 0 1 auto;
+    border-radius: 6px;
+
+    &:focus-visible {
+      outline: 3px solid rgba(14, 122, 156, 0.35);
+      outline-offset: 2px;
+    }
+  }
+
+  // The lockup's own white margin blends into the sheet; its tagline needs this height to stay readable
+  &__logo {
+    display: block;
+    width: auto;
+    height: clamp(40px, 7.5vh, 84px);
+    max-width: 100%;
+  }
+}
+
+/* The sheet: one white page, marigold edge on top */
+.cv-sheet {
+  // Fills the screen between the top margin and the footer line
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  width: calc(100% - 24px);
+  max-width: 680px;
+
+  @media only screen and (min-width: 1200px) and (min-height: 820px) {
+    max-width: 780px;
+  }
+  margin: 8px 12px 0;
+  background: var(--cv-sheet);
+  border-top: 6px solid var(--cv-marigold);
+  border-radius: 4px 4px 20px 20px;
+  box-shadow: 0 1px 2px rgba(91, 66, 0, 0.08), 0 16px 40px rgba(91, 66, 0, 0.1);
+  overflow: hidden;
+
+  // The sheet edge repeats the verdict for certificates that must not be trusted
+  .cv--invalid & { border-top-color: var(--cv-red); }
+  .cv--revoked & { border-top-color: var(--cv-grey); }
+
+  @media only screen and (min-width: $cv-tablet) {
+    margin-top: clamp(16px, 3vh, 40px);
+  }
+
+  &__body {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: var(--cv-space) var(--cv-gutter) calc(var(--cv-space) * 1.25);
+  }
+}
+
+/* Verdict */
+.cv-verdict {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  @media only screen and (min-width: $cv-tablet) {
+    gap: 20px;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: clamp(20px, min(4vh, 5.6vw), 40px);
+    line-height: 1.2;
+    font-weight: 700;
+    color: var(--cv-ink);
+  }
+
+  &__note {
+    margin: 4px 0 0;
+    max-width: 46ch;
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--cv-muted);
+  }
+
+  &__checked {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: var(--cv-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__id {
+    margin: 20px 0 0;
+    padding-top: 14px;
+    border-top: 1px solid var(--cv-rule);
+    font-size: 14px;
+    color: var(--cv-muted);
+    overflow-wrap: anywhere;
+  }
+}
+
+/* The seal: the page's single moment of motion */
+.cv-seal {
+  flex: 0 0 auto;
+  width: clamp(56px, min(14vh, 22vw), 148px);
+  height: clamp(56px, min(14vh, 22vw), 148px);
+
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  &__track {
+    fill: none;
+    stroke: var(--cv-marigold-soft);
+    stroke-width: 6;
+  }
+
+  &__ring {
+    fill: none;
+    stroke: var(--cv-seal-ring);
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-dasharray: 100 100;
+    transform: rotate(-90deg);
+    transform-origin: 60px 60px;
+  }
+
+  &__face {
+    fill: var(--cv-seal-face);
+    transition: fill 0.3s ease;
+  }
+
+  &__mark {
+    fill: none;
+    stroke: var(--cv-seal-mark);
+    stroke-width: 7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+// Loading: a quarter ring travels round the track
+.cv--loading .cv-seal__ring {
+  stroke-dasharray: 24 76;
+  animation: cv-seal-spin 1.1s linear infinite;
+}
+
+// Verified: the ring closes, then the check is drawn
+.cv--verified {
+  .cv-seal__ring {
+    animation: cv-seal-close 0.7s cubic-bezier(0.3, 0.7, 0.2, 1) both;
+  }
+
+  .cv-seal__mark {
+    stroke-dasharray: 100;
+    animation: cv-seal-draw 0.35s 0.55s ease-out both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cv--loading .cv-seal__ring {
+    animation-duration: 3s;
+  }
+
+  .cv--verified .cv-seal__ring,
+  .cv--verified .cv-seal__mark {
+    animation: none;
+  }
+}
+
+@keyframes cv-seal-spin {
+  to { transform: rotate(270deg); }
+}
+
+@keyframes cv-seal-close {
+  from { stroke-dashoffset: 100; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes cv-seal-draw {
+  from { stroke-dashoffset: 100; }
+  to { stroke-dashoffset: 0; }
+}
+
+/* The record, typeset like the certificate */
+.cv-record {
+  margin-top: var(--cv-space);
+  padding-top: var(--cv-space);
+  border-top: 1px solid var(--cv-rule);
+
+  &__lead {
+    margin: 0;
+    font-size: 13px;
+    color: var(--cv-muted);
+  }
+
+  &__name {
+    margin: 0 0 calc(var(--cv-space) * 0.6);
+    font-family: var(--cv-serif);
+    font-size: clamp(24px, min(6vh, 7vw), 56px);
+    line-height: 1.2;
+    font-weight: 700;
+    color: var(--cv-ink);
+    overflow-wrap: anywhere;
+  }
+
+  &__course {
+    margin: 0;
+    font-family: var(--cv-serif);
+    font-size: clamp(18px, min(3.4vh, 5vw), 30px);
+    line-height: 1.35;
+    color: var(--cv-body);
+    overflow-wrap: anywhere;
+  }
+
+  // Two columns on phones (ID on its own row); one row of three once there is room
+  &__facts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 24px;
+    margin: var(--cv-space) 0 0;
+
+    @media only screen and (min-width: $cv-tablet) {
+      grid-template-columns: auto auto minmax(0, 1fr);
+      gap: 0 32px;
+    }
+
+    dt {
+      font-size: 12px;
+      color: var(--cv-muted);
+    }
+
+    dd {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--cv-body);
+      font-variant-numeric: tabular-nums;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  // The ID is long; give it the full row
+  &__id {
+    grid-column: 1 / -1;
+
+    @media only screen and (min-width: $cv-tablet) {
+      grid-column: auto;
+    }
+
+    dd {
+      font-weight: 500;
+      font-size: 14px;
+    }
+  }
+}
+
+/* The instruction that matters after a genuine result */
+.cv-compare {
+  margin: var(--cv-space) 0 0;
+  padding: 10px 14px;
+  background: #fff8e6;
+  border-left: 4px solid var(--cv-marigold);
+  border-radius: 0 10px 10px 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--cv-body);
+
+  strong {
+    display: block;
+    margin-bottom: 2px;
+    color: var(--cv-ink);
+  }
+}
+
+/* Actions */
+.cv-button {
+  margin-top: 16px;
+  min-height: 44px;
+  padding: 10px 22px;
+  border: 1px solid var(--cv-teal);
+  border-radius: 10px;
+  background: var(--cv-teal);
+  color: #ffffff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--cv-teal-dark);
+    border-color: var(--cv-teal-dark);
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba(14, 122, 156, 0.35);
+    outline-offset: 2px;
+  }
+
+  &--quiet {
+    margin-top: var(--cv-space);
+    min-height: 40px;
+    padding: 8px 20px;
+    background: transparent;
+    color: var(--cv-teal);
+
+    &:hover {
+      background: #eef7fa;
+      color: var(--cv-teal-dark);
+    }
+  }
+}
+
+/* Footer: who stands behind the result */
+.cv-foot {
+  width: 100%;
+  max-width: 680px;
+  padding: calc(var(--cv-space) * 0.8) var(--cv-gutter);
+  text-align: center;
+  font-size: 13px;
+  color: var(--cv-muted);
+}
+
+/* Short phone screens: tighten the remaining fixed spacing so the whole result still fits */
+@media only screen and (max-height: 680px) and (max-width: #{$cv-tablet - 1px}) {
+  .cv-top__logo { height: 36px; }
+  .cv-verdict__note { font-size: 14px; }
+  .cv-record__facts { gap: 6px 20px; }
+  .cv-compare { padding: 8px 12px; font-size: 13px; }
+  .cv-button--quiet { min-height: 36px; padding: 6px 16px; font-size: 14px; }
+}

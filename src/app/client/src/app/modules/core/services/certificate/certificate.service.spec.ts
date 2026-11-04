@@ -28,10 +28,14 @@ describe('CertificateService', () => {
     post: jest.fn().mockImplementation(() => { }),
     get: jest.fn().mockImplementation(() => { })
   };
+  const mockHttpClient: Partial<HttpClient> = {
+    get: jest.fn()
+  };
   beforeAll(() => {
     certificateService = new CertificateService(
       mockLearnerService as LearnerService,
-      mockConfigService as ConfigService
+      mockConfigService as ConfigService,
+      mockHttpClient as HttpClient
     );
   });
 
@@ -169,6 +173,17 @@ describe('CertificateService', () => {
       }
       expect(certificateService.learnerService.get).toHaveBeenCalledWith(obj);
       expect(certificateService.learnerService.get).toHaveBeenCalled();
+    });
+  });
+
+  describe('verifyPublicCertificate', () => {
+    it('should call the public certificate verify API with the certificate id', (done) => {
+      mockHttpClient.get = jest.fn().mockImplementation(() => of({ result: { verified: true } }));
+      certificateService.verifyPublicCertificate('9763d1a9-0d49').subscribe((res) => {
+        expect(res.result.verified).toBe(true);
+        done();
+      });
+      expect(mockHttpClient.get).toHaveBeenCalledWith('/certificate/public/v1/verify/9763d1a9-0d49');
     });
   });
 });

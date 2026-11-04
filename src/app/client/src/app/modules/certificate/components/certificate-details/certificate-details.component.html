@@ -76,44 +76,99 @@
   </div>
 </div>
 
-<!-- RC Certificate validation -->
-<div *ngIf="validateRCCertificate && viewCertificate">
+<!-- RC Certificate validation (public page opened from the certificate QR code) -->
+<div *ngIf="validateRCCertificate" class="cv" [ngClass]="'cv--' + verifyState">
+  <main class="cv-sheet">
+    <!-- Official NIUA | NULP lockup, bundled so it shows even when tenant data can't load on this public page -->
+    <header class="cv-top">
+      <a href="/" class="cv-top__home">
+        <img src="assets/images/nulp-niua-logo.jpeg" alt="{{verifyLabel('logoAlt')}}" class="cv-top__logo" width="528" height="233" />
+      </a>
+    </header>
 
-  <div class="sb-certificatePage sb-certificate-view sb-certificatePage-flexHeight">
-    <div class="sb-certificatePage-header">
-      <img alt="{{tenantName}}" src="{{logo}}" class="sb-certificatePage-logo" />
-    </div>
-    <div class="sb-certificatePage-holder-details mb-auto">
-      <img src="assets/images/badge.svg" class="sb-icon-badge mt-24 mb-8" alt="Badge" />
-      <p *ngIf="recipient" class="sb-certificatePage-holder-desc sb-certificatePage-holder-desc-primary">
-        {{resourceService?.frmelmnts?.lbl?.certificateIssuedTo}}
+    <div class="cv-sheet__body">
+      <!-- Verdict: the seal carries the answer; its state comes from verifyState -->
+      <section class="cv-verdict" role="status" aria-live="polite">
+        <div class="cv-seal" aria-hidden="true">
+          <svg viewBox="0 0 120 120" width="120" height="120" focusable="false">
+            <circle class="cv-seal__track" cx="60" cy="60" r="52" />
+            <circle class="cv-seal__ring" cx="60" cy="60" r="52" pathLength="100" />
+            <circle class="cv-seal__face" cx="60" cy="60" r="40" />
+            <path *ngIf="verifyState === 'verified'" class="cv-seal__mark" pathLength="100" d="M42 61l12 12 25-27" />
+            <path *ngIf="verifyState === 'invalid'" class="cv-seal__mark" pathLength="100" d="M46 46l28 28M74 46L46 74" />
+            <path *ngIf="verifyState === 'revoked'" class="cv-seal__mark" pathLength="100" d="M40 80l40-40" />
+            <path *ngIf="verifyState === 'error'" class="cv-seal__mark" pathLength="100" d="M60 44v20M60 75v1" />
+          </svg>
+        </div>
+
+        <div class="cv-verdict__text">
+          <ng-container [ngSwitch]="verifyState">
+            <ng-container *ngSwitchCase="'loading'">
+              <h1 class="cv-verdict__title">{{verifyLabel('checkingTitle')}}</h1>
+              <p class="cv-verdict__note">{{verifyLabel('checkingText')}}</p>
+            </ng-container>
+            <ng-container *ngSwitchCase="'verified'">
+              <h1 class="cv-verdict__title">{{verifyLabel('verifiedTitle')}}</h1>
+              <p class="cv-verdict__note">{{verifyLabel('verifiedText')}}</p>
+              <p class="cv-verdict__checked" *ngIf="checkedAt">{{verifyLabel('checkedAt', { time: checkedAt })}}</p>
+            </ng-container>
+            <ng-container *ngSwitchCase="'invalid'">
+              <h1 class="cv-verdict__title">{{verifyLabel('invalidTitle')}}</h1>
+              <p class="cv-verdict__note">{{verifyLabel('invalidText')}}</p>
+            </ng-container>
+            <ng-container *ngSwitchCase="'revoked'">
+              <h1 class="cv-verdict__title">{{verifyLabel('revokedTitle')}}</h1>
+              <p class="cv-verdict__note">{{verifyLabel('revokedText')}}</p>
+            </ng-container>
+            <ng-container *ngSwitchCase="'error'">
+              <h1 class="cv-verdict__title">{{verifyLabel('errorTitle')}}</h1>
+              <p class="cv-verdict__note">{{tooManyRequests ? verifyLabel('tooManyText') : verifyLabel('errorText')}}</p>
+              <button type="button" class="cv-button" (click)="verifyRCCertificate()">{{verifyLabel('tryAgain')}}</button>
+            </ng-container>
+          </ng-container>
+        </div>
+      </section>
+
+      <!-- The record, set like the certificate so it can be read side by side with the paper copy -->
+      <section *ngIf="verifyState === 'verified'" class="cv-record">
+        <p class="cv-record__lead" *ngIf="recipient">{{verifyLabel('awardedTo')}}</p>
+        <p class="cv-record__name" *ngIf="recipient">{{recipient}}</p>
+        <p class="cv-record__lead" *ngIf="courseName">{{verifyLabel('forCompleting')}}</p>
+        <p class="cv-record__course" *ngIf="courseName">{{courseName}}</p>
+
+        <dl class="cv-record__facts">
+          <div *ngIf="issuedOn">
+            <dt>{{verifyLabel('issuedOn')}}</dt>
+            <dd>{{issuedOn}}</dd>
+          </div>
+          <div *ngIf="issuerName">
+            <dt>{{verifyLabel('issuedBy')}}</dt>
+            <dd>{{issuerName}}</dd>
+          </div>
+          <div *ngIf="certificateId" class="cv-record__id">
+            <dt>{{verifyLabel('certificateId')}}</dt>
+            <dd>{{certificateId}}</dd>
+          </div>
+        </dl>
+
+        <!-- The page shows NULP's record; an edited paper/PDF can only be caught by comparing -->
+        <p class="cv-compare">
+          <strong>{{verifyLabel('matchTitle')}}</strong>
+          {{verifyLabel('matchText')}}
+        </p>
+
+        <button type="button" class="cv-button cv-button--quiet" (click)="copyVerificationLink()">
+          {{linkCopied ? verifyLabel('linkCopied') : verifyLabel('copyLink')}}
+        </button>
+      </section>
+
+      <p *ngIf="(verifyState === 'invalid' || verifyState === 'revoked') && certificateId" class="cv-verdict__id">
+        {{verifyLabel('certificateId')}}: {{certificateId}}
       </p>
-      <h4 *ngIf="recipient" class="sb-certificatePage-holder-name">
-        {{recipient}}
-      </h4>
-      <p *ngIf="courseName && issuedOn" class="sb-certificatePage-holder-desc">
-        {{resourceService?.frmelmnts?.lbl?.completingCourseSuccessfully}}
-        <strong class="d-block">“{{courseName}}”</strong>
-        <span class="d-block">{{resourceService?.frmelmnts?.lbl?.onDiksha | interpolate:'{instance}':instance}}<strong>
-            {{issuedOn}}</strong></span>
-      </p>
     </div>
-  </div>
+  </main>
 
-</div>
-
-<div *ngIf="validateRCCertificate && !viewCertificate && isInvalidCertificate" class="sb-certificatePage" [class.loading]="loader" [class.error]="error">
-
-  <div class="sb-certificatePage sb-certificate-view sb-certificatePage-flexHeight">
-    <div class="sb-certificatePage-header">
-      <img alt="{{tenantName}}" src="{{logo}}" class="sb-certificatePage-logo" />
-    </div>
-    <div class="sb-certificatePage-holder-details mb-auto">
-      <img class="mr-8" src="assets/images/exclamation.svg" width="20px">
-      {{resourceService?.frmelmnts?.cert?.imsg?.rcInvalid}}
-    </div>
-  </div>
-
+  <footer class="cv-foot">{{verifyLabel('officialNotice')}}</footer>
 </div>
 <!-- RC Certificate validation -->
 </div>

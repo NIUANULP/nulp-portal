@@ -138,8 +138,25 @@ export class PublishedPopupComponent implements OnInit {
    * It also checks whether a reject reason is checked.
    * If both the validation is passed it enables the request changes button
    */
+  /**
+   * Select / deselect every checklist item
+   */
+  toggleSelectAll(checked: boolean) {
+    this.reasons = checked ? this.getAllItems() : [];
+    this.validateModal();
+  }
+
+  getAllItems(): string[] {
+    return _.uniq(_.flatMap(_.get(this.publishCheckListData, 'contents', []), (list: any) => list.checkList || []));
+  }
+
+  isAllSelected(): boolean {
+    const all = this.getAllItems();
+    return all.length > 0 && _.every(all, item => _.includes(this.reasons, item));
+  }
+
   validateModal() {
-    if ((this.inputFields && this.inputFields.length === this.reasons.length) || this.showDefaultConfig) {
+    if ((this.getAllItems().length > 0 && this.isAllSelected()) || this.showDefaultConfig) {
       this.isDisabled = false;
     } else {
       this.isDisabled = true;
@@ -174,10 +191,12 @@ export class PublishedPopupComponent implements OnInit {
     });
   }
   navigateToWorkspace() {
+    this.workSpaceService.publishedContentIds.push(this.contentId);
+    const extras = { queryParams: { _t: Date.now() }, state: { publishedContentId: this.contentId } };
     if (this.closeUrl.url.includes('flagreviewer')) {
-      this.route.navigate(['workspace/content/flagreviewer/1']);
+      this.route.navigate(['workspace/content/flagreviewer/1'], extras);
     } else {
-      this.route.navigate(['workspace/content/upForReview/1']);
+      this.route.navigate(['workspace/content/upForReview/1'], extras);
     }
   }
   deleteReviewComments() {

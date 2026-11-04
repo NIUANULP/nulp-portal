@@ -1,5 +1,6 @@
 import { LearnerService } from './../learner/learner.service';
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { ConfigService, ServerResponse } from '@sunbird/shared';
 import { Observable } from 'rxjs';
 
@@ -9,7 +10,7 @@ import { Observable } from 'rxjs';
 })
 export class CertificateService {
 
-  constructor(public learnerService: LearnerService, public configService: ConfigService) {  }
+  constructor(public learnerService: LearnerService, public configService: ConfigService, private http: HttpClient) {  }
 
   validateCertificate(data): Observable<ServerResponse> {
     const option = {
@@ -26,6 +27,11 @@ export class CertificateService {
       data: data
     };
     return this.learnerService.post(option);
+  }
+
+  /** Public (no login) verification of an RC certificate, used by the certificate QR code page */
+  verifyPublicCertificate(certificateId: string): Observable<ServerResponse> {
+    return this.http.get<ServerResponse>(`/certificate/public/v1/verify/${encodeURIComponent(certificateId)}`);
   }
 
   getBatchDetails(bathId) {
