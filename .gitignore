@@ -51,5 +51,3 @@ src/desktop/chromedriverlog.txt
 .prettierignore
 
 **/.DS_Store
-# QA evidence screenshots (local only)
-qa-artifacts/screenshots-*/
