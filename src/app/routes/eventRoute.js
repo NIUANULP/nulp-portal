@@ -25,6 +25,30 @@ const {
 } = require("../helpers/eventHelper.js");
 const proxyUtils = require("../proxy/proxyUtils.js");
 
+function isManualCertificateAdmin(req, res, next) {
+  const roles = req?.session?.roles || [];
+  if (
+    roles.includes("SYSTEM_ADMINISTRATION") ||
+    roles.includes("ORG_ADMIN")
+  ) {
+    return next();
+  }
+  return res.status(403).send({
+    ts: new Date().toISOString(),
+    params: {
+      resmsgid: null,
+      msgid: null,
+      statusCode: 403,
+      status: "unsuccessful",
+      message: "You don't have privilege to issue certificates manually",
+      err: null,
+      errmsg: null,
+    },
+    responseCode: "OK",
+    result: {},
+  });
+}
+
 module.exports = function (app) {
   app.post(
     "/custom_event/gmeet/create",
@@ -134,6 +158,13 @@ module.exports = function (app) {
     "/custom_event/certificate/create",
     bodyParser.json({ limit: "10mb" }),
     proxyUtils.verifyToken(),
+    createCertificate
+  );
+  app.post(
+    "/custom_event/certificate/manual-create",
+    bodyParser.json({ limit: "10mb" }),
+    proxyUtils.verifyToken(),
+    isManualCertificateAdmin,
     createCertificate
   );
   app.post(
