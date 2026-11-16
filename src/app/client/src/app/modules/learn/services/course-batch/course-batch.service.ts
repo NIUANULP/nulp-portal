@@ -1,5 +1,5 @@
-import { of as observableOf, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { of as observableOf, Observable, EMPTY } from 'rxjs';
+import { map, expand, scan, last, catchError } from 'rxjs/operators';
 import { Injectable, EventEmitter } from '@angular/core';
 import { ConfigService, ServerResponse } from '@sunbird/shared';
 import { SearchParam, LearnerService, UserService, ContentService, SearchService } from '@sunbird/core';
@@ -34,7 +34,11 @@ export class CourseBatchService {
     };
     return this.learnerService.post(option);
   }
-  getUserList(requestParam: SearchParam = {},type =''): Observable<ServerResponse> {
+  /**
+   * @param includeOtherOrgs only for type 'participant': true searches users of every org,
+   * false (default) limits the search to the current user's org like mentor searches
+   */
+  getUserList(requestParam: SearchParam = {}, type = '', includeOtherOrgs = false): Observable<ServerResponse> {
     if (_.isEmpty(requestParam) && this.defaultUserList) {
       return observableOf(this.defaultUserList);
     } else {
@@ -51,16 +55,13 @@ export class CourseBatchService {
       if (requestParam.limit) {
         option.data.request['limit'] = requestParam.limit;
       }
-      if (type === 'participant') {
+      if (requestParam.offset) {
+        option.data.request['offset'] = requestParam.offset;
+      }
+      if (type === 'participant' && includeOtherOrgs) {
         delete option.data.request.filters['rootOrgId'];
-      }else{
-        const mentorOrg = this.userService.userProfile.roleOrgMap['CONTENT_CREATOR'];
-        if (mentorOrg && mentorOrg.includes(this.userService.rootOrgId)) {
-          console.log('option before includes', option);
-          option.data.request.filters['rootOrgId'] = this.userService.rootOrgId;
-        } else if (mentorOrg) {
-          option.data.request.filters['organisations.organisationId'] = mentorOrg;
-        }
+      } else {
+        this.applyOwnOrgFilter(option.data.request.filters, type === 'participant');
       }
       // option.data.request.filters['organisations.roles'] = ['COURSE_MENTOR'];
       return this.learnerService.post(option).pipe(map((data) => {
@@ -70,6 +71,64 @@ export class CourseBatchService {
         return data;
       }));
     }
+  }
+  /**
+   * limits a user search to the current user's org: their root org when they create content
+   * in it, otherwise the orgs where they hold the CONTENT_CREATOR role. When neither applies,
+   * participant searches fall back to the root org so they never widen to every org.
+   */
+  private applyOwnOrgFilter(filters, isParticipantSearch: boolean) {
+    const rootOrgId = this.userService.rootOrgId;
+    const creatorOrgs = _.get(this.userService, 'userProfile.roleOrgMap.CONTENT_CREATOR');
+    if (creatorOrgs && creatorOrgs.includes(rootOrgId)) {
+      filters['rootOrgId'] = rootOrgId;
+    } else if (creatorOrgs) {
+      filters['organisations.organisationId'] = creatorOrgs;
+    } else if (isParticipantSearch && rootOrgId) {
+      filters['rootOrgId'] = rootOrgId;
+    }
+  }
+  /**
+   * user/v3/search returns a single page in `content` while `count` reports the
+   * total number of matches. This walks every page until the full result set is
+   * collected, so callers get all users instead of just the first page.
+   * Emits once, with every page merged.
+   */
+  getAllUserList(requestParam: SearchParam = {}, type = '', includeOtherOrgs = false): Observable<ServerResponse> {
+    return this.streamAllUserList(requestParam, type, includeOtherOrgs).pipe(last());
+  }
+  /**
+   * Same paging as getAllUserList, but emits the users collected so far after every page,
+   * so a large search (e.g. every org) fills the list progressively instead of showing
+   * nothing until the last page arrives. If a later page fails, the stream completes with
+   * the users already loaded; only a failure of the first page is reported as an error.
+   */
+  streamAllUserList(requestParam: SearchParam = {}, type = '', includeOtherOrgs = false): Observable<ServerResponse> {
+    const pageSize = requestParam.limit || 200;
+    const pageRequest = { ...requestParam, limit: pageSize };
+    let offset = 0;
+    return this.getUserList({ ...pageRequest, offset }, type, includeOtherOrgs).pipe(
+      expand((response) => {
+        const content = _.get(response, 'result.response.content', []) || [];
+        const count = _.get(response, 'result.response.count', 0);
+        offset += content.length;
+        if (content.length && offset < count) {
+          return this.getUserList({ ...pageRequest, offset }, type, includeOtherOrgs).pipe(
+            catchError(() => EMPTY)
+          );
+        }
+        return EMPTY;
+      }),
+      scan((merged: ServerResponse, response: ServerResponse) => {
+        const content = _.get(response, 'result.response.content', []) || [];
+        const existing = _.get(merged, 'result.response.content', []) || [];
+        const result = _.get(response, 'result', {});
+        return {
+          ...response,
+          result: { ...result, response: { ..._.get(result, 'response', {}), content: [...existing, ...content] } }
+        };
+      }, {} as ServerResponse)
+    );
   }
   getBatchDetails(bathId) {
     const option = {

@@ -392,3 +392,80 @@
     }
   }
 }
+
+// Create / update batch modals: title on the left, close (✕) button on the right.
+// The .sb-mat__modal header styles in themes-material_UI.scss are not part of the build,
+// so the header layout and the ✕ are defined here.
+.sb-batch-modal {
+  .mat-dialog-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+
+    .title {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+
+  .close-btn {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    margin: 0 0 0 auto;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: inherit;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+
+    // avoid a second ✕ if the material theme's ::after glyph is ever loaded
+    &::after {
+      content: none;
+    }
+
+    &:hover,
+    &:focus-visible {
+      background: rgba(0, 0, 0, 0.08);
+    }
+  }
+}
+
+// Update batch modal: keep the header and actions in view and scroll only the form body.
+// batch-update-modal is the dialog's panelClass, so it sits on .cdk-overlay-pane.
+// The height limit sits on the container (border-box, so it includes Material's padding);
+// the modal fills it and only its content area scrolls.
+.cdk-overlay-pane.batch-update-modal {
+  .mat-dialog-container {
+    display: flex;
+    flex-direction: column;
+    max-height: 96vh;
+    overflow: hidden;
+  }
+
+  .sb-mat__modal {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+
+    .sb-mat__modal__content {
+      flex: 1 1 auto;
+      min-height: 0;
+      max-height: none;
+      overflow-y: auto;
+    }
+
+    .mat-dialog-title,
+    .sb-mat__modal__actions {
+      flex: 0 0 auto;
+    }
+  }
+}

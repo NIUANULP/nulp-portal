@@ -8,12 +8,13 @@ import { CourseConsumptionService, CourseBatchService } from './../../../service
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject, TelemetryService } from '@sunbird/telemetry';
 import * as _ from 'lodash-es';
 import dayjs from 'dayjs';
-import { Subject, combineLatest, forkJoin } from 'rxjs';
+import { Subject, Subscription, combineLatest, forkJoin } from 'rxjs';
 import { LazzyLoadScriptService } from 'LazzyLoadScriptService';
 import { ConfigService } from '@sunbird/shared';
 import { CsModule } from '@project-sunbird/client-services';
 import { CsLibInitializerService } from '../../../../../service/CsLibInitializer/cs-lib-initializer.service';
 import { DiscussionService } from '../../../../../../app/modules/discussion/services/discussion/discussion.service';
+import { BatchMemberSelectComponent } from '../batch-member-select/batch-member-select.component';
 
 @Component({
   selector: 'app-create-batch',
@@ -23,7 +24,11 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild('createBatchModel') private createBatchModel;
 
-  private userSearchTime: any;
+  /**
+  * separate debounce timers so a mentor search and a member search never cancel each other
+  */
+  private mentorSearchTime: any;
+  private participantSearchTime: any;
 
   showCreateModal = false;
 
@@ -39,7 +44,31 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
   */
   participantList = [];
 
-  public selectedParticipants: any = [];
+  /**
+  * participants picked in the members dropdown
+  */
+  public newParticipants: any[] = [];
+  /**
+  * when true, typed member searches look in every org; the list shown before typing is always the creator's org
+  */
+  public includeOtherOrgs = false;
+  @ViewChild(BatchMemberSelectComponent) private memberSelect: BatchMemberSelectComponent;
+  /**
+  * latest text typed in the members search, reused when the org toggle changes
+  */
+  private participantQuery = '';
+  /**
+  * running member search; cancelled when a newer search starts so its pages can't overwrite the list
+  */
+  private participantSearchSub: Subscription;
+  /**
+  * running mentor search; cancelled when a newer one starts so an older, slower result can't overwrite it
+  */
+  private mentorSearchSub: Subscription;
+  /**
+  * true while member search pages are still loading
+  */
+  public participantsLoading = false;
 
   public selectedMentors: any = [];
   /**
@@ -173,7 +202,7 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
       filters: {'status': '1'},
     };
     return combineLatest(
-      this.courseBatchService.getUserList(requestBody),
+      this.courseBatchService.getAllUserList(requestBody),
       this.courseConsumptionService.getCourseHierarchy(this.courseId),
       (userDetails, courseDetails) => ({ userDetails, courseDetails })
     );
@@ -201,8 +230,7 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
     const mentorList = [];
     if (res.result.response.content && res.result.response.content.length > 0) {
       _.forEach(res.result.response.content, (userData) => {
-        if ( _.includes(this.selectedMentors , userData.identifier) ||
-          _.includes(this.selectedParticipants , userData.identifier)) {
+        if (_.includes(this.selectedMentors, userData.identifier)) {
           return;
         }
         if (userData.identifier !== this.userService.userid) {
@@ -233,7 +261,7 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
     let mentors = [];
     mentors = $('#mentors').dropdown('get value') ? $('#mentors').dropdown('get value').split(',') : [];
     if (this.createBatchForm.value.enrollmentType !== 'open') {
-      participants = $('#participants').dropdown('get value') ? $('#participants').dropdown('get value').split(',') : [];
+      participants = _.map(this.newParticipants, 'id');
       participants = participants.filter(participantId => !mentors.some(mentorId => mentorId == participantId));
     }
     const startDate = dayjs(this.createBatchForm.value.startDate).format('YYYY-MM-DD');
@@ -324,58 +352,79 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   private initDropDown() {
     this.lazzyLoadScriptService.loadScript('semanticDropdown.js').subscribe(() => {
-      $('#participants').dropdown({
-        forceSelection: false,
-        fullTextSearch: true,
-        onAdd: () => {
-        }
-      });
       $('#mentors').dropdown({
         fullTextSearch: true,
         forceSelection: false,
     });
-      $('#participants input.search').on('keyup', (e) => {
-        this.getUserListWithQuery($('#participants input.search').val(), 'participant');
-      });
       $('#mentors input.search').on('keyup', (e) => {
         this.getUserListWithQuery($('#mentors input.search').val(), 'mentor');
       });
     });
   }
   private getUserListWithQuery(query, type) {
-    if (this.userSearchTime) {
-      clearTimeout(this.userSearchTime);
+    if (type === 'participant') {
+      clearTimeout(this.participantSearchTime);
+      this.participantSearchTime = setTimeout(() => this.getUserList(query, type), 1000);
+    } else {
+      clearTimeout(this.mentorSearchTime);
+      this.mentorSearchTime = setTimeout(() => this.getUserList(query, type), 1000);
     }
-    this.userSearchTime = setTimeout(() => {
-      this.getUserList(query, type);
-    }, 1000);
   }
   /**
   *  api call to get user list
   */
   private getUserList(query: string = '', type) {
-    this.selectedParticipants = $('#participants').dropdown('get value') ? $('#participants').dropdown('get value').split(',') : [];
     this.selectedMentors = $('#mentors').dropdown('get value') ? $('#mentors').dropdown('get value').split(',') : [];
     const requestBody = {
       filters: {'status': '1'},
       query: query
     };
-    this.courseBatchService.getUserList(requestBody,type).pipe(takeUntil(this.unsubscribe))
+    const isParticipant = type === 'participant';
+    let users$;
+    if (isParticipant) {
+      // drop the previous member search so its remaining pages don't overwrite this one
+      if (this.participantSearchSub) {
+        this.participantSearchSub.unsubscribe();
+      }
+      this.participantsLoading = true;
+      // other orgs only apply to a typed search; an empty search box lists the creator's org
+      const searchOtherOrgs = this.includeOtherOrgs && !!_.trim(query);
+      users$ = this.courseBatchService.streamAllUserList(requestBody, type, searchOtherOrgs);
+    } else {
+      if (this.mentorSearchSub) {
+        this.mentorSearchSub.unsubscribe();
+      }
+      users$ = this.courseBatchService.getAllUserList(requestBody, type);
+    }
+    const sub = users$.pipe(takeUntil(this.unsubscribe))
       .subscribe((res) => {
         const list = this.sortUsers(res);
-        if (type === 'participant') {
+        if (isParticipant) {
           this.participantList = list.participantList;
         } else {
           this.mentorList = list.mentorList;
         }
       },
         (err) => {
+          if (isParticipant) {
+            this.participantsLoading = false;
+          }
           if (err.error && err.error.params.errmsg) {
             this.toasterService.error(err.error.params.errmsg);
           } else {
             this.toasterService.error(this.resourceService.messages.fmsg.m0056);
           }
+        },
+        () => {
+          if (isParticipant) {
+            this.participantsLoading = false;
+          }
         });
+    if (isParticipant) {
+      this.participantSearchSub = sub;
+    } else {
+      this.mentorSearchSub = sub;
+    }
   }
   ngAfterViewInit () {
     setTimeout(() => {
@@ -484,13 +533,33 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
     this.telemetryService.interact(telemetryData);
   }
 
+  public onParticipantSearch(query: string) {
+    this.participantQuery = query || '';
+    this.getUserListWithQuery(query, 'participant');
+  }
+
+  /**
+  * re-runs the current member search right away for the chosen scope; picked members stay selected.
+  * With an empty search box there is nothing to re-run, as that list is always the creator's org.
+  */
+  public onIncludeOtherOrgsChange(includeOtherOrgs: boolean) {
+    this.includeOtherOrgs = includeOtherOrgs;
+    if (!_.trim(this.participantQuery)) {
+      return;
+    }
+    clearTimeout(this.participantSearchTime);
+    this.getUserList(this.participantQuery, 'participant');
+    // the toggle click closes the members list (it is outside it); reopen so the new results are visible
+    setTimeout(() => this.memberSelect && this.memberSelect.open());
+  }
+
   handleBatchTypeInputChange() {
-    $('#participants').dropdown('restore defaults')
+    this.newParticipants = [];
   }
 
   clearList() {
     $('#mentors').dropdown('restore defaults')
-    $('#participants').dropdown('restore defaults')
+    this.newParticipants = [];
   }
 
   getPickerMinDateForEndDate() {
