@@ -2,7 +2,7 @@ import { IInteractEventEdata } from './../../../../telemetry/interfaces/telemetr
 
 import { Component, OnInit, ViewChild, OnDestroy, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import {combineLatest, Subject, forkJoin} from 'rxjs';
+import {combineLatest, Subject, Subscription, forkJoin} from 'rxjs';
 import { takeUntil, mergeMap } from 'rxjs/operators';
 import { RouterNavigationService, ResourceService, ToasterService, NavigationHelperService } from '@sunbird/shared';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
@@ -16,6 +16,7 @@ import { CsModule } from '@project-sunbird/client-services';
 import { CsLibInitializerService } from '../../../../../service/CsLibInitializer/cs-lib-initializer.service';
 import { IFetchForumConfig } from '../../../../groups/interfaces';
 import { DiscussionService } from '../../../../../../app/modules/discussion/services/discussion/discussion.service';
+import { BatchMemberSelectComponent } from '../batch-member-select/batch-member-select.component';
 
 @Component({
   selector: 'app-update-course-batch',
@@ -42,14 +43,49 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
 
   private courseId: string;
 
+  /**
+  * participants already in the batch (loaded from backend)
+  */
   public selectedParticipants: any = [];
+  /**
+  * members shown/selected in the members dropdown: existing participants + newly picked users
+  */
+  public batchMembers: any[] = [];
+  /**
+  * ids of participants already in the batch
+  */
+  public existingParticipantIds: string[] = [];
+  /**
+  * when true, typed member searches look in every org; the list shown before typing is always the creator's org
+  */
+  public includeOtherOrgs = false;
+  @ViewChild(BatchMemberSelectComponent) private memberSelect: BatchMemberSelectComponent;
+  /**
+  * latest text typed in the members search, reused when the org toggle changes
+  */
+  private participantQuery = '';
+  /**
+  * running member search; cancelled when a newer search starts so its pages can't overwrite the list
+  */
+  private participantSearchSub: Subscription;
+  /**
+  * running mentor search; cancelled when a newer one starts so an older, slower result can't overwrite it
+  */
+  private mentorSearchSub: Subscription;
+  /**
+  * true while member search pages are still loading
+  */
+  public participantsLoading = false;
 
   public showFormInViewMode: boolean;
 
   public selectedMentors: any = [];
 
-  private userSearchTime: any;
-  private removedUsers: any = [];
+  /**
+  * separate debounce timers so a mentor search and a member search never cancel each other
+  */
+  private mentorSearchTime: any;
+  private participantSearchTime: any;
 
   forumIds: any;
   fetchForumIdReq: any;
@@ -206,11 +242,6 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
             _.remove(this.mentorList, mentor => mentor.id === id);
           });
         }
-        if (this.batchDetails.participants) {
-          this.batchDetails.participants.forEach(id => {
-            _.remove(this.participantList, participant => participant.id === id);
-          });
-        }
         this.initializeUpdateForm();
         this.getEnabledForumId();
         this.fetchParticipantDetails();
@@ -231,7 +262,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
       };
       const participantList = {};
       return combineLatest(
-        this.courseBatchService.getUserList(requestBody),
+        this.courseBatchService.getAllUserList(requestBody),
         this.courseConsumptionService.getCourseHierarchy(this.courseId),
         this.courseBatchService.getUpdateBatchDetails(this.batchId),
         (userDetails, courseDetails, batchDetails) => (
@@ -242,7 +273,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
         filters: { 'status': '1' },
       };
       return combineLatest(
-        this.courseBatchService.getUserList(requestBody),
+        this.courseBatchService.getAllUserList(requestBody),
         this.courseConsumptionService.getCourseHierarchy(this.courseId),
         this.courseBatchService.getUpdateBatchDetails(this.batchId),
         this.courseBatchService.getParticipantList(
@@ -251,18 +282,6 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
           { userDetails, courseDetails, batchDetails, participantList }
         ));
     }
-  }
-  private isSubmitBtnDisable(batchForm): boolean {
-    const batchFormControls = ['name', 'description', 'enrollmentType', 'mentors', 'startDate', 'endDate', 'users'];
-    for (let i = 0; i < batchFormControls.length; i++) {
-      if (batchForm.controls[batchFormControls[i]].status !== 'VALID') {
-        return true;
-      }
-    }
-    if (batchForm.controls['enrollmentEndDate'].status !== 'VALID' && batchForm.controls['enrollmentEndDate'].pristine) {
-      return false;
-    }
-    return true;
   }
   /**
   * initializes form fields and apply field level validation
@@ -303,11 +322,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     });
 
     this.batchUpdateForm.valueChanges.subscribe(val => {
-      if (this.batchUpdateForm.status === 'VALID') {
-        this.disableSubmitBtn = false;
-      } else {
-        this.disableSubmitBtn = this.isSubmitBtnDisable(this.batchUpdateForm);
-      }
+      this.refreshSubmitState();
     });
     this.disableSubmitBtn = true;
     if (this.batchDetails.createdBy !== this.userService.userid) {
@@ -322,11 +337,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     let userList = [];
     if (this.batchDetails.participants || (this.batchDetails.mentors && this.batchDetails.mentors.length > 0)) {
       if (this.batchDetails.enrollmentType !== 'open') {
-        if (this.batchDetails.participants && this.batchDetails.participants.length > 100) {
-          userList = this.batchDetails.mentors;
-        } else {
-          userList = _.union(this.batchDetails.participants, this.batchDetails.mentors);
-        }
+        userList = _.union(this.batchDetails.participants, this.batchDetails.mentors);
       } else {
         userList = this.batchDetails.mentors;
       }
@@ -342,7 +353,9 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
         },
         limit : userList.length
       };
-      this.courseBatchService.getUserList(request).pipe(takeUntil(this.unsubscribe))
+      // look the ids up across every org: members added through 'Include other orgs in search'
+      // are outside the creator's org and would otherwise be missing from the list
+      this.courseBatchService.getUserList(request, 'participant', true).pipe(takeUntil(this.unsubscribe))
         .subscribe((res) => {
           this.processParticipantDetails(res);
         }, (err) => {
@@ -375,6 +388,9 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
       }
     });
     this.selectedParticipants = _.uniqBy(this.selectedParticipants, 'id');
+    // keep any users picked before the existing participants finished loading
+    this.batchMembers = _.uniqBy([...this.selectedParticipants, ...this.batchMembers], 'id');
+    this.existingParticipantIds = _.map(this.selectedParticipants, 'id');
     this.selectedMentors = _.uniqBy(this.selectedMentors, 'id');
     this.disableSubmitBtn = false;
     this.showLoader = false;
@@ -384,8 +400,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     const mentorList = [];
     if (res.result.response.content && res.result.response.content.length > 0) {
       _.forEach(res.result.response.content, (userData) => {
-        if (_.find(this.selectedMentors, { 'id': userData.identifier }) ||
-          _.find(this.selectedParticipants, { 'id': userData.identifier })) {
+        if (_.find(this.selectedMentors, { 'id': userData.identifier })) {
           return;
         }
         if (userData.identifier !== this.userService.userid) {
@@ -411,26 +426,16 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   private getUserListWithQuery(query, type) {
-    if (this.userSearchTime) {
-      clearTimeout(this.userSearchTime);
+    if (type === 'participant') {
+      clearTimeout(this.participantSearchTime);
+      this.participantSearchTime = setTimeout(() => this.getUserList(query, type), 1000);
+    } else {
+      clearTimeout(this.mentorSearchTime);
+      this.mentorSearchTime = setTimeout(() => this.getUserList(query, type), 1000);
     }
-    this.userSearchTime = setTimeout(() => {
-      this.getUserList(query, type);
-    }, 1000);
   }
   private initDropDown() {
-    const count = _.get(this.batchDetails, 'participants') ? _.get(this.batchDetails, 'participants.length') : 0;
     this.lazzyLoadScriptService.loadScript('semanticDropdown.js').subscribe(() => {
-      $('#participant').dropdown({
-        forceSelection: false,
-        fullTextSearch: true,
-        maxSelections: 100 - count,
-        message: {
-          maxSelections : this.resourceService.messages.imsg.m0047
-        },
-        onAdd: () => {
-        }
-      });
       if (!$('#mentors input.search').val()) {
         $('#mentors').dropdown({
           fullTextSearch: true,
@@ -440,9 +445,6 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
         });
       }
       $('#mentors input.search').attr('aria-label', 'select batch mentor'); // fix accessibility on screen reader
-      $('#participant input.search').on('keyup', (e) => {
-        this.getUserListWithQuery($('#participant input.search').val(), 'participant');
-      });
       $('#mentors input.search').on('keyup', (e) => {
         this.getUserListWithQuery($('#mentors input.search').val(), 'mentor');
       });
@@ -456,36 +458,57 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
       filters: {'status': '1'},
       query: query
     };
-    this.courseBatchService.getUserList(requestBody,type).pipe(takeUntil(this.unsubscribe))
+    const isParticipant = type === 'participant';
+    let users$;
+    if (isParticipant) {
+      // drop the previous member search so its remaining pages don't overwrite this one
+      if (this.participantSearchSub) {
+        this.participantSearchSub.unsubscribe();
+      }
+      this.participantsLoading = true;
+      // other orgs only apply to a typed search; an empty search box lists the creator's org
+      const searchOtherOrgs = this.includeOtherOrgs && !!_.trim(query);
+      users$ = this.courseBatchService.streamAllUserList(requestBody, type, searchOtherOrgs);
+    } else {
+      if (this.mentorSearchSub) {
+        this.mentorSearchSub.unsubscribe();
+      }
+      users$ = this.courseBatchService.getAllUserList(requestBody, type);
+    }
+    const sub = users$.pipe(takeUntil(this.unsubscribe))
       .subscribe((res) => {
         const userList = this.sortUsers(res);
-        if (type === 'participant') {
+        if (isParticipant) {
           this.participantList = userList.participantList;
         } else {
           this.mentorList = userList.mentorList;
         }
       },
         (err) => {
+          if (isParticipant) {
+            this.participantsLoading = false;
+          }
           if (err.error && err.error.params.errmsg) {
             this.toasterService.error(err.error.params.errmsg);
           } else {
             this.toasterService.error(this.resourceService.messages.fmsg.m0056);
           }
+        },
+        () => {
+          if (isParticipant) {
+            this.participantsLoading = false;
+          }
         });
+    if (isParticipant) {
+      this.participantSearchSub = sub;
+    } else {
+      this.mentorSearchSub = sub;
+    }
   }
 
   public removeMentor(mentor: any) {
     _.remove(this.selectedMentors, (data) => {
       return data === mentor;
-    });
-  }
-
-  public removeParticipant(user: any) {
-    if (user && user.id) {
-      this.removedUsers.push(user.id);
-    }
-    _.remove(this.selectedParticipants, (data) => {
-      return data === user;
     });
   }
 
@@ -503,8 +526,11 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     const selectedMentors = [];
     let mentors = [];
     mentors = $('#mentors').dropdown('get value') ? $('#mentors').dropdown('get value').split(',') : [];
+    const memberIds = _.map(this.batchMembers, 'id');
+    const existingIds = _.map(this.selectedParticipants, 'id');
+    const removedUsers = _.difference(existingIds, memberIds);
     if (this.batchUpdateForm.value.enrollmentType !== 'open') {
-      participants = $('#participant').dropdown('get value') ? $('#participant').dropdown('get value').split(',') : [];
+      participants = _.difference(memberIds, existingIds);
     }
     participants = participants.filter(participantId => !mentors.some(mentorId => mentorId == participantId));
     if ((this.selectedMentors).length > 0) {
@@ -536,8 +562,8 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     requestBody['mentors'] = _.concat(_.compact(requestBody['mentors']), selected);
     const requests = [];
     requests.push(this.courseBatchService.updateBatch(requestBody));
-    if (this.removedUsers && this.removedUsers.length > 0) {
-      _.forEach(this.removedUsers, (id) => {
+    if (removedUsers.length > 0) {
+      _.forEach(removedUsers, (id) => {
         requests.push(this.removeParticipantFromBatch(this.batchId, id));
       });
     }
@@ -672,6 +698,10 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
         this.callCreateDiscussion = false;
       }
       this.initializeUpdateForm();
+      // form re-init disables update; re-enable if participant details have already loaded
+      if (!this.showLoader) {
+        this.refreshSubmitState();
+      }
     }, error => {
       this.toasterService.error(this.resourceService.messages.emsg.m0005);
     });
@@ -755,6 +785,24 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     };
     this.telemetryService.interact(telemetryData);
   }
+  public onParticipantSearch(query: string) {
+    this.participantQuery = query || '';
+    this.getUserListWithQuery(query, 'participant');
+  }
+  /**
+  * re-runs the current member search right away for the chosen scope; picked members stay selected.
+  * With an empty search box there is nothing to re-run, as that list is always the creator's org.
+  */
+  public onIncludeOtherOrgsChange(includeOtherOrgs: boolean) {
+    this.includeOtherOrgs = includeOtherOrgs;
+    if (!_.trim(this.participantQuery)) {
+      return;
+    }
+    clearTimeout(this.participantSearchTime);
+    this.getUserList(this.participantQuery, 'participant');
+    // the toggle click closes the members list (it is outside it); reopen so the new results are visible
+    setTimeout(() => this.memberSelect && this.memberSelect.open());
+  }
   getSelectedMembers() {
     if(this.batchUpdateForm.value.enrollmentType !== 'open'){
       return $('#mentors').dropdown('get value') ? $('#mentors').dropdown('get value').split(',') : [];
@@ -762,15 +810,33 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
       return [];
     }
   }
-  checkList(field){
-    if(field =='mentor' ){
-      this.disableSubmitBtn = true;
-      console.log(typeof($('#mentors').dropdown('get value')))
-    }else if(field =='participant'){
-      this.disableSubmitBtn = true;
-
+  checkList(field) {
+    // selecting mentors/members is a valid change; enable update when the form is valid
+    if (field === 'mentor' || field === 'participant') {
+      this.refreshSubmitState();
     }
-
-  }  
+  }
+  /**
+  * enables update when the required batch fields are valid. enableDiscussions is not checked as it
+  * is only filled once the forum API responds and may stay empty when that call fails.
+  */
+  private refreshSubmitState() {
+    const controls = this.batchUpdateForm.controls;
+    const invalid = ['name', 'enrollmentType', 'startDate', 'issueCertificate'].some(key => controls[key].invalid);
+    this.disableSubmitBtn = this.showFormInViewMode || this.showLoader || invalid || this.hasInvalidEditedDates();
+  }
+  /**
+  * end date and enrollment end date only block update once they are edited, so an untouched date
+  * stored on an older batch (e.g. an end date that is now in the past) does not lock the form.
+  * The enrollment end date is re-checked when the end date changes, as its max is the end date,
+  * and only matters for open batches, the only ones that send it.
+  */
+  private hasInvalidEditedDates(): boolean {
+    const { endDate, enrollmentEndDate, enrollmentType } = this.batchUpdateForm.controls;
+    const endDateInvalid = endDate.dirty && endDate.invalid;
+    const enrollmentEndDateInvalid = enrollmentType.value === 'open' && enrollmentEndDate.invalid &&
+      (enrollmentEndDate.dirty || endDate.dirty);
+    return endDateInvalid || enrollmentEndDateInvalid;
+  }
   
 }
