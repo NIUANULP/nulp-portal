@@ -397,6 +397,12 @@
 // The .sb-mat__modal header styles in themes-material_UI.scss are not part of the build,
 // so the header layout and the ✕ are defined here.
 .sb-batch-modal {
+  // the Semantic UI grids in the form have -1rem side margins (gutters only, no content), which made the
+  // scrolling content area scroll sideways
+  .sb-mat__modal__content {
+    overflow-x: hidden;
+  }
+
   .mat-dialog-title {
     display: flex;
     align-items: center;
