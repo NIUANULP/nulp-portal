@@ -1,5 +1,5 @@
 <app-modal-wrapper *ngIf="showCreateModal"
-  [config]="{disableClose: true, size: 'normal', panelClass: ['overflow-visible', 'material-modal']}" (dismiss)="redirect()"
+  [config]="{disableClose: true, size: 'normal', width: '64rem', maxWidth: '96vw', panelClass: ['overflow-visible', 'material-modal']}" (dismiss)="redirect()"
   #createBatchModel>
   <ng-template sbModalContent>
     <div class="sb-mat__modal sb-batch-modal">
@@ -161,18 +161,16 @@
           </div>
 
           <div class="sb-field-group " [hidden]="createBatchForm.value.enrollmentType === 'open'">
-            <div class="d-flex flex-jc-space-between flex-ai-center flex-w-wrap">
-              <label>{{resourceService?.frmelmnts?.lbl?.bacthmembers}}</label>
-              <mat-slide-toggle class="fsmall" color="primary" [checked]="includeOtherOrgs"
-                (change)="onIncludeOtherOrgsChange($event.checked)">
-                {{resourceService?.frmelmnts?.lbl?.includeOtherOrgsInSearch || 'Include other orgs in search'}}
-              </mat-slide-toggle>
-            </div>
             <app-batch-member-select inputId="userSelList" [users]="participantList"
               [excludeIds]="getSelectedMembers()" [(selectedUsers)]="newParticipants"
               [placeholder]="resourceService?.frmelmnts?.intxt?.t0006"
               [selectAllLabel]="resourceService?.frmelmnts?.lbl?.selectAll || 'Select all'"
               [loading]="participantsLoading" (search)="onParticipantSearch($event)">
+              <label bmsLabel for="userSelList">{{resourceService?.frmelmnts?.lbl?.bacthmembers}}</label>
+              <mat-slide-toggle bmsToolbar class="fsmall" color="primary" [checked]="includeOtherOrgs"
+                (change)="onIncludeOtherOrgsChange($event.checked)">
+                {{resourceService?.frmelmnts?.lbl?.includeOtherOrgsInSearch || 'Include other orgs in search'}}
+              </mat-slide-toggle>
             </app-batch-member-select>
           </div>
 

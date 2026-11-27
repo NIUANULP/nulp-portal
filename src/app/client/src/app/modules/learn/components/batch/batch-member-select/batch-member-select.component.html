@@ -1,48 +1,202 @@
 <div class="bms" [class.bms--disabled]="disabled" [class.bms--open]="isOpen">
+
+  <!-- Toolbar: the page's field label, then join-date filter, CSV upload and controls passed in by the page
+       (e.g. "Include other orgs") -->
+  <div class="bms__toolbar">
+    <div class="bms__toolbar-label">
+      <ng-content select="[bmsLabel]"></ng-content>
+    </div>
+
+    <div class="bms__date-filter" *ngIf="!disabled" [class.bms__date-filter--active]="joinedSince"
+      (click)="openJoinedPicker()">
+      <i class="calendar alternate outline icon" aria-hidden="true"></i>
+      <!-- clicking anywhere in the pill opens the calendar; Alt+Down also opens it from the keyboard -->
+      <input class="bms__date-input" type="text" readonly [id]="inputId + '-joined-since'"
+        [matDatepicker]="joinedPicker" [max]="maxJoinedDate" [value]="joinedSinceDate" placeholder="Joined since"
+        aria-label="Joined since" title="Show only users who joined NULP on or after this date"
+        (dateChange)="onJoinedSinceDate($event.value)">
+      <button type="button" class="bms__date-clear" *ngIf="joinedSince" aria-label="Clear join date filter"
+        title="Clear date" (click)="$event.stopPropagation(); clearJoinedSince()">
+        <i class="close icon" aria-hidden="true"></i>
+      </button>
+      <mat-datepicker #joinedPicker></mat-datepicker>
+    </div>
+
+    <ng-container *ngIf="!disabled">
+      <input #importFile type="file" class="bms__file" accept=".csv,.txt,text/csv,text/plain" tabindex="-1"
+        aria-hidden="true" (change)="onImportFile(importFile)">
+      <button type="button" class="bms__upload" [disabled]="importing" (click)="importFile.click()"
+        [attr.aria-describedby]="inputId + '-upload-hint'">
+        <span class="bms__spinner" *ngIf="importing" aria-hidden="true"></span>
+        <i class="upload icon" *ngIf="!importing" aria-hidden="true"></i>
+        {{importing ? 'Adding…' : 'Upload CSV'}}
+      </button>
+      <span class="bms__sr-only" [id]="inputId + '-upload-hint'">
+        Selects the users listed in a CSV file. The file needs a column of NULP user IDs; other columns are ignored.
+      </span>
+    </ng-container>
+
+    <div class="bms__toolbar-slot">
+      <ng-content select="[bmsToolbar]"></ng-content>
+    </div>
+  </div>
+
+  <!-- Search -->
   <div class="bms__trigger" (click)="open()">
-    <input #searchInput class="bms__search" type="text" autocomplete="off" [id]="inputId" [attr.aria-label]="placeholder"
-      [placeholder]="selectedCount ? selectedCount + ' selected' : placeholder" [disabled]="disabled"
-      [value]="query" (focus)="open()" (input)="onQueryChange(searchInput.value)">
-    <button type="button" class="bms__caret" [disabled]="disabled" aria-label="toggle member list"
-      (click)="$event.stopPropagation(); toggleOpen()">
-      <i class="dropdown icon"></i>
+    <i class="search icon bms__search-icon" aria-hidden="true"></i>
+    <input #searchInput class="bms__search" type="text" autocomplete="off" role="combobox"
+      [attr.aria-expanded]="isOpen" [attr.aria-controls]="inputId + '-list'" [id]="inputId"
+      [attr.aria-label]="placeholder || 'Search members'" [placeholder]="placeholder || 'Search by name or user ID'"
+      [disabled]="disabled" [value]="query" (focus)="open()" (input)="onQueryChange(searchInput.value)">
+    <button type="button" class="bms__icon-btn" *ngIf="query && !disabled" aria-label="Clear search"
+      (click)="$event.stopPropagation(); clearQuery(searchInput)">
+      <i class="close icon" aria-hidden="true"></i>
     </button>
   </div>
 
-  <div class="bms__panel" *ngIf="isOpen" role="listbox" aria-multiselectable="true">
-    <div class="bms__loading" *ngIf="loading" role="status">Loading users…</div>
+  <!-- Results -->
+  <div class="bms__panel" *ngIf="isOpen" [id]="inputId + '-list'" role="listbox" aria-multiselectable="true">
+    <div class="bms__loading" *ngIf="loading" role="status">
+      <span class="bms__spinner" aria-hidden="true"></span>Loading users…
+    </div>
     <ng-container *ngIf="visibleUsers.length; else noUsers">
-      <label class="bms__option bms__option--all">
-        <input #selectAllBox type="checkbox" [checked]="allVisibleSelected" [indeterminate]="someVisibleSelected"
-          (change)="toggleSelectAll(selectAllBox)">
-        <span>{{selectAllLabel}} ({{visibleUsers.length}})</span>
-      </label>
-      <label class="bms__option" *ngFor="let user of visibleUsers" [class.bms__option--checked]="isSelected(user.id)">
+      <!-- clicking the strip (outside "Select all") hides the list -->
+      <div class="bms__panel-head" (click)="close()">
+        <label class="bms__select-all" (click)="$event.stopPropagation()">
+          <input #selectAllBox type="checkbox" [checked]="allVisibleSelected" [indeterminate]="someVisibleSelected"
+            (change)="toggleSelectAll(selectAllBox)">
+          <span>{{selectAllLabel}} <span class="bms__muted">({{visibleUsers.length}})</span></span>
+        </label>
+        <span class="bms__muted bms__panel-count">{{visibleSelectedCount}} of {{visibleUsers.length}} selected</span>
+        <button type="button" class="bms__icon-btn bms__collapse" aria-label="Hide member list"
+          title="Hide member list" (click)="$event.stopPropagation(); close()">
+          <i class="dropdown icon" aria-hidden="true"></i>
+        </button>
+      </div>
+      <label class="bms__option" *ngFor="let user of visibleUsers; trackBy: trackById"
+        [class.bms__option--checked]="isSelected(user.id)" [class.bms__option--locked]="isLocked(user.id)"
+        role="option" [attr.aria-selected]="isSelected(user.id)">
         <input type="checkbox" [checked]="isSelected(user.id)" [disabled]="isLocked(user.id)"
           (change)="toggleUser(user)">
-        <img class="ui mini avatar image" src="{{user.avatar || 'assets/images/user_logo.png' | cdnprefixurl}}"
-          alt="avatar image">
-        <span class="bms__name">{{user.name}}{{user.otherDetail}}</span>
+        <img class="bms__avatar" src="{{user.avatar || 'assets/images/user_logo.png' | cdnprefixurl}}" alt="">
+        <span class="bms__who">
+          <span class="bms__name">{{user.name}}</span>
+          <span class="bms__contact" *ngIf="contactOf(user)">{{contactOf(user)}}</span>
+        </span>
+        <span class="bms__badge" *ngIf="isLocked(user.id); else joinedTpl">In batch</span>
+        <ng-template #joinedTpl>
+          <span class="bms__joined" *ngIf="joinedAt(user) as joined" title="Joined NULP">
+            {{joined | date:'d MMM y'}}
+          </span>
+        </ng-template>
       </label>
     </ng-container>
     <ng-template #noUsers>
-      <div class="bms__empty" *ngIf="!loading">No users found</div>
+      <div class="bms__empty" *ngIf="!loading">
+        <ng-container *ngIf="joinedSince; else plainEmpty">
+          No users joined since {{joinedSince | date:'d MMM y'}}{{query ? ' match “' + query + '”' : ''}}.
+          <button type="button" class="bms__link" (click)="clearJoinedSince()">
+            Clear date
+          </button>
+        </ng-container>
+        <ng-template #plainEmpty>{{query ? 'No users match “' + query + '”.' : 'No users found.'}}</ng-template>
+      </div>
     </ng-template>
   </div>
 
+  <!-- CSV upload result -->
+  <div class="bms__notice bms__notice--error" role="alert" *ngIf="importError">
+    <i class="exclamation circle icon" aria-hidden="true"></i>
+    <span class="bms__notice-body">{{importError}}</span>
+    <button type="button" class="bms__icon-btn" aria-label="Dismiss" (click)="importError = ''">
+      <i class="close icon" aria-hidden="true"></i>
+    </button>
+  </div>
+  <div class="bms__notice" role="status" *ngIf="importing">
+    <span class="bms__spinner" aria-hidden="true"></span>
+    <span class="bms__notice-body">Looking up users from {{importingFileName}}…</span>
+  </div>
+  <div class="bms__notice" role="status" *ngIf="importSummary as summary"
+    [class.bms__notice--success]="summary.addedIds.length" [class.bms__notice--warning]="!summary.addedIds.length">
+    <i class="icon" [ngClass]="summary.addedIds.length ? 'check circle' : 'info circle'" aria-hidden="true"></i>
+    <div class="bms__notice-body">
+      <div class="bms__notice-title">
+        <ng-container *ngIf="summary.addedIds.length; else noneAdded">
+          Selected {{summary.addedIds.length}} {{summary.addedIds.length === 1 ? 'member' : 'members'}} from
+          {{summary.fileName}}
+        </ng-container>
+        <ng-template #noneAdded>No new members selected from {{summary.fileName}}</ng-template>
+      </div>
+      <ul class="bms__notice-details">
+        <li *ngIf="summary.addedFromOtherOrgs">{{summary.addedFromOtherOrgs}} from other organisations</li>
+        <li *ngIf="summary.alreadyInBatch">{{summary.alreadyInBatch}} already in this batch</li>
+        <li *ngIf="summary.alreadySelected">{{summary.alreadySelected}} already selected</li>
+        <li *ngIf="summary.mentors">{{summary.mentors}} chosen as mentors, skipped</li>
+        <li *ngIf="summary.self">your own account, skipped</li>
+        <li *ngIf="summary.notFound.length">
+          {{summary.notFound.length}} not found or inactive
+          <button type="button" class="bms__link" (click)="showNotFound = !showNotFound"
+            [attr.aria-expanded]="showNotFound">{{showNotFound ? 'Hide' : 'Show'}}</button>
+          <button type="button" class="bms__link" (click)="copyNotFound()">
+            {{notFoundCopied ? 'Copied' : 'Copy IDs'}}
+          </button>
+        </li>
+      </ul>
+      <div class="bms__missing-ids" *ngIf="showNotFound && summary.notFound.length">
+        <div *ngFor="let id of summary.notFound">{{id}}</div>
+      </div>
+    </div>
+    <div class="bms__notice-actions">
+      <button type="button" class="bms__link" *ngIf="summary.addedIds.length && !disabled" (click)="undoImport()">
+        Undo
+      </button>
+      <button type="button" class="bms__icon-btn" aria-label="Dismiss" (click)="dismissImportSummary()">
+        <i class="close icon" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Selected members: new picks first; existing members folded away -->
   <div class="bms__selected" *ngIf="selectedCount">
     <div class="bms__selected-header">
-      <span>{{selectedCount}} selected</span>
-      <button type="button" class="bms__clear" *ngIf="!disabled && canClearAll" (click)="clearAll()">Clear all</button>
-    </div>
-    <div class="bms__chips">
-      <span class="ui label bms__chip" *ngFor="let user of selectedUsers">
-        <img class="ui right spaced avatar image" src="{{user.avatar || 'assets/images/user_logo.png' | cdnprefixurl}}"
-          alt="avatar image">
-        {{user.name}}{{user.otherDetail}}
-        <i class="delete icon" *ngIf="!disabled && !isLocked(user.id)" tabindex="0" role="button" aria-label="remove"
-          (click)="remove(user)" (keydown.enter)="remove(user)"></i>
+      <span>
+        <ng-container *ngIf="newSelectedCount; else noneNew">
+          <strong>{{newSelectedCount}}</strong> {{lockedSelectedCount ? 'to add' : 'selected'}}
+        </ng-container>
+        <ng-template #noneNew><span class="bms__muted">No new members selected</span></ng-template>
       </span>
+      <button type="button" class="bms__link" *ngIf="!disabled && canClearAll" (click)="clearAll()">
+        {{lockedSelectedCount ? 'Clear new' : 'Clear all'}}
+      </button>
+    </div>
+
+    <div class="bms__chips" *ngIf="newSelectedCount">
+      <span class="bms__chip" *ngFor="let user of newSelectedUsers; trackBy: trackById"
+        [attr.title]="contactOf(user) || null">
+        <img class="bms__chip-avatar" src="{{user.avatar || 'assets/images/user_logo.png' | cdnprefixurl}}" alt="">
+        <span class="bms__chip-name">{{user.name}}</span>
+        <button type="button" class="bms__chip-remove" *ngIf="!disabled" [attr.aria-label]="'Remove ' + user.name"
+          (click)="remove(user)">
+          <i class="close icon" aria-hidden="true"></i>
+        </button>
+      </span>
+    </div>
+
+    <div class="bms__locked" *ngIf="lockedSelectedCount">
+      <button type="button" class="bms__locked-toggle" (click)="showLocked = !showLocked"
+        [attr.aria-expanded]="showLocked">
+        <i class="lock icon" aria-hidden="true"></i>
+        <span>{{lockedSelectedCount}} already in batch</span>
+        <span class="bms__locked-action">{{showLocked ? 'Hide' : 'Show'}}</span>
+        <i class="dropdown icon bms__locked-caret" [class.bms__locked-caret--open]="showLocked" aria-hidden="true"></i>
+      </button>
+      <div class="bms__chips bms__chips--locked" *ngIf="showLocked">
+        <span class="bms__chip bms__chip--locked" *ngFor="let user of lockedSelectedUsers; trackBy: trackById"
+          title="Already in this batch">
+          <img class="bms__chip-avatar" src="{{user.avatar || 'assets/images/user_logo.png' | cdnprefixurl}}" alt="">
+          <span class="bms__chip-name">{{user.name}}</span>
+        </span>
+      </div>
     </div>
   </div>
 </div>

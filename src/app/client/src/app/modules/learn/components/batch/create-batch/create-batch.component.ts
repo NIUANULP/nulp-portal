@@ -238,6 +238,7 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
             id: userData.identifier,
             name: userData.firstName + (userData.lastName ? ' ' + userData.lastName : ''),
             avatar: userData.avatar,
+            createdDate: userData.createdDate,
             otherDetail: this.getUserOtherDetail(userData)
           };
           _.forEach(userData.roles, (roles) => {
